@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "ruflo": {
+      "env": {
+        "OPENAI_API_KEY": "${OPENAI_API_KEY}",
+        "RUFLO_MCP_SERVER": "${RUFLO_MCP_SERVER}"
+      }
+    }
+  }
+}
