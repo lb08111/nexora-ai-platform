@@ -1,26 +1,5 @@
 import { getApiUrl, clearAuthToken } from "./config";
 import { buildAuthHeaders } from "./authHeaders";
-import { useAgentStore } from "../stores/agentStore";
-
-let _resettingAgent = false;
-
-function resetToValidAgent() {
-  if (_resettingAgent) return;
-  _resettingAgent = true;
-  const store = useAgentStore.getState();
-  store.setSelectedAgent("default");
-  fetch(getApiUrl("/agents"), {
-    headers: new Headers(buildAuthHeaders()),
-  })
-    .then((r) => (r.ok ? r.json() : null))
-    .then((data) => {
-      if (data?.agents) store.setAgents(data.agents);
-    })
-    .catch(() => {})
-    .finally(() => {
-      _resettingAgent = false;
-    });
-}
 
 function getErrorMessageFromBody(
   text: string,
@@ -57,19 +36,12 @@ function getErrorMessageFromBody(
   return text;
 }
 
-function buildHeaders(
-  method?: string,
-  extra?: HeadersInit,
-  hasBody = false,
-): Headers {
+function buildHeaders(method?: string, extra?: HeadersInit): Headers {
   // Normalize extra to a Headers instance for consistent handling
   const headers = extra instanceof Headers ? extra : new Headers(extra);
 
-  // Only add Content-Type when the request carries a JSON body.
-  if (
-    method &&
-    (["POST", "PUT", "PATCH"].includes(method.toUpperCase()) || hasBody)
-  ) {
+  // Only add Content-Type for methods that typically have a body
+  if (method && ["POST", "PUT", "PATCH"].includes(method.toUpperCase())) {
     // Don't override if caller explicitly set Content-Type
     if (!headers.has("Content-Type")) {
       headers.set("Content-Type", "application/json");
@@ -91,7 +63,7 @@ export async function request<T = unknown>(
 ): Promise<T> {
   const url = getApiUrl(path);
   const method = options.method || "GET";
-  const headers = buildHeaders(method, options.headers, options.body != null);
+  const headers = buildHeaders(method, options.headers);
 
   const response = await fetch(url, {
     ...options,
@@ -110,10 +82,6 @@ export async function request<T = unknown>(
     const text = await response.text().catch(() => "");
     const contentType = response.headers.get("content-type") || "";
     const errorMessage = getErrorMessageFromBody(text, contentType);
-
-    if (response.status === 403 && errorMessage === "Agent access denied") {
-      resetToValidAgent();
-    }
 
     // Preserve raw body for parseErrorDetail() to extract structured fields
     const finalMessage = errorMessage

@@ -56,7 +56,6 @@ class TokenRecordingModelWrapper(ChatModelBase):
             "total_tokens": pt + ct,
         }
         self._store_usage(usage_data)
-        _record_usage_to_pg(self._provider_id, self.model_name, pt, ct)
 
     @classmethod
     def pop_usage_for_session(cls, session_id: str) -> dict[str, Any] | None:
@@ -108,54 +107,3 @@ class TokenRecordingModelWrapper(ChatModelBase):
                 last_usage = chunk.usage
             yield chunk
         self._record_usage(last_usage)
-
-
-def _record_usage_to_pg(
-    provider_id: str, model_name: str, prompt_tokens: int, completion_tokens: int
-) -> None:
-    """Fire-and-forget write to PG token_usage table."""
-    try:
-        from qwenpaw_ext.nexora.db import is_database_enabled, get_engine
-
-        if not is_database_enabled():
-            return
-        from ..app.agent_context import get_current_actor, get_current_agent_id
-
-        actor = get_current_actor() or "anonymous"
-        agent_id = get_current_agent_id() or ""
-        today = date.today()
-
-        import threading
-
-        def _insert():
-            try:
-                from sqlalchemy import text
-
-                engine = get_engine()
-                with engine.begin() as conn:
-                    conn.execute(
-                        text(
-                            "INSERT INTO nexora_token_usage "
-                            "(date, actor, agent_id, provider_id, model, prompt_tokens, completion_tokens) "
-                            "VALUES (:d, :a, :ag, :p, :m, :pt, :ct)"
-                        ),
-                        {
-                            "d": today,
-                            "a": actor,
-                            "ag": agent_id,
-                            "p": provider_id,
-                            "m": model_name,
-                            "pt": prompt_tokens,
-                            "ct": completion_tokens,
-                        },
-                    )
-            except Exception:
-                import logging
-
-                logging.getLogger(__name__).warning(
-                    "token_usage: PG write failed", exc_info=True
-                )
-
-        threading.Thread(target=_insert, daemon=True).start()
-    except Exception:
-        pass

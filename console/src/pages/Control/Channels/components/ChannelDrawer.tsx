@@ -33,6 +33,7 @@ const CHANNELS_WITH_ACCESS_CONTROL: ChannelKey[] = [
   "qq",
   "mqtt",
   "xiaoyi",
+  "yuanbao",
 ];
 
 // Doc EN URLs per channel (anchors on https://qwenpaw.agentscope.io/docs/channels)
@@ -55,6 +56,7 @@ const CHANNEL_DOC_EN_URLS: Partial<Record<ChannelKey, string>> = {
     "https://qwenpaw.agentscope.io/docs/channels/?lang=en#WeChat-Personal-iLink",
   xiaoyi:
     "https://developer.huawei.com/consumer/cn/doc/service/openclaw-0000002518410344",
+  yuanbao: "https://qwenpaw.agentscope.io/docs/channels/?lang=en#Yuanbao",
   onebot:
     "https://qwenpaw.agentscope.io/docs/channels/?lang=en#OneBot-v11-NapCat--QQ-full-protocol",
 };
@@ -76,6 +78,8 @@ const CHANNEL_DOC_ZH_URLS: Partial<Record<ChannelKey, string>> = {
   wechat: "https://qwenpaw.agentscope.io/docs/channels/?lang=zh#微信个人iLink",
   xiaoyi:
     "https://developer.huawei.com/consumer/cn/doc/service/openclaw-0000002518410344",
+  yuanbao:
+    "https://qwenpaw.agentscope.io/docs/channels/?lang=zh#腾讯元宝Yuanbao",
   onebot:
     "https://qwenpaw.agentscope.io/docs/channels/?lang=zh#OneBot-v11NapCat--QQ-完整协议",
 };
@@ -185,7 +189,7 @@ export function ChannelDrawer({
               name="user_id"
               label="User ID"
               tooltip="Accepts a full MXID (e.g. @bot:matrix.org) or just the localpart (e.g. bot)."
-              rules={[{ required: true, message: "Por favor, insira o ID de usuário" }]}
+              rules={[{ required: true, message: "Please enter User ID" }]}
             >
               <Input placeholder="@bot:matrix.org" />
             </Form.Item>
@@ -207,7 +211,7 @@ export function ChannelDrawer({
               rules={[
                 {
                   required: !isMatrixPasswordAuth,
-                  message: "Por favor, insira o token de acesso",
+                  message: "Please enter access token",
                 },
               ]}
               hidden={isMatrixPasswordAuth}
@@ -220,7 +224,7 @@ export function ChannelDrawer({
               rules={[
                 {
                   required: isMatrixPasswordAuth,
-                  message: "Por favor, insira a senha",
+                  message: "Please enter password",
                 },
               ]}
               hidden={!isMatrixPasswordAuth}
@@ -514,12 +518,55 @@ export function ChannelDrawer({
             <Form.Item name="media_dir" label={t("channels.wechatMediaDir")}>
               <Input placeholder={defaultMediaDir} />
             </Form.Item>
+            <Form.Item
+              name="share_session_in_group"
+              label={t("channels.shareSessionInGroup")}
+              valuePropName="checked"
+              tooltip={t("channels.shareSessionInGroupTooltip")}
+            >
+              <Switch />
+            </Form.Item>
           </>
         );
 
       case "qq":
         return (
           <>
+            <ConfigProvider prefixCls="ant">
+              <Alert
+                type="info"
+                showIcon
+                message={t("channels.qqSetupGuide")}
+                style={{ marginBottom: 16 }}
+              />
+            </ConfigProvider>
+            <QrcodeAuthBlock
+              label={t("channels.qqScanAuth")}
+              buttonText={t("channels.qqGetQrcode")}
+              imageAlt="QQ QR Code"
+              hintText={t("channels.qqScanHint")}
+              channel="qq"
+              successStatus="success"
+              successCredentialKey="app_id"
+              pollInterval={2000}
+              pollTimeout={300000}
+              maxPollCount={180}
+              onSuccess={(credentials) => {
+                form.setFieldsValue({
+                  app_id: credentials.app_id,
+                  client_secret: credentials.client_secret,
+                  user_openid: credentials.user_openid,
+                });
+                message.success(t("channels.qqAuthSuccess"));
+              }}
+              onError={(type) => {
+                if (type === "expired") {
+                  message.warning(t("channels.qqQrcodeExpired"));
+                } else {
+                  message.error(t("channels.qqQrcodeFailed"));
+                }
+              }}
+            />
             <Form.Item
               name="app_id"
               label="App ID"
@@ -533,6 +580,9 @@ export function ChannelDrawer({
               rules={[{ required: true }]}
             >
               <Input.Password />
+            </Form.Item>
+            <Form.Item name="user_openid" hidden>
+              <Input />
             </Form.Item>
             <Form.Item
               name="ack_message"
@@ -956,7 +1006,7 @@ export function ChannelDrawer({
             <Form.Item
               name="bot_id"
               label="Bot ID"
-              rules={[{ required: true, message: "Por favor, insira o ID do Bot" }]}
+              rules={[{ required: true, message: "Please input Bot ID" }]}
             >
               <Input placeholder="Bot ID from WeCom backend" />
             </Form.Item>
@@ -979,9 +1029,9 @@ export function ChannelDrawer({
             </Form.Item>
             <Form.Item
               name="share_session_in_group"
-              label={t("channels.onebotShareSessionInGroup")}
+              label={t("channels.shareSessionInGroup")}
               valuePropName="checked"
-              tooltip={t("channels.onebotShareSessionInGroupTooltip")}
+              tooltip={t("channels.shareSessionInGroupTooltip")}
             >
               <Switch />
             </Form.Item>
@@ -1016,7 +1066,7 @@ export function ChannelDrawer({
             <Form.Item
               name="agent_id"
               label="Agent ID"
-              rules={[{ required: true, message: "Por favor, insira o ID do Agente" }]}
+              rules={[{ required: true, message: "Please input Agent ID" }]}
             >
               <Input placeholder="Agent ID from XiaoYi platform" />
             </Form.Item>
@@ -1142,6 +1192,36 @@ export function ChannelDrawer({
           </>
         );
 
+      case "yuanbao":
+        return (
+          <>
+            <Form.Item
+              name="app_id"
+              label="App ID"
+              rules={[{ required: true, message: "Please input App ID" }]}
+            >
+              <Input placeholder="App ID from Yuanbao platform" />
+            </Form.Item>
+            <Form.Item
+              name="app_secret"
+              label="App Secret"
+              rules={[{ required: true, message: "Please input App Secret" }]}
+            >
+              <Input.Password placeholder="App Secret from Yuanbao platform" />
+            </Form.Item>
+            <Form.Item
+              name="api_domain"
+              label="API Domain"
+              tooltip="REST API domain for sign-token auth (default: bot.yuanbao.tencent.com)"
+            >
+              <Input placeholder="bot.yuanbao.tencent.com" />
+            </Form.Item>
+            <Form.Item name="media_dir" label={t("channels.wechatMediaDir")}>
+              <Input placeholder={defaultMediaDir} />
+            </Form.Item>
+          </>
+        );
+
       case "onebot":
         return (
           <>
@@ -1177,9 +1257,9 @@ export function ChannelDrawer({
             </Form.Item>
             <Form.Item
               name="share_session_in_group"
-              label={t("channels.onebotShareSessionInGroup")}
+              label={t("channels.shareSessionInGroup")}
               valuePropName="checked"
-              tooltip={t("channels.onebotShareSessionInGroupTooltip")}
+              tooltip={t("channels.shareSessionInGroupTooltip")}
             >
               <Switch />
             </Form.Item>
@@ -1291,7 +1371,7 @@ export function ChannelDrawer({
       title={drawerTitle}
       open={open}
       onClose={onClose}
-      destroyOnClose
+      destroyOnHidden
       footer={drawerFooter}
       key={activeKey} // Force remount when switching channels
     >

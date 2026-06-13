@@ -13,6 +13,7 @@ pretty-printed to the terminal.
 from __future__ import annotations
 
 import copy
+import json as _json
 import logging
 import os
 import sys
@@ -29,6 +30,7 @@ from agentscope_runtime.engine.schemas.agent_schemas import (
 from ....config.config import ConsoleConfig as ConsoleChannelConfig
 from ...console_push_store import append as push_store_append
 from ....constant import DEFAULT_MEDIA_DIR
+from ....exceptions import ModelQuotaExceededException
 from ..base import (
     BaseChannel,
     AudioContent,
@@ -263,7 +265,6 @@ class ConsoleChannel(BaseChannel):
         channel_id = payload.get("channel_id") or self.channel
         sender_id = payload.get("sender_id") or ""
         content_parts = payload.get("content_parts") or []
-        content_parts = self._resolve_console_upload_refs(content_parts)
         meta = payload.get("meta") or {}
         session_id = self.resolve_session_id(sender_id, meta)
         request = self.build_agent_request_from_user_content(
@@ -390,11 +391,6 @@ class ConsoleChannel(BaseChannel):
                     if event_output is not None:
                         for message in event_output:
                             event.output.append(message)
-                            media_message = await self._extract_media_message(
-                                message,
-                            )
-                            if media_message:
-                                event.output.append(media_message)
 
                 if obj == "response":
                     usage_data = self._extract_token_usage(session_id)
@@ -405,13 +401,6 @@ class ConsoleChannel(BaseChannel):
                 yield f"data: {data}\n\n"
 
                 if obj == "message" and status == RunStatus.Completed:
-                    media_message = await self._extract_media_message(event)
-                    if media_message:
-                        media_json = self._serialize_event_for_sse(
-                            media_message,
-                        )
-                        yield f"data: {media_json}\n\n"
-
                     parts = self._message_to_content_parts(event)
                     self._print_parts(parts, ev_type)
 
@@ -436,6 +425,18 @@ class ConsoleChannel(BaseChannel):
                     request.session_id or f"{self.channel}:{to_handle}",
                 )
 
+        except ModelQuotaExceededException as e:
+            logger.warning("rate limit hit: %s", e)
+            alternatives = self._get_free_model_alternatives()
+            rl_event = _json.dumps(
+                {
+                    "type": "rate_limited",
+                    "error": str(e).strip(),
+                    "alternatives": alternatives,
+                },
+            )
+            yield f"data: {rl_event}\n\n"
+            self._print_error(str(e).strip())
         except Exception as e:
             logger.exception("console process/reply failed")
             err_msg = str(e).strip() or "An error occurred while processing."
@@ -509,6 +510,38 @@ class ConsoleChannel(BaseChannel):
                 self._safe_print(f"{_YELLOW}📎 [File: {url}]{_RESET}")
         self._safe_print("")
 
+    def _get_free_model_alternatives(self) -> list:
+        """Return a list of alternative free models."""
+        try:
+            from ....providers.provider_manager import (
+                ProviderManager,
+            )
+
+            pm = ProviderManager.get_instance()
+            if pm is None:
+                return []
+            alternatives = []
+            all_providers = list(
+                pm.builtin_providers.values(),
+            ) + list(pm.custom_providers.values())
+            for p in all_providers:
+                meta = getattr(p, "meta", None) or {}
+                if not meta.get("is_free_tier"):
+                    continue
+                for m in p.models:
+                    if getattr(m, "is_free", False):
+                        alternatives.append(
+                            {
+                                "provider_id": p.id,
+                                "provider_name": p.name,
+                                "model_id": m.id,
+                                "model_name": m.name or m.id,
+                            },
+                        )
+            return alternatives[:8]
+        except Exception:
+            return []
+
     def _print_error(self, err: str) -> None:
         ts = _ts()
         self._safe_print(
@@ -554,7 +587,11 @@ class ConsoleChannel(BaseChannel):
             f"{prefix}{text}\n",
         )
         sid = (meta or {}).get("session_id")
-        if sid and text.strip():
+        if (
+            sid
+            and text.strip()
+            and not (meta or {}).get("suppress_console_push")
+        ):
             await push_store_append(sid, text.strip())
 
     async def send_content_parts(
@@ -568,7 +605,7 @@ class ConsoleChannel(BaseChannel):
         """
         self._print_parts(parts)
         sid = (meta or {}).get("session_id")
-        if sid:
+        if sid and not (meta or {}).get("suppress_console_push"):
             body = self._parts_to_text(parts, meta)
             if body.strip():
                 await push_store_append(sid, body.strip())

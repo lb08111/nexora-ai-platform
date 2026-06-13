@@ -1,974 +1,529 @@
 <div align="center">
 
-# Nexora AI Platform
+# QwenPaw
 
-**Enterprise AI Workspace**
+[![GitHub Repo](https://img.shields.io/badge/GitHub-Repo-black.svg?logo=github)](https://github.com/agentscope-ai/QwenPaw)
+[![PyPI](https://img.shields.io/pypi/v/qwenpaw?color=3775A9&label=PyPI&logo=pypi)](https://pypi.org/project/qwenpaw/)
+[![Documentation](https://img.shields.io/badge/Docs-Website-green.svg?logo=readthedocs&label=Docs)](https://qwenpaw.agentscope.io/)
+[![Python Version](https://img.shields.io/badge/python-3.10%20~%20%3C3.14-blue.svg?logo=python&label=Python)](https://www.python.org/downloads/)
+[![Last Commit](https://img.shields.io/github/last-commit/agentscope-ai/QwenPaw)](https://github.com/agentscope-ai/QwenPaw)
+[![License](https://img.shields.io/badge/license-Apache%202.0-red.svg?logo=apache&label=License)](LICENSE)
+[![Code Style](https://img.shields.io/badge/code%20style-black-black.svg?logo=python&label=CodeStyle)](https://github.com/psf/black)
+[![GitHub Stars](https://img.shields.io/github/stars/agentscope-ai/QwenPaw?style=flat&logo=github&color=yellow&label=Stars)](https://github.com/agentscope-ai/QwenPaw/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/agentscope-ai/QwenPaw?style=flat&logo=github&color=purple&label=Forks)](https://github.com/agentscope-ai/QwenPaw/network)
+[![DeepWiki](https://img.shields.io/badge/DeepWiki-Ask_Devin-navy.svg?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAyCAYAAAAnWDnqAAAAAXNSR0IArs4c6QAAA05JREFUaEPtmUtyEzEQhtWTQyQLHNak2AB7ZnyXZMEjXMGeK/AIi+QuHrMnbChYY7MIh8g01fJoopFb0uhhEqqcbWTp06/uv1saEDv4O3n3dV60RfP947Mm9/SQc0ICFQgzfc4CYZoTPAswgSJCCUJUnAAoRHOAUOcATwbmVLWdGoH//PB8mnKqScAhsD0kYP3j/Yt5LPQe2KvcXmGvRHcDnpxfL2zOYJ1mFwrryWTz0advv1Ut4CJgf5uhDuDj5eUcAUoahrdY/56ebRWeraTjMt/00Sh3UDtjgHtQNHwcRGOC98BJEAEymycmYcWwOprTgcB6VZ5JK5TAJ+fXGLBm3FDAmn6oPPjR4rKCAoJCal2eAiQp2x0vxTPB3ALO2CRkwmDy5WohzBDwSEFKRwPbknEggCPB/imwrycgxX2NzoMCHhPkDwqYMr9tRcP5qNrMZHkVnOjRMWwLCcr8ohBVb1OMjxLwGCvjTikrsBOiA6fNyCrm8V1rP93iVPpwaE+gO0SsWmPiXB+jikdf6SizrT5qKasx5j8ABbHpFTx+vFXp9EnYQmLx02h1QTTrl6eDqxLnGjporxl3NL3agEvXdT0WmEost648sQOYAeJS9Q7bfUVoMGnjo4AZdUMQku50McDcMWcBPvr0SzbTAFDfvJqwLzgxwATnCgnp4wDl6Aa+Ax283gghmj+vj7feE2KBBRMW3FzOpLOADl0Isb5587h/U4gGvkt5v60Z1VLG8BhYjbzRwyQZemwAd6cCR5/XFWLYZRIMpX39AR0tjaGGiGzLVyhse5C9RKC6ai42ppWPKiBagOvaYk8lO7DajerabOZP46Lby5wKjw1HCRx7p9sVMOWGzb/vA1hwiWc6jm3MvQDTogQkiqIhJV0nBQBTU+3okKCFDy9WwferkHjtxib7t3xIUQtHxnIwtx4mpg26/HfwVNVDb4oI9RHmx5WGelRVlrtiw43zboCLaxv46AZeB3IlTkwouebTr1y2NjSpHz68WNFjHvupy3q8TFn3Hos2IAk4Ju5dCo8B3wP7VPr/FGaKiG+T+v+TQqIrOqMTL1VdWV1DdmcbO8KXBz6esmYWYKPwDL5b5FA1a0hwapHiom0r/cKaoqr+27/XcrS5UwSMbQAAAABJRU5ErkJggg==)](https://deepwiki.com/agentscope-ai/QwenPaw)
+[![Discord](https://img.shields.io/badge/Discord-Join_Us-blueviolet.svg?logo=discord)](https://discord.gg/eYMpfnkG8h)
+[![X](https://img.shields.io/badge/X-Follow_Us-black.svg?logo=x)](https://x.com/agentscope_ai)
+[![DingTalk](https://img.shields.io/badge/DingTalk-Join_Us-orange.svg)](https://qr.dingtalk.com/action/joingroup?code=v1,k1,OmDlBXpjW+I2vWjKDsjvI9dhcXjGZi3bQiojOq3dlDw=&_dt_no_comment=1&origin=11)
+[![AgentScope Platform](https://img.shields.io/badge/%E2%98%81_AgentScope_Platform-%F0%9F%90%BE_7%2F24_Online_%26_Free-FF6B2B.svg)](https://platform.agentscope.io/)
 
-[![License](https://img.shields.io/badge/license-Apache%202.0-red.svg?logo=apache)](LICENSE)
-[![Python](https://img.shields.io/badge/python-3.10%20~%20%3C3.14-blue.svg?logo=python)](https://www.python.org/downloads/)
-[![Built on QwenPaw](https://img.shields.io/badge/built%20on-QwenPaw-orange.svg)](https://github.com/agentscope-ai/QwenPaw)
+[[Documentation](https://qwenpaw.agentscope.io/)] [[中文](README_zh.md)] [[日本語](README_ja.md)] [[Русский](README_ru.md)]
 
-[English](#overview) | [中文](#概述)
+<p align="center">
+  <img src="https://gw.alicdn.com/imgextra/i1/O1CN01sens5C1TuwioeGexL_!!6000000002443-55-tps-771-132.svg" alt="QwenPaw Logo" width="120">
+</p>
+
+<p align="center"><b>Works for you, grows with you.</b></p>
 
 </div>
 
----
+Your personal AI assistant — easy to install, deploy locally or in the cloud, connect across channels, extend with ease.
 
-## What is Nexora?
-
-**Nexora** = **Nex**us + **ora** (edge, frontier)
-
-- **Nexus** — a central hub where things connect. Nexora is the nexus where AI agents, enterprise tools, team members, and messaging channels converge into a unified workspace.
-- **Ora** — derived from Latin *ora* (edge, boundary), representing the frontier of AI-driven enterprise operations.
-
-Together, the name embodies the platform's mission: **the central hub at the frontier of enterprise AI** — connecting intelligent agents with the people and tools that run your business, under controlled governance.
-
----
-
-## Overview
-
-Nexora AI Platform is an enterprise-grade AI workspace built on [QwenPaw](https://github.com/agentscope-ai/QwenPaw). It inherits all the core capabilities of QwenPaw — multi-agent orchestration, multi-channel messaging, skill extensions, local model support, and memory-evolving agents — while adding enterprise-essential layers: multi-tenant access control, security governance, audit logging, and token usage analytics.
-
-> **What you can do with Nexora:**
+> **Core capabilities:**
 >
-> - **Team AI workspace** — Multiple users share one platform, each with their own agents and permissions
-> - **Social media & productivity** — Daily hot post digests, email highlights, newsletter summaries pushed to DingTalk/Feishu/WeChat
-> - **Creative & building** — Describe a goal, let agents auto-execute; full workflow from idea to prototype
-> - **Research & learning** — Track tech & AI news, personal knowledge base search and reuse
-> - **Desktop & files** — Organize and search local files, read & summarize documents
-> - **Operations & governance** — Audit every AI action, control who can use which tools, track token spend per user
+> **Under your control** — Memory and personalization fully under your control. Deploy locally (data stays on your machine) or in the cloud (your chosen server). No third-party hosting, no data upload.
+>
+> **Skills extension** — Built-in scheduling, PDF/Office processing, news digest, and more; custom skills auto-loaded, no lock-in. Skills determine what QwenPaw can do.
+>
+> **Multi-agent collaboration** — Create multiple independent agents, each with their own role; enable collaboration skills for inter-agent communication to tackle complex tasks together.
+>
+> **Multi-layer security** — Tool guard, file access control, skill security scanning to ensure safe operation.
+>
+> **Every channel** — DingTalk, Feishu, WeChat, Discord, Telegram, and more. One QwenPaw, connect as needed.
+>
+> **Memory-evolving & proactive** — Agent learns from interactions, reflects on experience, and proactively serves you. Gets smarter the more you use it.
+>
+> <details>
+> <summary><b>What you can do with QwenPaw</b></summary>
+>
+> <br>
+>
+> - **Social media**: Daily hot post digests (Xiaohongshu, Zhihu, Reddit), Bilibili/YouTube video summaries.
+> - **Productivity**: Email & newsletter highlights pushed to DingTalk/Feishu/QQ; email & calendar contact organization.
+> - **Creative & building**: Describe your goal before sleep, auto-execute, wake up to a prototype; full workflow from topic selection to final video.
+> - **Research & learning**: Track tech & AI news, personal knowledge base search and reuse.
+> - **Desktop & files**: Organize and search local files, read & summarize documents, request files in chat.
+> - **Explore more**: Combine Skills with scheduled tasks into your own agentic app.
+>
+> </details>
 
 ---
 
-## Core Features
+## News
 
-### AI Agent Capabilities (from QwenPaw)
+- [2026-06-11] **AgentScope Platform is live** — Free QwenPaw deployment, plugin sharing, and Skill marketplace. [Try it now →](https://platform.agentscope.io/)
 
-| Feature | Description |
-|---------|-------------|
-| **Multi-Agent Collaboration** | Create multiple independent agents, each with their own role; enable inter-agent communication for complex tasks |
-| **Skills Extension** | Built-in scheduling, PDF/Office processing, news digest, web search, and more; custom skills auto-loaded |
-| **Memory-Evolving & Proactive** | Agents learn from interactions, reflect on experience, and proactively serve you — smarter the more you use |
-| **Multi-Channel Messaging** | DingTalk, Feishu, WeChat, Discord, Telegram, Slack, QQ, and more — one platform, connect as needed |
-| **Local Model Support** | Run LLMs entirely on your machine via llama.cpp, Ollama, or LM Studio — no API keys required |
-| **Cloud LLM Providers** | DashScope (Qwen), OpenAI, Gemini, Claude, MiniMax, DeepSeek, and many more |
-| **Coding Mode** | Built-in Web IDE with file tree, tabbed editor, inline diff review, and Git panel |
-| **Plugin Ecosystem** | Extend with custom tools, skills, and MCP servers; official plugin marketplace |
-| **Scheduled Tasks (Cron)** | Automate recurring tasks — daily briefings, periodic data checks, scheduled reports |
-| **Context Management** | Intelligent context compression for long conversations |
-| **Tool Guard** | Automatically intercepts dangerous shell commands (rm -rf, fork bombs, reverse shells) |
-| **File Access Guard** | Restricts agent access to sensitive paths (~/.ssh, key files, system directories) |
-| **Skill Security Scanning** | Detects risks like prompt injection, command injection, hardcoded keys before installing skills |
+- [2026-06-10] **v1.1.11 — Free Model OAuth & Plugin Market** | Zero-config free models with one-click OAuth; Plugin Market with AgentScope Platform integration.
 
-### Enterprise Extensions (Nexora)
+  | Highlight | What's new |
+  |-----------|------------|
+  | **Free Model OAuth** | Zero-config free models with one-click OAuth authentication. |
+  | **Plugin Market** | New Plugin Market tab with AgentScope Platform integration. |
+  | **MCP Tool Whitelisting** | Per-server MCP tool whitelisting with frontend toggle UI. |
 
-| Feature | Description |
-|---------|-------------|
-| **Multi-Tenant RBAC** | Two-role model (admin / operator) with platform-level access control and user management |
-| **Agent Authorization** | Fine-grained agent grants per user — control who can access which AI agents |
-| **Capability Approval** | Risk-based approval workflow for installing/removing tools, skills, MCP servers, and plugins |
-| **Audit Logging** | Full audit trail with PostgreSQL backend — auth, chat, tool use, config changes, admin actions |
-| **Token Usage Analytics** | Track LLM token consumption by user, agent, model, and date with dashboard visualization |
-| **Security Governance** | Resource policies, tool scanners, and centralized secret management |
-| **PostgreSQL Backend** | All enterprise data (users, grants, audit, config, tokens) stored in PostgreSQL |
+  Also: self-evolving skill creation, backend startup optimization, Feishu group sharing, QQ QR code auth. [v1.1.11 Release Notes →](https://qwenpaw.agentscope.io/release-notes#v1.1.11)
+
+- [2026-06-01] **v1.1.10** — Spawn Subagent, Open Directory, Tencent Yuanbao channel. [v1.1.10 Release Notes →](https://qwenpaw.agentscope.io/release-notes#v1.1.10)
+
+- [2026-05-27] **v1.1.9** — Coding Mode (three-panel Web IDE), Tauri desktop app, unified access control. [v1.1.9 Release Notes →](https://qwenpaw.agentscope.io/release-notes#v1.1.9)
+
+- [2026-05-19] **v1.1.8** — Official plugin distribution, QwenPaw Pet, streaming cards for DingTalk / Feishu / Telegram. [v1.1.8 Release Notes →](https://qwenpaw.agentscope.io/release-notes#v1.1.8)
+
+- [2026-05-14] **v1.1.7** — Browser batch actions, OAuth 2.1 MCP, Cron calendar view, multiple file attachments. [v1.1.7 Release Notes →](https://qwenpaw.agentscope.io/release-notes#v1.1.7)
+
+- [2026-05-09] **v1.1.6** — Whisper voice input, GPT Image 2 plugin, Volcano Engine provider, Mermaid diagrams. [v1.1.6 Release Notes →](https://qwenpaw.agentscope.io/release-notes#v1.1.6)
+
+- [2026-04-12] **CoPaw rebrands to QwenPaw** — deeper Qwen ecosystem integration, same open-source mission. [v1.0.0 Release Notes →](https://qwenpaw.agentscope.io/release-notes#v1.0.0)
 
 ---
 
-## Architecture
+## Table of Contents
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    Frontend (React + Vite)                   │
-│  ┌───────────────────────┐  ┌─────────────────────────────┐ │
-│  │   QwenPaw Console UI  │  │  Nexora Admin Dashboard     │ │
-│  │  Chat / Agents / Cron │  │  Users / Grants / Audit     │ │
-│  │  Skills / MCP / Coding│  │  Token Usage / Governance   │ │
-│  └───────────────────────┘  └─────────────────────────────┘ │
-├─────────────────────────────────────────────────────────────┤
-│                    Backend (FastAPI)                         │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────┐  │
-│  │  QwenPaw     │  │   Nexora     │  │  Auth Middleware  │  │
-│  │  Core Engine │  │  Extension   │  │  JWT + RBAC       │  │
-│  │  Agents      │  │  RBAC/Audit  │  │  Route Guards     │  │
-│  │  Providers   │  │  Governance  │  │                   │  │
-│  │  Channels    │  │  Token Track │  │                   │  │
-│  └──────────────┘  └──────────────┘  └──────────────────┘  │
-├─────────────────────────────────────────────────────────────┤
-│                    PostgreSQL 16                             │
-│    Users · Roles · Agent Grants · Audit Logs · Approvals    │
-│    Runtime Config · Governance Policies · Token Usage        │
-├─────────────────────────────────────────────────────────────┤
-│                    Channels                                  │
-│  Console · DingTalk · Feishu · WeChat · Discord · Telegram  │
-│  Slack · QQ · iMessage · Email · ...                        │
-└─────────────────────────────────────────────────────────────┘
-```
-
-**Extension isolation**: All Nexora-specific code lives in dedicated directories (`src/qwenpaw_ext/nexora/` and `console/src/nexora/`), keeping the upstream QwenPaw core clean for future syncs.
-
----
-
-## Technical Design
-
-> Full details in [Technical Solution](docs/technical-solution.md)
-
-### Three-Layer Permission Model
-
-Nexora enforces access control through three cascading layers — each request must pass all applicable checks before reaching the agent runtime:
-
-```
-Layer 1 — Platform Access          Layer 2 — Agent Authorization       Layer 3 — Capability Approval
-┌──────────────────────┐           ┌──────────────────────┐           ┌──────────────────────┐
-│  User authenticates  │           │  Check agent_grants  │           │  When user installs  │
-│  via JWT             │──pass──▶  │  for this user       │           │  or removes a tool,  │
-│                      │           │                      │           │  skill, MCP, plugin  │
-│  RBAC role checked   │           │  Only granted agents │           │  Low risk → allow    │
-│  against route       │           │  are visible & usable│           │  High risk → queue   │
-└──────────────────────┘           └──────────────────────┘           └──────────────────────┘
-        │ fail                             │ fail                             │ pending
-        ▼                                  ▼                                  ▼
-   401 / 403                          403 Forbidden                    Approval Request
-   + audit log                        + audit log                      → Admin reviews
-                                                                       → Approve or reject
-                                                                       + audit log
-```
-
-### Request Lifecycle
-
-Every user action flows through a unified pipeline — auth, permission, execution, and audit are never bypassed:
-
-```
-Browser ──▶ FastAPI ──▶ JWT Middleware ──▶ RBAC Guard ──▶ Agent Grant Check
-                                                              │
-                        ┌─────────────────────────────────────┘
-                        ▼
-               QwenPaw Agent Runtime ──▶ LLM Provider
-                        │                       │
-                        ▼                       ▼
-                  Tool Execution          Token Recording
-                        │                       │
-                        └───────────────────────┘
-                                                 ▼
-                                           PostgreSQL
-                                    (audit · tokens · approvals)
-
-Capability changes (install/remove tools, skills, MCP, plugins)
-go through a separate approval workflow before taking effect.
-```
-
-### Multi-Agent Runtime
-
-Nexora manages 100+ agents on a single node using lazy loading and automatic lifecycle management:
-
-```
-                         ┌─────────────────────────────────┐
-                         │      MultiAgentManager          │
-                         │                                 │
-  User request ────▶     │  ┌─ Active Agent Pool ────────┐ │
-  (agent_id)             │  │  agent_a  [last used: 10s] │ │     Max active: 20
-                         │  │  agent_b  [last used: 45s] │ │     Idle TTL: 1 hour
-                         │  │  agent_c  [last used: 300s]│ │     Eviction: LRU
-                         │  └────────────────────────────┘ │
-                         │         ▲           │           │
-                         │    lazy load    idle evict      │
-                         │         │           ▼           │
-                         │  ┌─ Agent Configs (disk) ─────┐ │
-                         │  │  100+ agent YAML configs   │ │
-                         │  └────────────────────────────┘ │
-                         └─────────────────────────────────┘
-```
-
-- Agents are loaded on first request, not at startup — cold start stays fast
-- Idle agents are evicted after a configurable TTL (default 1 hour)
-- When the pool is full, least-recently-used agents are evicted first
-- Each agent maintains its own memory, tools, and channel bindings
-
-### Capability Approval Workflow
-
-When users install or remove capabilities (tools, skills, MCP servers, plugins), a configurable approval gate controls the change:
-
-```
-User adds/removes capability ──▶ Policy Engine checks risk level
-(skill.create, mcp.delete,            │
- plugin.install, tool.create…)         │
-                          ┌────────────┼────────────┐
-                          ▼            ▼            ▼
-                      Low Risk    Medium Risk   High Risk
-                          │            │            │
-                          ▼            ▼            ▼
-                     Auto-allow   Configurable   Must approve
-                     + audit log  (approve/      + audit log
-                                   auto)
-                                       │
-                                       ▼
-                                ┌─────────────┐
-                                │  Approval   │──▶ Admin reviews in Approval Center
-                                │  Queue      │    (capability type, action, risk level,
-                                │  (PG-backed)│     requesting user context)
-                                └─────────────┘
-                                       │
-                             ┌─────────┴─────────┐
-                             ▼                   ▼
-                        Approved              Rejected
-                        Change applied        Change blocked
-                        + audit log           + audit log
-```
-
-Policies are configurable per capability type, per risk level, and per environment — stored in `nexora_capability_policies`.
-
-### Audit System
-
-Every significant action produces an immutable audit record in PostgreSQL:
-
-```
-┌──────────────────────────────────────────────────────────┐
-│                    Audit Event Record                     │
-├──────────┬───────────────────────────────────────────────┤
-│ actor    │ The authenticated user who triggered action   │
-│ action   │ e.g. chat.message.send, auth.login, tool.exec│
-│ resource │ Type + ID of affected resource                │
-│ status   │ success / failure                             │
-│ ip       │ Client IP address                             │
-│ ua       │ User-Agent string                             │
-│ detail   │ JSON payload (params, result summary, etc.)   │
-│ timestamp│ Server-side UTC timestamp                     │
-└──────────┴───────────────────────────────────────────────┘
-```
-
-Audit coverage:
-
-| Category | Events |
-|----------|--------|
-| **Auth** | Login success/failure, registration, logout |
-| **Users** | Create, delete, role change, password reset |
-| **Agents** | Grant/revoke authorization, config changes |
-| **Chat** | Message send, reconnect, stop, file upload |
-| **Tools** | Execution attempts (success + blocked) |
-| **Approvals** | Request created, approved, rejected, timeout |
-| **Config** | Model changes, environment variable updates |
-
-Audit writes are fire-and-forget — a failed audit write never blocks the main operation.
-
-### Token Usage Tracking
-
-Token consumption is attributed to the **authenticated JWT user** (not the chat payload sender), using Python's `ContextVar` to propagate identity through the async call chain:
-
-```
-JWT Middleware                    Console Router                   Model Wrapper
-─────────────                    ──────────────                   ─────────────
-request.state.user = "alice"  →  set_current_actor("alice")   →  get_current_actor()
-                                                                       │
-                                                                       ▼
-                                                              INSERT INTO nexora_token_usage
-                                                              (actor="alice", model, tokens)
-                                                              via background daemon thread
-```
-
-Records are aggregated by user, agent, model, and date — visualized in the Token Usage dashboard with trend charts and per-user breakdown tables.
-
-### Extension Isolation
-
-Nexora follows a strict "upstream core + extension layer" architecture to minimize merge conflicts when syncing with QwenPaw:
-
-```
-┌────────────────────────────────────────────────────────────────┐
-│  QwenPaw Core (upstream)                    Modification: ≤5% │
-│  ├── app/auth.py ·············· JWT middleware hook            │
-│  ├── app/routers/console.py ··· audit + ContextVar injection  │
-│  ├── app/routers/__init__.py ·· register nexora router        │
-│  └── token_usage/model_wrapper · PG write hook                │
-├────────────────────────────────────────────────────────────────┤
-│  Nexora Extension Layer (isolated)         Modification: 100% │
-│  ├── qwenpaw_ext/nexora/ ····· All backend business logic     │
-│  │   ├── rbac.py, audit.py, agent_grants.py, ...              │
-│  │   └── repositories/ ······ PostgreSQL data access          │
-│  ├── console/src/nexora/ ····· All frontend pages & API       │
-│  └── alembic/versions/ ······ Database migrations             │
-└────────────────────────────────────────────────────────────────┘
-```
-
-Only 4 upstream files are modified — the rest of Nexora lives entirely in extension directories. This keeps `git merge upstream/main` clean in >95% of cases.
-
-### Security Defense in Depth
-
-Multiple independent safety layers protect the system — no single bypass compromises security:
-
-```
-       Inbound Request
-            │
-    ┌───────▼───────┐
-    │ JWT Auth      │  Identity verification
-    │ (middleware)  │  Reject: 401 Unauthorized
-    └───────┬───────┘
-    ┌───────▼───────┐
-    │ RBAC Guard    │  Role-based route protection
-    │ (per-route)   │  Reject: 403 Forbidden
-    └───────┬───────┘
-    ┌───────▼───────┐
-    │ Agent Grants  │  Per-user agent access control
-    │ (DB lookup)   │  Reject: 403 Forbidden
-    └───────┬───────┘
-    ┌───────▼───────┐
-    │ Tool Guard    │  Block rm -rf, fork bombs, reverse shells
-    │ (pattern)     │  Reject: blocked + audit log
-    └───────┬───────┘
-    ┌───────▼───────┐
-    │ File Guard    │  Restrict ~/.ssh, /etc/passwd, key files
-    │ (path check)  │  Reject: blocked + audit log
-    └───────┬───────┘
-    ┌───────▼───────┐
-    │ Capability    │  Approval gate for installing/removing
-    │ Approval      │  tools, skills, MCP, plugins
-    └───────┬───────┘
-    ┌───────▼───────┐
-    │ Skill Scanner │  Pre-install scan for injection, exfil,
-    │ (static)      │  hardcoded keys, suspicious patterns
-    └───────┬───────┘
-            ▼
-      Execute + Audit
-
-### PostgreSQL Schema
-
-All enterprise data is persisted in PostgreSQL with versioned migrations (Alembic):
-
-| Table | Purpose |
-|-------|---------|
-| `nexora_users` | User accounts, password hashes, roles |
-| `nexora_agent_grants` | User ↔ Agent authorization mapping |
-| `nexora_audit_events` | Full audit trail (indexed by date, actor) |
-| `nexora_approval_requests` | Capability change approval queue and results |
-| `nexora_capability_policies` | Risk-based capability change approval policies |
-| `nexora_governance` | Agent ↔ Tool/MCP/Skill resource policies |
-| `nexora_token_usage` | LLM token consumption records |
-| `nexora_runtime_config` | Runtime configuration key-value store |
-
-### Streaming Chat & Task Management
-
-Chat sessions use server-sent events (SSE) with background task tracking — clients can disconnect and reconnect without losing the agent's response:
-
-```
-Client POST /console/chat
-        │
-        ▼
-  TaskTracker.attach_or_start()
-        │
-        ├──▶ New chat: spawn background task → agent.stream_one()
-        │                                           │
-        │                                     SSE events ──▶ Queue
-        │                                           │
-        └──▶ Reconnect: attach to existing queue ◀──┘
-                    │
-                    ▼
-            StreamingResponse (SSE)
-            "data: {token}..."
-            "data: {token}..."
-            "data: [DONE]"
-```
-
-- Agent runs in background — client abort doesn't kill the computation
-- `POST /console/chat/stop` sends a cancellation signal
-- Multiple subscribers can attach to the same running stream
-- Chat title is auto-generated via LLM in a detached background task
+> **Recommended reading:**
+>
+> - **🚀 I'm new and want to try quickly**: [Quick Start](#quick-start) → three commands to run → [Configure model](#api-key) → chat in Console
+> - **💬 I want to use in DingTalk/Feishu/WeChat**: Complete Quick Start → [Configure model](#api-key) → [Channel setup](https://qwenpaw.agentscope.io/docs/channels)
+> - **🐍 I don't want to install Python**: [Desktop app](#option-6-desktop-application-beta) or [Script install](#option-2-script-install) or [ModelScope Studio](https://modelscope.cn/studios/fork?target=AgentScope/QwenPaw)
+> - **💻 I want to use local models (no API key needed)**: [Local Models](#local-models) → download model → start using
+> - **🛠️ I want to contribute code or develop new features**: [Install from source](#install-from-source) → [Contributing](#contributing)
+- [News](#news)
+- [Quick Start](#quick-start)
+- [API Key](#api-key)
+- [Local Models](#local-models)
+- [Documentation](#documentation)
+- [Security Features](#security-features)
+- [FAQ](#faq)
+- [Staying ahead](#staying-ahead)
+- [Roadmap](#roadmap)
+- [Install from source](#install-from-source)
+- [Contributing](#contributing)
+- [Why QwenPaw?](#why-qwenpaw)
+- [Built by](#built-by)
+- [License](#license)
 
 ---
 
 ## Quick Start
 
-### Prerequisites
+### Option 1: pip install
 
-- Python 3.10 ~ 3.13
-- Node.js 18+
-- PostgreSQL 16 (or use the bundled Docker Compose)
-
-### 1. Clone and install
+If you prefer managing Python yourself:
 
 ```bash
-git clone https://github.com/your-org/nexora-ai-platform.git
-cd nexora-ai-platform
-pip install -e .
-cd console && npm install && npm run build && cd ..
+pip install qwenpaw
+qwenpaw init --defaults
+qwenpaw app
 ```
 
-### 2. Start PostgreSQL
+Then open the Console in your browser at **http://127.0.0.1:8088/** to configure your model. To chat in DingTalk, Feishu, WeChat, etc., see the [Channel setup](https://qwenpaw.agentscope.io/docs/channels) documentation.
 
-```bash
-docker compose up -d postgres
-```
-
-### 3. Configure environment
-
-```bash
-# Database connection
-export NEXORA_DB_URL="postgresql+psycopg2://nexora:changeme@127.0.0.1:5432/nexora"
-
-# LLM API key (example for DashScope/Qwen)
-export DASHSCOPE_API_KEY="your-api-key"
-```
-
-### 4. Run
-
-```bash
-bash start-qwenpaw-zh.sh
-```
-
-Open http://127.0.0.1:8088 in your browser. Go to **Settings > Models** to configure your LLM provider and start chatting.
-
-### Docker (one-command deploy)
-
-```bash
-docker compose up -d
-```
-
-See [Docker Deployment Guide](docs/docker-deployment-guide.md) for details.
+![Console](https://img.alicdn.com/imgextra/i2/O1CN01EP1ra01iOAcBvF0TC_!!6000000004402-2-tps-3822-2070.png)
 
 ---
 
-## LLM Configuration
+### Option 2: Script install
 
-Nexora supports both cloud and local LLM providers:
+No Python setup required, one command installs everything. The script will automatically download uv (Python package manager), create a virtual environment, and install QwenPaw with all dependencies (including Node.js and frontend assets). Note: May not work in restricted network environments or corporate firewalls.
 
-### Cloud Providers
-
-Configure via **Settings > Models** in the web UI, or set environment variables:
-
-| Provider | Env Variable | Notes |
-|----------|-------------|-------|
-| DashScope (Qwen) | `DASHSCOPE_API_KEY` | Recommended for Chinese users |
-| OpenAI | `OPENAI_API_KEY` | GPT-4o, GPT-4, etc. |
-| Google Gemini | `GOOGLE_API_KEY` | Gemini Pro, etc. |
-| Anthropic | `ANTHROPIC_API_KEY` | Claude series |
-| DeepSeek | `DEEPSEEK_API_KEY` | DeepSeek series |
-| MiniMax | via Settings UI | MiniMax models |
-
-### Local Models (no API key needed)
-
-| Backend | Best for | Setup |
-|---------|----------|-------|
-| **llama.cpp** | Cross-platform | Click "Download" in the web UI |
-| **Ollama** | Easy model management | Install Ollama app, then configure in Settings |
-| **LM Studio** | GUI-based | Install LM Studio, start server, configure in Settings |
-
----
-
-## Multi-Channel Messaging
-
-Connect your agents to the platforms your team already uses:
-
-| Channel | Status | Auth Method |
-|---------|--------|-------------|
-| Console (Web UI) | Built-in | JWT |
-| DingTalk | Supported | Bot Token |
-| Feishu (Lark) | Supported | App Credentials |
-| WeChat (Enterprise) | Supported | Webhook |
-| Discord | Supported | Bot Token |
-| Telegram | Supported | Bot Token |
-| Slack | Supported | OAuth |
-| QQ | Supported | Bot API |
-| Email | Supported | IMAP/SMTP |
-
-See [Channel Documentation](https://qwenpaw.agentscope.io/docs/channels) for setup guides.
-
----
-
-## Project Structure
-
-```
-src/
-├── qwenpaw/                     # QwenPaw core engine
-│   ├── app/                     # FastAPI app, routers, middleware, auth
-│   ├── agents/                  # Agent runtime, memory, proactive behavior
-│   ├── providers/               # LLM provider adapters (OpenAI, DashScope, etc.)
-│   ├── token_usage/             # Token consumption tracking (model wrapper)
-│   ├── security/                # Tool guard, file guard, skill scanner
-│   ├── plugins/                 # Plugin system runtime
-│   ├── config/                  # Configuration management
-│   └── cli/                     # Command-line interface
-└── qwenpaw_ext/
-    └── nexora/                  # Nexora enterprise extension layer
-        ├── rbac.py              # Role-based access control
-        ├── audit.py             # Audit event logging
-        ├── agent_grants.py      # Per-user agent authorization
-        ├── capability_approval.py # Capability change approval workflow
-        ├── governance.py        # Resource governance policies
-        ├── authorization.py     # Authorization engine
-        ├── db.py                # PostgreSQL schema & connection
-        └── repositories/       # Data access layer
-
-console/src/
-├── nexora/                      # Nexora frontend extensions
-│   ├── pages/                   # Admin pages (users, grants, audit, governance)
-│   └── api/                     # Nexora API clients
-├── pages/                       # Core pages (Chat, Settings, Login, Agent, Inbox)
-│   └── Settings/TokenUsage/     # Token consumption dashboard
-├── components/                  # Shared UI components
-└── layouts/                     # App layout (sidebar, header)
-
-tests/
-├── unit/                        # Unit tests (including nexora modules)
-├── integration/                 # Integration tests
-├── contract/                    # Contract tests (API, security)
-├── e2e/                         # End-to-end tests
-└── load/                        # Load testing (Locust)
-
-docs/                            # Documentation
-plugins/                         # Plugin bundles and tools
-deploy/                          # Docker deployment configs
-```
-
----
-
-## Security
-
-Nexora combines QwenPaw's built-in security with enterprise governance:
-
-| Layer | Mechanism | Description |
-|-------|-----------|-------------|
-| **Authentication** | JWT + Password | Login required, token-based session management |
-| **Authorization** | RBAC | Admin / Operator roles with route-level guards |
-| **Agent Access** | Agent Grants | Users can only access explicitly authorized agents |
-| **Tool Safety** | Tool Guard | Blocks dangerous commands (rm -rf, fork bombs, etc.) |
-| **File Safety** | File Access Guard | Restricts access to sensitive system paths |
-| **Skill Safety** | Security Scanner | Scans for injection, hardcoded keys, data exfiltration |
-| **Capability Control** | Approval Workflow | Installing/removing capabilities requires admin approval |
-| **Audit** | Full Logging | Every action logged to PostgreSQL with actor, timestamp, detail |
-| **Data** | Local Deployment | All data stays on your infrastructure |
-
----
-
-## Syncing Upstream
-
-Nexora maintains two Git remotes to stay current with QwenPaw improvements:
+**macOS / Linux:**
 
 ```bash
-# Add upstream (first time only)
-git remote add upstream https://github.com/agentscope-ai/QwenPaw.git
-
-# Sync upstream updates
-git fetch upstream
-git checkout -b sync/upstream-YYYYMMDD
-git merge upstream/main
-# Resolve conflicts, test, merge to main
+curl -fsSL https://qwenpaw.agentscope.io/install.sh | bash
 ```
 
-Post-merge checklist:
-- Login / logout works
-- Chat functions normally
-- Agent and user management pages load
-- Frontend builds successfully
-- Backend starts without errors
+**Windows (CMD):**
+
+```CMD
+curl -fsSL https://qwenpaw.agentscope.io/install.bat -o install.bat && install.bat
+```
+
+**Windows (PowerShell):**
+
+```powershell
+irm https://qwenpaw.agentscope.io/install.ps1 | iex
+```
+
+> **Note**: The installer will automatically check the status of uv. If it is not installed, it will attempt to download and configure it automatically. If the automatic installation fails, please follow the on-screen prompts or execute `python -m pip install -U uv`, then rerun the installer.
+
+> **⚠️ Special Notice for Windows Enterprise LTSC Users**
+>
+> If you are using Windows LTSC or an enterprise environment governed by strict security policies, PowerShell may run in **Constrained Language Mode**, potentially causing the following issue:
+> 1. **If using CMD (.bat): Script executes successfully but fails to write to `Path`**
+>
+>    The script completes file installation. Due to **Constrained Language Mode**, it cannot automatically update environment variables. Manually configure as follows:
+>    - **Locate the installation directory**:
+>      - Check if `uv` is available: Enter `uv --version` in CMD. If a version number appears, **only configure the QwenPaw path**. If you receive the prompt `'uv' is not recognized as an internal or external command, operable program or batch file,` configure both paths.
+>      - uv path (choose one based on installation location; use if `uv` fails): Typically `%USERPROFILE%\.local\bin`, `%USERPROFILE%\AppData\Local\uv`, or the `Scripts` folder within your Python installation directory
+>      - QwenPaw path: Typically located at `%USERPROFILE%\.qwenpaw\bin`.
+>    - **Manually add to the system's Path environment variable**:
+>      - Press `Win + R`, type `sysdm.cpl` and press Enter to open System Properties.
+>      - Click “Advanced” -> “Environment Variables”.
+>      - Under “System variables”, locate and select `Path`, then click “Edit”.
+>      - Click “New”, enter both directory paths sequentially, then click OK to save.
+> 2. **If using PowerShell (.ps1): Script execution interrupted**
+>
+>   Due to **Constrained Language Mode**, the script may fail to automatically download `uv`.
+>   - **Manually install uv**: Refer to the [GitHub Release](https://github.com/astral-sh/uv/releases) to download `uv.exe` and place it in `%USERPROFILE%\.local\bin` or `%USERPROFILE%\AppData\Local\uv`; or ensure Python is installed and run `python -m pip install -U uv`.
+>   - **Configure `uv` environment variables**: Add the `uv` directory and `%USERPROFILE%\.qwenpaw\bin` to your system's `Path` variable.
+>   - **Re-run the installation**: Open a new terminal and execute the installation script again to complete the `QwenPaw` installation.
+>   - **Configure the `QwenPaw` environment variable**: Add `%USERPROFILE%\.qwenpaw\bin` to your system's `Path` variable.
+
+Once installed, open a new terminal and run:
+
+```bash
+qwenpaw init --defaults   # or: qwenpaw init (interactive)
+qwenpaw app
+```
+
+<details>
+<summary><b>Install options</b></summary>
+
+**macOS / Linux:**
+
+```bash
+# Install a specific version
+curl -fsSL ... | bash -s -- --version 1.1.0
+
+# Install from source (dev/testing)
+curl -fsSL ... | bash -s -- --from-source
+
+# Upgrade — just re-run the installer
+curl -fsSL ... | bash
+
+# Uninstall
+qwenpaw uninstall          # keeps config and data
+qwenpaw uninstall --purge  # removes everything
+```
+
+**Windows (PowerShell):**
+
+```powershell
+# Install a specific version
+irm ... | iex; .\install.ps1 -Version 0.0.2
+
+# Install from source (dev/testing)
+.\install.ps1 -FromSource
+
+# Upgrade — just re-run the installer
+irm ... | iex
+
+# Uninstall
+qwenpaw uninstall          # keeps config and data
+qwenpaw uninstall --purge  # removes everything
+```
+
+</details>
+
+
+---
+
+### Option 3: Docker
+
+Images are on **Docker Hub** (`agentscope/qwenpaw`). Image tags: `latest` (stable); `pre` (PyPI pre-release).
+
+```bash
+docker pull agentscope/qwenpaw:latest
+docker run -p 127.0.0.1:8088:8088 \
+  -v qwenpaw-data:/app/working \
+  -v qwenpaw-secrets:/app/working.secret \
+  -v qwenpaw-backups:/app/working.backups \
+  agentscope/qwenpaw:latest
+```
+
+Also available on Alibaba Cloud Container Registry (ACR) for users in China: `agentscope-registry.ap-southeast-1.cr.aliyuncs.com/agentscope/qwenpaw` (same tags).
+
+Then open **http://127.0.0.1:8088/** for the Console. Config, memory, and skills are stored in the `qwenpaw-data` volume; model provider settings and API keys are in the `qwenpaw-secrets` volume; backup archives are stored in the `qwenpaw-backups` volume. To pass API keys (e.g. `DASHSCOPE_API_KEY`), add `-e VAR=value` or `--env-file .env` to `docker run`.
+
+> **Connecting to Ollama or other services on the host machine**
+>
+> Inside a Docker container, `localhost` refers to the container itself, not your host machine. If you run Ollama (or other model services) on the host and want QwenPaw in Docker to reach them, use one of these approaches:
+>
+> **Option A** — Explicit host binding (all platforms):
+> ```bash
+> docker run -p 127.0.0.1:8088:8088 \
+>   --add-host=host.docker.internal:host-gateway \
+>   -v qwenpaw-data:/app/working \
+>   -v qwenpaw-secrets:/app/working.secret \
+>   -v qwenpaw-backups:/app/working.backups \
+>   agentscope/qwenpaw:latest
+> ```
+> Then in QwenPaw **Settings → Models**, change the Base URL to `http://host.docker.internal:<port>` — for example, `http://host.docker.internal:11434` for Ollama, or `http://host.docker.internal:1234/v1` for LM Studio.
+>
+> **Option B** — Host networking (Linux only):
+> ```bash
+> docker run --network=host \
+>   -v qwenpaw-data:/app/working \
+>   -v qwenpaw-secrets:/app/working.secret \
+>   -v qwenpaw-backups:/app/working.backups \
+>   agentscope/qwenpaw:latest
+> ```
+> No port mapping (`-p`) is needed; the container shares the host network directly. Note that all container ports are exposed on the host, which may cause conflicts if the port is already in use.
+>
+
+The image is built from scratch. To build the image yourself, please refer to the [Build Docker image](scripts/README.md#build-docker-image) section in `scripts/README.md`, and then push to your registry.
+
+---
+
+### Option 4: Deploy on Alibaba Cloud ECS
+
+To run QwenPaw on Alibaba Cloud (ECS), use the one-click deployment: open the [QwenPaw on Alibaba Cloud (ECS) deployment link](https://computenest.console.aliyun.com/service/instance/create/cn-hangzhou?type=user&ServiceId=service-1ed84201799f40879884) and follow the prompts. For step-by-step instructions, see [Alibaba Cloud Developer: Deploy your AI assistant in 3 minutes](https://developer.aliyun.com/article/1713682).
+
+---
+
+### Option 5: Using ModelScope
+
+**No local install?** [ModelScope Studio](https://modelscope.cn/studios/fork?target=AgentScope/QwenPaw) one-click cloud setup. Set your Studio to **non-public** so others cannot control your QwenPaw.
+
+---
+
+### Option 6: Desktop Application (Beta)
+
+> **Beta Notice**: The desktop application is currently in Beta testing phase with the following known limitations:
+> - **Incomplete compatibility testing**: Not fully tested across all system versions and hardware configurations
+> - **Potential performance issues**: Startup time, memory usage, and other performance aspects may need further optimization
+> - **Features under development**: Some features may be unstable or missing
+
+If you're not comfortable with command-line tools, you can download and use QwenPaw's desktop application without manually configuring Python environments or running commands.
+
+#### Download
+
+Download the desktop app from [GitHub Releases](https://github.com/agentscope-ai/QwenPaw/releases):
+- **Windows**: `QwenPaw-Setup-<version>.exe`
+- **macOS**: `QwenPaw-<version>-macOS.zip` (Apple Silicon recommended)
+
+#### Features
+
+- ✅ **Zero configuration**: Download and double-click to run, no need to install Python or configure environment variables
+- ✅ **Cross-platform**: Supports Windows 10+ and macOS 14+
+- ✅ **Visual interface**: Automatically opens browser interface, no need to manually enter addresses
+- ⚠️ **Beta stage**: Features are continuously being improved, feedback welcome
+
+#### First Launch
+
+**Important**: The first launch may take 10-60 seconds (depending on your system configuration). The application needs to initialize the Python environment and load dependencies. Please wait patiently for the browser window to open automatically.
+
+#### macOS: Bypass System Security Restrictions
+
+When you download the QwenPaw macOS app from Releases, macOS may show: *"Apple cannot verify that 'QwenPaw' contains no malicious software"*. This happens because the app is not notarized. You can still open it as follows:
+
+- **Right-click to open (recommended)**
+  Right-click (or Control+click) the QwenPaw app → **Open** → in the dialog click **Open** again. This tells Gatekeeper you trust the app; after that you can double-click to launch as usual.
+
+- **Allow in System Settings**
+  If it is still blocked, go to **System Settings → Privacy & Security**, scroll to the message like *"QwenPaw was blocked because it is from an unidentified developer"*, and click **Open Anyway** or **Allow**.
+
+- **Remove quarantine attribute (not recommended for most users)**
+  In Terminal run:
+  `xattr -cr /Applications/QwenPaw.app`
+  (or use the path to the `.app` after unzipping). This clears the "downloaded from the internet" quarantine flag so the warning usually does not appear, but is less safe and controllable than using **Right-click → Open**.
+
+For detailed usage instructions, troubleshooting, and common issues, see the [Desktop Application Guide](https://qwenpaw.agentscope.io/docs/desktop).
+
+---
+
+## API Key
+
+If you use a **cloud LLM API** (e.g., Qianwen, Gemini, OpenAI), you must configure an API key before chatting. QwenPaw will not work until a valid key is set. See the [official docs](https://qwenpaw.agentscope.io/docs/models) for details.
+
+**How to configure:**
+
+1. **Console (recommended)** — After running `qwenpaw app`, open **http://127.0.0.1:8088/** → **Settings** → **Models**. Choose a provider, enter the **API Key**, and enable that provider and model.
+2. **`qwenpaw init`** — When you run `qwenpaw init`, it will guide you through configuring the LLM provider and API key. Follow the prompts to choose a provider and enter your key.
+3. **Environment variable** — For DashScope you can set `DASHSCOPE_API_KEY` in your shell or in a `.env` file in the working directory.
+
+Tools that need extra keys (e.g. `TAVILY_API_KEY` for web search) can be set in Console **Settings → Environment variables**, see [Config](https://qwenpaw.agentscope.io/docs/config) for details.
+
+> **Using local models only?** If you use [Local Models](#local-models) (llama.cpp / Ollama / LM Studio), you do **not** need any API key.
+
+## Local Models
+
+QwenPaw can run LLMs entirely on your machine — no API keys or cloud services required. See the [official docs](https://qwenpaw.agentscope.io/docs/models) for details.
+
+| Backend       | Best for                                 | Install                                                              |
+| ------------- | ---------------------------------------- | -------------------------------------------------------------------- |
+| **llama.cpp** | Cross-platform (macOS / Linux / Windows) | No extra installation required; click "Download Llama.cpp" in the web UI. |
+| **Ollama**    | Cross-platform (requires Ollama service) | Install and start the Ollama app in advance. |
+| **LM Studio** | Cross-platform (requires LM Studio service) | Install and start the LM Studio app in advance. |
 
 ---
 
 ## Documentation
 
-| Topic | Link |
-|-------|------|
-| Technical Solution | [docs/technical-solution.md](docs/technical-solution.md) |
-| Docker Deployment | [docs/docker-deployment-guide.md](docs/docker-deployment-guide.md) |
-| Engineering Governance | [docs/company-grade-engineering-governance.md](docs/company-grade-engineering-governance.md) |
-| QwenPaw Core Docs | [qwenpaw.agentscope.io](https://qwenpaw.agentscope.io/) |
-| Models Configuration | [QwenPaw Models Guide](https://qwenpaw.agentscope.io/docs/models) |
-| Channel Setup | [QwenPaw Channels Guide](https://qwenpaw.agentscope.io/docs/channels) |
-| Skills & Plugins | [QwenPaw Skills Guide](https://qwenpaw.agentscope.io/docs/skills) |
-| Security | [QwenPaw Security Guide](https://qwenpaw.agentscope.io/docs/security) |
+| Topic                                                                 | Description                                      |
+| --------------------------------------------------------------------- | ------------------------------------------------ |
+| [Introduction](https://qwenpaw.agentscope.io/docs/intro)                | What QwenPaw is and how to use it                  |
+| [Quick start](https://qwenpaw.agentscope.io/docs/quickstart)            | Install and run (local or ModelScope Studio)    |
+| [Console](https://qwenpaw.agentscope.io/docs/console)                   | Web UI: chat and agent configuration            |
+| [Models](https://qwenpaw.agentscope.io/docs/models)                     | Configure cloud, local, and custom providers    |
+| [Channels](https://qwenpaw.agentscope.io/docs/channels)                  | DingTalk, Feishu, QQ, Discord, iMessage, and more |
+| [Skills](https://qwenpaw.agentscope.io/docs/skills)                      | Extend and customize capabilities               |
+| [Plugins](https://qwenpaw.agentscope.io/docs/plugins)                    | Plugin system                                    |
+| [MCP](https://qwenpaw.agentscope.io/docs/mcp)                            | Manage MCP clients                               |
+| [Memory](https://qwenpaw.agentscope.io/docs/memory)                     | Long-term memory                     |
+| [Memory-Evolving & Proactive](https://qwenpaw.agentscope.io/docs/memory-evolving-and-proactive) | Agent memory evolution and proactive interaction |
+| [Context](https://qwenpaw.agentscope.io/docs/context)                   | Context management mechanism                     |
+| [Magic commands](https://qwenpaw.agentscope.io/docs/commands)           | Control conversation state without waiting for the AI |
+| [Heartbeat](https://qwenpaw.agentscope.io/docs/heartbeat)                | Scheduled check-in and digest                    |
+| [Multi-Agent](https://qwenpaw.agentscope.io/docs/multi-agent)           | Create multiple agents and enable collaboration  |
+| [Config & working dir](https://qwenpaw.agentscope.io/docs/config) | Working directory and config file                |
+| [CLI](https://qwenpaw.agentscope.io/docs/cli)                            | Init, cron jobs, skills, clean                   |
+| [FAQ](https://qwenpaw.agentscope.io/docs/faq)                           | Common questions and troubleshooting             |
+
+Full docs in this repo: [website/public/docs/](website/public/docs/).
+
+---
+
+## Security Features
+
+QwenPaw includes multi-layer security mechanisms to protect your data and system:
+
+- **Tool guard** — Automatically intercepts dangerous shell commands (e.g., `rm -rf /`, fork bombs, reverse shells, etc.)
+- **File access guard** — Restricts agent access to sensitive paths (e.g., `~/.ssh`, key files, system directories, etc.)
+- **Skill security scanning** — Automatically scans before installing skills, detecting risks like prompt injection, command injection, hardcoded keys, data exfiltration, etc.
+- **Local deployment** — All data and memory stored locally, no third-party upload (when using cloud LLM APIs, conversation content is sent to the corresponding API provider)
+- **Web Authentication** — Optional login protection for the Console. Disabled by default; set `QWENPAW_AUTH_ENABLED=true` to enable. See [Web Authentication](https://qwenpaw.agentscope.io/docs/security#Web-Authentication) for details.
+
+See [Security documentation](https://qwenpaw.agentscope.io/docs/security) for details.
+
+---
+
+## FAQ
+
+For common questions, troubleshooting tips, and known issues, please visit the **[FAQ page](https://qwenpaw.agentscope.io/docs/faq)**.
+
+---
+
+## Staying ahead
+
+<a href="https://github.com/agentscope-ai/QwenPaw">
+  <img src="https://img.alicdn.com/imgextra/i1/O1CN01V8HYv61By0HYcIDaq_!!6000000000013-1-tps-1698-954.gif" width="600" alt="Star QwenPaw" />
+</a>
+
+Star QwenPaw on GitHub and be instantly notified of new releases.
+
+---
+
+## Roadmap
+
+| Area                     | Item                                                                                         | Status               |
+| ------------------------ | -------------------------------------------------------------------------------------------- | -------------------- |
+| **Horizontal Expansion** | More channels, models, skills, MCPs — **community contributions welcome**                  | Seeking Contributors |
+| **Existing Feature Extension** | Display optimization, download hints, Windows path compatibility, etc. — **community contributions welcome** | Seeking Contributors |
+| **Client Experience**    | Install, update, and packaging improvements                                                  | In Progress          |
+| **Models**               | Multi-model switching                                                                         | In Progress          |
+|                          | OAuth                                                                                        | Planned              |
+|                          | Response API                                                                                 | Planned              |
+| **Workspace**            | File access control with Sandbox integration                                                 | In Progress          |
+|                          | Subfolder layout (config, production files, etc.)                                            | Planned              |
+| **Coding**               | LSP, dedicated prompts, workspace versioning, runtime, and supporting infra                  | In Progress              |
+|                          | Lightweight native APIs                                                                      | Planned              |
+|                          | Tool self-evolution                                                                          | Planned              |
+|                          | Compatibility with existing agents (e.g. Claude Code)                                        | Planned              |
+| **Multi-agent**          | Group chat                                                                                   | Planned              |
+|                          | Subagent Visualization                                                                                 | Planned              |
+|                          | HiClaw enterprise capabilities                                                               | Planned              |
+| **Context Management**   | Personal Knowledge Base                                                             | In Progress          |
+|                          | User-selectable compression (fine-grained control)                                           | Planned              |
+| **QwenPaw Application**   | QwenPaw Creator                                                             | In Progress          |
+|                          | QwenPaw Insight                                           | In Progress              |
+_Status:_ **In Progress** — actively being worked on; **Planned** — queued or under design, also welcome contributions; **Seeking Contributors** — we strongly encourage community contributions.
+
+## Install from source
+
+```bash
+git clone https://github.com/agentscope-ai/QwenPaw.git
+cd QwenPaw
+
+# Build console frontend first (required for web UI)
+cd console && npm ci && npm run build
+cd ..
+
+# Copy console build output to package directory
+mkdir -p src/qwenpaw/console
+cp -R console/dist/. src/qwenpaw/console/
+
+# Install Python package
+pip install -e .
+```
+
+- **Dev** (tests, formatting): `pip install -e ".[dev,full]"`
+- **Then**: Run `qwenpaw init --defaults`, then `qwenpaw app`.
+
+> **Note for updates:** When updating to a new major version after `git pull`, please also rebuild the frontend, reinstall the package (`pip install -e .`), restart `qwenpaw app`, and clear your browser cache with `Ctrl+Shift+R` (or `Cmd+Shift+R` on macOS).
+
+---
+
+## Contributing
+
+QwenPaw evolves through open collaboration, and we welcome all forms of contribution! Check the [Roadmap](#roadmap) above (especially items marked **Seeking Contributors**) to find areas that interest you, and read [CONTRIBUTING](https://github.com/agentscope-ai/QwenPaw/blob/main/CONTRIBUTING.md) to get started. We particularly welcome:
+
+- **Horizontal expansion** — new channels, model providers, skills, MCPs.
+- **Existing feature extension & refinement** — display and interaction improvements, download hints, Windows path compatibility, etc.
+
+Join [GitHub Discussions](https://github.com/agentscope-ai/QwenPaw/discussions) to discuss ideas or pick up tasks.
+
+---
+
+## Why QwenPaw?
+
+QwenPaw stands for Qwen Personal Agent Workstation, and also embodies the wisdom of Qwen and the warmth of a Paw.
+We hope it is not a cold tool, but an intelligent and warm "little paw" always ready to help—a most intuitive partner in your digital life.
+
+---
+
+## Built by
+
+[AgentScope team](https://github.com/agentscope-ai) · [AgentScope](https://github.com/agentscope-ai/agentscope) · [AgentScope Runtime](https://github.com/agentscope-ai/agentscope-runtime) · [ReMe](https://github.com/agentscope-ai/ReMe)
+
+---
+
+## Contact us
+
+| [Discord](https://discord.gg/eYMpfnkG8h)                     | [X (Twitter)](https://x.com/agentscope_ai)                   | [DingTalk](https://qr.dingtalk.com/action/joingroup?code=v1,k1,OmDlBXpjW+I2vWjKDsjvI9dhcXjGZi3bQiojOq3dlDw=&_dt_no_comment=1&origin=11) | [RedNote](https://www.xiaohongshu.com/user/profile/691c18db0000000037032be9) |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| [<img src="https://gw.alicdn.com/imgextra/i1/O1CN01hhD1mu1Dd3BWVUvxN_!!6000000000238-2-tps-400-400.png" width="80" height="80" alt="Discord">](https://discord.gg/eYMpfnkG8h) | [<img src="https://img.shields.io/badge/X-black.svg?logo=x&logoColor=white" width="80" height="80" alt="X">](https://x.com/agentscope_ai) | [<img src="https://img.alicdn.com/imgextra/i2/O1CN01vCWI8a1skHtLGXEMQ_!!6000000005804-2-tps-458-460.png" width="80" height="80" alt="DingTalk">](https://qr.dingtalk.com/action/joingroup?code=v1,k1,OmDlBXpjW+I2vWjKDsjvI9dhcXjGZi3bQiojOq3dlDw=&_dt_no_comment=1&origin=11) | [<img src="https://img.alicdn.com/imgextra/i3/O1CN016BoEPS1l33CE9mHb9_!!6000000004762-0-tps-160-160.jpg" width="80" height="80" alt="RedNote">](https://www.xiaohongshu.com/user/profile/691c18db0000000037032be9) |
+
+---
+
+## Telemetry
+
+QwenPaw collects **anonymous** usage data during `qwenpaw init` to help us understand our user base and prioritize improvements. Data is sent **once per version** — when you upgrade QwenPaw, telemetry is re-collected so we can track version adoption.
+
+**What we collect:**
+
+- QwenPaw version (e.g., 0.0.7)
+- Install method (pip, Docker, or desktop app)
+- OS and version (e.g., macOS 14.0, Ubuntu 22.04)
+- Python version (e.g., 3.13)
+- CPU architecture (e.g., x86_64, arm64)
+- GPU availability (yes/no)
+
+**What we do NOT collect:** No personal data, no files, no credentials, no IP addresses, no identifiable information.
+
+When running `qwenpaw init` interactively, you will be asked whether to opt in. If you choose `--defaults`, telemetry is accepted automatically. The prompt appears once per version and never affects QwenPaw's functionality.
 
 ---
 
 ## License
 
-This project is licensed under [Apache 2.0](LICENSE), same as the upstream QwenPaw project.
-
-## Acknowledgements
-
-Built on [QwenPaw](https://github.com/agentscope-ai/QwenPaw) by [AgentScope AI](https://github.com/agentscope-ai).
+QwenPaw is released under the [Apache License 2.0](LICENSE).
 
 ---
 
-<div align="center">
+## Contributors
 
-# Nexora AI Platform
+All thanks to our contributors:
 
-**企业级 AI 工作台**
-
-</div>
-
----
-
-## 什么是 Nexora？
-
-**Nexora** = **Nex**us + **ora**（边界、前沿）
-
-- **Nexus** — 连接的枢纽。Nexora 是 AI 智能体、企业工具、团队成员和消息渠道汇聚的统一工作台。
-- **Ora** — 源自拉丁语 *ora*（边界、前沿），代表 AI 驱动企业运营的最前沿。
-
-两者合一，体现平台的使命：**企业 AI 前沿的中枢平台** — 在可控的治理框架下，将智能体与业务中的人和工具连接在一起。
-
----
-
-## 概述
-
-Nexora AI Platform 是基于 [QwenPaw](https://github.com/agentscope-ai/QwenPaw) 构建的企业级 AI 工作台。完整继承了 QwenPaw 的所有核心能力 — 多智能体协作、多渠道消息接入、技能扩展、本地模型支持、记忆进化 — 并在此基础上增加了企业必需的多租户权限控制、安全治理、审计日志和 Token 消耗分析。
-
-> **你可以用 Nexora 做什么：**
->
-> - **团队 AI 工作台** — 多用户共享平台，每个人拥有独立的智能体和权限
-> - **资讯与效率** — 每日热帖摘要、邮件要点、新闻简报，推送到钉钉/飞书/企业微信
-> - **创意与构建** — 描述目标，让智能体自动执行，醒来即可看到原型
-> - **研究与学习** — 追踪科技和 AI 动态，个人知识库搜索复用
-> - **文件与桌面** — 整理搜索本地文件，阅读并总结文档
-> - **运维与治理** — 审计每一次 AI 操作，控制谁能使用哪些工具，按用户追踪 Token 消耗
-
----
-
-## 功能特性
-
-### AI 智能体能力（继承自 QwenPaw）
-
-| 功能 | 说明 |
-|------|------|
-| **多智能体协作** | 创建多个独立智能体，各有角色分工，支持跨智能体通信协作 |
-| **技能扩展** | 内置定时任务、PDF/Office 处理、新闻摘要、网页搜索等；自定义技能自动加载 |
-| **记忆进化与主动服务** | 智能体从交互中学习，反思经验，主动服务 — 越用越聪明 |
-| **多渠道消息接入** | 钉钉、飞书、微信、Discord、Telegram、Slack、QQ 等 — 一个平台，按需接入 |
-| **本地模型支持** | 通过 llama.cpp、Ollama、LM Studio 在本机运行 LLM，无需 API 密钥 |
-| **云端模型支持** | 通义千问、OpenAI、Gemini、Claude、MiniMax、DeepSeek 等主流供应商 |
-| **Coding 模式** | 内置 Web IDE，含文件树、标签编辑器、行内 diff 审查和 Git 面板 |
-| **插件生态** | 自定义工具、技能和 MCP 服务器扩展；官方插件市场 |
-| **定时任务 (Cron)** | 自动化重复任务 — 每日简报、定期数据检查、定时报告 |
-| **安全防护** | 工具守卫（拦截危险命令）、文件访问控制、技能安全扫描 |
-
-### 企业扩展能力（Nexora）
-
-| 功能 | 说明 |
-|------|------|
-| **多租户 RBAC** | 管理员 / 操作员双角色模型，平台级访问控制和用户管理 |
-| **智能体授权** | 按用户精细分配智能体访问权限，控制谁可以使用哪个智能体 |
-| **能力审批** | 安装/卸载工具、技能、MCP 服务器、插件时的风险审批流程，可配置策略 |
-| **审计日志** | PostgreSQL 存储的全链路审计 — 认证、对话、工具调用、配置变更、管理操作 |
-| **Token 消耗分析** | 按用户、智能体、模型、日期维度追踪 LLM Token 消耗，可视化仪表盘 |
-| **安全治理** | 资源策略、工具扫描器、集中化密钥管理 |
-| **PostgreSQL 后端** | 全部企业数据（用户、授权、审计、配置、Token）存储在 PostgreSQL |
-
----
-
-## 技术设计
-
-> 完整文档见 [技术方案](docs/technical-solution.md)
-
-### 三层权限模型
-
-Nexora 通过三层级联访问控制保护平台资源 — 每个请求必须逐层通过所有检查：
-
-```
-第一层 — 平台访问                第二层 — 智能体授权              第三层 — 能力审批
-┌──────────────────┐            ┌──────────────────┐            ┌──────────────────┐
-│ 用户 JWT 认证    │            │ 检查 agent_grants│            │ 安装/卸载工具、  │
-│                  │──通过──▶   │ 是否授权该智能体 │            │ 技能、MCP、插件时│
-│ RBAC 角色校验    │            │                  │            │ 低风险 → 直接放行│
-│ 路由级权限守卫   │            │ 仅展示已授权智能体│            │ 高风险 → 进入审批│
-└──────────────────┘            └──────────────────┘            └──────────────────┘
-       │ 拒绝                          │ 拒绝                          │ 待审批
-       ▼                               ▼                               ▼
-   401 / 403                      403 禁止访问                    审批请求 → 管理员审批
-   + 审计日志                     + 审计日志                      → 通过或拒绝 + 审计日志
-```
-
-### 多智能体运行时
-
-单节点管理 100+ 智能体，按需懒加载，自动生命周期管理：
-
-```
-                         ┌─────────────────────────────────┐
-                         │      MultiAgentManager          │
-                         │                                 │
-  用户请求 ─────▶        │  ┌─ 活跃智能体池 ────────────┐  │
-  (agent_id)             │  │  agent_a [最近使用: 10s]  │  │    最大活跃: 20
-                         │  │  agent_b [最近使用: 45s]  │  │    空闲回收: 1小时
-                         │  │  agent_c [最近使用: 300s] │  │    淘汰策略: LRU
-                         │  └────────────────────────────┘ │
-                         │         ▲           │           │
-                         │     懒加载      空闲回收        │
-                         │         │           ▼           │
-                         │  ┌─ 智能体配置 (磁盘) ────────┐ │
-                         │  │  100+ 智能体 YAML 配置     │ │
-                         │  └────────────────────────────┘ │
-                         └─────────────────────────────────┘
-```
-
-- 智能体首次请求时才加载，启动保持快速
-- 空闲超过 TTL 自动回收（默认 1 小时）
-- 池满时按最近最少使用（LRU）策略淘汰
-- 每个智能体独立维护记忆、工具和渠道绑定
-
-### 能力审批流程
-
-用户安装或卸载能力（工具、技能、MCP 服务器、插件）时，通过可配置的审批闸口管控变更：
-
-```
-用户新增/删除能力 ──▶ 策略引擎检查风险等级
-(skill.create, mcp.delete,       │
- plugin.install, tool.create…)   │
-                      ┌──────────┼──────────┐
-                      ▼          ▼          ▼
-                  低风险       中风险      高风险
-                      │          │          │
-                      ▼          ▼          ▼
-                 自动放行     可配置       必须审批
-                 + 审计      (审批/自动)   + 审计
-                                 │
-                                 ▼
-                          ┌─────────────┐
-                          │  审批队列    │──▶ 管理员在审批中心审核
-                          │ (PG 存储)   │   (能力类型、操作、风险等级、
-                          └─────────────┘    请求用户上下文)
-                                 │
-                       ┌─────────┴─────────┐
-                       ▼                   ▼
-                    通过                 拒绝
-                  变更生效             变更阻止
-                  + 审计日志           + 审计日志
-```
-
-### 审计系统
-
-每个重要操作产生一条不可变的审计记录：
-
-| 分类 | 审计事件 |
-|------|---------|
-| **认证** | 登录成功/失败、注册、退出 |
-| **用户** | 创建、删除、角色变更、密码重置 |
-| **智能体** | 授权/撤销、配置变更 |
-| **对话** | 消息发送、重连、停止、文件上传 |
-| **工具** | 执行尝试（成功 + 被拦截） |
-| **审批** | 请求创建、审批通过、拒绝、超时 |
-| **配置** | 模型变更、环境变量更新 |
-
-审计写入采用 fire-and-forget 模式 — 审计写入失败不会阻断主流程。
-
-### Token 消耗追踪
-
-Token 消耗归属到 **JWT 认证用户**（而非聊天负载中的 sender_id），通过 Python `ContextVar` 在异步调用链中传递身份：
-
-```
-JWT 中间件                      Console 路由                     模型包装器
-──────────                      ──────────                       ──────────
-request.state.user = "alice" → set_current_actor("alice")  →  get_current_actor()
-                                                                      │
-                                                                      ▼
-                                                             INSERT INTO nexora_token_usage
-                                                             (actor="alice", model, tokens)
-                                                             后台守护线程写入，不阻塞请求
-```
-
-按用户、智能体、模型、日期四维聚合，在 Token 消耗仪表盘中可视化展示趋势图和用户明细表。
-
-### 扩展隔离架构
-
-严格的"上游核心 + 扩展层"架构，最小化上游合并冲突：
-
-```
-┌────────────────────────────────────────────────────────────────┐
-│  QwenPaw 核心 (上游)                        修改比例: ≤5%     │
-│  ├── app/auth.py ·············· JWT 中间件挂载点              │
-│  ├── app/routers/console.py ··· 审计 + ContextVar 注入        │
-│  ├── app/routers/__init__.py ·· 注册 nexora 路由              │
-│  └── token_usage/model_wrapper · PG 写入挂载点                │
-├────────────────────────────────────────────────────────────────┤
-│  Nexora 扩展层 (隔离)                       修改比例: 100%    │
-│  ├── qwenpaw_ext/nexora/ ····· 全部后端业务逻辑               │
-│  │   ├── rbac.py, audit.py, agent_grants.py, ...              │
-│  │   └── repositories/ ······ PostgreSQL 数据访问层           │
-│  ├── console/src/nexora/ ····· 全部前端页面和 API             │
-│  └── alembic/versions/ ······ 数据库迁移脚本                  │
-└────────────────────────────────────────────────────────────────┘
-```
-
-仅修改 4 个上游文件，其余 Nexora 代码完全在扩展目录中。`git merge upstream/main` 在 95% 以上的情况下无冲突。
-
-### 安全纵深防御
-
-多层独立安全机制 — 任何单一绕过都不会导致系统失守：
-
-```
-       请求进入
-           │
-   ┌───────▼───────┐
-   │ JWT 认证      │  身份验证 → 401
-   └───────┬───────┘
-   ┌───────▼───────┐
-   │ RBAC 守卫     │  角色权限 → 403
-   └───────┬───────┘
-   ┌───────▼───────┐
-   │ 智能体授权    │  用户-智能体映射 → 403
-   └───────┬───────┘
-   ┌───────▼───────┐
-   │ 工具守卫      │  拦截危险命令 → blocked
-   └───────┬───────┘
-   ┌───────▼───────┐
-   │ 文件守卫      │  限制敏感路径 → blocked
-   └───────┬───────┘
-   ┌───────▼───────┐
-   │ 能力审批      │  安装/卸载能力 → 审批管控
-   └───────┬───────┘
-   ┌───────▼───────┐
-   │ 技能扫描器    │  安装前检测注入/泄露 → blocked
-   └───────┬───────┘
-           ▼
-     执行 + 审计记录
-```
-
-### 流式对话与任务管理
-
-对话使用 SSE（Server-Sent Events）推送，后台任务跟踪 — 客户端断线重连不丢失响应：
-
-```
-客户端 POST /console/chat
-        │
-        ▼
-  TaskTracker.attach_or_start()
-        │
-        ├──▶ 新对话: 启动后台任务 → agent.stream_one()
-        │                               │
-        │                         SSE 事件 ──▶ 队列
-        │                               │
-        └──▶ 重连: 接入已有队列 ◀────────┘
-                    │
-                    ▼
-            StreamingResponse (SSE)
-            "data: {token}..."
-            "data: [DONE]"
-```
-
-- 智能体在后台运行 — 客户端断开不会终止计算
-- `POST /console/chat/stop` 发送取消信号
-- 多个订阅者可以接入同一运行中的流
-- 对话标题通过 LLM 在后台自动生成
-
-### PostgreSQL 数据表
-
-全部企业数据通过 Alembic 版本化迁移持久化在 PostgreSQL：
-
-| 表名 | 用途 |
-|------|------|
-| `nexora_users` | 用户账号、密码哈希、角色 |
-| `nexora_agent_grants` | 用户 ↔ 智能体授权映射 |
-| `nexora_audit_events` | 全链路审计日志（按日期、用户索引） |
-| `nexora_approval_requests` | 能力审批队列与结果 |
-| `nexora_capability_policies` | 基于风险的审批策略配置 |
-| `nexora_governance` | 智能体 ↔ 工具/MCP/Skill 资源策略 |
-| `nexora_token_usage` | LLM Token 消耗记录 |
-| `nexora_runtime_config` | 运行时配置键值存储 |
-
----
-
-## 快速开始
-
-### 环境要求
-
-- Python 3.10 ~ 3.13
-- Node.js 18+
-- PostgreSQL 16（或使用项目自带的 Docker Compose）
-
-### 安装并运行
-
-```bash
-git clone https://github.com/your-org/nexora-ai-platform.git
-cd nexora-ai-platform
-pip install -e .
-cd console && npm install && npm run build && cd ..
-docker compose up -d postgres
-export NEXORA_DB_URL="postgresql+psycopg2://nexora:changeme@127.0.0.1:5432/nexora"
-bash start-qwenpaw-zh.sh
-```
-
-浏览器打开 http://127.0.0.1:8088，进入 **设置 > 模型** 配置你的 LLM 供应商，即可开始对话。
-
-### Docker 一键部署
-
-```bash
-docker compose up -d
-```
-
-详见 [Docker 部署指南](docs/docker-deployment-guide.md)。
-
----
-
-## 模型配置
-
-### 云端模型
-
-通过 Web 界面 **设置 > 模型** 配置，或设置环境变量：
-
-| 供应商 | 环境变量 | 说明 |
-|--------|---------|------|
-| 通义千问 (DashScope) | `DASHSCOPE_API_KEY` | 推荐国内用户使用 |
-| OpenAI | `OPENAI_API_KEY` | GPT-4o、GPT-4 等 |
-| DeepSeek | `DEEPSEEK_API_KEY` | DeepSeek 系列 |
-| Google Gemini | `GOOGLE_API_KEY` | Gemini Pro 等 |
-| Anthropic | `ANTHROPIC_API_KEY` | Claude 系列 |
-
-### 本地模型（无需 API 密钥）
-
-| 方式 | 适用场景 | 配置 |
-|------|---------|------|
-| **llama.cpp** | 跨平台 | 在 Web 界面点击"下载" |
-| **Ollama** | 模型管理便捷 | 安装 Ollama 应用后在设置中配置 |
-| **LM Studio** | 图形界面 | 安装 LM Studio 后启动服务器并配置 |
-
----
-
-## 多渠道接入
-
-将智能体连接到团队已在使用的平台：
-
-| 渠道 | 状态 | 认证方式 |
-|------|------|---------|
-| 控制台 (Web UI) | 内置 | JWT |
-| 钉钉 | 支持 | Bot Token |
-| 飞书 | 支持 | App 凭证 |
-| 企业微信 | 支持 | Webhook |
-| Discord | 支持 | Bot Token |
-| Telegram | 支持 | Bot Token |
-| Slack | 支持 | OAuth |
-| QQ | 支持 | Bot API |
-| 邮箱 | 支持 | IMAP/SMTP |
-
-详见 [渠道配置文档](https://qwenpaw.agentscope.io/docs/channels)。
-
----
-
-## 安全体系
-
-| 层级 | 机制 | 说明 |
-|------|------|------|
-| **认证** | JWT + 密码 | 登录认证，基于 Token 的会话管理 |
-| **授权** | RBAC | 管理员/操作员角色，路由级权限守卫 |
-| **智能体访问** | 智能体授权 | 用户只能访问被明确授权的智能体 |
-| **工具安全** | 工具守卫 | 拦截危险命令（rm -rf、fork 炸弹等） |
-| **文件安全** | 文件访问控制 | 限制访问敏感系统路径 |
-| **技能安全** | 安全扫描器 | 安装前检测注入、硬编码密钥、数据泄露 |
-| **能力管控** | 审批流程 | 安装/卸载能力需管理员审批 |
-| **审计** | 全链路日志 | 每个操作记录到 PostgreSQL，含操作者、时间、详情 |
-| **数据** | 本地部署 | 所有数据存储在你自己的基础设施上 |
-
----
-
-## 文档
-
-| 主题 | 链接 |
-|------|------|
-| 技术方案 | [docs/technical-solution.md](docs/technical-solution.md) |
-| Docker 部署 | [docs/docker-deployment-guide.md](docs/docker-deployment-guide.md) |
-| 工程治理规范 | [docs/company-grade-engineering-governance.md](docs/company-grade-engineering-governance.md) |
-| QwenPaw 核心文档 | [qwenpaw.agentscope.io](https://qwenpaw.agentscope.io/) |
-| 模型配置 | [QwenPaw 模型指南](https://qwenpaw.agentscope.io/docs/models) |
-| 渠道接入 | [QwenPaw 渠道指南](https://qwenpaw.agentscope.io/docs/channels) |
-| 技能与插件 | [QwenPaw 技能指南](https://qwenpaw.agentscope.io/docs/skills) |
-
----
-
-## 许可证
-
-本项目采用 [Apache 2.0](LICENSE) 协议，与上游 QwenPaw 项目一致。
-
-基于 [AgentScope AI](https://github.com/agentscope-ai) 团队的 [QwenPaw](https://github.com/agentscope-ai/QwenPaw) 构建。
+<a href="https://github.com/agentscope-ai/QwenPaw/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=agentscope-ai/QwenPaw" alt="Contributors" />
+</a>

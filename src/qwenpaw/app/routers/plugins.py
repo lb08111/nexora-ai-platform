@@ -7,7 +7,6 @@ import inspect
 import json
 import logging
 import mimetypes
-import os
 import shutil
 import tempfile
 import urllib.request
@@ -19,15 +18,6 @@ from fastapi import APIRouter, HTTPException, Request, UploadFile, File
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
-from qwenpaw.constant import SECRET_DIR
-
-from ._capability_approval import (
-    capability_create_requires_approval,
-    capability_remove_requires_approval,
-    pending_approval_response,
-    record_auto_approved,
-    submit_capability_approval,
-)
 from ..utils import schedule_agent_reload
 
 logger = logging.getLogger(__name__)
@@ -133,40 +123,6 @@ def _find_plugin_dir(base: Path) -> Path:
     raise ValueError(
         "No plugin.json found in archive root or top-level subdirectory",
     )
-
-
-def _stage_approval_upload(
-    content: bytes,
-    filename: str,
-    *,
-    prefix: str,
-) -> Path:
-    upload_dir = SECRET_DIR / "nexora_approval_uploads" / "plugins"
-    upload_dir.mkdir(parents=True, exist_ok=True)
-    try:
-        os.chmod(upload_dir, 0o700)
-    except OSError:
-        pass
-    suffix = Path(filename).suffix or ".zip"
-    fd, staged_name = tempfile.mkstemp(
-        prefix=prefix,
-        suffix=suffix,
-        dir=upload_dir,
-    )
-    staged_path = Path(staged_name)
-    try:
-        with os.fdopen(fd, "wb") as fh:
-            fh.write(content)
-            fh.flush()
-            os.fsync(fh.fileno())
-        try:
-            os.chmod(staged_path, 0o600)
-        except OSError:
-            pass
-    except Exception:
-        staged_path.unlink(missing_ok=True)
-        raise
-    return staged_path
 
 
 async def _post_load_setup(  # pylint: disable=too-many-branches
@@ -563,28 +519,6 @@ async def install_plugin(
     reloaded in the background so that newly registered tools can be
     used without a server restart.
     """
-    source = body.source.strip()
-    if not source:
-        raise HTTPException(status_code=400, detail="source is required")
-    if capability_create_requires_approval(request, "plugin.install"):
-        approval = submit_capability_approval(
-            request,
-            action="plugin.install",
-            resource_type="plugin",
-            resource_id=source,
-            resource_name=source,
-            summary=f"Instalar plugin: {source}",
-            payload={
-                "operation": "install_source",
-                "source": source,
-                "force": body.force,
-            },
-        )
-        return pending_approval_response(
-            approval,
-            "Solicitação de instalação de plugin enviada. Será instalado automaticamente após aprovação.",
-        )
-
     loader = getattr(request.app.state, "plugin_loader", None)
     if loader is None:
         raise HTTPException(
@@ -592,6 +526,7 @@ async def install_plugin(
             detail="Plugin loader is not ready yet. Try again shortly.",
         )
 
+    source = body.source.strip()
     is_url = source.startswith(("http://", "https://"))
     temp_dir: Optional[Path] = None
 
@@ -700,38 +635,6 @@ async def upload_plugin(
     force: bool = False,
 ):
     """Install and hot-load a plugin from an uploaded ZIP file."""
-    if not file.filename or not file.filename.endswith(".zip"):
-        raise HTTPException(
-            status_code=400,
-            detail="Only .zip archives are accepted.",
-        )
-
-    content = await file.read()
-    if capability_create_requires_approval(request, "plugin.install"):
-        staged_path = _stage_approval_upload(
-            content,
-            file.filename,
-            prefix="plugin_",
-        )
-        approval = submit_capability_approval(
-            request,
-            action="plugin.install",
-            resource_type="plugin",
-            resource_id=file.filename,
-            resource_name=file.filename,
-            summary=f"Carregar e instalar plugin: {file.filename}",
-            payload={
-                "operation": "install_uploaded_zip",
-                "staged_zip_path": str(staged_path),
-                "filename": file.filename,
-                "force": force,
-            },
-        )
-        return pending_approval_response(
-            approval,
-            "插件上传安装申请已提交，审批通过后会自动安装。",
-        )
-
     loader = getattr(request.app.state, "plugin_loader", None)
     if loader is None:
         raise HTTPException(
@@ -739,9 +642,16 @@ async def upload_plugin(
             detail="Plugin loader is not ready yet. Try again shortly.",
         )
 
+    if not file.filename or not file.filename.endswith(".zip"):
+        raise HTTPException(
+            status_code=400,
+            detail="Only .zip archives are accepted.",
+        )
+
     temp_dir = Path(tempfile.mkdtemp())
     try:
         zip_path = temp_dir / "plugin.zip"
+        content = await file.read()
         zip_path.write_bytes(content)
 
         with zipfile.ZipFile(zip_path, "r") as zf:
@@ -829,27 +739,6 @@ async def upload_plugin(
 )
 async def uninstall_plugin(plugin_id: str, request: Request):
     """Unload and delete a plugin by ID."""
-    needs_approval, auto_approve = capability_remove_requires_approval(
-        request, "plugin.uninstall",
-    )
-    if needs_approval and not auto_approve:
-        approval = submit_capability_approval(
-            request,
-            action="plugin.uninstall",
-            resource_type="plugin",
-            resource_id=plugin_id,
-            resource_name=plugin_id,
-            summary=f"Desinstalar plugin: {plugin_id}",
-            payload={
-                "operation": "uninstall",
-                "plugin_id": plugin_id,
-            },
-        )
-        return pending_approval_response(
-            approval,
-            "Solicitação de desinstalação de plugin enviada. Será desinstalado após aprovação.",
-        )
-
     loader = getattr(request.app.state, "plugin_loader", None)
     if loader is None:
         raise HTTPException(
@@ -894,15 +783,6 @@ async def uninstall_plugin(plugin_id: str, request: Request):
 
     # Schedule agent reloads so tools disappear immediately
     _schedule_all_agents_reload(request)
-
-    if needs_approval and auto_approve:
-        record_auto_approved(
-            request, action="plugin.uninstall", resource_type="plugin",
-            resource_id=plugin_id, resource_name=plugin_id,
-            summary=f"Desinstalar plugin: {plugin_id} (aprovação automática)",
-            payload={"operation": "uninstall", "plugin_id": plugin_id},
-            result={"uninstalled": True},
-        )
 
     return {
         "id": plugin_id,

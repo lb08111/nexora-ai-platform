@@ -18,7 +18,7 @@ from agentscope_runtime.engine.schemas.agent_schemas import AgentRequest
 from ...utils.logging import LOG_FILE_PATH
 from ..agent_context import get_agent_for_request
 from ..runner.title_generator import generate_and_update_title
-from qwenpaw_ext.nexora.audit import record_audit_event
+from ..utils import check_upload_size
 
 
 logger = logging.getLogger(__name__)
@@ -31,7 +31,6 @@ class MarkInboxReadRequest(BaseModel):
     all: bool = False
 
 
-MAX_UPLOAD_BYTES = 10 * 1024 * 1024
 MAX_DEBUG_LOG_LINES = 1000
 
 
@@ -106,23 +105,6 @@ def _extract_session_and_payload(request_data: Union[AgentRequest, dict]):
     return native_payload
 
 
-def _current_actor(request: Request) -> str:
-    return getattr(request.state, "user", "") or "anonymous"
-
-
-def _current_agent_id(request: Request) -> str:
-    if hasattr(request.state, "agent_id") and request.state.agent_id:
-        return request.state.agent_id
-    return request.headers.get("X-Agent-Id") or "default"
-
-
-def _text_preview(text: str, max_len: int = 1000) -> str:
-    text = (text or "").strip()
-    if len(text) <= max_len:
-        return text
-    return f"{text[:max_len]}..."
-
-
 def _tail_text_file(
     path: Path,
     *,
@@ -164,9 +146,6 @@ async def post_console_chat(
     """Stream agent response. Run continues in background after disconnect.
     Stop via POST /console/chat/stop. Reconnect with body.reconnect=true.
     """
-    from ..agent_context import set_current_actor
-
-    set_current_actor(_current_actor(request))
     workspace = await get_agent_for_request(request)
     console_channel = await workspace.channel_manager.get_channel("console")
     if console_channel is None:
@@ -210,39 +189,9 @@ async def post_console_chat(
     if isinstance(request_data, dict):
         is_reconnect = request_data.get("reconnect") is True
 
-    record_audit_event(
-        actor=_current_actor(request),
-        action="chat.reconnect" if is_reconnect else "chat.message.send",
-        resource_type="chat",
-        resource_id=chat.id,
-        status="success",
-        detail={
-            "agent_id": _current_agent_id(request),
-            "session_id": session_id,
-            "channel": native_payload["channel_id"],
-            "target_user": native_payload["sender_id"],
-            "message_preview": _text_preview(first_text),
-            "message_length": len(first_text or ""),
-        },
-        request=request,
-    )
-
     if is_reconnect:
         queue = await tracker.attach(chat.id)
         if queue is None:
-            record_audit_event(
-                actor=_current_actor(request),
-                action="chat.reconnect",
-                resource_type="chat",
-                resource_id=chat.id,
-                status="failure",
-                detail={
-                    "agent_id": _current_agent_id(request),
-                    "session_id": session_id,
-                    "reason": "no_running_stream",
-                },
-                request=request,
-            )
             return
     else:
         queue, _ = await tracker.attach_or_start(
@@ -321,15 +270,6 @@ async def post_console_chat_stop(
         "[STOP API] task_tracker.request_stop returned: stopped=%s",
         stopped,
     )
-    record_audit_event(
-        actor=_current_actor(request),
-        action="chat.stop",
-        resource_type="chat",
-        resource_id=chat_id,
-        status="success" if stopped else "failure",
-        detail={"agent_id": _current_agent_id(request)},
-        request=request,
-    )
     return {"stopped": stopped}
 
 
@@ -350,30 +290,12 @@ async def post_console_upload(
     media_dir = console_channel.media_dir
     media_dir.mkdir(parents=True, exist_ok=True)
     data = await file.read()
-    if len(data) > MAX_UPLOAD_BYTES:
-        raise HTTPException(
-            status_code=400,
-            detail="File too large (max "
-            f"{MAX_UPLOAD_BYTES // (1024 * 1024)} MB)",
-        )
+    check_upload_size(data)
     safe_name = _safe_filename(file.filename or "file")
     stored_name = f"{uuid.uuid4().hex}_{safe_name}"
 
     path = (media_dir / stored_name).resolve()
     path.write_bytes(data)
-    record_audit_event(
-        actor=_current_actor(request),
-        action="chat.file.upload",
-        resource_type="chat_file",
-        resource_id=safe_name,
-        status="success",
-        detail={
-            "agent_id": _current_agent_id(request),
-            "size": len(data),
-            "stored_name": stored_name,
-        },
-        request=request,
-    )
     return {
         "url": path,
         "file_name": safe_name,

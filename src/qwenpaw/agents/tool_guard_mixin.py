@@ -84,46 +84,6 @@ class ToolGuardMixin:
     and ``super()._reasoning`` resolve to the concrete agent methods.
     """
 
-    def _audit_tool_call(
-        self,
-        tool_call: dict[str, Any],
-        status: str,
-        *,
-        reason: str = "",
-        error: str = "",
-        result_preview: Any = None,
-    ) -> None:
-        """Best-effort audit for Agent tool execution lifecycle."""
-        try:
-            from qwenpaw_ext.nexora.audit import (
-                record_tool_audit_event,
-                safe_preview,
-            )
-
-            ctx = getattr(self, "_request_context", None) or {}
-            tool_name = str(tool_call.get("name", "") or "")
-            tool_input = tool_call.get("input", {})
-            detail: dict[str, Any] = {
-                "reason": reason,
-                "input_preview": safe_preview(tool_input),
-            }
-            if error:
-                detail["error"] = safe_preview(error)
-            if result_preview is not None:
-                detail["result_preview"] = safe_preview(result_preview)
-            record_tool_audit_event(
-                actor=str(ctx.get("user_id") or "agent"),
-                agent_id=str(ctx.get("agent_id") or "unknown"),
-                tool_name=tool_name,
-                status=status,
-                tool_call_id=str(tool_call.get("id", "") or ""),
-                session_id=str(ctx.get("session_id") or ""),
-                channel=str(ctx.get("channel") or ""),
-                detail=detail,
-            )
-        except Exception:
-            logger.debug("Failed to record tool audit event", exc_info=True)
-
     # ------------------------------------------------------------------
     # Lazy initialisation
     # ------------------------------------------------------------------
@@ -213,22 +173,7 @@ class ToolGuardMixin:
         if action is not None:
             return await self._execute_guard_action(action, tool_call)
 
-        self._audit_tool_call(tool_call, "started")
-        try:
-            result = await super()._acting(tool_call)  # type: ignore[misc]
-        except Exception as exc:
-            self._audit_tool_call(
-                tool_call,
-                "failure",
-                error=str(exc),
-            )
-            raise
-        self._audit_tool_call(
-            tool_call,
-            "success",
-            result_preview=result,
-        )
-        return result
+        return await super()._acting(tool_call)  # type: ignore[misc]
 
     # pylint: disable=too-many-return-statements
     async def _decide_guard_action(
@@ -422,11 +367,6 @@ class ToolGuardMixin:
         guard_result=None,
     ) -> dict | None:
         """Auto-deny a tool call without offering approval."""
-        self._audit_tool_call(
-            tool_call,
-            "denied",
-            reason="auto_denied",
-        )
         from agentscope.message import ToolResultBlock
         from qwenpaw.security.tool_guard.approval import (
             format_findings_summary,
@@ -552,24 +492,8 @@ class ToolGuardMixin:
                 "Tool '%s' approved by user, executing...",
                 tool_name,
             )
-            self._audit_tool_call(tool_call, "started", reason="approved")
-            try:
-                result = await super()._acting(tool_call)  # type: ignore[misc]
-            except Exception as exc:
-                self._audit_tool_call(
-                    tool_call,
-                    "failure",
-                    reason="approved",
-                    error=str(exc),
-                )
-                raise
-            self._audit_tool_call(
-                tool_call,
-                "success",
-                reason="approved",
-                result_preview=result,
-            )
-            return result
+            # Execute the tool
+            return await super()._acting(tool_call)  # type: ignore[misc]
         elif decision == ApprovalDecision.DENIED:
             logger.info(
                 "Tool '%s' denied by user",
@@ -767,11 +691,6 @@ class ToolGuardMixin:
         guard_result,
     ) -> dict | None:
         """Handle user denial of tool execution."""
-        self._audit_tool_call(
-            tool_call,
-            "denied",
-            reason="approval_denied",
-        )
         from agentscope.message import ToolResultBlock
         from qwenpaw.security.tool_guard.approval import (
             format_findings_summary,
@@ -818,11 +737,6 @@ class ToolGuardMixin:
         guard_result,
     ) -> dict | None:
         """Handle approval timeout (auto-deny)."""
-        self._audit_tool_call(
-            tool_call,
-            "denied",
-            reason="approval_timeout",
-        )
         from agentscope.message import ToolResultBlock
         from qwenpaw.security.tool_guard.approval import (
             format_findings_summary,

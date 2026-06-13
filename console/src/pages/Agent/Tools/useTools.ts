@@ -17,14 +17,14 @@ export function useTools() {
     setLoading(true);
     try {
       const data = await api.listTools();
-      setTools(data || []);
+      setTools(data);
     } catch (error) {
       console.error("Failed to load tools:", error);
       message.error(t("tools.loadError"));
     } finally {
       setLoading(false);
     }
-  }, [t, selectedAgent]);
+  }, [t]);
 
   useEffect(() => {
     loadTools();

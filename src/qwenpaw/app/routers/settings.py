@@ -13,7 +13,7 @@ from fastapi import APIRouter, Body, HTTPException
 from ...agents.skill_system.registry import (
     set_builtin_skill_language_preference,
 )
-from ...constant import WORKING_DIR
+from ...constant import UPLOAD_MAX_SIZE_MB, WORKING_DIR
 
 router = APIRouter(prefix="/settings", tags=["settings"])
 
@@ -41,7 +41,7 @@ def _save(data: dict) -> None:
 
 @router.get("/language", summary="Get UI language")
 async def get_language() -> dict:
-    return {"language": _load().get("language", "zh")}
+    return {"language": _load().get("language", "en")}
 
 
 @router.put("/language", summary="Update UI language")
@@ -64,3 +64,9 @@ async def put_language(
             "zh" if language.startswith("zh") else "en",
         )
     return {"language": language}
+
+
+@router.get("/upload-limit", summary="Get upload size limit")
+async def get_upload_limit() -> dict:
+    """Return the configured upload size limit (MB), or null if unlimited."""
+    return {"upload_max_size_mb": UPLOAD_MAX_SIZE_MB}

@@ -3,10 +3,7 @@ import { Modal } from "@agentscope-ai/design";
 import { useAppMessage } from "../../../hooks/useAppMessage";
 import api from "../../../api";
 import type { SecurityScanErrorResponse } from "../../../api/modules/security";
-import {
-  invalidateSkillCache,
-  isPendingApprovalResult,
-} from "../../../api/modules/skill";
+import { invalidateSkillCache } from "../../../api/modules/skill";
 import type { SkillSpec } from "../../../api/types";
 import { useTranslation } from "react-i18next";
 import { useAgentStore } from "../../../stores/agentStore";
@@ -19,7 +16,6 @@ import {
 
 type SkillActionResult =
   | { success: true; name?: string; imported?: string[] }
-  | { success: false; pending: true; approvalRequestId: string }
   | { success: false; conflict?: Record<string, any> };
 
 export function useSkills() {
@@ -97,14 +93,6 @@ export function useSkills() {
   ): Promise<SkillActionResult> => {
     try {
       const result = await api.createSkill(name, content, config, enable);
-      if (isPendingApprovalResult(result)) {
-        message.info(result.message);
-        return {
-          success: false,
-          pending: true,
-          approvalRequestId: result.approval_request_id,
-        };
-      }
       message.success(t("skills.createdSuccessfully"));
       invalidateSkillCache({ agentId: selectedAgent }); // Clear cache after mutation
       await fetchSkills();
@@ -132,14 +120,6 @@ export function useSkills() {
         target_name: targetName,
         rename_map: renameMap,
       });
-      if (isPendingApprovalResult(result)) {
-        message.info(result.message);
-        return {
-          success: false,
-          pending: true,
-          approvalRequestId: result.approval_request_id,
-        };
-      }
       if (result?.count > 0) {
         message.success(
           t("skills.uploadSuccess") + `: ${result.imported.join(", ")}`,
@@ -191,12 +171,7 @@ export function useSkills() {
         enable: true,
         target_name: targetName,
       };
-      const taskOrApproval = await api.startHubSkillInstall(payload);
-      if (isPendingApprovalResult(taskOrApproval)) {
-        message.info(taskOrApproval.message);
-        return { success: true, name: "" };
-      }
-      const task = taskOrApproval;
+      const task = await api.startHubSkillInstall(payload);
       importTaskIdRef.current = task.task_id;
 
       while (importTaskIdRef.current) {
