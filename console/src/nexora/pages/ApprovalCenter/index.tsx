@@ -31,6 +31,7 @@ import {
   type CapabilityApprovalConfig,
   multiTenantApi,
 } from "../../api/multiTenant";
+import styles from "../nexoraPages.module.less";
 
 const actionLabels: Record<string, string> = {
   "mcp.create": "新增 MCP",
@@ -82,7 +83,9 @@ function compactJson(value: Record<string, unknown>) {
 export default function ApprovalCenterPage() {
   const { message } = useAppMessage();
   const [requests, setRequests] = useState<ApprovalRequest[]>([]);
-  const [approvalConfigs, setApprovalConfigs] = useState<CapabilityApprovalConfig[]>([]);
+  const [approvalConfigs, setApprovalConfigs] = useState<
+    CapabilityApprovalConfig[]
+  >([]);
   const [roles, setRoles] = useState<PlatformRole[]>([]);
   const [loading, setLoading] = useState(false);
   const [approvalSaving, setApprovalSaving] = useState<string | null>(null);
@@ -109,7 +112,9 @@ export default function ApprovalCenterPage() {
       setApprovalConfigs(configList);
       setRoles(roleList);
     } catch (error) {
-      message.error(error instanceof Error ? error.message : "加载审批中心失败");
+      message.error(
+        error instanceof Error ? error.message : "加载审批中心失败",
+      );
     } finally {
       setLoading(false);
     }
@@ -230,9 +235,7 @@ export default function ApprovalCenterPage() {
       dataIndex: "action",
       key: "action",
       width: 120,
-      render: (value: string) => (
-        <Tag>{actionLabels[value] || value}</Tag>
-      ),
+      render: (value: string) => <Tag>{actionLabels[value] || value}</Tag>,
     },
     {
       title: "状态",
@@ -272,7 +275,9 @@ export default function ApprovalCenterPage() {
       key: "result",
       ellipsis: true,
       render: (value: Record<string, unknown>, record) => (
-        <Typography.Text type={record.status === "failed" ? "danger" : undefined}>
+        <Typography.Text
+          type={record.status === "failed" ? "danger" : undefined}
+        >
           {record.reason || compactJson(value)}
         </Typography.Text>
       ),
@@ -329,7 +334,9 @@ export default function ApprovalCenterPage() {
           value={value || "approval"}
           style={{ width: 130 }}
           loading={approvalSaving === record.capability_type}
-          onChange={(v) => handlePolicyChange(record.capability_type, "add_policy", v)}
+          onChange={(v) =>
+            handlePolicyChange(record.capability_type, "add_policy", v)
+          }
           options={[
             { value: "none", label: "无需审批" },
             { value: "approval", label: "需要审批" },
@@ -347,7 +354,9 @@ export default function ApprovalCenterPage() {
           value={value || "log"}
           style={{ width: 140 }}
           loading={approvalSaving === record.capability_type}
-          onChange={(v) => handlePolicyChange(record.capability_type, "remove_policy", v)}
+          onChange={(v) =>
+            handlePolicyChange(record.capability_type, "remove_policy", v)
+          }
           options={[
             { value: "none", label: "无需审批" },
             { value: "log", label: "自动审批" },
@@ -383,8 +392,9 @@ export default function ApprovalCenterPage() {
   ).length;
 
   return (
-    <div>
+    <div className={styles.nexoraPage}>
       <PageHeader
+        className={styles.pageHeader}
         parent="安全管理"
         current="审批中心"
         subRow={
@@ -399,94 +409,109 @@ export default function ApprovalCenterPage() {
         }
       />
 
-      <Space size={16} wrap style={{ marginBottom: 16 }}>
-        <Card size="small">
-          <Typography.Text type="secondary">待处理申请</Typography.Text>
-          <Typography.Title level={3} style={{ margin: 0 }}>
-            {pendingCount}
-          </Typography.Title>
-        </Card>
-        <Card size="small">
-          <Typography.Text type="secondary">申请总数</Typography.Text>
-          <Typography.Title level={3} style={{ margin: 0 }}>
-            {requests.length}
-          </Typography.Title>
-        </Card>
-        <Card size="small">
-          <Typography.Text type="secondary">审批规则启用</Typography.Text>
-          <Typography.Title level={3} style={{ margin: 0 }}>
-            {enabledConfigCount}/{approvalConfigs.length}
-          </Typography.Title>
-        </Card>
-      </Space>
+      <div className={styles.content}>
+        <div className={styles.stack}>
+          <div className={styles.metricGrid}>
+            <Card className={styles.metricCard} size="small">
+              <Typography.Text className={styles.metricLabel}>
+                待处理申请
+              </Typography.Text>
+              <Typography.Title className={styles.metricValue} level={3}>
+                {pendingCount}
+              </Typography.Title>
+            </Card>
+            <Card className={styles.metricCard} size="small">
+              <Typography.Text className={styles.metricLabel}>
+                申请总数
+              </Typography.Text>
+              <Typography.Title className={styles.metricValue} level={3}>
+                {requests.length}
+              </Typography.Title>
+            </Card>
+            <Card className={styles.metricCard} size="small">
+              <Typography.Text className={styles.metricLabel}>
+                审批规则启用
+              </Typography.Text>
+              <Typography.Title className={styles.metricValue} level={3}>
+                {enabledConfigCount}/{approvalConfigs.length}
+              </Typography.Title>
+            </Card>
+          </div>
 
-      <Tabs
-        items={[
-          {
-            key: "requests",
-            label: "审批申请",
-            children: (
-              <>
-                <Card style={{ marginBottom: 16 }}>
-                  <Form
-                    form={filterForm}
-                    layout="inline"
-                    onFinish={loadAll}
-                  >
-                    <Form.Item name="status" label="状态">
-                      <Select
-                        allowClear
-                        style={{ width: 140 }}
-                        options={Object.entries(statusLabels).map(
-                          ([value, label]) => ({ value, label }),
-                        )}
+          <Tabs
+            className={styles.tabs}
+            items={[
+              {
+                key: "requests",
+                label: "审批申请",
+                children: (
+                  <>
+                    <Card className={styles.panel} style={{ marginBottom: 16 }}>
+                      <Form
+                        form={filterForm}
+                        className={styles.filterForm}
+                        onFinish={loadAll}
+                      >
+                        <Form.Item name="status" label="状态">
+                          <Select
+                            allowClear
+                            style={{ width: 140 }}
+                            options={Object.entries(statusLabels).map(
+                              ([value, label]) => ({ value, label }),
+                            )}
+                          />
+                        </Form.Item>
+                        <Form.Item name="action" label="类型">
+                          <Select
+                            allowClear
+                            style={{ width: 150 }}
+                            options={Object.entries(actionLabels).map(
+                              ([value, label]) => ({ value, label }),
+                            )}
+                          />
+                        </Form.Item>
+                        <Form.Item>
+                          <Button
+                            type="primary"
+                            htmlType="submit"
+                            loading={loading}
+                          >
+                            查询
+                          </Button>
+                        </Form.Item>
+                      </Form>
+                    </Card>
+                    <Card className={styles.tablePanel}>
+                      <Table
+                        rowKey="id"
+                        columns={requestColumns}
+                        dataSource={requests}
+                        loading={loading}
+                        pagination={{ pageSize: 10, showSizeChanger: true }}
                       />
-                    </Form.Item>
-                    <Form.Item name="action" label="类型">
-                      <Select
-                        allowClear
-                        style={{ width: 150 }}
-                        options={Object.entries(actionLabels).map(
-                          ([value, label]) => ({ value, label }),
-                        )}
-                      />
-                    </Form.Item>
-                    <Form.Item>
-                      <Button type="primary" htmlType="submit" loading={loading}>
-                        查询
-                      </Button>
-                    </Form.Item>
-                  </Form>
-                </Card>
-                <Card>
-                  <Table
-                    rowKey="id"
-                    columns={requestColumns}
-                    dataSource={requests}
-                    loading={loading}
-                    pagination={{ pageSize: 10, showSizeChanger: true }}
-                  />
-                </Card>
-              </>
-            ),
-          },
-          {
-            key: "config",
-            label: "审批规则配置",
-            children: (
-              <Card>
-                <Table
-                  rowKey="capability_type"
-                  columns={configColumns}
-                  dataSource={approvalConfigs}
-                  loading={loading}
-                  pagination={false}
-                />
-              </Card>
-            ),
-          },
-        ]}
-      />
+                    </Card>
+                  </>
+                ),
+              },
+              {
+                key: "config",
+                label: "审批规则配置",
+                children: (
+                  <Card className={styles.tablePanel}>
+                    <Table
+                      rowKey="capability_type"
+                      columns={configColumns}
+                      dataSource={approvalConfigs}
+                      loading={loading}
+                      pagination={false}
+                    />
+                  </Card>
+                ),
+              },
+            ]}
+          />
+        </div>
+      </div>
     </div>
   );
 }

@@ -1,0 +1,209 @@
+.nexoraPage {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: radial-gradient(
+      circle at top right,
+      rgba(255, 127, 22, 0.07),
+      transparent 28%
+    ),
+    linear-gradient(180deg, #f8f9fa 0%, #f2f4f7 100%);
+}
+
+.pageHeader {
+  border-bottom-color: rgba(42, 38, 34, 0.08);
+  background: rgba(251, 251, 250, 0.82);
+  backdrop-filter: blur(12px);
+}
+
+.content {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 20px 22px 28px;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.metricGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.metricCard {
+  border: 1px solid rgba(34, 31, 28, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 253, 0.92);
+  box-shadow: 0 10px 28px rgba(31, 28, 25, 0.05);
+
+  :global(.qwenpaw-card-body),
+  :global(.ant-card-body) {
+    height: auto;
+    padding: 14px 16px;
+  }
+}
+
+.metricLabel {
+  display: block;
+  margin-bottom: 6px;
+  color: rgba(36, 33, 30, 0.54);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.metricValue {
+  margin: 0 !important;
+  color: #201d1a !important;
+  font-size: 24px !important;
+  line-height: 1.1 !important;
+}
+
+.panel {
+  border: 1px solid rgba(34, 31, 28, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 253, 0.96);
+  box-shadow: 0 12px 32px rgba(31, 28, 25, 0.06);
+
+  :global(.qwenpaw-card-body),
+  :global(.ant-card-body) {
+    height: auto;
+    padding: 16px;
+  }
+}
+
+.tablePanel {
+  .panel();
+
+  :global(.qwenpaw-card-body),
+  :global(.ant-card-body) {
+    padding: 0;
+  }
+
+  :global(.qwenpaw-table),
+  :global(.ant-table) {
+    background: transparent;
+  }
+
+  :global(.qwenpaw-table-thead > tr > th),
+  :global(.ant-table-thead > tr > th) {
+    background: #f5f6f7;
+    color: rgba(36, 33, 30, 0.58);
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  :global(.qwenpaw-table-tbody > tr > td),
+  :global(.ant-table-tbody > tr > td) {
+    border-bottom-color: rgba(34, 31, 28, 0.06);
+  }
+}
+
+.tabs {
+  :global(.qwenpaw-tabs-nav),
+  :global(.ant-tabs-nav) {
+    margin-bottom: 12px;
+  }
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.filterForm {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: end;
+
+  :global(.qwenpaw-form-item),
+  :global(.ant-form-item) {
+    margin: 0;
+  }
+}
+
+.drawerTextBlock {
+  margin-bottom: 0;
+  max-height: 300px;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
+@media (max-width: 720px) {
+  .content {
+    padding: 14px;
+  }
+
+  .metricGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .filterForm {
+    align-items: stretch;
+
+    :global(.qwenpaw-form-item),
+    :global(.ant-form-item),
+    :global(.qwenpaw-select),
+    :global(.ant-select),
+    :global(.qwenpaw-input),
+    :global(.ant-input),
+    :global(.qwenpaw-picker),
+    :global(.ant-picker) {
+      width: 100% !important;
+    }
+  }
+}
+
+:global(html.dark-mode) {
+  .nexoraPage {
+    background: radial-gradient(
+        circle at top right,
+        rgba(255, 127, 22, 0.12),
+        transparent 30%
+      ),
+      linear-gradient(180deg, #151515 0%, #101010 100%);
+  }
+
+  .pageHeader {
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+    background: rgba(24, 24, 24, 0.82);
+  }
+
+  .metricCard,
+  .panel,
+  .tablePanel {
+    border-color: rgba(255, 255, 255, 0.09);
+    background: rgba(31, 31, 31, 0.92);
+    box-shadow: none;
+  }
+
+  .metricLabel {
+    color: rgba(255, 255, 255, 0.55);
+  }
+
+  .metricValue {
+    color: rgba(255, 255, 255, 0.9) !important;
+  }
+
+  .tablePanel {
+    :global(.qwenpaw-table-thead > tr > th),
+    :global(.ant-table-thead > tr > th) {
+      background: #262626 !important;
+      color: rgba(255, 255, 255, 0.62) !important;
+    }
+  }
+}

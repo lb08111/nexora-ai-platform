@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   Button,
+  Card,
   Form,
   Input,
   Modal,
@@ -21,6 +22,7 @@ import {
   usersApi,
 } from "../../api/users";
 import { useAppMessage } from "../../../hooks/useAppMessage";
+import styles from "../nexoraPages.module.less";
 
 type UserFormValues = {
   username: string;
@@ -351,29 +353,36 @@ export default function UserManagementPage() {
   ];
 
   return (
-    <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
-      <PageHeader parent="权限管理" current="用户权限" />
+    <div className={styles.nexoraPage}>
+      <PageHeader
+        className={styles.pageHeader}
+        parent="权限管理"
+        current="用户权限"
+      />
 
-      <div style={{ padding: 20, overflow: "auto" }}>
+      <div className={styles.content}>
         <Tabs
+          className={styles.tabs}
           items={[
             {
               key: "users",
               label: "用户管理",
               children: (
-                <Space direction="vertical" size={16} style={{ width: "100%" }}>
-                  <Space>
-                    <Button icon={<ReloadOutlined />} onClick={fetchAll}>
-                      刷新
-                    </Button>
-                    <Button
-                      type="primary"
-                      icon={<PlusOutlined />}
-                      onClick={openCreateUser}
-                    >
-                      新建用户
-                    </Button>
-                  </Space>
+                <Card className={styles.tablePanel}>
+                  <div className={styles.toolbar}>
+                    <Space>
+                      <Button icon={<ReloadOutlined />} onClick={fetchAll}>
+                        刷新
+                      </Button>
+                      <Button
+                        type="primary"
+                        icon={<PlusOutlined />}
+                        onClick={openCreateUser}
+                      >
+                        新建用户
+                      </Button>
+                    </Space>
+                  </div>
                   <Table
                     rowKey="id"
                     loading={loading}
@@ -381,26 +390,28 @@ export default function UserManagementPage() {
                     dataSource={users}
                     pagination={false}
                   />
-                </Space>
+                </Card>
               ),
             },
             {
               key: "roles",
               label: "角色管理",
               children: (
-                <Space direction="vertical" size={16} style={{ width: "100%" }}>
-                  <Space>
-                    <Button icon={<ReloadOutlined />} onClick={fetchAll}>
-                      刷新
-                    </Button>
-                    <Button
-                      type="primary"
-                      icon={<PlusOutlined />}
-                      onClick={openCreateRole}
-                    >
-                      新建角色
-                    </Button>
-                  </Space>
+                <Card className={styles.tablePanel}>
+                  <div className={styles.toolbar}>
+                    <Space>
+                      <Button icon={<ReloadOutlined />} onClick={fetchAll}>
+                        刷新
+                      </Button>
+                      <Button
+                        type="primary"
+                        icon={<PlusOutlined />}
+                        onClick={openCreateRole}
+                      >
+                        新建角色
+                      </Button>
+                    </Space>
+                  </div>
                   <Table
                     rowKey="id"
                     loading={loading}
@@ -408,7 +419,7 @@ export default function UserManagementPage() {
                     dataSource={roles}
                     pagination={false}
                   />
-                </Space>
+                </Card>
               ),
             },
           ]}
@@ -436,9 +447,7 @@ export default function UserManagementPage() {
             label={editingUser ? "重置密码" : "密码"}
             name="password"
             rules={
-              editingUser
-                ? []
-                : [{ required: true, message: "请输入初始密码" }]
+              editingUser ? [] : [{ required: true, message: "请输入初始密码" }]
             }
           >
             <Input.Password
@@ -506,10 +515,7 @@ export default function UserManagementPage() {
             name="permissions"
             rules={[{ required: true, message: "请选择权限" }]}
           >
-            <Select
-              mode="multiple"
-              options={permissionSelectOptions}
-            />
+            <Select mode="multiple" options={permissionSelectOptions} />
           </Form.Item>
         </Form>
       </Modal>
