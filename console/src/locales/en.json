@@ -62,6 +62,7 @@
     "permissionManagement": "Permission Management",
     "intelligentReports": "Intelligent Reports",
     "securityManagement": "Security Management",
+    "approvalCenter": "Approval Center",
     "auditLogs": "Audit Logs",
     "settings": "Settings",
     "models": "Models",
@@ -1239,6 +1240,9 @@
   },
   "tokenUsage": {
     "title": "Token Usage",
+    "user": "User",
+    "agent": "Agent",
+    "byUser": "By user",
     "totalTokens": "Total Tokens",
     "totalCalls": "Total Calls",
     "promptTokens": "Prompt Tokens",

@@ -34,24 +34,24 @@ import {
 import styles from "../nexoraPages.module.less";
 
 const actionLabels: Record<string, string> = {
-  "mcp.create": "新增 MCP",
-  "mcp.delete": "删除 MCP",
-  "skill.create": "新增 Skill",
-  "skill.delete": "删除 Skill",
-  "plugin.install": "安装插件",
-  "plugin.uninstall": "卸载插件",
-  "tool.create": "新增工具",
-  "tool.delete": "删除工具",
-  "acp.create": "新增 ACP",
-  "acp.delete": "删除 ACP",
+  "mcp.create": "Adicionar MCP",
+  "mcp.delete": "Excluir MCP",
+  "skill.create": "Adicionar Skill",
+  "skill.delete": "Excluir Skill",
+  "plugin.install": "Instalar plugin",
+  "plugin.uninstall": "Desinstalar plugin",
+  "tool.create": "Adicionar ferramenta",
+  "tool.delete": "Excluir ferramenta",
+  "acp.create": "Adicionar ACP",
+  "acp.delete": "Excluir ACP",
 };
 
 const statusLabels: Record<ApprovalRequestStatus, string> = {
-  pending: "待审批",
-  approved: "已通过",
-  rejected: "已驳回",
-  applied: "已生效",
-  failed: "执行失败",
+  pending: "Pendente",
+  approved: "Aprovado",
+  rejected: "Rejeitado",
+  applied: "Aplicado",
+  failed: "Falha na execução",
 };
 
 const statusColors: Record<ApprovalRequestStatus, string> = {
@@ -65,9 +65,9 @@ const statusColors: Record<ApprovalRequestStatus, string> = {
 const capTypeLabels: Record<string, string> = {
   skill: "Skill",
   mcp: "MCP",
-  tool: "工具",
+  tool: "Ferramenta",
   acp: "ACP",
-  plugin: "插件",
+  plugin: "Plugin",
 };
 
 function formatTime(timestamp: number) {
@@ -113,7 +113,9 @@ export default function ApprovalCenterPage() {
       setRoles(roleList);
     } catch (error) {
       message.error(
-        error instanceof Error ? error.message : "加载审批中心失败",
+        error instanceof Error
+          ? error.message
+          : "Falha ao carregar a Central de Aprovação",
       );
     } finally {
       setLoading(false);
@@ -126,17 +128,19 @@ export default function ApprovalCenterPage() {
 
   const handleApprove = (record: ApprovalRequest) => {
     Modal.confirm({
-      title: "通过申请",
-      content: `确认通过「${record.summary || record.resource_name}」？`,
-      okText: "通过",
-      cancelText: "取消",
+      title: "Aprovar solicitação",
+      content: `Confirmar aprovação de "${record.summary || record.resource_name}"?`,
+      okText: "Aprovar",
+      cancelText: "Cancelar",
       onOk: async () => {
         try {
           await governanceApi.approveApprovalRequest(record.id);
-          message.success("审批已通过");
+          message.success("Solicitação aprovada");
           await loadAll();
         } catch (error) {
-          message.error(error instanceof Error ? error.message : "审批失败");
+          message.error(
+            error instanceof Error ? error.message : "Falha ao aprovar",
+          );
         }
       },
     });
@@ -145,26 +149,28 @@ export default function ApprovalCenterPage() {
   const handleReject = (record: ApprovalRequest) => {
     let reason = "";
     Modal.confirm({
-      title: "驳回申请",
+      title: "Rejeitar solicitação",
       content: (
         <Input.TextArea
           rows={3}
-          placeholder="填写驳回原因"
+          placeholder="Informe o motivo da rejeição"
           onChange={(event) => {
             reason = event.target.value;
           }}
         />
       ),
-      okText: "驳回",
+      okText: "Rejeitar",
       okButtonProps: { danger: true },
-      cancelText: "取消",
+      cancelText: "Cancelar",
       onOk: async () => {
         try {
           await governanceApi.rejectApprovalRequest(record.id, reason);
-          message.success("申请已驳回");
+          message.success("Solicitação rejeitada");
           await loadAll();
         } catch (error) {
-          message.error(error instanceof Error ? error.message : "驳回失败");
+          message.error(
+            error instanceof Error ? error.message : "Falha ao rejeitar",
+          );
         }
       },
     });
@@ -185,9 +191,11 @@ export default function ApprovalCenterPage() {
       setApprovalConfigs((prev) =>
         prev.map((c) => (c.capability_type === capType ? updated : c)),
       );
-      message.success("配置已更新");
+      message.success("Configuração atualizada");
     } catch (error) {
-      message.error(error instanceof Error ? error.message : "保存失败");
+      message.error(
+        error instanceof Error ? error.message : "Falha ao salvar",
+      );
     } finally {
       setApprovalSaving(null);
     }
@@ -205,9 +213,11 @@ export default function ApprovalCenterPage() {
       setApprovalConfigs((prev) =>
         prev.map((c) => (c.capability_type === capType ? updated : c)),
       );
-      message.success("配置已更新");
+      message.success("Configuração atualizada");
     } catch (error) {
-      message.error(error instanceof Error ? error.message : "保存失败");
+      message.error(
+        error instanceof Error ? error.message : "Falha ao salvar",
+      );
     } finally {
       setApprovalSaving(null);
     }
@@ -217,7 +227,7 @@ export default function ApprovalCenterPage() {
 
   const requestColumns: ColumnsType<ApprovalRequest> = [
     {
-      title: "申请内容",
+      title: "Conteúdo da Solicitação",
       key: "summary",
       render: (_, record) => (
         <Space direction="vertical" size={2}>
@@ -231,14 +241,14 @@ export default function ApprovalCenterPage() {
       ),
     },
     {
-      title: "类型",
+      title: "Tipo",
       dataIndex: "action",
       key: "action",
       width: 120,
       render: (value: string) => <Tag>{actionLabels[value] || value}</Tag>,
     },
     {
-      title: "状态",
+      title: "Status",
       dataIndex: "status",
       key: "status",
       width: 110,
@@ -249,28 +259,28 @@ export default function ApprovalCenterPage() {
       ),
     },
     {
-      title: "申请人",
+      title: "Solicitante",
       dataIndex: "requester",
       key: "requester",
       width: 130,
       render: (value: string) => value || "-",
     },
     {
-      title: "审批人",
+      title: "Aprovador",
       dataIndex: "approver",
       key: "approver",
       width: 130,
       render: (value: string) => value || "-",
     },
     {
-      title: "时间",
+      title: "Data/Hora",
       dataIndex: "created_at",
       key: "created_at",
       width: 180,
       render: (value: number) => formatTime(value),
     },
     {
-      title: "结果",
+      title: "Resultado",
       dataIndex: "result",
       key: "result",
       ellipsis: true,
@@ -283,7 +293,7 @@ export default function ApprovalCenterPage() {
       ),
     },
     {
-      title: "操作",
+      title: "Ações",
       key: "actions",
       width: 160,
       render: (_, record) =>
@@ -295,7 +305,7 @@ export default function ApprovalCenterPage() {
               icon={<CheckCircleOutlined />}
               onClick={() => handleApprove(record)}
             >
-              通过
+              Aprovar
             </Button>
             <Button
               size="small"
@@ -303,18 +313,18 @@ export default function ApprovalCenterPage() {
               icon={<CloseCircleOutlined />}
               onClick={() => handleReject(record)}
             >
-              驳回
+              Rejeitar
             </Button>
           </Space>
         ) : (
-          <Typography.Text type="secondary">已处理</Typography.Text>
+          <Typography.Text type="secondary">Processado</Typography.Text>
         ),
     },
   ];
 
   const configColumns: ColumnsType<CapabilityApprovalConfig> = [
     {
-      title: "能力类型",
+      title: "Tipo de capacidade",
       dataIndex: "capability_type",
       key: "capability_type",
       width: 120,
@@ -325,7 +335,7 @@ export default function ApprovalCenterPage() {
       ),
     },
     {
-      title: "新增策略",
+      title: "Política de adição",
       dataIndex: "add_policy",
       key: "add_policy",
       width: 150,
@@ -338,14 +348,14 @@ export default function ApprovalCenterPage() {
             handlePolicyChange(record.capability_type, "add_policy", v)
           }
           options={[
-            { value: "none", label: "无需审批" },
-            { value: "approval", label: "需要审批" },
+            { value: "none", label: "Não requer aprovação" },
+            { value: "approval", label: "Requer aprovação" },
           ]}
         />
       ),
     },
     {
-      title: "删除策略",
+      title: "Política de remoção",
       dataIndex: "remove_policy",
       key: "remove_policy",
       width: 160,
@@ -358,15 +368,15 @@ export default function ApprovalCenterPage() {
             handlePolicyChange(record.capability_type, "remove_policy", v)
           }
           options={[
-            { value: "none", label: "无需审批" },
-            { value: "log", label: "自动审批" },
-            { value: "approval", label: "需要审批" },
+            { value: "none", label: "Não requer aprovação" },
+            { value: "log", label: "Aprovação automática" },
+            { value: "approval", label: "Requer aprovação" },
           ]}
         />
       ),
     },
     {
-      title: "审批角色",
+      title: "Função do aprovador",
       dataIndex: "approver_roles",
       key: "approver_roles",
       render: (value: string[], record) => (
@@ -395,16 +405,18 @@ export default function ApprovalCenterPage() {
     <div className={styles.nexoraPage}>
       <PageHeader
         className={styles.pageHeader}
-        parent="安全管理"
-        current="审批中心"
+        parent="Gerenciamento de Segurança"
+        current="Central de Aprovação"
         subRow={
           <Typography.Text type="secondary">
-            处理能力变更的审批申请；按能力类型配置新增/删除的审批开关。
+            Processe solicitações de aprovação de mudanças de capacidade;
+            configure os controles de aprovação de adição/remoção por tipo de
+            capacidade.
           </Typography.Text>
         }
         extra={
           <Button icon={<ReloadOutlined />} onClick={loadAll} loading={loading}>
-            刷新
+            Atualizar
           </Button>
         }
       />
@@ -414,7 +426,7 @@ export default function ApprovalCenterPage() {
           <div className={styles.metricGrid}>
             <Card className={styles.metricCard} size="small">
               <Typography.Text className={styles.metricLabel}>
-                待处理申请
+                Solicitações Pendentes
               </Typography.Text>
               <Typography.Title className={styles.metricValue} level={3}>
                 {pendingCount}
@@ -422,7 +434,7 @@ export default function ApprovalCenterPage() {
             </Card>
             <Card className={styles.metricCard} size="small">
               <Typography.Text className={styles.metricLabel}>
-                申请总数
+                Total de Solicitações
               </Typography.Text>
               <Typography.Title className={styles.metricValue} level={3}>
                 {requests.length}
@@ -430,7 +442,7 @@ export default function ApprovalCenterPage() {
             </Card>
             <Card className={styles.metricCard} size="small">
               <Typography.Text className={styles.metricLabel}>
-                审批规则启用
+                Regras de Aprovação Ativas
               </Typography.Text>
               <Typography.Title className={styles.metricValue} level={3}>
                 {enabledConfigCount}/{approvalConfigs.length}
@@ -443,7 +455,7 @@ export default function ApprovalCenterPage() {
             items={[
               {
                 key: "requests",
-                label: "审批申请",
+                label: "Solicitações de Aprovação",
                 children: (
                   <>
                     <Card className={styles.panel} style={{ marginBottom: 16 }}>
@@ -452,7 +464,7 @@ export default function ApprovalCenterPage() {
                         className={styles.filterForm}
                         onFinish={loadAll}
                       >
-                        <Form.Item name="status" label="状态">
+                        <Form.Item name="status" label="Status">
                           <Select
                             allowClear
                             style={{ width: 140 }}
@@ -461,7 +473,7 @@ export default function ApprovalCenterPage() {
                             )}
                           />
                         </Form.Item>
-                        <Form.Item name="action" label="类型">
+                        <Form.Item name="action" label="Tipo">
                           <Select
                             allowClear
                             style={{ width: 150 }}
@@ -476,7 +488,7 @@ export default function ApprovalCenterPage() {
                             htmlType="submit"
                             loading={loading}
                           >
-                            查询
+                            Consultar
                           </Button>
                         </Form.Item>
                       </Form>
@@ -495,7 +507,7 @@ export default function ApprovalCenterPage() {
               },
               {
                 key: "config",
-                label: "审批规则配置",
+                label: "Configuração de Regras de Aprovação",
                 children: (
                   <Card className={styles.tablePanel}>
                     <Table

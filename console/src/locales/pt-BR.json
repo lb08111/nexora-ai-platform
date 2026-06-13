@@ -73,6 +73,7 @@
     "permissionManagement": "Gerenciamento de Permissões",
     "intelligentReports": "Relatórios Inteligentes",
     "securityManagement": "Gerenciamento de Segurança",
+    "approvalCenter": "Central de Aprovação",
     "auditLogs": "Logs de Auditoria"
   },
   "debug": {
@@ -1174,6 +1175,9 @@
   },
   "tokenUsage": {
     "title": "Uso de Tokens",
+    "user": "Usuário",
+    "agent": "Agente",
+    "byUser": "Por usuário",
     "description": "View LLM token consumption over time, by date and model.",
     "totalTokens": "Total Tokens",
     "totalCalls": "Total Calls",

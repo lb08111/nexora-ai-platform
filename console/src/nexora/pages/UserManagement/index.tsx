@@ -39,24 +39,24 @@ type RoleFormValues = {
 };
 
 const permissionLabels: Record<string, string> = {
-  "system.admin": "菜单：系统管理",
-  "users.manage": "菜单：管理用户和角色",
-  "users.view": "菜单：查看用户",
-  "agents.manage": "菜单：智能体管理",
-  "agents.use": "能力：使用智能体",
-  "tools.manage": "菜单：工具配置",
-  "tools.execute": "能力：调用工具/MCP/Skill",
-  "models.manage": "菜单：模型管理",
-  "mcp.manage": "菜单：MCP 配置",
-  "governance.manage": "菜单：管理智能体权限",
-  "governance.view": "菜单：查看智能体权限",
-  "audit.view": "菜单：查看审计",
+  "system.admin": "Menu: Gerenciamento do Sistema",
+  "users.manage": "Menu: Gerenciar Usuários e Funções",
+  "users.view": "Menu: Visualizar Usuários",
+  "agents.manage": "Menu: Gerenciamento de Agentes",
+  "agents.use": "Capacidade: Usar Agentes",
+  "tools.manage": "Menu: Configuração de Ferramentas",
+  "tools.execute": "Capacidade: Chamar Ferramentas/MCP/Skill",
+  "models.manage": "Menu: Gerenciamento de Modelos",
+  "mcp.manage": "Menu: Configuração de MCP",
+  "governance.manage": "Menu: Gerenciar Permissões de Agentes",
+  "governance.view": "Menu: Visualizar Permissões de Agentes",
+  "audit.view": "Menu: Visualizar Auditoria",
 };
 
 const capabilityPermissions = new Set(["agents.use", "tools.execute"]);
 const permissionGroupLabels = {
-  menu: "菜单权限",
-  capability: "能力权限",
+  menu: "Permissões de Menu",
+  capability: "Permissões de Capacidade",
 };
 
 function permissionText(permission: string) {
@@ -119,7 +119,7 @@ export default function UserManagementPage() {
       setPermissions(permissionList);
     } catch (error) {
       message.error(
-        error instanceof Error ? error.message : "加载用户权限失败",
+        error instanceof Error ? error.message : "Falha ao carregar permissões de usuário",
       );
     } finally {
       setLoading(false);
@@ -176,19 +176,19 @@ export default function UserManagementPage() {
           status: values.status,
           password: values.password?.trim() || undefined,
         });
-        message.success("用户已更新");
+        message.success("Usuário atualizado");
       } else {
         await usersApi.createUser({
           username: values.username.trim(),
           password: values.password || "",
           roles: values.roles,
         });
-        message.success("用户已创建");
+        message.success("Usuário criado");
       }
       setUserModalOpen(false);
       await fetchAll();
     } catch (error) {
-      message.error(error instanceof Error ? error.message : "保存失败");
+      message.error(error instanceof Error ? error.message : "Falha ao salvar");
     } finally {
       setSaving(false);
     }
@@ -204,7 +204,7 @@ export default function UserManagementPage() {
           description: values.description || "",
           permissions: values.permissions,
         });
-        message.success("角色已更新");
+        message.success("Função atualizada");
       } else {
         await usersApi.createRole({
           id: values.id.trim(),
@@ -212,12 +212,12 @@ export default function UserManagementPage() {
           description: values.description || "",
           permissions: values.permissions,
         });
-        message.success("角色已创建");
+        message.success("Função criada");
       }
       setRoleModalOpen(false);
       await fetchAll();
     } catch (error) {
-      message.error(error instanceof Error ? error.message : "保存失败");
+      message.error(error instanceof Error ? error.message : "Falha ao salvar");
     } finally {
       setSaving(false);
     }
@@ -226,32 +226,32 @@ export default function UserManagementPage() {
   const handleDeleteUser = async (username: string) => {
     try {
       await usersApi.deleteUser(username);
-      message.success("用户已删除");
+      message.success("Usuário excluído");
       await fetchAll();
     } catch (error) {
-      message.error(error instanceof Error ? error.message : "删除失败");
+      message.error(error instanceof Error ? error.message : "Falha ao excluir");
     }
   };
 
   const handleDeleteRole = async (roleId: string) => {
     try {
       await usersApi.deleteRole(roleId);
-      message.success("角色已删除");
+      message.success("Função excluída");
       await fetchAll();
     } catch (error) {
-      message.error(error instanceof Error ? error.message : "删除失败");
+      message.error(error instanceof Error ? error.message : "Falha ao excluir");
     }
   };
 
   const userColumns: ColumnsType<PlatformUser> = [
     {
-      title: "用户名",
+      title: "Nome de usuário",
       dataIndex: "username",
       key: "username",
       render: (value) => <Typography.Text strong>{value}</Typography.Text>,
     },
     {
-      title: "角色",
+      title: "Função",
       dataIndex: "roles",
       key: "roles",
       render: (value: string[]) => (
@@ -265,30 +265,30 @@ export default function UserManagementPage() {
       ),
     },
     {
-      title: "状态",
+      title: "Status",
       dataIndex: "status",
       key: "status",
       render: (value: PlatformUser["status"]) => (
         <Tag color={value === "active" ? "green" : "default"}>
-          {value === "active" ? "启用" : "停用"}
+          {value === "active" ? "Ativado" : "Desativado"}
         </Tag>
       ),
     },
     {
-      title: "操作",
+      title: "Ações",
       key: "actions",
       width: 180,
       render: (_, record) => (
         <Space>
           <Button size="small" onClick={() => openEditUser(record)}>
-            编辑
+            Editar
           </Button>
           <Popconfirm
-            title="确认删除该用户？"
+            title="Confirma a exclusão deste usuário?"
             onConfirm={() => handleDeleteUser(record.username)}
           >
             <Button size="small" danger>
-              删除
+              Excluir
             </Button>
           </Popconfirm>
         </Space>
@@ -298,27 +298,27 @@ export default function UserManagementPage() {
 
   const roleColumns: ColumnsType<PlatformRole> = [
     {
-      title: "角色",
+      title: "Função",
       dataIndex: "name",
       key: "name",
       render: (value, record) => (
         <Space direction="vertical" size={2}>
           <Space>
             <Typography.Text strong>{value}</Typography.Text>
-            {record.builtin ? <Tag>内置</Tag> : <Tag color="blue">自定义</Tag>}
+            {record.builtin ? <Tag>Integrada</Tag> : <Tag color="blue">Personalizada</Tag>}
           </Space>
           <Typography.Text type="secondary">{record.id}</Typography.Text>
         </Space>
       ),
     },
     {
-      title: "说明",
+      title: "Descrição",
       dataIndex: "description",
       key: "description",
       render: (value) => value || "-",
     },
     {
-      title: "权限",
+      title: "Permissões",
       dataIndex: "permissions",
       key: "permissions",
       render: (value: string[]) => (
@@ -330,21 +330,21 @@ export default function UserManagementPage() {
       ),
     },
     {
-      title: "操作",
+      title: "Ações",
       key: "actions",
       width: 180,
       render: (_, record) => (
         <Space>
           <Button size="small" onClick={() => openEditRole(record)}>
-            编辑
+            Editar
           </Button>
           <Popconfirm
-            title="确认删除该角色？"
+            title="Confirma a exclusão desta função?"
             onConfirm={() => handleDeleteRole(record.id)}
             disabled={record.builtin}
           >
             <Button size="small" danger disabled={record.builtin}>
-              删除
+              Excluir
             </Button>
           </Popconfirm>
         </Space>
@@ -356,8 +356,8 @@ export default function UserManagementPage() {
     <div className={styles.nexoraPage}>
       <PageHeader
         className={styles.pageHeader}
-        parent="权限管理"
-        current="用户权限"
+        parent="Gerenciamento de Permissões"
+        current="Permissões de Usuário"
       />
 
       <div className={styles.content}>
@@ -366,20 +366,20 @@ export default function UserManagementPage() {
           items={[
             {
               key: "users",
-              label: "用户管理",
+              label: "Gerenciamento de Usuários",
               children: (
                 <Card className={styles.tablePanel}>
                   <div className={styles.toolbar}>
                     <Space>
                       <Button icon={<ReloadOutlined />} onClick={fetchAll}>
-                        刷新
+                        Atualizar
                       </Button>
                       <Button
                         type="primary"
                         icon={<PlusOutlined />}
                         onClick={openCreateUser}
                       >
-                        新建用户
+                        Adicionar Usuário
                       </Button>
                     </Space>
                   </div>
@@ -395,20 +395,20 @@ export default function UserManagementPage() {
             },
             {
               key: "roles",
-              label: "角色管理",
+              label: "Gerenciamento de Funções",
               children: (
                 <Card className={styles.tablePanel}>
                   <div className={styles.toolbar}>
                     <Space>
                       <Button icon={<ReloadOutlined />} onClick={fetchAll}>
-                        刷新
+                        Atualizar
                       </Button>
                       <Button
                         type="primary"
                         icon={<PlusOutlined />}
                         onClick={openCreateRole}
                       >
-                        新建角色
+                        Adicionar Função
                       </Button>
                     </Space>
                   </div>
@@ -427,7 +427,7 @@ export default function UserManagementPage() {
       </div>
 
       <Modal
-        title={editingUser ? "编辑用户" : "新建用户"}
+        title={editingUser ? "Editar Usuário" : "Adicionar Usuário"}
         open={userModalOpen}
         confirmLoading={saving}
         onCancel={() => setUserModalOpen(false)}
@@ -436,29 +436,29 @@ export default function UserManagementPage() {
       >
         <Form form={userForm} layout="vertical">
           <Form.Item
-            label="用户名"
+            label="Nome de usuário"
             name="username"
-            rules={[{ required: true, message: "请输入用户名" }]}
+            rules={[{ required: true, message: "Digite o nome de usuário" }]}
           >
             <Input disabled={!!editingUser} />
           </Form.Item>
 
           <Form.Item
-            label={editingUser ? "重置密码" : "密码"}
+            label={editingUser ? "Redefinir senha" : "Senha"}
             name="password"
             rules={
-              editingUser ? [] : [{ required: true, message: "请输入初始密码" }]
+              editingUser ? [] : [{ required: true, message: "Digite a senha inicial" }]
             }
           >
             <Input.Password
-              placeholder={editingUser ? "留空表示不修改" : "请输入初始密码"}
+              placeholder={editingUser ? "Deixe em branco para não alterar" : "Digite a senha inicial"}
             />
           </Form.Item>
 
           <Form.Item
-            label="角色"
+            label="Função"
             name="roles"
-            rules={[{ required: true, message: "请选择角色" }]}
+            rules={[{ required: true, message: "Selecione a função" }]}
           >
             <Select
               mode="multiple"
@@ -469,11 +469,11 @@ export default function UserManagementPage() {
             />
           </Form.Item>
 
-          <Form.Item label="状态" name="status">
+          <Form.Item label="Status" name="status">
             <Select
               options={[
-                { value: "active", label: "启用" },
-                { value: "disabled", label: "停用" },
+                { value: "active", label: "Ativado" },
+                { value: "disabled", label: "Desativado" },
               ]}
             />
           </Form.Item>
@@ -481,7 +481,7 @@ export default function UserManagementPage() {
       </Modal>
 
       <Modal
-        title={editingRole ? "编辑角色" : "新建角色"}
+        title={editingRole ? "Editar Função" : "Adicionar Função"}
         open={roleModalOpen}
         confirmLoading={saving}
         onCancel={() => setRoleModalOpen(false)}
@@ -491,29 +491,29 @@ export default function UserManagementPage() {
       >
         <Form form={roleForm} layout="vertical">
           <Form.Item
-            label="角色 ID"
+            label="ID da Função"
             name="id"
-            rules={[{ required: true, message: "请输入角色 ID" }]}
+            rules={[{ required: true, message: "Digite o ID da função" }]}
           >
-            <Input disabled={!!editingRole} placeholder="例如: deployer" />
+            <Input disabled={!!editingRole} placeholder="Ex: deployer" />
           </Form.Item>
 
           <Form.Item
-            label="角色名称"
+            label="Nome da Função"
             name="name"
-            rules={[{ required: true, message: "请输入角色名称" }]}
+            rules={[{ required: true, message: "Digite o nome da função" }]}
           >
-            <Input placeholder="例如: 发布工程师" />
+            <Input placeholder="Ex: Engenheiro de Implantação" />
           </Form.Item>
 
-          <Form.Item label="角色说明" name="description">
+          <Form.Item label="Descrição da Função" name="description">
             <Input.TextArea rows={3} />
           </Form.Item>
 
           <Form.Item
-            label="权限"
+            label="Permissões"
             name="permissions"
-            rules={[{ required: true, message: "请选择权限" }]}
+            rules={[{ required: true, message: "Selecione as permissões" }]}
           >
             <Select mode="multiple" options={permissionSelectOptions} />
           </Form.Item>
