@@ -1,15 +1,38 @@
-/**
- * Form required mark style protection
- * Prevent CSS-in-JS styles from third-party components (e.g., @agentscope-ai/chat) from overriding
+﻿/**
+ * Form overrides — Warm Obsidian Design System
+ * Protects required marks from third-party CSS-in-JS clobbering,
+ * and applies consistent typography/radius to all form elements.
  */
 
-/* Protect red asterisk for Ant Design form required marks */
+/* ── Required mark protection ─────────────────────────────────────────────── */
 .ant-form-item-required::before {
   color: #ff4d4f !important;
 }
 
-/* Protect custom required mark span elements (e.g., spark-required-mark) */
 span.spark-required-mark,
 span[class*="spark-required-mark"] {
   color: #ff4d4f !important;
+}
+
+/* ── Global form typography ───────────────────────────────────────────────── */
+.qwenpaw-input,
+.qwenpaw-input-affix-wrapper,
+.qwenpaw-select-selector,
+.qwenpaw-picker,
+.qwenpaw-textarea {
+  font-family: var(--nx-font) !important;
+  border-radius: var(--nx-radius-sm) !important;
+  transition: var(--nx-transition) !important;
+}
+
+.qwenpaw-form-item-label > label {
+  font-family: var(--nx-font) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: var(--nx-text-2) !important;
+}
+
+.qwenpaw-btn {
+  font-family: var(--nx-font) !important;
+  border-radius: var(--nx-radius-sm) !important;
 }

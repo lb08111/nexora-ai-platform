@@ -182,7 +182,12 @@ function AppInner() {
             ? antdTheme.darkAlgorithm
             : antdTheme.defaultAlgorithm,
           token: {
-            colorPrimary: "#FF7F16",
+            colorPrimary: isDark ? "#FF8C2A" : "#E8650A",
+            fontFamily:
+              "'DM Sans', system-ui, -apple-system, sans-serif",
+            borderRadius: 8,
+            borderRadiusSM: 6,
+            borderRadiusLG: 10,
           },
         }}
       >
