@@ -2273,6 +2273,7 @@
     "installed": "已安装插件",
     "noPlugins": "暂无已安装插件",
     "installBtn": "安装插件",
+    "publishBtn": "发布插件",
     "installTitle": "安装插件",
     "dropPrimary": "拖入文件夹或 ZIP 文件",
     "dropSecondary": "或点击选择 ZIP 文件",
@@ -2312,7 +2313,18 @@
     "kindBundle": "插件包",
     "kindTool": "工具",
     "filterByName": "按名称筛选",
-    "filterByKind": "按标签筛选"
+    "filterByKind": "按标签筛选",
+    "marketTitle": "插件市场",
+    "marketEmpty": "暂无市场插件",
+    "marketLoadFailed": "加载插件市场失败",
+    "marketUnavailable": "插件市场正在维护中，请稍后再试",
+    "marketSearch": "搜索插件...",
+    "marketAll": "全部",
+    "marketCategory": "按类别筛选",
+    "marketSearchResult": "\"{{keyword}}\" 相关插件共搜索到 {{count}} 个结果",
+    "marketDetails": "详情",
+    "marketDownloads": "下载量",
+    "marketDeveloper": "开发者"
   },
   "codingMode": {
     "title": "编程模式",
