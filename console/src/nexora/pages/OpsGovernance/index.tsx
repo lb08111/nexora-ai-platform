@@ -25,13 +25,18 @@ import type { AgentSummary } from "../../../api/types/agents";
 import { agentsApi } from "../../../api/modules/agents";
 import { PageHeader } from "../../../components/PageHeader";
 import { useAppMessage } from "../../../hooks/useAppMessage";
-import { type PlatformRole, type PlatformUser, usersApi } from "../../api/users";
+import {
+  type PlatformRole,
+  type PlatformUser,
+  usersApi,
+} from "../../api/users";
 import {
   type AgentGrant,
   type AgentTemplate,
   type CapabilityApprovalConfig,
   multiTenantApi,
 } from "../../api/multiTenant";
+import styles from "../nexoraPages.module.less";
 
 // ── Helpers ──────────────────────────────────────────────────────────────
 
@@ -62,13 +67,17 @@ export default function OpsGovernancePage() {
   const [grantSaving, setGrantSaving] = useState(false);
 
   // capability approval config
-  const [approvalConfigs, setApprovalConfigs] = useState<CapabilityApprovalConfig[]>([]);
+  const [approvalConfigs, setApprovalConfigs] = useState<
+    CapabilityApprovalConfig[]
+  >([]);
   const [approvalSaving, setApprovalSaving] = useState<string | null>(null);
 
   // templates
   const [templates, setTemplates] = useState<AgentTemplate[]>([]);
   const [templateModalOpen, setTemplateModalOpen] = useState(false);
-  const [editingTemplate, setEditingTemplate] = useState<AgentTemplate | null>(null);
+  const [editingTemplate, setEditingTemplate] = useState<AgentTemplate | null>(
+    null,
+  );
   const [templateForm] = Form.useForm();
   const [templateSaving, setTemplateSaving] = useState(false);
 
@@ -275,7 +284,9 @@ export default function OpsGovernancePage() {
           value={value || "approval"}
           style={{ width: 130 }}
           loading={approvalSaving === record.capability_type}
-          onChange={(v) => handlePolicyChange(record.capability_type, "add_policy", v)}
+          onChange={(v) =>
+            handlePolicyChange(record.capability_type, "add_policy", v)
+          }
           options={[
             { value: "none", label: "无需审批" },
             { value: "approval", label: "需要审批" },
@@ -293,7 +304,9 @@ export default function OpsGovernancePage() {
           value={value || "log"}
           style={{ width: 140 }}
           loading={approvalSaving === record.capability_type}
-          onChange={(v) => handlePolicyChange(record.capability_type, "remove_policy", v)}
+          onChange={(v) =>
+            handlePolicyChange(record.capability_type, "remove_policy", v)
+          }
           options={[
             { value: "none", label: "无需审批" },
             { value: "log", label: "自动审批" },
@@ -509,8 +522,9 @@ export default function OpsGovernancePage() {
   // ── Render ───────────────────────────────────────────────────────────────
 
   return (
-    <div>
+    <div className={styles.nexoraPage}>
       <PageHeader
+        className={styles.pageHeader}
         parent="权限管理"
         current="智能体授权"
         subRow={
@@ -525,91 +539,104 @@ export default function OpsGovernancePage() {
         }
       />
 
-      <Space size={16} wrap style={{ marginBottom: 16 }}>
-        <Card size="small">
-          <Typography.Text type="secondary">智能体总数</Typography.Text>
-          <Typography.Title level={3} style={{ margin: 0 }}>
-            {agents.length}
-          </Typography.Title>
-        </Card>
-        <Card size="small">
-          <Typography.Text type="secondary">平台用户</Typography.Text>
-          <Typography.Title level={3} style={{ margin: 0 }}>
-            {users.length}
-          </Typography.Title>
-        </Card>
-        <Card size="small">
-          <Typography.Text type="secondary">审批规则启用</Typography.Text>
-          <Typography.Title level={3} style={{ margin: 0 }}>
-            {enabledApprovalCount}/{approvalConfigs.length}
-          </Typography.Title>
-        </Card>
-        <Card size="small">
-          <Typography.Text type="secondary">能力模板</Typography.Text>
-          <Typography.Title level={3} style={{ margin: 0 }}>
-            {templates.length}
-          </Typography.Title>
-        </Card>
-      </Space>
+      <div className={styles.content}>
+        <div className={styles.stack}>
+          <div className={styles.metricGrid}>
+            <Card className={styles.metricCard} size="small">
+              <Typography.Text className={styles.metricLabel}>
+                智能体总数
+              </Typography.Text>
+              <Typography.Title className={styles.metricValue} level={3}>
+                {agents.length}
+              </Typography.Title>
+            </Card>
+            <Card className={styles.metricCard} size="small">
+              <Typography.Text className={styles.metricLabel}>
+                平台用户
+              </Typography.Text>
+              <Typography.Title className={styles.metricValue} level={3}>
+                {users.length}
+              </Typography.Title>
+            </Card>
+            <Card className={styles.metricCard} size="small">
+              <Typography.Text className={styles.metricLabel}>
+                审批规则启用
+              </Typography.Text>
+              <Typography.Title className={styles.metricValue} level={3}>
+                {enabledApprovalCount}/{approvalConfigs.length}
+              </Typography.Title>
+            </Card>
+            <Card className={styles.metricCard} size="small">
+              <Typography.Text className={styles.metricLabel}>
+                能力模板
+              </Typography.Text>
+              <Typography.Title className={styles.metricValue} level={3}>
+                {templates.length}
+              </Typography.Title>
+            </Card>
+          </div>
 
-      <Tabs
-        items={[
-          {
-            key: "grants",
-            label: "智能体授权",
-            children: (
-              <Card>
-                <Table
-                  rowKey="id"
-                  columns={agentColumns}
-                  dataSource={agents}
-                  loading={loading}
-                  pagination={{ pageSize: 10, showSizeChanger: true }}
-                />
-              </Card>
-            ),
-          },
-          {
-            key: "approval",
-            label: "能力审批配置",
-            children: (
-              <Card>
-                <Table
-                  rowKey="capability_type"
-                  columns={approvalColumns}
-                  dataSource={approvalConfigs}
-                  loading={loading}
-                  pagination={false}
-                />
-              </Card>
-            ),
-          },
-          {
-            key: "templates",
-            label: "智能体模板",
-            children: (
-              <Card>
-                <div style={{ marginBottom: 16 }}>
-                  <Button
-                    type="primary"
-                    icon={<PlusOutlined />}
-                    onClick={openTemplateCreate}
-                  >
-                    新建模板
-                  </Button>
-                </div>
-                <Table
-                  rowKey="template_id"
-                  columns={templateColumns}
-                  dataSource={templates}
-                  loading={loading}
-                  pagination={{ pageSize: 10, showSizeChanger: true }}
-                />
-              </Card>
-            ),
-          },
-        ]}
-      />
+          <Tabs
+            className={styles.tabs}
+            items={[
+              {
+                key: "grants",
+                label: "智能体授权",
+                children: (
+                  <Card className={styles.tablePanel}>
+                    <Table
+                      rowKey="id"
+                      columns={agentColumns}
+                      dataSource={agents}
+                      loading={loading}
+                      pagination={{ pageSize: 10, showSizeChanger: true }}
+                    />
+                  </Card>
+                ),
+              },
+              {
+                key: "approval",
+                label: "能力审批配置",
+                children: (
+                  <Card className={styles.tablePanel}>
+                    <Table
+                      rowKey="capability_type"
+                      columns={approvalColumns}
+                      dataSource={approvalConfigs}
+                      loading={loading}
+                      pagination={false}
+                    />
+                  </Card>
+                ),
+              },
+              {
+                key: "templates",
+                label: "智能体模板",
+                children: (
+                  <Card className={styles.tablePanel}>
+                    <div className={styles.toolbar}>
+                      <Button
+                        type="primary"
+                        icon={<PlusOutlined />}
+                        onClick={openTemplateCreate}
+                      >
+                        新建模板
+                      </Button>
+                    </div>
+                    <Table
+                      rowKey="template_id"
+                      columns={templateColumns}
+                      dataSource={templates}
+                      loading={loading}
+                      pagination={{ pageSize: 10, showSizeChanger: true }}
+                    />
+                  </Card>
+                ),
+              },
+            ]}
+          />
+        </div>
+      </div>
 
       {/* Grant Modal — Transfer picker */}
       <Modal
@@ -699,25 +726,16 @@ export default function OpsGovernancePage() {
           <Form.Item name="description" label="描述">
             <Input.TextArea rows={2} placeholder="模板用途说明" />
           </Form.Item>
-          <Form.Item
-            name="capabilities_tools"
-            label="工具（逗号分隔）"
-          >
+          <Form.Item name="capabilities_tools" label="工具（逗号分隔）">
             <Input.TextArea
               rows={2}
               placeholder="read_file, write_file, execute_command"
             />
           </Form.Item>
-          <Form.Item
-            name="capabilities_skills"
-            label="Skill（逗号分隔）"
-          >
+          <Form.Item name="capabilities_skills" label="Skill（逗号分隔）">
             <Input.TextArea rows={2} placeholder="log_query, metric_check" />
           </Form.Item>
-          <Form.Item
-            name="capabilities_mcps"
-            label="MCP（逗号分隔）"
-          >
+          <Form.Item name="capabilities_mcps" label="MCP（逗号分隔）">
             <Input.TextArea rows={2} placeholder="prometheus, grafana" />
           </Form.Item>
         </Form>

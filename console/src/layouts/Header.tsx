@@ -194,8 +194,8 @@ export default function Header() {
       <AntHeader className={styles.header}>
         <div className={styles.logoWrapper}>
           <img
-            src="/logo.png"
-            alt="QwenPaw"
+            src="/jota-duo-icon.png"
+            alt="Jota Duo"
             className={styles.logoImg}
           />
           <div className={styles.logoDivider} />

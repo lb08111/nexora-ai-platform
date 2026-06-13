@@ -14,12 +14,17 @@ import {
   Typography,
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { DownloadOutlined, ReloadOutlined, InfoCircleOutlined } from "@ant-design/icons";
+import {
+  DownloadOutlined,
+  ReloadOutlined,
+  InfoCircleOutlined,
+} from "@ant-design/icons";
 import { PageHeader } from "../../../components/PageHeader";
 import { useAppMessage } from "../../../hooks/useAppMessage";
 import { auditApi, type AuditEvent, type AuditQuery } from "../../api/audit";
 import { buildAuthHeaders } from "../../../api/authHeaders";
 import dayjs from "dayjs";
+import styles from "../nexoraPages.module.less";
 
 const { RangePicker } = DatePicker;
 
@@ -134,7 +139,12 @@ function DetailContent({ event }: { event: AuditEvent }) {
     }
   } else if (action === "auth.login") {
     contextItems = [
-      { label: "角色", value: Array.isArray(d.roles) ? d.roles.join(", ") : String(d.roles || "-") },
+      {
+        label: "角色",
+        value: Array.isArray(d.roles)
+          ? d.roles.join(", ")
+          : String(d.roles || "-"),
+      },
     ];
     if (d.reason) {
       contextItems.push({ label: "失败原因", value: String(d.reason) });
@@ -142,10 +152,16 @@ function DetailContent({ event }: { event: AuditEvent }) {
   } else if (action === "auth.profile.update") {
     contextItems = [];
     if (d.username_changed !== undefined) {
-      contextItems.push({ label: "修改用户名", value: d.username_changed ? "是" : "否" });
+      contextItems.push({
+        label: "修改用户名",
+        value: d.username_changed ? "是" : "否",
+      });
     }
     if (d.password_changed !== undefined) {
-      contextItems.push({ label: "修改密码", value: d.password_changed ? "是" : "否" });
+      contextItems.push({
+        label: "修改密码",
+        value: d.password_changed ? "是" : "否",
+      });
     }
     if (d.reason) {
       contextItems.push({ label: "失败原因", value: String(d.reason) });
@@ -158,7 +174,10 @@ function DetailContent({ event }: { event: AuditEvent }) {
   } else if (action === "chat.file.upload") {
     contextItems = [
       { label: "智能体", value: String(d.agent_id || "-") },
-      { label: "文件大小", value: d.size ? `${Number(d.size).toLocaleString()} 字节` : "-" },
+      {
+        label: "文件大小",
+        value: d.size ? `${Number(d.size).toLocaleString()} 字节` : "-",
+      },
       { label: "存储名称", value: String(d.stored_name || "-") },
     ];
   } else if (action.includes(".approved") || action.includes(".rejected")) {
@@ -171,7 +190,10 @@ function DetailContent({ event }: { event: AuditEvent }) {
     if (d.result) {
       contextItems.push({
         label: "审批结果",
-        value: typeof d.result === "object" ? JSON.stringify(d.result, null, 2) : String(d.result),
+        value:
+          typeof d.result === "object"
+            ? JSON.stringify(d.result, null, 2)
+            : String(d.result),
       });
     }
   } else {
@@ -179,16 +201,29 @@ function DetailContent({ event }: { event: AuditEvent }) {
     if (keys.length > 0) {
       contextItems = keys.map((k) => ({
         label: k,
-        value: typeof d[k] === "object" ? JSON.stringify(d[k], null, 2) : String(d[k] ?? "-"),
+        value:
+          typeof d[k] === "object"
+            ? JSON.stringify(d[k], null, 2)
+            : String(d[k] ?? "-"),
       }));
     }
   }
 
   return (
     <div>
-      <Descriptions title="基本信息" column={2} bordered size="small" style={{ marginBottom: 16 }}>
+      <Descriptions
+        title="基本信息"
+        column={2}
+        bordered
+        size="small"
+        style={{ marginBottom: 16 }}
+      >
         {baseItems.map((item) => (
-          <Descriptions.Item key={item.label} label={item.label} span={item.label === "浏览器" ? 2 : 1}>
+          <Descriptions.Item
+            key={item.label}
+            label={item.label}
+            span={item.label === "浏览器" ? 2 : 1}
+          >
             <Typography.Text copyable={item.label === "事件 ID"}>
               {item.value}
             </Typography.Text>
@@ -201,9 +236,7 @@ function DetailContent({ event }: { event: AuditEvent }) {
           {contextItems.map((item) => (
             <Descriptions.Item key={item.label} label={item.label}>
               {item.value.length > 200 ? (
-                <Typography.Paragraph
-                  style={{ marginBottom: 0, maxHeight: 300, overflow: "auto", whiteSpace: "pre-wrap" }}
-                >
+                <Typography.Paragraph className={styles.drawerTextBlock}>
                   {item.value}
                 </Typography.Paragraph>
               ) : (
@@ -222,10 +255,14 @@ export default function AuditLogsPage() {
   const { message } = useAppMessage();
   const [events, setEvents] = useState<AuditEvent[]>([]);
   const [loading, setLoading] = useState(false);
-  const [form] = Form.useForm<AuditQuery & { timeRange?: [dayjs.Dayjs, dayjs.Dayjs] }>();
+  const [form] = Form.useForm<
+    AuditQuery & { timeRange?: [dayjs.Dayjs, dayjs.Dayjs] }
+  >();
   const [drawerEvent, setDrawerEvent] = useState<AuditEvent | null>(null);
 
-  const loadEvents = async (values: AuditQuery & { timeRange?: [dayjs.Dayjs, dayjs.Dayjs] } = {}) => {
+  const loadEvents = async (
+    values: AuditQuery & { timeRange?: [dayjs.Dayjs, dayjs.Dayjs] } = {},
+  ) => {
     setLoading(true);
     try {
       const params: AuditQuery = {
@@ -241,7 +278,9 @@ export default function AuditLogsPage() {
       const data = await auditApi.listEvents(params);
       setEvents(data);
     } catch (error) {
-      message.error(error instanceof Error ? error.message : "加载审计日志失败");
+      message.error(
+        error instanceof Error ? error.message : "加载审计日志失败",
+      );
     } finally {
       setLoading(false);
     }
@@ -306,7 +345,9 @@ export default function AuditLogsPage() {
       return `${d.method || ""} ${event.resource_id || ""}`.trim() || "-";
     }
     if (action === "api.denied") {
-      return `${d.method || ""} ${event.resource_id || ""} (需要 ${d.permission || "?"} 权限)`.trim();
+      return `${d.method || ""} ${event.resource_id || ""} (需要 ${
+        d.permission || "?"
+      } 权限)`.trim();
     }
     if (action === "page.view") {
       return String(d.title || "-");
@@ -316,13 +357,21 @@ export default function AuditLogsPage() {
       if (Array.isArray(d.roles)) return `角色: ${d.roles.join(", ")}`;
     }
     if (action === "chat.file.upload") {
-      return `文件: ${d.stored_name || "-"} (${d.size ? Number(d.size).toLocaleString() + " B" : "-"})`;
+      return `文件: ${d.stored_name || "-"} (${
+        d.size ? Number(d.size).toLocaleString() + " B" : "-"
+      })`;
     }
     if (action.includes(".approved")) return "审批通过";
-    if (action.includes(".rejected")) return `审批驳回${d.reason ? ": " + d.reason : ""}`;
+    if (action.includes(".rejected"))
+      return `审批驳回${d.reason ? ": " + d.reason : ""}`;
 
     const keys = Object.keys(d).slice(0, 3);
-    return keys.map((k) => `${k}: ${typeof d[k] === "object" ? JSON.stringify(d[k]) : d[k]}`).join(" | ");
+    return keys
+      .map(
+        (k) =>
+          `${k}: ${typeof d[k] === "object" ? JSON.stringify(d[k]) : d[k]}`,
+      )
+      .join(" | ");
   };
 
   const columns: ColumnsType<AuditEvent> = [
@@ -338,7 +387,9 @@ export default function AuditLogsPage() {
       dataIndex: "actor",
       key: "actor",
       width: 120,
-      render: (value: string) => <Typography.Text strong>{value}</Typography.Text>,
+      render: (value: string) => (
+        <Typography.Text strong>{value}</Typography.Text>
+      ),
     },
     {
       title: "操作",
@@ -365,7 +416,9 @@ export default function AuditLogsPage() {
       ellipsis: true,
       render: (_, record) => (
         <Space direction="vertical" size={0}>
-          <Typography.Text ellipsis>{record.resource_id || "-"}</Typography.Text>
+          <Typography.Text ellipsis>
+            {record.resource_id || "-"}
+          </Typography.Text>
           <Typography.Text type="secondary" style={{ fontSize: 12 }}>
             {record.resource_type || "-"}
           </Typography.Text>
@@ -405,8 +458,9 @@ export default function AuditLogsPage() {
   ];
 
   return (
-    <div>
+    <div className={styles.nexoraPage}>
       <PageHeader
+        className={styles.pageHeader}
         parent="安全管理"
         current="日志审计"
         subRow={
@@ -435,73 +489,82 @@ export default function AuditLogsPage() {
         }
       />
 
-      <Card style={{ marginBottom: 16 }}>
-        <Form
-          form={form}
-          layout="inline"
-          initialValues={{ limit: 200 }}
-          onFinish={loadEvents}
-          style={{ flexWrap: "wrap", gap: 8 }}
-        >
-          <Form.Item name="actor" label="用户">
-            <Input allowClear placeholder="用户名" style={{ width: 120 }} />
-          </Form.Item>
-          <Form.Item name="action" label="操作">
-            <Select
-              allowClear
-              style={{ width: 180 }}
-              placeholder="全部"
-              options={Object.entries(actionLabels).map(([value, label]) => ({
-                value,
-                label,
-              }))}
-            />
-          </Form.Item>
-          <Form.Item name="status" label="结果">
-            <Select
-              allowClear
-              style={{ width: 100 }}
-              placeholder="全部"
-              options={[
-                { value: "success", label: "成功" },
-                { value: "failure", label: "失败" },
-                { value: "denied", label: "拒绝" },
-                { value: "started", label: "执行中" },
-              ]}
-            />
-          </Form.Item>
-          <Form.Item name="timeRange" label="时间范围">
-            <RangePicker />
-          </Form.Item>
-          <Form.Item name="limit" label="数量">
-            <Select
-              style={{ width: 80 }}
-              options={[
-                { value: 100, label: "100" },
-                { value: 200, label: "200" },
-                { value: 500, label: "500" },
-                { value: 1000, label: "1000" },
-              ]}
-            />
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit" loading={loading}>
-              查询
-            </Button>
-          </Form.Item>
-        </Form>
-      </Card>
+      <div className={styles.content}>
+        <div className={styles.stack}>
+          <Card className={styles.panel}>
+            <Form
+              form={form}
+              className={styles.filterForm}
+              initialValues={{ limit: 200 }}
+              onFinish={loadEvents}
+            >
+              <Form.Item name="actor" label="用户">
+                <Input allowClear placeholder="用户名" style={{ width: 120 }} />
+              </Form.Item>
+              <Form.Item name="action" label="操作">
+                <Select
+                  allowClear
+                  style={{ width: 180 }}
+                  placeholder="全部"
+                  options={Object.entries(actionLabels).map(
+                    ([value, label]) => ({
+                      value,
+                      label,
+                    }),
+                  )}
+                />
+              </Form.Item>
+              <Form.Item name="status" label="结果">
+                <Select
+                  allowClear
+                  style={{ width: 100 }}
+                  placeholder="全部"
+                  options={[
+                    { value: "success", label: "成功" },
+                    { value: "failure", label: "失败" },
+                    { value: "denied", label: "拒绝" },
+                    { value: "started", label: "执行中" },
+                  ]}
+                />
+              </Form.Item>
+              <Form.Item name="timeRange" label="时间范围">
+                <RangePicker />
+              </Form.Item>
+              <Form.Item name="limit" label="数量">
+                <Select
+                  style={{ width: 80 }}
+                  options={[
+                    { value: 100, label: "100" },
+                    { value: 200, label: "200" },
+                    { value: 500, label: "500" },
+                    { value: 1000, label: "1000" },
+                  ]}
+                />
+              </Form.Item>
+              <Form.Item>
+                <Button type="primary" htmlType="submit" loading={loading}>
+                  查询
+                </Button>
+              </Form.Item>
+            </Form>
+          </Card>
 
-      <Card>
-        <Table
-          rowKey="id"
-          columns={columns}
-          dataSource={events}
-          loading={loading}
-          pagination={{ pageSize: 20, showSizeChanger: true, showTotal: (total) => `共 ${total} 条` }}
-          size="middle"
-        />
-      </Card>
+          <Card className={styles.tablePanel}>
+            <Table
+              rowKey="id"
+              columns={columns}
+              dataSource={events}
+              loading={loading}
+              pagination={{
+                pageSize: 20,
+                showSizeChanger: true,
+                showTotal: (total) => `共 ${total} 条`,
+              }}
+              size="middle"
+            />
+          </Card>
+        </div>
+      </div>
 
       <Drawer
         title="审计事件详情"
