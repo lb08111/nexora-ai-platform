@@ -68,7 +68,9 @@ _CHANNEL_CONFIG_CLASS_MAP = {
     "matrix": MatrixConfig,
     "wecom": WecomConfig,
     "whatsapp": WhatsAppConfig,
-} = {
+}
+
+_EXCLUDED_CONFIG_FIELDS = {
     "call_title",
     "update_detail",
     "call_detail",
