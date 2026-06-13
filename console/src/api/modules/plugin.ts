@@ -29,14 +29,12 @@ export interface PluginInfo {
 }
 
 export interface InstallPluginResult {
-  status?: "pending_approval";
-  approval_request_id?: string;
-  id?: string;
-  name?: string;
-  version?: string;
-  description?: string;
+  id: string;
+  name: string;
+  version: string;
+  description: string;
   author?: string;
-  loaded?: boolean;
+  loaded: boolean;
   message: string;
 }
 

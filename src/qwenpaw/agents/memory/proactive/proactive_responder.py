@@ -41,8 +41,10 @@ async def generate_proactive_response(
     workspace: "Workspace",
 ) -> Optional[Msg]:
     """Main function to generate proactive response based on memory."""
+    from ....app.agent_context import get_current_agent_id
+
     baseline_timestamp = datetime.now(timezone.utc)  # Use UTC time directly
-    active_agent_id = workspace.agent_id
+    active_agent_id = get_current_agent_id()
 
     agent = await _initialize_single_proactive_agent(
         active_agent_id,
@@ -109,27 +111,15 @@ async def _initialize_single_proactive_agent(
 
     # Create toolkit and register tools conditionally
     toolkit = Toolkit()
+    toolkit.register_tool_function(browser_use)
+    toolkit.register_tool_function(read_file)
+    toolkit.register_tool_function(execute_shell_command)
+
+    # Register desktop_screenshot only if the model supports multimodal
     from ...prompt import get_active_model_supports_multimodal
 
-    tool_functions = {
-        "browser_use": browser_use,
-        "read_file": read_file,
-        "execute_shell_command": execute_shell_command,
-        **(
-            {"desktop_screenshot": desktop_screenshot}
-            if get_active_model_supports_multimodal()
-            else {}
-        ),
-    }
-    for tool_name, tool_func in tool_functions.items():
-        if _agent_can_use_proactive_builtin_tool(agent_id, tool_name):
-            toolkit.register_tool_function(tool_func)
-        else:
-            logger.debug(
-                "Skipped unauthorized proactive tool for agent %s: %s",
-                agent_id,
-                tool_name,
-            )
+    if get_active_model_supports_multimodal():
+        toolkit.register_tool_function(desktop_screenshot)
 
     agent = ReActAgent(
         name="ProactiveAssistant",
@@ -142,12 +132,6 @@ async def _initialize_single_proactive_agent(
     )
 
     return agent
-
-
-def _agent_can_use_proactive_builtin_tool(agent_id: str, tool_name: str) -> bool:
-    from qwenpaw_ext.nexora.governance import agent_can_use_resource
-
-    return agent_can_use_resource(agent_id, "builtin_tool", tool_name)
 
 
 async def _extract_tasks_from_memory(

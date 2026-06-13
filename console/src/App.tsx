@@ -32,6 +32,7 @@ import { lazyImportWithRetry } from "./utils/lazyWithRetry";
 const LoginPage = lazyImportWithRetry("./pages/Login/index");
 import { authApi } from "./api/modules/auth";
 import { languageApi } from "./api/modules/language";
+import { useUploadLimitStore } from "./stores/uploadLimitStore";
 import { getApiUrl, getApiToken, clearAuthToken } from "./api/config";
 import "./styles/layout.css";
 import "./styles/form-override.css";
@@ -132,19 +133,20 @@ function AppInner() {
   );
 
   useEffect(() => {
-    languageApi
-      .getLanguage()
-      .then(({ language }) => {
-        if (language && language !== i18n.language) {
-          i18n.changeLanguage(language);
-        }
-        if (language) {
-          localStorage.setItem("language", language);
-        }
-      })
-      .catch((err) =>
-        console.error("Failed to fetch language preference:", err),
-      );
+    if (!localStorage.getItem("language")) {
+      languageApi
+        .getLanguage()
+        .then(({ language }) => {
+          if (language && language !== i18n.language) {
+            i18n.changeLanguage(language);
+            localStorage.setItem("language", language);
+          }
+        })
+        .catch((err) =>
+          console.error("Failed to fetch language preference:", err),
+        );
+    }
+    useUploadLimitStore.getState().fetch();
   }, []);
 
   useEffect(() => {
@@ -182,12 +184,7 @@ function AppInner() {
             ? antdTheme.darkAlgorithm
             : antdTheme.defaultAlgorithm,
           token: {
-            colorPrimary: isDark ? "#FF8C2A" : "#E8650A",
-            fontFamily:
-              "'DM Sans', system-ui, -apple-system, sans-serif",
-            borderRadius: 8,
-            borderRadiusSM: 6,
-            borderRadiusLG: 10,
+            colorPrimary: "#FF7F16",
           },
         }}
       >

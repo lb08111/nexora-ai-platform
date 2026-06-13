@@ -13,7 +13,6 @@ const Home = lazy(() => import("@/pages/Home"));
 const Docs = lazy(() => import("@/pages/Docs"));
 const ReleaseNotes = lazy(() => import("@/pages/ReleaseNotes"));
 const Downloads = lazy(() => import("@/pages/Downloads"));
-const CopilotKitDemo = lazy(() => import("@/pages/CopilotKitDemo"));
 
 declare global {
   interface Window {
@@ -144,7 +143,6 @@ export default function App() {
           <Route path="/docs/:slug" element={<Docs />} />
           <Route path="/release-notes" element={<ReleaseNotes />} />
         </Route>
-        <Route path="/copilot-kit-demo" element={<CopilotKitDemo />} />
       </Routes>
     </SiteConfigProvider>
   );

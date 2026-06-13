@@ -17,8 +17,8 @@ interface Props {
 
 /**
  * Automatic pre-restore snapshot modal.
- * Opens when target is set, immediately starts a full rollback backup,
- * shows only a progress bar and a Cancel button. No user form input required.
+ * Opens when target is set, immediately starts a full backup, shows only a
+ * progress bar and a Cancel button. No user form input required.
  */
 export default function SilentBackupModal({
   target,

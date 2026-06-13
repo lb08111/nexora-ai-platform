@@ -104,7 +104,7 @@ export function useCronJobs() {
       }
     } catch (error) {
       console.error("Failed to load cron jobs", error);
-      message.error("Falha ao carregar Tarefas Agendadas");
+      message.error("Failed to load Cron Jobs");
     } finally {
       setLoading(false);
     }
@@ -130,7 +130,7 @@ export function useCronJobs() {
     try {
       const created = await api.createCronJob(values);
       setJobs((prev) => [created as CronJob, ...prev]);
-      message.success("Criado com sucesso");
+      message.success("Created successfully");
       return true;
     } catch (error) {
       console.error("Failed to create cron job", error);
@@ -149,7 +149,7 @@ export function useCronJobs() {
       setJobs((prev) =>
         prev.map((j) => (j.id === jobId ? (updated as CronJob) : j)),
       );
-      message.success("Atualizado com sucesso");
+      message.success("Updated successfully");
       return true;
     } catch (error) {
       console.error("Failed to update cron job", error);
@@ -167,7 +167,7 @@ export function useCronJobs() {
 
     try {
       await api.deleteCronJob(jobId);
-      message.success("Excluído com sucesso");
+      message.success("Deleted successfully");
       return true;
     } catch (error) {
       console.error("Failed to delete cron job", error);
@@ -188,7 +188,7 @@ export function useCronJobs() {
       setJobs((prev) =>
         prev.map((j) => (j.id === job.id ? (returned as CronJob) : j)),
       );
-      message.success(`${updated.enabled ? "Habilitado" : "Desabilitado"}`);
+      message.success(`${updated.enabled ? "Enabled" : "Disabled"}`);
       return true;
     } catch (error) {
       console.error("Failed to toggle cron job", error);
@@ -201,11 +201,11 @@ export function useCronJobs() {
   const executeNow = async (jobId: string) => {
     try {
       await api.triggerCronJob(jobId);
-      message.success("Tarefa disparada com sucesso");
+      message.success("Task triggered successfully");
       return true;
     } catch (error) {
       console.error("Failed to execute cron job", error);
-      message.error("Falha ao executar");
+      message.error("Failed to execute");
       return false;
     }
   };

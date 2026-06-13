@@ -111,12 +111,6 @@ export function useInstallModal(onSuccess: () => void) {
       }
 
       const result = await uploadPlugin(uploadFile);
-      if (result.status === "pending_approval") {
-        message.info(result.message);
-        setInstallOpen(false);
-        setLocalSel(null);
-        return;
-      }
       message.success(`${t("pluginManager.installSuccess")}: ${result.name}`);
       setInstallOpen(false);
       setLocalSel(null);
@@ -142,12 +136,6 @@ export function useInstallModal(onSuccess: () => void) {
     setUrlInstalling(true);
     try {
       const result = await installPlugin(source);
-      if (result.status === "pending_approval") {
-        message.info(result.message);
-        setInstallOpen(false);
-        form.resetFields();
-        return;
-      }
       message.success(`${t("pluginManager.installSuccess")}: ${result.name}`);
       setInstallOpen(false);
       form.resetFields();

@@ -15,7 +15,6 @@ from agentscope_runtime.engine.schemas.exception import (
 
 from .workspace import Workspace
 from ..config.utils import load_config
-from ..constant import EnvVarLoader
 
 logger = logging.getLogger(__name__)
 
@@ -32,122 +31,13 @@ class MultiAgentManager:
       fine-grained locking (lock released during slow workspace init)
     """
 
-    def __init__(
-        self,
-        *,
-        max_active_agents: int | None = None,
-        idle_ttl_seconds: int | None = None,
-    ):
+    def __init__(self):
         """Initialize multi-agent manager."""
         self.agents: Dict[str, Workspace] = {}
         self._lock = asyncio.Lock()
-        self._start_capacity_lock = asyncio.Lock()
         self._pending_starts: Dict[str, asyncio.Event] = {}
         self._cleanup_tasks: Set[asyncio.Task] = set()
-        self._started_at: Dict[str, float] = {}
-        self._last_access: Dict[str, float] = {}
-        self.max_active_agents = (
-            max_active_agents
-            if max_active_agents is not None
-            else EnvVarLoader.get_int(
-                "NEXORA_MAX_ACTIVE_AGENTS",
-                20,
-                min_value=0,
-            )
-        )
-        self.idle_ttl_seconds = (
-            idle_ttl_seconds
-            if idle_ttl_seconds is not None
-            else EnvVarLoader.get_int(
-                "NEXORA_AGENT_IDLE_TTL_SECONDS",
-                3600,
-                min_value=0,
-            )
-        )
-        logger.debug(
-            "MultiAgentManager initialized "
-            "(max_active_agents=%s, idle_ttl_seconds=%s)",
-            self.max_active_agents,
-            self.idle_ttl_seconds,
-        )
-
-    def _touch_agent(self, agent_id: str) -> None:
-        """Record the most recent successful access for an agent."""
-        self._last_access[agent_id] = time.time()
-
-    async def _stop_loaded_agent(self, agent_id: str) -> bool:
-        """Remove a loaded agent from the pool and stop it outside the lock."""
-        async with self._lock:
-            instance = self.agents.pop(agent_id, None)
-            self._started_at.pop(agent_id, None)
-            self._last_access.pop(agent_id, None)
-
-        if instance is None:
-            logger.warning(f"Agent not running: {agent_id}")
-            return False
-
-        await instance.stop()
-        logger.info(f"Agent stopped and removed: {agent_id}")
-        return True
-
-    async def _get_idle_candidates(
-        self,
-        *,
-        exclude_agent_id: str | None = None,
-    ) -> list[str]:
-        """Return loaded idle agent IDs ordered by least recent access."""
-        async with self._lock:
-            snapshots = [
-                (
-                    agent_id,
-                    instance,
-                    self._last_access.get(agent_id, 0.0),
-                )
-                for agent_id, instance in self.agents.items()
-                if agent_id != exclude_agent_id
-            ]
-
-        candidates: list[tuple[str, float]] = []
-        for agent_id, instance, last_access in snapshots:
-            if not await instance.task_tracker.has_active_tasks():
-                candidates.append((agent_id, last_access))
-
-        candidates.sort(key=lambda item: item[1])
-        return [agent_id for agent_id, _ in candidates]
-
-    async def _ensure_capacity_for(self, agent_id: str) -> None:
-        """Free capacity before starting a new agent, if a limit is set."""
-        if self.max_active_agents <= 0:
-            return
-
-        await self.cleanup_idle_agents()
-
-        while True:
-            async with self._lock:
-                loaded_count = len(self.agents)
-            if loaded_count < self.max_active_agents:
-                return
-
-            idle_candidates = await self._get_idle_candidates(
-                exclude_agent_id=agent_id,
-            )
-            if not idle_candidates:
-                raise ConfigurationException(
-                    config_key="agent",
-                    message=(
-                        "Maximum active agent limit reached "
-                        f"({self.max_active_agents}). No idle loaded agent "
-                        "is available to unload."
-                    ),
-                )
-
-            victim_id = idle_candidates[0]
-            logger.info(
-                "Unloading idle agent %s to keep active agent count <= %s",
-                victim_id,
-                self.max_active_agents,
-            )
-            await self._stop_loaded_agent(victim_id)
+        logger.debug("MultiAgentManager initialized")
 
     async def get_agent(self, agent_id: str) -> Workspace:
         """Get agent workspace by ID (lazy loading with dedup).
@@ -171,7 +61,6 @@ class MultiAgentManager:
         # Fast path: already loaded (no lock)
         if agent_id in self.agents:
             logger.debug(f"Returning cached agent: {agent_id}")
-            self._touch_agent(agent_id)
             return self.agents[agent_id]
 
         should_start = False
@@ -182,7 +71,6 @@ class MultiAgentManager:
             # Re-check under lock
             if agent_id in self.agents:
                 logger.debug(f"Returning cached agent: {agent_id}")
-                self._touch_agent(agent_id)
                 return self.agents[agent_id]
 
             if agent_id in self._pending_starts:
@@ -216,48 +104,85 @@ class MultiAgentManager:
                 message=f"Agent '{agent_id}' failed to initialize",
             )
 
+        # We are the starter — create outside the lock for parallelism
+        t0 = time.perf_counter()
+        logger.debug(f"Creating new workspace: {agent_id}")
+        instance = Workspace(
+            agent_id=agent_id,
+            workspace_dir=agent_ref.workspace_dir,
+        )
+
         try:
-            async with self._start_capacity_lock:
-                async with self._lock:
-                    existing_instance = self.agents.get(agent_id)
-                if existing_instance is not None:
-                    self._touch_agent(agent_id)
-                    return existing_instance
+            await instance.start()
+            instance.set_manager(self)
 
-                await self._ensure_capacity_for(agent_id)
+            async with self._lock:
+                self.agents[agent_id] = instance
 
-                # We are the starter — create outside the main lock.
-                t0 = time.perf_counter()
-                logger.debug(f"Creating new workspace: {agent_id}")
-                instance = Workspace(
-                    agent_id=agent_id,
-                    workspace_dir=agent_ref.workspace_dir,
-                )
+            elapsed = time.perf_counter() - t0
+            logger.debug(
+                f"Workspace created and started: {agent_id} "
+                f"({elapsed:.3f}s)",
+            )
 
-                await instance.start()
-                instance.set_manager(self)
+            # Fire workspace_created hooks so plugins can provision
+            # skills / config into the newly created workspace.
+            await self._fire_workspace_created_hooks(
+                {
+                    "agent_id": agent_id,
+                    "workspace_dir": str(agent_ref.workspace_dir),
+                },
+            )
 
-                async with self._lock:
-                    self.agents[agent_id] = instance
-                    now = time.time()
-                    self._started_at[agent_id] = now
-                    self._last_access[agent_id] = now
-
-                elapsed = time.perf_counter() - t0
-                logger.debug(
-                    f"Workspace created and started: {agent_id} "
-                    f"({elapsed:.3f}s)",
-                )
-                return instance
+            return instance
         except Exception as e:
             logger.error(f"Failed to start workspace {agent_id}: {e}")
             raise
         finally:
-            # Always clean up pending state and signal waiters.
-            # This handles cancellation (CancelledError) and all other cases.
+            # Always clean up pending state and signal waiters
+            # This handles cancellation (CancelledError) and all other cases
             async with self._lock:
                 self._pending_starts.pop(agent_id, None)
             event.set()
+
+    @staticmethod
+    async def _fire_workspace_created_hooks(workspace_info: dict) -> None:
+        """Invoke all registered workspace_created hooks.
+
+        Supports both sync and async callbacks:
+        - Async callbacks are awaited directly.
+        - Sync callbacks are offloaded to a thread via
+          ``asyncio.to_thread`` so they never block the event loop.
+
+        Errors in individual hooks are logged but do not prevent
+        subsequent hooks from running.
+
+        Args:
+            workspace_info: Dict with at least ``agent_id`` and
+                ``workspace_dir`` keys.
+        """
+        try:
+            from ..plugins.registry import PluginRegistry
+
+            hooks = PluginRegistry().get_workspace_created_hooks()
+        except Exception:
+            # Plugin system not initialised yet — nothing to do.
+            return
+
+        for hook in hooks:
+            try:
+                callback = hook.callback
+                if asyncio.iscoroutinefunction(callback):
+                    await callback(workspace_info)
+                else:
+                    await asyncio.to_thread(callback, workspace_info)
+            except Exception as exc:
+                logger.error(
+                    f"Error in workspace_created hook "
+                    f"'{hook.hook_name}' for plugin "
+                    f"'{hook.plugin_id}': {exc}",
+                    exc_info=True,
+                )
 
     async def _graceful_stop_old_instance(
         self,
@@ -365,26 +290,16 @@ class MultiAgentManager:
         Returns:
             bool: True if agent was stopped, False if not running
         """
-        return await self._stop_loaded_agent(agent_id)
-
-    async def unload_agent(
-        self,
-        agent_id: str,
-        *,
-        force: bool = False,
-    ) -> tuple[bool, str]:
-        """Unload a loaded agent, preserving active tasks unless forced."""
         async with self._lock:
-            instance = self.agents.get(agent_id)
+            if agent_id not in self.agents:
+                logger.warning(f"Agent not running: {agent_id}")
+                return False
 
-        if instance is None:
-            return False, "not_loaded"
-
-        if not force and await instance.task_tracker.has_active_tasks():
-            return False, "active_tasks"
-
-        await self._stop_loaded_agent(agent_id)
-        return True, "unloaded"
+            instance = self.agents[agent_id]
+            await instance.stop()
+            del self.agents[agent_id]
+            logger.info(f"Agent stopped and removed: {agent_id}")
+            return True
 
     async def reload_agent(self, agent_id: str) -> bool:
         """Reload a specific agent instance with zero-downtime.
@@ -507,9 +422,6 @@ class MultiAgentManager:
             # Swap instances atomically
             old_instance = self.agents[agent_id]
             self.agents[agent_id] = new_instance
-            now = time.time()
-            self._started_at[agent_id] = now
-            self._last_access[agent_id] = now
             logger.info(f"Workspace instance replaced: {agent_id}")
 
         # Step 5: Gracefully stop old instance (outside lock)
@@ -566,8 +478,6 @@ class MultiAgentManager:
                 logger.error(f"Error stopping agent {agent_id}: {e}")
 
         self.agents.clear()
-        self._started_at.clear()
-        self._last_access.clear()
         logger.info("All agents stopped")
 
     def list_loaded_agents(self) -> list[str]:
@@ -588,73 +498,6 @@ class MultiAgentManager:
             bool: True if agent is loaded and running
         """
         return agent_id in self.agents
-
-    async def cleanup_idle_agents(self) -> list[str]:
-        """Unload loaded agents that exceeded the configured idle TTL."""
-        if self.idle_ttl_seconds <= 0:
-            return []
-
-        now = time.time()
-        async with self._lock:
-            snapshots = [
-                (
-                    agent_id,
-                    instance,
-                    self._last_access.get(agent_id, self._started_at.get(agent_id, now)),
-                )
-                for agent_id, instance in self.agents.items()
-            ]
-
-        unloaded: list[str] = []
-        for agent_id, instance, last_access in snapshots:
-            if now - last_access < self.idle_ttl_seconds:
-                continue
-            if await instance.task_tracker.has_active_tasks():
-                continue
-            if await self._stop_loaded_agent(agent_id):
-                unloaded.append(agent_id)
-
-        if unloaded:
-            logger.info("Idle agent cleanup unloaded: %s", unloaded)
-        return unloaded
-
-    async def list_runtime_agents(self) -> dict:
-        """Return runtime pool status for currently loaded agents."""
-        now = time.time()
-        async with self._lock:
-            snapshots = [
-                (
-                    agent_id,
-                    instance,
-                    self._started_at.get(agent_id),
-                    self._last_access.get(agent_id),
-                )
-                for agent_id, instance in self.agents.items()
-            ]
-
-        agents = []
-        for agent_id, instance, started_at, last_access in snapshots:
-            active_tasks = await instance.task_tracker.list_active_tasks()
-            idle_seconds = None if last_access is None else max(0.0, now - last_access)
-            agents.append(
-                {
-                    "agent_id": agent_id,
-                    "loaded": True,
-                    "started_at": started_at,
-                    "last_access_at": last_access,
-                    "idle_seconds": idle_seconds,
-                    "active_task_count": len(active_tasks),
-                    "active_task_ids": active_tasks,
-                },
-            )
-
-        agents.sort(key=lambda item: item["agent_id"])
-        return {
-            "max_active_agents": self.max_active_agents,
-            "idle_ttl_seconds": self.idle_ttl_seconds,
-            "loaded_agent_count": len(agents),
-            "agents": agents,
-        }
 
     async def preload_agent(self, agent_id: str) -> bool:
         """Preload an agent instance during startup.
@@ -706,22 +549,6 @@ class MultiAgentManager:
             f"({disabled_count} disabled)",
         )
 
-        if self.max_active_agents > 0 and len(agent_ids) > self.max_active_agents:
-            preloaded_agent_ids = agent_ids[: self.max_active_agents]
-            skipped_agent_ids = agent_ids[self.max_active_agents :]
-            logger.info(
-                "Preloading first %s/%s enabled agents due to "
-                "NEXORA_MAX_ACTIVE_AGENTS=%s; skipped agents will load "
-                "lazily on first request: %s",
-                len(preloaded_agent_ids),
-                len(agent_ids),
-                self.max_active_agents,
-                skipped_agent_ids,
-            )
-        else:
-            preloaded_agent_ids = agent_ids
-            skipped_agent_ids = []
-
         async def start_single_agent(agent_id: str) -> tuple[str, bool]:
             """Start a single agent with error handling."""
             try:
@@ -738,13 +565,12 @@ class MultiAgentManager:
 
         # Truly parallel: get_agent releases lock during workspace startup
         results = await asyncio.gather(
-            *[start_single_agent(agent_id) for agent_id in preloaded_agent_ids],
+            *[start_single_agent(agent_id) for agent_id in agent_ids],
             return_exceptions=False,
         )
 
         # Build result mapping
         result_map = dict(results)
-        result_map.update({agent_id: False for agent_id in skipped_agent_ids})
         success_count = sum(1 for success in result_map.values() if success)
         logger.info(
             f"Agent startup complete: {success_count}/{len(agent_ids)} "

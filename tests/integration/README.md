@@ -129,7 +129,7 @@ the subprocess across all tests within the file. Cross-module isolation
 is achieved by re-launching with a fresh tmp dir.
 
 **Tests must use unique resource ids within the module** (e.g.
-`agent_id = "integ_<scope>_01"`) to avoid coluser04ons inside the shared
+`agent_id = "integ_<scope>_01"`) to avoid collisions inside the shared
 subprocess. The existing convention already does this.
 
 The fixture:
