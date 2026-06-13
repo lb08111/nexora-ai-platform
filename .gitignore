@@ -140,3 +140,9 @@ docs/*副本.md
 
 # Secrets — never commit
 .qwenpaw.secret/
+
+# QA screenshots (root)
+console-*.png
+
+# Playwright MCP runtime artifacts
+.playwright-mcp/
