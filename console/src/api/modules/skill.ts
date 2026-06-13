@@ -11,9 +11,6 @@ import type {
   WorkspaceSkillSummary,
 } from "../types";
 
-// Declare VITE_API_BASE_URL as global (injected by Vite)
-declare const VITE_API_BASE_URL: string;
-
 // Simple in-memory cache with TTL
 const CACHE_TTL_MS = 30000; // 30 seconds
 const apiCache = new Map<string, { data: unknown; timestamp: number }>();
@@ -64,7 +61,8 @@ export function invalidateSkillCache(options?: {
 }
 
 function getStreamApiUrl(): string {
-  const base = typeof VITE_API_BASE_URL === "string" ? VITE_API_BASE_URL : "";
+  const v = import.meta.env.VITE_API_BASE_URL as string | undefined;
+  const base = typeof v === "string" ? v : "";
   return `${base}/api`;
 }
 

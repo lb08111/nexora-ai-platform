@@ -35,14 +35,15 @@ describe("openExternalLink", () => {
     delete (window as any).pywebview;
     delete (window as any).__TAURI_INTERNALS__;
     localStorage.clear();
-    (globalThis as any).VITE_API_BASE_URL = "";
     (globalThis as any).TOKEN = "";
+    vi.stubEnv("VITE_API_BASE_URL", "");
     window.history.replaceState(null, "", "/");
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
     vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
   });
 
   it("uses the pywebview bridge for the legacy desktop app", () => {

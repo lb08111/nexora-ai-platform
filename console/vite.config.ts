@@ -15,14 +15,13 @@ const cssStubPlugin = {
 };
 
 export default defineConfig(({ mode }) => {
+  // Load env to expose VITE_-prefixed vars to import.meta.env (Vite reads
+  // .env / .env.local automatically; loadEnv is needed only if we want to
+  // surface non-VITE_ vars in this config).
   const env = loadEnv(mode, process.cwd(), "");
-  // Empty = same-origin; frontend and backend served together, no hardcoded host.
-  // Use a dedicated Vite-prefixed key so unrelated shell BASE_URL values don't leak into the build.
-  const apiBaseUrl = env.VITE_API_BASE_URL ?? "";
 
   return {
     define: {
-      VITE_API_BASE_URL: JSON.stringify(apiBaseUrl),
       TOKEN: JSON.stringify(env.TOKEN || ""),
       MOBILE: false,
     },

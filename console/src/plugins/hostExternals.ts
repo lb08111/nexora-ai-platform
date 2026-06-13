@@ -31,8 +31,6 @@ import type {
   QwenPawChatNamespace,
 } from "./types/qwenpaw";
 
-declare const VITE_API_BASE_URL: string;
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Public types
 // ─────────────────────────────────────────────────────────────────────────────
@@ -223,8 +221,8 @@ function ensurePluginsGroup(): void {
 }
 
 export function installHostExternals(): void {
-  const apiBaseUrl =
-    typeof VITE_API_BASE_URL !== "undefined" ? VITE_API_BASE_URL : "";
+  const envBase = import.meta.env.VITE_API_BASE_URL as string | undefined;
+  const apiBaseUrl = typeof envBase === "string" ? envBase : "";
 
   if (!window.QwenPaw) {
     (window as any).QwenPaw = {} as WindowNamespace;
