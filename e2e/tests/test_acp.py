@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-QwenPaw ACP (Agent Communication Protocol) management module end-to-end tests
+JotaDuo ACP (Agent Communication Protocol) management module end-to-end tests
 
 ACP module tests:
 - ACP-001: ACP page load and card list display (P0)
@@ -96,7 +96,7 @@ class TestACPPageDisplay:
             # 5. Verify ACP card list
             log_test_step("5. Verify ACP card list")
             cards = page.locator(
-                '[class*="acpCard"], [class*="ACPCard"], .qwenpaw-card'
+                '[class*="acpCard"], [class*="ACPCard"], .jotaduo-card'
             ).all()
             assert len(cards) > 0, "ACP card list should not be empty (at least builtin ACP expected)"
             logger.info(f"Found {len(cards)} ACP cards")
@@ -165,13 +165,13 @@ class TestCreateACPDrawerForm:
 
             # 3. Verify drawer opens
             log_test_step("3. Verify drawer opens")
-            drawer = page.locator(".qwenpaw-drawer, .qwenpaw-modal").first
+            drawer = page.locator(".jotaduo-drawer, .jotaduo-modal").first
             expect(drawer).to_be_visible(timeout=5000)
             logger.info("ACP create drawer opened")
 
             # Verify title
             drawer_title = drawer.locator(
-                '.qwenpaw-drawer-title, .qwenpaw-modal-title, h2, h3'
+                '.jotaduo-drawer-title, .jotaduo-modal-title, h2, h3'
             ).first
             if drawer_title.is_visible(timeout=3000):
                 title_text = drawer_title.inner_text().strip()
@@ -206,11 +206,11 @@ class TestCreateACPDrawerForm:
                 logger.info("args textarea is visible")
 
             # Switch fields (enabled, trusted)
-            switches = drawer.locator('.qwenpaw-switch').all()
+            switches = drawer.locator('.jotaduo-switch').all()
             logger.info(f"Found {len(switches)} switch fields")
 
             # tool_parse_mode dropdown
-            select_el = drawer.locator('.qwenpaw-select').first
+            select_el = drawer.locator('.jotaduo-select').first
             if select_el.is_visible(timeout=3000):
                 logger.info("Select dropdown visible (tool_parse_mode)")
 
@@ -225,7 +225,7 @@ class TestCreateACPDrawerForm:
             cancel_btn = drawer.locator(
                 'button:has-text("Cancel"), button:has-text("取消")'
             ).first
-            close_btn = drawer.locator('.qwenpaw-drawer-close, .qwenpaw-modal-close').first
+            close_btn = drawer.locator('.jotaduo-drawer-close, .jotaduo-modal-close').first
 
             if cancel_btn.is_visible(timeout=3000):
                 cancel_btn.click()
@@ -278,7 +278,7 @@ class TestACPToggleSwitch:
             # 2. Find toggle on ACP card
             log_test_step("2. Find toggle on ACP card")
             cards = page.locator(
-                '[class*="acpCard"], [class*="ACPCard"], .qwenpaw-card'
+                '[class*="acpCard"], [class*="ACPCard"], .jotaduo-card'
             ).all()
 
             if len(cards) == 0:
@@ -288,7 +288,7 @@ class TestACPToggleSwitch:
 
             # Find switch in the first card
             first_card = cards[0]
-            target_switch = first_card.locator('.qwenpaw-switch').first
+            target_switch = first_card.locator('.jotaduo-switch').first
 
             if not target_switch.is_visible(timeout=3000):
                 logger.info("No switch found on card, skipping validation")
@@ -298,7 +298,7 @@ class TestACPToggleSwitch:
             # 3. Record initial state
             log_test_step("3. Record initial state")
             initial_checked = target_switch.evaluate(
-                "el => el.classList.contains('qwenpaw-switch-checked') || "
+                "el => el.classList.contains('jotaduo-switch-checked') || "
                 "el.getAttribute('aria-checked') === 'true'"
             )
             logger.info(f"Initial switch state: {'enabled' if initial_checked else 'disabled'}")
@@ -309,7 +309,7 @@ class TestACPToggleSwitch:
             page.wait_for_timeout(1000)
 
             new_checked = target_switch.evaluate(
-                "el => el.classList.contains('qwenpaw-switch-checked') || "
+                "el => el.classList.contains('jotaduo-switch-checked') || "
                 "el.getAttribute('aria-checked') === 'true'"
             )
             logger.info(f"Switch state after toggle: {'enabled' if new_checked else 'disabled'}")
@@ -329,7 +329,7 @@ class TestACPToggleSwitch:
             try:
                 if initial_checked is not None and target_switch is not None:
                     current = target_switch.evaluate(
-                        "el => el.classList.contains('qwenpaw-switch-checked') || "
+                        "el => el.classList.contains('jotaduo-switch-checked') || "
                         "el.getAttribute('aria-checked') === 'true'"
                     )
                     if current != initial_checked:
@@ -372,7 +372,7 @@ class TestACPFilterTabs:
             # 2. Record card count under All tab
             log_test_step("2. Record card count under All tab")
             all_cards = page.locator(
-                '[class*="acpCard"], [class*="ACPCard"], .qwenpaw-card'
+                '[class*="acpCard"], [class*="ACPCard"], .jotaduo-card'
             ).all()
             all_count = len(all_cards)
             logger.info(f"Card count under All tab: {all_count}")
@@ -382,8 +382,8 @@ class TestACPFilterTabs:
             builtin_tab = page.locator(
                 '[class*="tab"]:has-text("Builtin"), '
                 '[class*="tab"]:has-text("内置"), '
-                '.qwenpaw-segmented-item:has-text("Builtin"), '
-                '.qwenpaw-segmented-item:has-text("内置")'
+                '.jotaduo-segmented-item:has-text("Builtin"), '
+                '.jotaduo-segmented-item:has-text("内置")'
             ).first
 
             if not builtin_tab.is_visible(timeout=5000):
@@ -395,7 +395,7 @@ class TestACPFilterTabs:
             page.wait_for_timeout(1000)
 
             builtin_cards = page.locator(
-                '[class*="acpCard"], [class*="ACPCard"], .qwenpaw-card'
+                '[class*="acpCard"], [class*="ACPCard"], .jotaduo-card'
             ).all()
             builtin_count = len(builtin_cards)
             logger.info(f"Card count under Builtin tab: {builtin_count}")
@@ -410,8 +410,8 @@ class TestACPFilterTabs:
             custom_tab = page.locator(
                 '[class*="tab"]:has-text("Custom"), '
                 '[class*="tab"]:has-text("自定义"), '
-                '.qwenpaw-segmented-item:has-text("Custom"), '
-                '.qwenpaw-segmented-item:has-text("自定义")'
+                '.jotaduo-segmented-item:has-text("Custom"), '
+                '.jotaduo-segmented-item:has-text("自定义")'
             ).first
 
             if custom_tab.is_visible(timeout=3000):
@@ -419,7 +419,7 @@ class TestACPFilterTabs:
                 page.wait_for_timeout(1000)
 
                 custom_cards = page.locator(
-                    '[class*="acpCard"], [class*="ACPCard"], .qwenpaw-card'
+                    '[class*="acpCard"], [class*="ACPCard"], .jotaduo-card'
                 ).all()
                 custom_count = len(custom_cards)
                 logger.info(f"Card count under Custom tab: {custom_count}")
@@ -433,8 +433,8 @@ class TestACPFilterTabs:
             all_tab = page.locator(
                 '[class*="tab"]:has-text("All"), '
                 '[class*="tab"]:has-text("全部"), '
-                '.qwenpaw-segmented-item:has-text("All"), '
-                '.qwenpaw-segmented-item:has-text("全部")'
+                '.jotaduo-segmented-item:has-text("All"), '
+                '.jotaduo-segmented-item:has-text("全部")'
             ).first
 
             if all_tab.is_visible(timeout=3000):
@@ -442,7 +442,7 @@ class TestACPFilterTabs:
                 page.wait_for_timeout(1000)
 
                 restored_cards = page.locator(
-                    '[class*="acpCard"], [class*="ACPCard"], .qwenpaw-card'
+                    '[class*="acpCard"], [class*="ACPCard"], .jotaduo-card'
                 ).all()
                 restored_count = len(restored_cards)
                 assert restored_count == all_count, \
@@ -489,7 +489,7 @@ class TestEditACPConfig:
             # 2. Click the first ACP card
             log_test_step("2. Click the first ACP card")
             cards = page.locator(
-                '[class*="acpCard"], [class*="ACPCard"], .qwenpaw-card'
+                '[class*="acpCard"], [class*="ACPCard"], .jotaduo-card'
             ).all()
 
             if len(cards) == 0:
@@ -503,7 +503,7 @@ class TestEditACPConfig:
 
             # Click card body (excluding switch area)
             card_body = first_card.locator(
-                '[class*="cardBody"], [class*="content"], .qwenpaw-card-body, '
+                '[class*="cardBody"], [class*="content"], .jotaduo-card-body, '
                 '[class*="agentKey"], [class*="title"]'
             ).first
             if card_body.is_visible(timeout=3000):
@@ -514,7 +514,7 @@ class TestEditACPConfig:
 
             # 3. Verify edit drawer opens
             log_test_step("3. Verify edit drawer opens")
-            drawer = page.locator(".qwenpaw-drawer, .qwenpaw-modal").first
+            drawer = page.locator(".jotaduo-drawer, .jotaduo-modal").first
             expect(drawer).to_be_visible(timeout=5000)
             logger.info("Edit drawer opened")
 
@@ -530,7 +530,7 @@ class TestEditACPConfig:
             else:
                 # agentKey for builtin ACP may be hidden (form-item-hidden), which is normal protection
                 # Fall back to validating agentKey info from the drawer title
-                drawer_title = drawer.locator('.qwenpaw-drawer-title').first
+                drawer_title = drawer.locator('.jotaduo-drawer-title').first
                 if drawer_title.is_visible(timeout=2000):
                     title_text = drawer_title.inner_text().strip()
                     assert len(title_text) > 0, "Edit drawer should have a title"
@@ -550,7 +550,7 @@ class TestEditACPConfig:
             cancel_btn = drawer.locator(
                 'button:has-text("Cancel"), button:has-text("取消")'
             ).first
-            close_btn = drawer.locator('.qwenpaw-drawer-close, .qwenpaw-modal-close').first
+            close_btn = drawer.locator('.jotaduo-drawer-close, .jotaduo-modal-close').first
 
             if cancel_btn.is_visible(timeout=3000):
                 cancel_btn.click()
@@ -601,7 +601,7 @@ class TestCreateAndDeleteCustomACP:
             page.wait_for_timeout(3000)
 
             initial_cards = page.locator(
-                '[class*="acpCard"], [class*="ACPCard"], .qwenpaw-card'
+                '[class*="acpCard"], [class*="ACPCard"], .jotaduo-card'
             ).all()
             initial_count = len(initial_cards)
 
@@ -618,7 +618,7 @@ class TestCreateAndDeleteCustomACP:
             create_btn.click()
             page.wait_for_timeout(500)
 
-            drawer = page.locator(".qwenpaw-drawer, .qwenpaw-modal").first
+            drawer = page.locator(".jotaduo-drawer, .jotaduo-modal").first
             expect(drawer).to_be_visible(timeout=5000)
 
             # 3. Fill in the form
@@ -647,7 +647,7 @@ class TestCreateAndDeleteCustomACP:
             # 4. Save
             log_test_step("4. Save creation")
             save_btn = drawer.locator(
-                'button.qwenpaw-btn-primary, button:has-text("Save"), '
+                'button.jotaduo-btn-primary, button:has-text("Save"), '
                 'button:has-text("保存"), button:has-text("OK"), button:has-text("确定")'
             ).first
             if save_btn.is_visible(timeout=3000):
@@ -656,7 +656,7 @@ class TestCreateAndDeleteCustomACP:
 
             # Check creation success
             success_msg = page.locator(
-                '.qwenpaw-message-success, .qwenpaw-notification-success'
+                '.jotaduo-message-success, .jotaduo-notification-success'
             ).first
             if success_msg.is_visible(timeout=5000):
                 logger.info("Success message appeared")
@@ -665,7 +665,7 @@ class TestCreateAndDeleteCustomACP:
             log_test_step("5. Verify new ACP appears")
             page.wait_for_timeout(1000)
             new_cards = page.locator(
-                '[class*="acpCard"], [class*="ACPCard"], .qwenpaw-card'
+                '[class*="acpCard"], [class*="ACPCard"], .jotaduo-card'
             ).all()
             new_count = len(new_cards)
             logger.info(f"Card count after creation: {new_count} (initial: {initial_count})")
@@ -685,7 +685,7 @@ class TestCreateAndDeleteCustomACP:
                 target_card = page.locator(
                     f'[class*="acpCard"]:has-text("{created_acp_key}"), '
                     f'[class*="ACPCard"]:has-text("{created_acp_key}"), '
-                    f'.qwenpaw-card:has-text("{created_acp_key}")'
+                    f'.jotaduo-card:has-text("{created_acp_key}")'
                 ).first
 
                 if target_card.is_visible(timeout=3000):
@@ -698,7 +698,7 @@ class TestCreateAndDeleteCustomACP:
                         target_card.click()
                     page.wait_for_timeout(500)
 
-                    edit_drawer = page.locator(".qwenpaw-drawer, .qwenpaw-modal").first
+                    edit_drawer = page.locator(".jotaduo-drawer, .jotaduo-modal").first
                     if edit_drawer.is_visible(timeout=5000):
                         delete_btn = edit_drawer.locator(
                             'button:has-text("Delete"), button:has-text("删除")'
@@ -709,10 +709,10 @@ class TestCreateAndDeleteCustomACP:
 
                             # Confirm deletion
                             confirm_btn = page.locator(
-                                '.qwenpaw-popconfirm button.qwenpaw-btn-primary, '
-                                '.qwenpaw-popconfirm button:has-text("OK"), '
-                                '.qwenpaw-popconfirm button:has-text("确定"), '
-                                '.qwenpaw-modal button.qwenpaw-btn-primary'
+                                '.jotaduo-popconfirm button.jotaduo-btn-primary, '
+                                '.jotaduo-popconfirm button:has-text("OK"), '
+                                '.jotaduo-popconfirm button:has-text("确定"), '
+                                '.jotaduo-modal button.jotaduo-btn-primary'
                             ).first
                             if confirm_btn.is_visible(timeout=3000):
                                 confirm_btn.click()
@@ -728,7 +728,7 @@ class TestCreateAndDeleteCustomACP:
                 # Verify count returns after deletion
                 page.wait_for_timeout(1000)
                 final_cards = page.locator(
-                    '[class*="acpCard"], [class*="ACPCard"], .qwenpaw-card'
+                    '[class*="acpCard"], [class*="ACPCard"], .jotaduo-card'
                 ).all()
                 final_count = len(final_cards)
                 logger.info(f"Card count after deletion: {final_count}")
@@ -774,7 +774,7 @@ class TestBuiltinACPProtection:
             builtin_tab = page.locator(
                 '[class*="tab"]:has-text("Builtin"), '
                 '[class*="tab"]:has-text("内置"), '
-                '.qwenpaw-segmented-item:has-text("Builtin")'
+                '.jotaduo-segmented-item:has-text("Builtin")'
             ).first
 
             if builtin_tab.is_visible(timeout=3000):
@@ -782,7 +782,7 @@ class TestBuiltinACPProtection:
                 page.wait_for_timeout(1000)
 
             cards = page.locator(
-                '[class*="acpCard"], [class*="ACPCard"], .qwenpaw-card'
+                '[class*="acpCard"], [class*="ACPCard"], .jotaduo-card'
             ).all()
 
             if len(cards) == 0:
@@ -802,7 +802,7 @@ class TestBuiltinACPProtection:
                 first_card.click()
             page.wait_for_timeout(500)
 
-            drawer = page.locator(".qwenpaw-drawer, .qwenpaw-modal").first
+            drawer = page.locator(".jotaduo-drawer, .jotaduo-modal").first
             if not drawer.is_visible(timeout=5000):
                 logger.info("Edit drawer did not open")
                 log_test_result(test_name, True, 0)
@@ -819,7 +819,7 @@ class TestBuiltinACPProtection:
                 logger.info("Builtin ACP agentKey is not editable (disabled/readonly)")
             else:
                 # agentKey hidden via form-item-hidden, which itself is a form of protection
-                hidden_item = drawer.locator('.qwenpaw-form-item-hidden').first
+                hidden_item = drawer.locator('.jotaduo-form-item-hidden').first
                 assert hidden_item.count() > 0 or not key_input.is_visible(), \
                     "Builtin ACP agentKey should be hidden or non-editable"
                 logger.info("Builtin ACP agentKey is hidden (non-editable protection in effect)")
@@ -880,7 +880,7 @@ class TestACPCardDetails:
             # 2. Get ACP card list
             log_test_step("2. Get card list")
             cards = page.locator(
-                '[class*="acpCard"], [class*="ACPCard"], .qwenpaw-card'
+                '[class*="acpCard"], [class*="ACPCard"], .jotaduo-card'
             ).all()
 
             assert len(cards) > 0, "ACP card list should not be empty"
@@ -904,7 +904,7 @@ class TestACPCardDetails:
                     cards_with_key += 1
 
                 # Check switch exists
-                switch = card.locator('.qwenpaw-switch').first
+                switch = card.locator('.jotaduo-switch').first
                 if switch.count() > 0:
                     cards_with_switch += 1
 

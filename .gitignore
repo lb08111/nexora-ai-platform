@@ -32,11 +32,11 @@ dist/
 # Console frontend build (generated in Docker/CI, do not commit)
 console/.cursor/
 console/.wiki/
-src/qwenpaw/console/dist/
-src/qwenpaw/console/
+src/jotaduo/console/dist/
+src/jotaduo/console/
 
 # Docs bundled at build time (copied from website/public/docs/)
-src/qwenpaw/docs/
+src/jotaduo/docs/
 
 # frontend (website)
 website/node_modules/
@@ -130,7 +130,7 @@ src/.hypothesis/
 
 # Worktrees
 .worktrees/
-.qwenpaw/worktrees/
+.jotaduo/worktrees/
 
 # Local File
 /localfile/
@@ -143,7 +143,7 @@ e2e/.pytest_cache/
 e2e/__pycache__/
 
 # Secrets — never commit
-.qwenpaw.secret/
+.jotaduo.secret/
 
 # QA screenshots (root)
 console-*.png

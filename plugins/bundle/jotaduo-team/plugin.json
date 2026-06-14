@@ -1,0 +1,30 @@
+{
+  "id": "jotaduo-team",
+  "name": "Jotaduo Team — Atendentes BR",
+  "version": "1.0.0",
+  "type": "general",
+  "description": "Plugin que materializa o time de atendentes brasileiros (atendente, agendamento, vendas, suporte, financeiro) no JotaDuo. Registra 5 agentes pt-BR prontos para WhatsApp/Pix/Agenda e adiciona a ferramenta 'convene_meeting' para reuniões multi-agente assíncronas. Após instalar: 1) Configure o canal WhatsApp em Environment Variables (WHATSAPP_PROVIDER, WHATSAPP_TOKEN); 2) Recarregue a página para ativar os agentes.",
+  "description_i18n": {
+    "pt-BR": "Plugin que materializa o time de atendentes brasileiros (atendente, agendamento, vendas, suporte, financeiro) no JotaDuo. Registra 5 agentes pt-BR prontos para WhatsApp/Pix/Agenda e adiciona a ferramenta 'convene_meeting' para reuniões multi-agente assíncronas.",
+    "en-US": "Brazilian customer-success team plugin for JotaDuo. Registers 5 pt-BR specialist agents (receptionist, scheduling, sales, support, finance) wired with WhatsApp/Pix/Calendar tools, plus a 'convene_meeting' tool for async multi-agent stand-ups."
+  },
+  "author": "Jotaduo",
+  "entry": {
+    "backend": "plugin.py"
+  },
+  "dependencies": [
+    "fastapi>=0.110",
+    "pydantic>=2.0"
+  ],
+  "min_version": "1.1.7",
+  "meta": {
+    "category": "brazilian-customer-success",
+    "features": [
+      "br-specialist-agents",
+      "multi-agent-meeting",
+      "whatsapp-pix-agenda-tools",
+      "lgpd-cdc-compliance",
+      "http-api-router"
+    ]
+  }
+}

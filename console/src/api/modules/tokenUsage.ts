@@ -31,14 +31,14 @@ export const tokenUsageApi = {
   getTokenUsageDetails: (params: GetTokenUsageParams) =>
     request<TokenUsageRecord[]>(`/token-usage/details${buildQuery(params)}`),
 
-  // Per-user token usage (Nexora PG)
+  // Per-user token usage (Jotaduo PG)
   getTokenUsageByUser: (params: { start_date: string; end_date: string }) => {
     const search = new URLSearchParams({
       start_date: params.start_date,
       end_date: params.end_date,
     });
     return request<TokenUsageByUserRecord[]>(
-      `/nexora/token-usage/by-user?${search.toString()}`,
+      `/jotaduo/token-usage/by-user?${search.toString()}`,
     );
   },
 };

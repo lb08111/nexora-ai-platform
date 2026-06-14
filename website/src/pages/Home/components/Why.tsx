@@ -34,8 +34,8 @@ export function Why() {
   const sectionRef = useRef<HTMLElement | null>(null);
   const [isInView, setIsInView] = useState(false);
 
-  const heroLine = t("whyQwenpaw.heroLine");
-  const secondPrefix = t("whyQwenpaw.secondPrefix");
+  const heroLine = t("whyJotaduo.heroLine");
+  const secondPrefix = t("whyJotaduo.secondPrefix");
   const secondLine = secondPrefix;
   const heroLineLength = heroLine.length;
   const secondLineLength = secondLine.length;
@@ -159,9 +159,9 @@ export function Why() {
               className="pointer-events-none absolute -top-2 left-0 z-20 h-11 w-11 object-contain md:-top-6 md:h-20 md:w-20"
             />
             <h2 className="font-newsreader font-semibold relative z-10 text-3xl leading-[0.98] text-[#ffffff] sm:text-[42px] md:text-[52px]">
-              <span>{t("whyQwenpaw.headingPrefix")} </span>
+              <span>{t("whyJotaduo.headingPrefix")} </span>
               <span className="inline-block italic whitespace-nowrap">
-                {t("whyQwenpaw.headingEmphasis")}
+                {t("whyJotaduo.headingEmphasis")}
               </span>
               <svg
                 aria-hidden
@@ -185,7 +185,7 @@ export function Why() {
             </h2>
           </div>
           <p className="font-inter text-center text-[13px] leading-5 text-[rgba(255,255,255,0.7)] sm:text-sm sm:leading-6 md:text-right md:text-base md:pt-8">
-            {t("whyQwenpaw.sub")
+            {t("whyJotaduo.sub")
               .split("\n")
               .map((line, idx) => (
                 <span key={idx}>

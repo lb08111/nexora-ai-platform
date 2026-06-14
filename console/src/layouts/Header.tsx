@@ -9,7 +9,7 @@ import styles from "./index.module.less";
 import api from "../api";
 import { clearAuthToken } from "../api/config";
 import { authApi } from "../api/modules/auth";
-import { usersApi } from "../nexora/api/users";
+import { usersApi } from "../jotaduo/api/users";
 import {
   GITHUB_URL,
   getDocsUrl,
@@ -159,8 +159,8 @@ export default function Header() {
     fetch(url, { cache: "no-cache" })
       .then((res) => (res.ok ? res.text() : Promise.reject()))
       .then((text) => {
-        const zhPattern = /###\s*QwenPaw如何更新[\s\S]*?(?=\n###|$)/;
-        const enPattern = /###\s*How to update QwenPaw[\s\S]*?(?=\n###|$)/;
+        const zhPattern = /###\s*JotaDuo如何更新[\s\S]*?(?=\n###|$)/;
+        const enPattern = /###\s*How to update JotaDuo[\s\S]*?(?=\n###|$)/;
         const match = text.match(faqLang === "zh" ? zhPattern : enPattern);
         setUpdateMarkdown(
           match && lang !== "ru"

@@ -1,4 +1,4 @@
-# QwenPaw Desktop Application Guide
+# JotaDuo Desktop Application Guide
 
 > ⚠️ **Beta Version Notice**
 >
@@ -13,7 +13,7 @@
 
 **Download**: [GitHub Releases][releases]
 
-This guide explains how to install and use the QwenPaw Desktop application on Windows and macOS.
+This guide explains how to install and use the JotaDuo Desktop application on Windows and macOS.
 
 [releases]: https://qwenpaw.agentscope.io/downloads
 
@@ -39,32 +39,32 @@ This guide explains how to install and use the QwenPaw Desktop application on Wi
 ### Installation Steps
 
 1. **Download the installer**
-   Download `QwenPaw-Setup-<version>.exe` from the [Release page][releases]
+   Download `JotaDuo-Setup-<version>.exe` from the [Release page][releases]
 
 2. **Run the installer**
    Double-click the `.exe` file and follow the installation wizard
-   - Default installation location: `C:\Users\<your-username>\AppData\Local\QwenPaw`
+   - Default installation location: `C:\Users\<your-username>\AppData\Local\JotaDuo`
    - Desktop and Start Menu shortcuts will be created after installation
 
 ### Launch Options
 
 After installation, you'll see **two launch shortcuts**:
 
-#### **QwenPaw Desktop** (Recommended for daily use)
+#### **JotaDuo Desktop** (Recommended for daily use)
 
 - **Features**: Silent launch, no terminal window, clean interface
 - **Use Case**: Normal usage when you don't need to view technical logs
-- **How to Launch**: Double-click the "QwenPaw Desktop" icon on desktop or Start Menu
+- **How to Launch**: Double-click the "JotaDuo Desktop" icon on desktop or Start Menu
 - **Technical Note**: Uses VBScript launcher, runs Python process in background
 
-#### **QwenPaw Desktop (Debug)** (Debug Mode)
+#### **JotaDuo Desktop (Debug)** (Debug Mode)
 
 - **Features**: Shows terminal window with real-time logging
 - **Use Cases**:
   - Need to view error messages when encountering problems
   - Development and testing
   - Need to provide logs when reporting bugs
-- **How to Launch**: Double-click "QwenPaw Desktop (Debug)" icon in Start Menu
+- **How to Launch**: Double-click "JotaDuo Desktop (Debug)" icon in Start Menu
 - **Log Contents**:
   - Application startup information
   - Python error stack traces
@@ -82,11 +82,11 @@ Restart the application after installation.
 
 **Q: Application doesn't respond after launch?**
 
-A: Use "QwenPaw Desktop (Debug)" mode to view terminal output for error messages
+A: Use "JotaDuo Desktop (Debug)" mode to view terminal output for error messages
 
 **Q: How to uninstall?**
 
-A: Go to Windows Settings → Apps → Installed apps → Find "QwenPaw Desktop" → Uninstall
+A: Go to Windows Settings → Apps → Installed apps → Find "JotaDuo Desktop" → Uninstall
 
 **Q: Is the installer safe?**
 
@@ -108,7 +108,7 @@ The code is completely open source, and the build process is transparently verif
 ### Installation Steps
 
 1. **Download the archive**
-   Download `QwenPaw-<version>-macOS.zip` from the [Release page][releases]
+   Download `JotaDuo-<version>-macOS.zip` from the [Release page][releases]
 
 2. **Extract**
    Double-click the `.zip` file to extract and get `QwenPaw.app`
@@ -120,7 +120,7 @@ The code is completely open source, and the build process is transparently verif
 
 #### Why manual trust is needed?
 
-QwenPaw is **not Apple Developer-signed or notarized**, so macOS Gatekeeper will block it by default.
+JotaDuo is **not Apple Developer-signed or notarized**, so macOS Gatekeeper will block it by default.
 
 **Why no signature?**
 
@@ -147,7 +147,7 @@ If still blocked:
 
 1. Open **System Settings → Privacy & Security**
 2. Scroll down to find a message like:
-   _"'QwenPaw' was blocked from use because it cannot verify the developer"_
+   _"'JotaDuo' was blocked from use because it cannot verify the developer"_
 3. Click the **"Open Anyway"** or **"Allow"** button
 4. Enter your administrator password to confirm
 
@@ -175,7 +175,7 @@ When first launched, macOS may request the following permissions:
 
 - Double-click `QwenPaw.app` to launch
 - The app runs in the background and opens a browser window
-- Logs are written to: `~/.qwenpaw/desktop.log`
+- Logs are written to: `~/.jotaduo/desktop.log`
 
 #### Terminal Launch (View real-time logs)
 
@@ -187,7 +187,7 @@ cd /Applications  # or wherever your QwenPaw.app is located
 
 # Set environment variables and launch (isolate packaged env, avoid conflicts)
 APP_ENV="$(pwd)/QwenPaw.app/Contents/Resources/env"
-PYTHONNOUSERSITE=1 PYTHONPATH= PYTHONHOME="$APP_ENV" "$APP_ENV/bin/python" -m qwenpaw desktop
+PYTHONNOUSERSITE=1 PYTHONPATH= PYTHONHOME="$APP_ENV" "$APP_ENV/bin/python" -m jotaduo desktop
 ```
 
 **Advantages of terminal launch:**
@@ -201,7 +201,7 @@ PYTHONNOUSERSITE=1 PYTHONPATH= PYTHONHOME="$APP_ENV" "$APP_ENV/bin/python" -m qw
 
 ```bash
 # View recent startup logs
-tail -f ~/.qwenpaw/desktop.log
+tail -f ~/.jotaduo/desktop.log
 ```
 
 ### Common Issues
@@ -210,7 +210,7 @@ tail -f ~/.qwenpaw/desktop.log
 
 A: Try the following steps:
 
-1. Check the `~/.qwenpaw/desktop.log` file for errors
+1. Check the `~/.jotaduo/desktop.log` file for errors
 2. Use the terminal command above to launch and view real-time output
 
 **Q: Message "Apple cannot verify this application"?**
@@ -219,7 +219,7 @@ A: Follow the "Bypassing System Security Restrictions" steps above
 
 **Q: How to uninstall?**
 
-A: Drag `QwenPaw.app` to the Trash, then delete the `~/.qwenpaw` configuration folder
+A: Drag `QwenPaw.app` to the Trash, then delete the `~/.jotaduo` configuration folder
 
 **Q: Can I use it on Intel Mac?**
 A: Yes, but may not be able to use built-in local model services
@@ -240,8 +240,8 @@ A: Currently using:
 - **GitHub Issues**: [Submit an issue](https://github.com/agentscope-ai/QwenPaw/issues)
 - **Packaging documentation**: `scripts/pack/README.md` - Technical details and local build guide
 - **Log locations**:
-  - Windows: View in Debug mode terminal, or `%USERPROFILE%\.qwenpaw\` directory
-  - macOS: `~/.qwenpaw/desktop.log`
+  - Windows: View in Debug mode terminal, or `%USERPROFILE%\.jotaduo\` directory
+  - macOS: `~/.jotaduo/desktop.log`
 
 ---
 

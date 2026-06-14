@@ -18,23 +18,23 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 
-from qwenpaw.constant import SECRET_DIR
+from jotaduo.constant import SECRET_DIR
 
 
 def _governance_path() -> Path:
-    return Path(SECRET_DIR) / "nexora_governance.json"
+    return Path(SECRET_DIR) / "jotaduo_governance.json"
 
 
 def _grants_path() -> Path:
-    return Path(SECRET_DIR) / "nexora_agent_grants.json"
+    return Path(SECRET_DIR) / "jotaduo_agent_grants.json"
 
 
 def _approval_path() -> Path:
-    return Path(SECRET_DIR) / "nexora_capability_approval.json"
+    return Path(SECRET_DIR) / "jotaduo_capability_approval.json"
 
 
 def _templates_path() -> Path:
-    return Path(SECRET_DIR) / "nexora_agent_templates.json"
+    return Path(SECRET_DIR) / "jotaduo_agent_templates.json"
 
 
 def step1_clear_old_governance():
@@ -78,7 +78,7 @@ def step2_clear_grants():
 
 def step3_init_approval_config():
     """Initialize capability approval defaults via the module."""
-    from qwenpaw_ext.nexora.capability_approval import (
+    from jotaduo_ext.jotaduo.capability_approval import (
         ensure_default_configs,
         list_configs,
     )
@@ -94,7 +94,7 @@ def step3_init_approval_config():
 
 def step4_init_templates():
     """Initialize built-in templates via the module."""
-    from qwenpaw_ext.nexora.agent_templates import (
+    from jotaduo_ext.jotaduo.agent_templates import (
         ensure_builtin_templates,
         list_templates,
     )

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-QwenPaw Security module P0-level end-to-end test cases.
+JotaDuo Security module P0-level end-to-end test cases.
 
 Combined test cases:
 - SEC-001: Tool Guard tab display + switch toggle + File Guard tab switch
@@ -73,8 +73,8 @@ class TestSecurityToolGuardAndTabSwitch:
 
         # Step 3: Verify the tabs exist
         log_test_step("3. Verify the tabs exist")
-        tool_guard_tab = page.locator('[data-node-key="toolGuard"] .qwenpaw-tabs-tab-btn').first
-        file_guard_tab = page.locator('[data-node-key="fileGuard"] .qwenpaw-tabs-tab-btn').first
+        tool_guard_tab = page.locator('[data-node-key="toolGuard"] .jotaduo-tabs-tab-btn').first
+        file_guard_tab = page.locator('[data-node-key="fileGuard"] .jotaduo-tabs-tab-btn').first
 
         expect(tool_guard_tab).to_be_visible(timeout=5000)
         logger.info("Tool Guard tab visible")
@@ -87,13 +87,13 @@ class TestSecurityToolGuardAndTabSwitch:
         active_panel = page.locator('#rc-tabs-0-panel-toolGuard').first
         if not active_panel.is_visible():
             # The tab ID may differ; use a generic selector
-            active_panel = page.locator('.qwenpaw-tabs-tabpane-active').first
+            active_panel = page.locator('.jotaduo-tabs-tabpane-active').first
         expect(active_panel).to_be_visible(timeout=5000)
         logger.info("Tool Guard tab panel is active")
 
         # Step 5: Verify the Tool Guard enable switch and toggle it
         log_test_step("5. Verify the Tool Guard enable switch and toggle it")
-        tool_guard_switch = active_panel.locator('button.qwenpaw-switch[role="switch"]').first
+        tool_guard_switch = active_panel.locator('button.jotaduo-switch[role="switch"]').first
         expect(tool_guard_switch).to_be_visible(timeout=5000)
 
         initial_checked = tool_guard_switch.get_attribute('aria-checked')
@@ -115,7 +115,7 @@ class TestSecurityToolGuardAndTabSwitch:
 
         # Step 6: Verify the protected-tools dropdown exists
         log_test_step("6. Verify the protected-tools dropdown exists")
-        protected_tools_select = active_panel.locator('.qwenpaw-select').first
+        protected_tools_select = active_panel.locator('.jotaduo-select').first
         expect(protected_tools_select).to_be_visible(timeout=5000)
         logger.info("Protected-tools dropdown visible")
 
@@ -124,13 +124,13 @@ class TestSecurityToolGuardAndTabSwitch:
         file_guard_tab.click()
         page.wait_for_timeout(1500)
 
-        file_guard_panel = page.locator('.qwenpaw-tabs-tabpane-active').first
+        file_guard_panel = page.locator('.jotaduo-tabs-tabpane-active').first
         expect(file_guard_panel).to_be_visible(timeout=5000)
         logger.info("File Guard tab panel is active")
 
         # Step 8: Verify the File Guard enable switch
         log_test_step("8. Verify the File Guard enable switch")
-        file_guard_switch = file_guard_panel.locator('button.qwenpaw-switch[role="switch"]').first
+        file_guard_switch = file_guard_panel.locator('button.jotaduo-switch[role="switch"]').first
         expect(file_guard_switch).to_be_visible(timeout=5000)
         file_guard_checked = file_guard_switch.get_attribute('aria-checked')
         logger.info(f"File Guard switch state: aria-checked={file_guard_checked}")
@@ -174,17 +174,17 @@ class TestSecurityFileGuardPathAndToolSelect:
 
         # Step 2: Switch to the File Guard tab
         log_test_step("2. Switch to the File Guard tab")
-        file_guard_tab = page.locator('[data-node-key="fileGuard"] .qwenpaw-tabs-tab-btn').first
+        file_guard_tab = page.locator('[data-node-key="fileGuard"] .jotaduo-tabs-tab-btn').first
         expect(file_guard_tab).to_be_visible(timeout=5000)
         file_guard_tab.click()
         page.wait_for_timeout(1500)
 
-        file_guard_panel = page.locator('.qwenpaw-tabs-tabpane-active').first
+        file_guard_panel = page.locator('.jotaduo-tabs-tabpane-active').first
         expect(file_guard_panel).to_be_visible(timeout=5000)
 
         # Step 3: Verify the add-button initial state (should be disabled on empty input)
         log_test_step("3. Verify the add-button initial state")
-        add_button = file_guard_panel.locator('button.qwenpaw-btn-primary').first
+        add_button = file_guard_panel.locator('button.jotaduo-btn-primary').first
         expect(add_button).to_be_visible(timeout=5000)
         initial_disabled = add_button.is_disabled()
         logger.info(f"Add button initial disabled state: {initial_disabled}")
@@ -211,19 +211,19 @@ class TestSecurityFileGuardPathAndToolSelect:
 
         # Step 6: Switch back to the Tool Guard tab
         log_test_step("6. Switch back to the Tool Guard tab")
-        tool_guard_tab = page.locator('[data-node-key="toolGuard"] .qwenpaw-tabs-tab-btn').first
+        tool_guard_tab = page.locator('[data-node-key="toolGuard"] .jotaduo-tabs-tab-btn').first
         tool_guard_tab.click()
         page.wait_for_timeout(1500)
 
-        tool_guard_panel = page.locator('.qwenpaw-tabs-tabpane-active').first
+        tool_guard_panel = page.locator('.jotaduo-tabs-tabpane-active').first
         expect(tool_guard_panel).to_be_visible(timeout=5000)
 
         # Step 7: Click the protected-tools dropdown to expand it
         log_test_step("7. Click the protected-tools dropdown to expand it")
-        protected_tools_select = tool_guard_panel.locator('.qwenpaw-select').first
+        protected_tools_select = tool_guard_panel.locator('.jotaduo-select').first
         expect(protected_tools_select).to_be_visible(timeout=5000)
         # Click the selector inside the Select to trigger the dropdown
-        select_selector = protected_tools_select.locator('.qwenpaw-select-selector').first
+        select_selector = protected_tools_select.locator('.jotaduo-select-selector').first
         if select_selector.count() > 0 and select_selector.is_visible():
             select_selector.click()
         else:
@@ -231,9 +231,9 @@ class TestSecurityFileGuardPathAndToolSelect:
         page.wait_for_timeout(1500)
 
         # Verify dropdown options appear (the dropdown is rendered under body, not inside the panel)
-        dropdown = page.locator('.qwenpaw-select-dropdown:visible').first
+        dropdown = page.locator('.jotaduo-select-dropdown:visible').first
         if dropdown.count() > 0 and dropdown.is_visible():
-            options = dropdown.locator('.qwenpaw-select-item').all()
+            options = dropdown.locator('.jotaduo-select-item').all()
             assert len(options) >= 1, "Protected-tools dropdown options are empty"
             first_option_text = options[0].inner_text()
             assert len(first_option_text) > 0, "First option text is empty"
@@ -285,15 +285,15 @@ class TestSecurityConfigSaveAndPersist:
 
         # Step 2: Record the current Tool Guard switch state
         log_test_step("2. Record the Tool Guard switch initial state")
-        tool_guard_tab = page.locator('[data-node-key="toolGuard"] .qwenpaw-tabs-tab-btn').first
+        tool_guard_tab = page.locator('[data-node-key="toolGuard"] .jotaduo-tabs-tab-btn').first
         expect(tool_guard_tab).to_be_visible(timeout=5000)
         tool_guard_tab.click()
         page.wait_for_timeout(1500)
 
-        tool_guard_panel = page.locator('.qwenpaw-tabs-tabpane-active').first
+        tool_guard_panel = page.locator('.jotaduo-tabs-tabpane-active').first
         expect(tool_guard_panel).to_be_visible(timeout=5000)
 
-        tool_guard_switch = tool_guard_panel.locator('button.qwenpaw-switch[role="switch"]').first
+        tool_guard_switch = tool_guard_panel.locator('button.jotaduo-switch[role="switch"]').first
         expect(tool_guard_switch).to_be_visible(timeout=5000)
 
         initial_checked = tool_guard_switch.get_attribute('aria-checked')
@@ -312,16 +312,16 @@ class TestSecurityConfigSaveAndPersist:
 
             # Step 4: Find and click the Save button
             log_test_step("4. Click the Save button")
-            save_btn = page.locator('button.qwenpaw-btn-primary:has-text("保存"), button:has-text("保 存")').first
+            save_btn = page.locator('button.jotaduo-btn-primary:has-text("保存"), button:has-text("保 存")').first
             if not save_btn.is_visible():
-                save_btn = page.locator('div[class*="footer"] button.qwenpaw-btn-primary').first
+                save_btn = page.locator('div[class*="footer"] button.jotaduo-btn-primary').first
             expect(save_btn).to_be_visible(timeout=5000)
             save_btn.click()
             page.wait_for_timeout(2000)
 
             # Step 5: Verify the save success toast
             log_test_step("5. Verify the save success toast")
-            success_msg = page.locator('.qwenpaw-message-success, .qwenpaw-message-notice-content:has-text("保存")').first
+            success_msg = page.locator('.jotaduo-message-success, .jotaduo-message-notice-content:has-text("保存")').first
             if success_msg.is_visible():
                 logger.info("Save success toast visible")
             else:
@@ -335,15 +335,15 @@ class TestSecurityConfigSaveAndPersist:
 
             # Step 7: Verify the Tool Guard switch state is persisted
             log_test_step("7. Verify the Tool Guard switch state is persisted")
-            tool_guard_tab_refreshed = page.locator('[data-node-key="toolGuard"] .qwenpaw-tabs-tab-btn').first
+            tool_guard_tab_refreshed = page.locator('[data-node-key="toolGuard"] .jotaduo-tabs-tab-btn').first
             expect(tool_guard_tab_refreshed).to_be_visible(timeout=5000)
             tool_guard_tab_refreshed.click()
             page.wait_for_timeout(1500)
 
-            tool_guard_panel_refreshed = page.locator('.qwenpaw-tabs-tabpane-active').first
+            tool_guard_panel_refreshed = page.locator('.jotaduo-tabs-tabpane-active').first
             expect(tool_guard_panel_refreshed).to_be_visible(timeout=5000)
 
-            tool_guard_switch_refreshed = tool_guard_panel_refreshed.locator('button.qwenpaw-switch[role="switch"]').first
+            tool_guard_switch_refreshed = tool_guard_panel_refreshed.locator('button.jotaduo-switch[role="switch"]').first
             expect(tool_guard_switch_refreshed).to_be_visible(timeout=5000)
 
             persisted_checked = tool_guard_switch_refreshed.get_attribute('aria-checked')
@@ -355,7 +355,7 @@ class TestSecurityConfigSaveAndPersist:
             # Step 8: Restore the original state and save
             log_test_step("8. Restore the original state and save")
             try:
-                tool_guard_switch_refreshed = page.locator('.qwenpaw-tabs-tabpane-active').first.locator('button.qwenpaw-switch[role="switch"]').first
+                tool_guard_switch_refreshed = page.locator('.jotaduo-tabs-tabpane-active').first.locator('button.jotaduo-switch[role="switch"]').first
                 if tool_guard_switch_refreshed.is_visible():
                     current_state = tool_guard_switch_refreshed.get_attribute('aria-checked')
                     if current_state != initial_checked:
@@ -369,9 +369,9 @@ class TestSecurityConfigSaveAndPersist:
                         logger.info(f"Switch restored to initial state: {restored_checked}")
 
                         # Save again
-                        save_btn_refreshed = page.locator('button.qwenpaw-btn-primary:has-text("保存"), button:has-text("保 存")').first
+                        save_btn_refreshed = page.locator('button.jotaduo-btn-primary:has-text("保存"), button:has-text("保 存")').first
                         if not save_btn_refreshed.is_visible():
-                            save_btn_refreshed = page.locator('div[class*="footer"] button.qwenpaw-btn-primary').first
+                            save_btn_refreshed = page.locator('div[class*="footer"] button.jotaduo-btn-primary').first
                         if save_btn_refreshed.is_visible():
                             save_btn_refreshed.click()
                             page.wait_for_timeout(2000)
@@ -383,7 +383,7 @@ class TestSecurityConfigSaveAndPersist:
 
         # Step 9: Switch to the Skill Scanner tab (if present)
         log_test_step("9. Check and switch to the Skill Scanner tab")
-        skill_scanner_tab = page.locator('[data-node-key="skillScanner"] .qwenpaw-tabs-tab-btn').first
+        skill_scanner_tab = page.locator('[data-node-key="skillScanner"] .jotaduo-tabs-tab-btn').first
 
         if skill_scanner_tab.is_visible():
             logger.info("Skill Scanner tab found")
@@ -392,7 +392,7 @@ class TestSecurityConfigSaveAndPersist:
 
             # Step 10: Verify the Skill Scanner tab content loads
             log_test_step("10. Verify the Skill Scanner tab content loads")
-            skill_scanner_panel = page.locator('.qwenpaw-tabs-tabpane-active').first
+            skill_scanner_panel = page.locator('.jotaduo-tabs-tabpane-active').first
             expect(skill_scanner_panel).to_be_visible(timeout=5000)
 
             # Verify the panel has content
@@ -440,18 +440,18 @@ class TestSecurityRuleCrud:
 
         # Step 2: Verify the Tool Guard tab and switch to it
         log_test_step("2. Switch to the Tool Guard tab")
-        tool_guard_tab = page.locator('[data-node-key="toolGuard"] .qwenpaw-tabs-tab-btn').first
+        tool_guard_tab = page.locator('[data-node-key="toolGuard"] .jotaduo-tabs-tab-btn').first
         expect(tool_guard_tab).to_be_visible(timeout=5000)
         tool_guard_tab.click()
         page.wait_for_timeout(1500)
 
-        tool_guard_panel = page.locator('.qwenpaw-tabs-tabpane-active').first
+        tool_guard_panel = page.locator('.jotaduo-tabs-tabpane-active').first
         expect(tool_guard_panel).to_be_visible(timeout=5000)
         logger.info("Tool Guard tab activated")
 
         # Step 3: Ensure Tool Guard is enabled (otherwise rule operations are not available)
         log_test_step("3. Ensure Tool Guard is enabled")
-        tool_guard_switch = tool_guard_panel.locator('button.qwenpaw-switch[role="switch"]').first
+        tool_guard_switch = tool_guard_panel.locator('button.jotaduo-switch[role="switch"]').first
         expect(tool_guard_switch).to_be_visible(timeout=5000)
 
         initial_checked = tool_guard_switch.get_attribute('aria-checked')
@@ -472,7 +472,7 @@ class TestSecurityRuleCrud:
 
             # Step 5: Verify the rule modal appears
             log_test_step("5. Verify the rule modal appears")
-            modal = page.locator('.qwenpaw-modal').first
+            modal = page.locator('.jotaduo-modal').first
             expect(modal).to_be_visible(timeout=5000)
             logger.info("Rule modal opened")
 
@@ -496,7 +496,7 @@ class TestSecurityRuleCrud:
 
             # Step 7: Click the Confirm button to save the rule
             log_test_step("7. Click the Confirm button to save the rule")
-            confirm_btn = modal.locator('button.qwenpaw-btn-primary').first
+            confirm_btn = modal.locator('button.jotaduo-btn-primary').first
             expect(confirm_btn).to_be_visible(timeout=5000)
             confirm_btn.click()
             page.wait_for_timeout(2000)
@@ -509,9 +509,9 @@ class TestSecurityRuleCrud:
 
             # Step 9: Verify the rule's severity tag (default HIGH)
             log_test_step("9. Verify the rule's severity tag")
-            severity_tag = rule_row.locator('.qwenpaw-tag:has-text("HIGH")').first
+            severity_tag = rule_row.locator('.jotaduo-tag:has-text("HIGH")').first
             if severity_tag.count() == 0:
-                severity_tag = rule_row.locator('.qwenpaw-tag').first
+                severity_tag = rule_row.locator('.jotaduo-tag').first
             assert severity_tag.count() > 0, "Rule row should contain a severity tag"
             expect(severity_tag).to_be_visible(timeout=5000)
             logger.info(f"Severity tag verified: {severity_tag.inner_text().strip()}")
@@ -519,7 +519,7 @@ class TestSecurityRuleCrud:
             # Step 10: Disable the rule
             log_test_step("10. Disable the rule")
             # Each row has two switches: autoDeny (col 5) and enabled (col 6). Use .last to pick the enabled switch.
-            enable_switch = rule_row.locator('button.qwenpaw-switch[role="switch"]').last
+            enable_switch = rule_row.locator('button.jotaduo-switch[role="switch"]').last
             expect(enable_switch).to_be_visible(timeout=5000)
 
             initial_switch_state = enable_switch.get_attribute('aria-checked')
@@ -527,7 +527,7 @@ class TestSecurityRuleCrud:
             page.wait_for_timeout(1500)
 
             # Re-fetch the switch element
-            enable_switch = rule_row.locator('button.qwenpaw-switch[role="switch"]').last
+            enable_switch = rule_row.locator('button.jotaduo-switch[role="switch"]').last
             after_disable = enable_switch.get_attribute('aria-checked')
             assert initial_switch_state != after_disable, "Rule switch did not toggle"
             logger.info("Rule disabled")
@@ -538,7 +538,7 @@ class TestSecurityRuleCrud:
             page.wait_for_timeout(2000)
 
             # Re-fetch the switch element (DOM may have updated)
-            enable_switch = rule_row.locator('button.qwenpaw-switch[role="switch"]').last
+            enable_switch = rule_row.locator('button.jotaduo-switch[role="switch"]').last
 
             after_enable = enable_switch.get_attribute('aria-checked')
             if after_enable != 'true':
@@ -561,7 +561,7 @@ class TestSecurityRuleCrud:
 
             # Step 13: Verify the edit modal appears
             log_test_step("13. Verify the edit modal appears")
-            edit_modal = page.locator('.qwenpaw-modal').first
+            edit_modal = page.locator('.jotaduo-modal').first
             expect(edit_modal).to_be_visible(timeout=5000)
             logger.info("Edit modal opened")
 
@@ -588,7 +588,7 @@ class TestSecurityRuleCrud:
                             delete_btn = cleanup_rule_row.locator('button:not([role="switch"]):has(svg)').last
                         delete_btn.click()
                         page.wait_for_timeout(1500)
-                        confirm_delete_btn = page.locator('.qwenpaw-modal-confirm button.qwenpaw-btn-primary, .qwenpaw-modal button:has-text("确认"), .qwenpaw-modal button:has-text("Delete")').first
+                        confirm_delete_btn = page.locator('.jotaduo-modal-confirm button.jotaduo-btn-primary, .jotaduo-modal button:has-text("确认"), .jotaduo-modal button:has-text("Delete")').first
                         if confirm_delete_btn.count() > 0:
                             confirm_delete_btn.click()
                             page.wait_for_timeout(2000)
@@ -638,7 +638,7 @@ class TestSkillScannerModeSwitch:
 
         # Step 2: Check and switch to the Skill Scanner tab
         log_test_step("2. Check and switch to the Skill Scanner tab")
-        skill_scanner_tab = page.locator('[data-node-key="skillScanner"] .qwenpaw-tabs-tab-btn').first
+        skill_scanner_tab = page.locator('[data-node-key="skillScanner"] .jotaduo-tabs-tab-btn').first
 
         if not skill_scanner_tab.is_visible():
             pytest.skip("Skill Scanner tab not present, skipping this test")
@@ -646,19 +646,19 @@ class TestSkillScannerModeSwitch:
         skill_scanner_tab.click()
         page.wait_for_timeout(1500)
 
-        skill_scanner_panel = page.locator('.qwenpaw-tabs-tabpane-active').first
+        skill_scanner_panel = page.locator('.jotaduo-tabs-tabpane-active').first
         expect(skill_scanner_panel).to_be_visible(timeout=5000)
         logger.info("Skill Scanner tab activated")
 
         # Step 3: Verify the mode selector exists
         log_test_step("3. Verify the mode selector exists")
-        mode_select = skill_scanner_panel.locator('.qwenpaw-select').first
+        mode_select = skill_scanner_panel.locator('.jotaduo-select').first
         expect(mode_select).to_be_visible(timeout=5000)
         logger.info("Mode selector visible")
 
         # Step 4: Record the current mode (used by the finally block to restore)
         log_test_step("4. Record the current mode")
-        current_mode_selector = mode_select.locator('.qwenpaw-select-selector').first
+        current_mode_selector = mode_select.locator('.jotaduo-select-selector').first
         expect(current_mode_selector).to_be_visible(timeout=5000)
         original_mode_text = current_mode_selector.inner_text().strip()
         logger.info(f"Current mode: {original_mode_text}")
@@ -669,7 +669,7 @@ class TestSkillScannerModeSwitch:
             current_mode_selector.click()
             page.wait_for_timeout(1000)
 
-            block_option = page.locator('.qwenpaw-select-item:has-text("block"), .qwenpaw-select-item:has-text("Block")').first
+            block_option = page.locator('.jotaduo-select-item:has-text("block"), .jotaduo-select-item:has-text("Block")').first
             if block_option.count() > 0:
                 block_option.click()
                 page.wait_for_timeout(2000)
@@ -686,7 +686,7 @@ class TestSkillScannerModeSwitch:
             current_mode_selector.click()
             page.wait_for_timeout(1000)
 
-            warn_option = page.locator('.qwenpaw-select-item:has-text("warn"), .qwenpaw-select-item:has-text("Warn")').first
+            warn_option = page.locator('.jotaduo-select-item:has-text("warn"), .jotaduo-select-item:has-text("Warn")').first
             if warn_option.count() > 0:
                 warn_option.click()
                 page.wait_for_timeout(2000)
@@ -703,7 +703,7 @@ class TestSkillScannerModeSwitch:
             current_mode_selector.click()
             page.wait_for_timeout(1000)
 
-            off_option = page.locator('.qwenpaw-select-item:has-text("off"), .qwenpaw-select-item:has-text("Off")').first
+            off_option = page.locator('.jotaduo-select-item:has-text("off"), .jotaduo-select-item:has-text("Off")').first
             if off_option.count() > 0:
                 off_option.click()
                 page.wait_for_timeout(2000)
@@ -717,7 +717,7 @@ class TestSkillScannerModeSwitch:
 
             # Step 8: Verify the timeout-setting control exists
             log_test_step("8. Verify the timeout-setting control exists")
-            timeout_input = skill_scanner_panel.locator('input[type="number"], .qwenpaw-input-number input').first
+            timeout_input = skill_scanner_panel.locator('input[type="number"], .jotaduo-input-number input').first
             if timeout_input.count() > 0:
                 expect(timeout_input).to_be_visible(timeout=5000)
                 logger.info("Timeout-setting control visible")
@@ -726,7 +726,7 @@ class TestSkillScannerModeSwitch:
 
             # Step 9: Verify the Scan Alerts tab exists
             log_test_step("9. Verify the Scan Alerts tab exists")
-            scan_alerts_tab = skill_scanner_panel.locator('[data-node-key="scanAlerts"] .qwenpaw-tabs-tab-btn, .qwenpaw-tabs-tab-btn:has-text("扫描警报"), .qwenpaw-tabs-tab-btn:has-text("Scan Alerts")').first
+            scan_alerts_tab = skill_scanner_panel.locator('[data-node-key="scanAlerts"] .jotaduo-tabs-tab-btn, .jotaduo-tabs-tab-btn:has-text("扫描警报"), .jotaduo-tabs-tab-btn:has-text("Scan Alerts")').first
             if scan_alerts_tab.count() > 0:
                 expect(scan_alerts_tab).to_be_visible(timeout=5000)
                 logger.info("Scan Alerts tab visible")
@@ -735,7 +735,7 @@ class TestSkillScannerModeSwitch:
 
             # Step 10: Verify the Whitelist tab exists
             log_test_step("10. Verify the Whitelist tab exists")
-            whitelist_tab = skill_scanner_panel.locator('[data-node-key="whitelist"] .qwenpaw-tabs-tab-btn, .qwenpaw-tabs-tab-btn:has-text("白名单"), .qwenpaw-tabs-tab-btn:has-text("Whitelist")').first
+            whitelist_tab = skill_scanner_panel.locator('[data-node-key="whitelist"] .jotaduo-tabs-tab-btn, .jotaduo-tabs-tab-btn:has-text("白名单"), .jotaduo-tabs-tab-btn:has-text("Whitelist")').first
             if whitelist_tab.count() > 0:
                 expect(whitelist_tab).to_be_visible(timeout=5000)
                 logger.info("Whitelist tab visible")
@@ -750,7 +750,7 @@ class TestSkillScannerModeSwitch:
                 try:
                     current_mode_selector.click()
                     page.wait_for_timeout(1000)
-                    restore_option = page.locator(f'.qwenpaw-select-item:has-text("{original_mode_text}")').first
+                    restore_option = page.locator(f'.jotaduo-select-item:has-text("{original_mode_text}")').first
                     if restore_option.count() > 0:
                         restore_option.click()
                         page.wait_for_timeout(1000)
@@ -789,17 +789,17 @@ class TestDeniedToolsConfig:
 
         log_test_step("Ensure we are on the Tool Guard tab")
         tool_guard_tab = page.locator(
-            '[data-node-key="toolGuard"] .qwenpaw-tabs-tab-btn, '
-            '.qwenpaw-tabs-tab-btn:has-text("Tool Guard"), '
-            '.qwenpaw-tabs-tab-btn:has-text("工具防护")'
+            '[data-node-key="toolGuard"] .jotaduo-tabs-tab-btn, '
+            '.jotaduo-tabs-tab-btn:has-text("Tool Guard"), '
+            '.jotaduo-tabs-tab-btn:has-text("工具防护")'
         ).first
         if tool_guard_tab.count() > 0:
             tool_guard_tab.click()
             page.wait_for_timeout(1000)
 
         log_test_step("Ensure Tool Guard is enabled")
-        active_panel = page.locator('.qwenpaw-tabs-tabpane-active').first
-        guard_switch = active_panel.locator('.qwenpaw-switch').first
+        active_panel = page.locator('.jotaduo-tabs-tabpane-active').first
+        guard_switch = active_panel.locator('.jotaduo-switch').first
         if guard_switch.count() > 0:
             is_enabled = guard_switch.get_attribute("aria-checked") == "true"
             if not is_enabled:
@@ -811,8 +811,8 @@ class TestDeniedToolsConfig:
         # denied_tools is a Select mode="tags" component
         denied_tools_select = page.locator(
             '#denied_tools, '
-            '.qwenpaw-select:near(:text("Denied"), 200), '
-            '.qwenpaw-select:near(:text("拒绝"), 200)'
+            '.jotaduo-select:near(:text("Denied"), 200), '
+            '.jotaduo-select:near(:text("拒绝"), 200)'
         ).first
 
         if denied_tools_select.count() == 0:
@@ -830,7 +830,7 @@ class TestDeniedToolsConfig:
             page.wait_for_timeout(1000)
 
             # Look for dropdown options
-            options = page.locator('.qwenpaw-select-item-option').all()
+            options = page.locator('.jotaduo-select-item-option').all()
             if len(options) > 0:
                 logger.info(f"Found {len(options)} selectable tool(s)")
                 # Select the first option
@@ -839,7 +839,7 @@ class TestDeniedToolsConfig:
                 logger.info("Added a tool to the denied list")
 
                 # Verify selection
-                selected_tags = page.locator('.qwenpaw-select-selection-item').all()
+                selected_tags = page.locator('.jotaduo-select-selection-item').all()
                 assert len(selected_tags) > 0, "No selected tool tags found"
                 logger.info(f"Denied list contains {len(selected_tags)} tool(s)")
 
@@ -854,7 +854,7 @@ class TestDeniedToolsConfig:
                 logger.info("Entered a custom tool name")
         else:
             logger.info("Denied tools list Select not found; verify the page has related form fields")
-            form_items = active_panel.locator('.qwenpaw-form-item').all()
+            form_items = active_panel.locator('.jotaduo-form-item').all()
             assert len(form_items) >= 2, f"Tool Guard form fields insufficient: {len(form_items)}"
             logger.info(f"Tool Guard has {len(form_items)} form field(s)")
 
@@ -889,24 +889,24 @@ class TestRulePreview:
 
         log_test_step("Ensure we are on the Tool Guard tab")
         tool_guard_tab = page.locator(
-            '[data-node-key="toolGuard"] .qwenpaw-tabs-tab-btn, '
-            '.qwenpaw-tabs-tab-btn:has-text("Tool Guard"), '
-            '.qwenpaw-tabs-tab-btn:has-text("工具防护")'
+            '[data-node-key="toolGuard"] .jotaduo-tabs-tab-btn, '
+            '.jotaduo-tabs-tab-btn:has-text("Tool Guard"), '
+            '.jotaduo-tabs-tab-btn:has-text("工具防护")'
         ).first
         if tool_guard_tab.count() > 0:
             tool_guard_tab.click()
             page.wait_for_timeout(1000)
 
         log_test_step("Find the rules table")
-        active_panel = page.locator('.qwenpaw-tabs-tabpane-active').first
-        rule_table = active_panel.locator('table, .qwenpaw-table').first
+        active_panel = page.locator('.jotaduo-tabs-tabpane-active').first
+        rule_table = active_panel.locator('table, .jotaduo-table').first
 
         if rule_table.count() > 0:
             expect(rule_table).to_be_visible(timeout=5000)
             logger.info("Found the rules table")
 
             # Count rule rows
-            rule_rows = active_panel.locator('table tbody tr, .qwenpaw-table-row').all()
+            rule_rows = active_panel.locator('table tbody tr, .jotaduo-table-row').all()
             logger.info(f"Rules table contains {len(rule_rows)} rule(s)")
 
             log_test_step("Find the preview button")
@@ -921,7 +921,7 @@ class TestRulePreview:
                 page.wait_for_timeout(1500)
 
                 log_test_step("Verify the preview modal")
-                preview_modal = page.locator('.qwenpaw-modal').first
+                preview_modal = page.locator('.jotaduo-modal').first
                 if preview_modal.count() > 0:
                     expect(preview_modal).to_be_visible(timeout=5000)
                     modal_content = preview_modal.inner_text()
@@ -929,7 +929,7 @@ class TestRulePreview:
                     logger.info(f"Preview modal opened, content length: {len(modal_content)}")
 
                     # Close the modal
-                    close_btn = preview_modal.locator('.qwenpaw-modal-close, button:has-text("Close"), button:has-text("关闭"), button:has-text("OK")').first
+                    close_btn = preview_modal.locator('.jotaduo-modal-close, button:has-text("Close"), button:has-text("关闭"), button:has-text("OK")').first
                     if close_btn.count() > 0:
                         close_btn.click()
                         page.wait_for_timeout(500)
@@ -970,8 +970,8 @@ class TestSecurityBatchRuleToggle:
         page.wait_for_timeout(3000)
 
         log_test_step("Find the rules table")
-        active_panel = page.locator('.qwenpaw-tabs-tabpane-active').first
-        rule_switches = active_panel.locator('.qwenpaw-switch').all()
+        active_panel = page.locator('.jotaduo-tabs-tabpane-active').first
+        rule_switches = active_panel.locator('.jotaduo-switch').all()
         logger.info(f"Found {len(rule_switches)} rule switch(es)")
 
         if len(rule_switches) >= 2:

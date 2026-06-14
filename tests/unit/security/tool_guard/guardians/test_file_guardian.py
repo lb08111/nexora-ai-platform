@@ -2,7 +2,7 @@
 # pylint: disable=redefined-outer-name,protected-access,unused-argument
 """Tests for file_guardian path-sensitive file guard.
 
-Target: src/qwenpaw/security/tool_guard/guardians/file_guardian.py
+Target: src/jotaduo/security/tool_guard/guardians/file_guardian.py
 Goal: push coverage from 38% to 78%+.
 """
 from __future__ import annotations
@@ -12,17 +12,17 @@ from unittest.mock import patch
 
 import pytest
 
-from qwenpaw.security.tool_guard.guardians.file_guardian import (
+from jotaduo.security.tool_guard.guardians.file_guardian import (
     FilePathToolGuardian,
     _extract_paths_from_shell_command,
     _looks_like_path_token,
     _normalize_path,
     ensure_file_guard_paths,
 )
-from qwenpaw.security.tool_guard.models import GuardFinding, GuardSeverity
+from jotaduo.security.tool_guard.models import GuardFinding, GuardSeverity
 
 # Short alias for the long module path used in patch() calls
-_FG_MOD = "qwenpaw.security.tool_guard.guardians.file_guardian"
+_FG_MOD = "jotaduo.security.tool_guard.guardians.file_guardian"
 
 
 # ---------------------------------------------------------------------------
@@ -196,7 +196,7 @@ class TestEnsureFileGuardPaths:
         result = ensure_file_guard_paths([])
         assert len(result) > 0
         # Every _COMPAT_SECRET_DIRS entry must be present.
-        from qwenpaw.security.tool_guard.guardians.file_guardian import (
+        from jotaduo.security.tool_guard.guardians.file_guardian import (
             _COMPAT_SECRET_DIRS,
         )
 
@@ -204,7 +204,7 @@ class TestEnsureFileGuardPaths:
             assert d in result
 
     def test_deduplication(self):
-        from qwenpaw.security.tool_guard.guardians.file_guardian import (
+        from jotaduo.security.tool_guard.guardians.file_guardian import (
             _COMPAT_SECRET_DIRS,
         )
 

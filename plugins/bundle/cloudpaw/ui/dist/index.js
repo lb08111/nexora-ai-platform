@@ -1,6 +1,6 @@
 function Ht() {
   var st, at, it, ct;
-  const { React: e, antd: j, antdIcons: Y, getApiUrl: q, getApiToken: U } = window.QwenPaw.host, {
+  const { React: e, antd: j, antdIcons: Y, getApiUrl: q, getApiToken: U } = window.JotaDuo.host, {
     Card: X,
     Table: M,
     Tag: $,
@@ -854,7 +854,7 @@ function Ht() {
   function Ne() {
     var t;
     try {
-      const n = sessionStorage.getItem("qwenpaw-agent-storage") || localStorage.getItem("qwenpaw-agent-storage");
+      const n = sessionStorage.getItem("jotaduo-agent-storage") || localStorage.getItem("jotaduo-agent-storage");
       if (n) {
         const o = JSON.parse(n);
         return ((t = o == null ? void 0 : o.state) == null ? void 0 : t.selectedAgent) || null;
@@ -2137,9 +2137,9 @@ function Ht() {
   }
   async function He(t) {
     var s, I;
-    const n = window.QwenPaw;
+    const n = window.JotaDuo;
     if (!(n != null && n.host)) {
-      console.warn("[a2a] QwenPaw.host not available");
+      console.warn("[a2a] JotaDuo.host not available");
       return;
     }
     const { getApiUrl: o, getApiToken: i } = n.host, d = o("/a2a/call/stream"), g = i();
@@ -2153,7 +2153,7 @@ function Ht() {
       };
       g && (A.Authorization = `Bearer ${g}`);
       try {
-        const B = sessionStorage.getItem("qwenpaw-agent-storage") || localStorage.getItem("qwenpaw-agent-storage"), H = (I = (s = JSON.parse(B || "{}")) == null ? void 0 : s.state) == null ? void 0 : I.selectedAgent;
+        const B = sessionStorage.getItem("jotaduo-agent-storage") || localStorage.getItem("jotaduo-agent-storage"), H = (I = (s = JSON.parse(B || "{}")) == null ? void 0 : s.state) == null ? void 0 : I.selectedAgent;
         H && (A["X-Agent-Id"] = H);
       } catch {
       }
@@ -2254,11 +2254,11 @@ function Ht() {
       }
     }
   }
-  (at = (st = window.QwenPaw).registerToolRender) == null || at.call(st, "cloudpaw", {
+  (at = (st = window.JotaDuo).registerToolRender) == null || at.call(st, "cloudpaw", {
     proposal_choice: St,
     manage_prd: At,
     a2a_call: _t
-  }), (ct = (it = window.QwenPaw).registerRoutes) == null || ct.call(it, "cloudpaw", [
+  }), (ct = (it = window.JotaDuo).registerRoutes) == null || ct.call(it, "cloudpaw", [
     {
       path: "/a2a",
       component: It,
@@ -2269,7 +2269,7 @@ function Ht() {
   ]), jt(), Wt(), Pt();
 }
 function jt() {
-  const e = "qwenpaw-last-used-agent", j = "qwenpaw-agent-storage", Y = "cloudpaw-first-install", q = "cloud-orchestrator";
+  const e = "jotaduo-last-used-agent", j = "jotaduo-agent-storage", Y = "cloudpaw-first-install", q = "cloud-orchestrator";
   if (localStorage.getItem(Y)) return;
   localStorage.setItem(Y, "true");
   function U() {
@@ -2325,7 +2325,7 @@ function jt() {
 }
 function Wt() {
   var W;
-  const e = (W = window.QwenPaw) == null ? void 0 : W.modules;
+  const e = (W = window.JotaDuo) == null ? void 0 : W.modules;
   if (!e) return;
   const j = e["Chat/OptionsPanel/defaultConfig"];
   if (!(j != null && j.configProvider)) {

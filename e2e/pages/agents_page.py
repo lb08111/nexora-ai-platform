@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-QwenPaw Agents management page object.
+JotaDuo Agents management page object.
 
 Wraps all interactions on the agent management page and exposes business-level
 methods.
@@ -33,7 +33,7 @@ class AgentsPage(BasePage):
     - Manage agent files
     """
 
-    PAGE_TITLE = "QwenPaw Console"
+    PAGE_TITLE = "JotaDuo Console"
     PAGE_URL = f"{config.base_url}/agents"
 
     # ========== Selector definitions ==========
@@ -43,52 +43,52 @@ class AgentsPage(BasePage):
     BREADCRUMB = 'span[class*="breadcrumbCurrent"]:has-text("智能体")'
 
     # Agent list (table structure)
-    AGENT_TABLE = '.qwenpaw-table'
-    AGENT_LIST = '.qwenpaw-table-tbody'
-    AGENT_ITEM = '.qwenpaw-table-tbody tr.qwenpaw-table-row'
+    AGENT_TABLE = '.jotaduo-table'
+    AGENT_LIST = '.jotaduo-table-tbody'
+    AGENT_ITEM = '.jotaduo-table-tbody tr.jotaduo-table-row'
     # Table column order: drag handle (1) | Name (2) | ID (3) | Description (4) | Workspace (5) | Model (6) | Actions (7)
-    AGENT_NAME_CELL = 'td.qwenpaw-table-cell:nth-child(2)'
-    AGENT_ID_CELL = 'td.qwenpaw-table-cell:nth-child(3)'
-    AGENT_DESC_CELL = 'td.qwenpaw-table-cell:nth-child(4)'
-    AGENT_WORKSPACE_CELL = 'td.qwenpaw-table-cell:nth-child(5)'
-    AGENT_MODEL_CELL = 'td.qwenpaw-table-cell:nth-child(6)'
-    AGENT_ACTIONS_CELL = 'td.qwenpaw-table-cell:nth-child(7)'
-    AGENT_STATUS = '.qwenpaw-tag'
+    AGENT_NAME_CELL = 'td.jotaduo-table-cell:nth-child(2)'
+    AGENT_ID_CELL = 'td.jotaduo-table-cell:nth-child(3)'
+    AGENT_DESC_CELL = 'td.jotaduo-table-cell:nth-child(4)'
+    AGENT_WORKSPACE_CELL = 'td.jotaduo-table-cell:nth-child(5)'
+    AGENT_MODEL_CELL = 'td.jotaduo-table-cell:nth-child(6)'
+    AGENT_ACTIONS_CELL = 'td.jotaduo-table-cell:nth-child(7)'
+    AGENT_STATUS = '.jotaduo-tag'
 
     # Action buttons
-    CREATE_AGENT_BTN = 'button:has-text("创建智能体"), button:has-text("Create Agent"), .qwenpaw-btn-primary'
+    CREATE_AGENT_BTN = 'button:has-text("创建智能体"), button:has-text("Create Agent"), .jotaduo-btn-primary'
     # Inline action buttons in a table row (3 icon buttons: edit, toggle, delete)
     # Locate via Ant Design icon class names (anticon-edit / anticon-delete), fallback to nth-child
-    EDIT_BTN = 'button:has(.anticon-edit), .qwenpaw-space-item:nth-child(1) button'
-    TOGGLE_BTN = '.qwenpaw-space-item:nth-child(2) button'
-    DELETE_BTN = 'button.qwenpaw-btn-dangerous, button:has(.anticon-delete)'
-    ENABLE_TOGGLE = '.qwenpaw-space-item:nth-child(2) button'
+    EDIT_BTN = 'button:has(.anticon-edit), .jotaduo-space-item:nth-child(1) button'
+    TOGGLE_BTN = '.jotaduo-space-item:nth-child(2) button'
+    DELETE_BTN = 'button.jotaduo-btn-dangerous, button:has(.anticon-delete)'
+    ENABLE_TOGGLE = '.jotaduo-space-item:nth-child(2) button'
     REFRESH_BTN = 'button:has(.anticon-reload), button:has(.spark-icon-spark-refresh-line)'
 
     # Create/edit form
-    FORM_DIALOG = '.qwenpaw-modal, [role="dialog"]'
-    FORM_TITLE = '.qwenpaw-modal-header-title, .qwenpaw-spark-title'
+    FORM_DIALOG = '.jotaduo-modal, [role="dialog"]'
+    FORM_TITLE = '.jotaduo-modal-header-title, .jotaduo-spark-title'
     FORM_NAME_INPUT = 'input#name, input[placeholder*="My Agent"]'
     FORM_DESC_INPUT = 'textarea#description, textarea[placeholder*="describe"]'
     FORM_WORKSPACE_INPUT = 'input#workspace_dir'
-    FORM_SKILLS_SELECT = '.qwenpaw-form-item:has-text("Skills") .qwenpaw-select-selector'
-    FORM_SUBMIT_BTN = '.qwenpaw-modal-footer button.qwenpaw-btn-primary, button:has-text("保存"), button:has-text("Save")'
-    FORM_CANCEL_BTN = '.qwenpaw-modal-footer button.qwenpaw-btn-default, button:has-text("取消"), button:has-text("Cancel")'
+    FORM_SKILLS_SELECT = '.jotaduo-form-item:has-text("Skills") .jotaduo-select-selector'
+    FORM_SUBMIT_BTN = '.jotaduo-modal-footer button.jotaduo-btn-primary, button:has-text("保存"), button:has-text("Save")'
+    FORM_CANCEL_BTN = '.jotaduo-modal-footer button.jotaduo-btn-default, button:has-text("取消"), button:has-text("Cancel")'
 
     # Delete confirmation (Popconfirm bubble)
-    DELETE_CONFIRM_DIALOG = '.qwenpaw-popconfirm'
-    DELETE_CONFIRM_BTN = '.qwenpaw-popconfirm-buttons button.qwenpaw-btn-primary'
-    DELETE_CANCEL_BTN = '.qwenpaw-popconfirm-buttons button.qwenpaw-btn-default'
+    DELETE_CONFIRM_DIALOG = '.jotaduo-popconfirm'
+    DELETE_CONFIRM_BTN = '.jotaduo-popconfirm-buttons button.jotaduo-btn-primary'
+    DELETE_CANCEL_BTN = '.jotaduo-popconfirm-buttons button.jotaduo-btn-default'
 
     # Agent detail
-    AGENT_DETAIL_TAB = '.qwenpaw-tabs-tab-btn'
-    AGENT_DETAIL_PANEL = '.qwenpaw-tabs-tabpane-active'
-    AGENT_FILES_LIST = '[class*=fileList], .qwenpaw-list'
-    AGENT_FILE_ITEM = '[class*=fileItem], .qwenpaw-list-item'
+    AGENT_DETAIL_TAB = '.jotaduo-tabs-tab-btn'
+    AGENT_DETAIL_PANEL = '.jotaduo-tabs-tabpane-active'
+    AGENT_FILES_LIST = '[class*=fileList], .jotaduo-list'
+    AGENT_FILE_ITEM = '[class*=fileItem], .jotaduo-list-item'
 
     # Empty state
-    EMPTY_STATE = '.qwenpaw-empty, [class*=empty]'
-    EMPTY_STATE_TEXT = '.qwenpaw-empty-description, .qwenpaw-empty-desc'
+    EMPTY_STATE = '.jotaduo-empty, [class*=empty]'
+    EMPTY_STATE_TEXT = '.jotaduo-empty-description, .jotaduo-empty-desc'
 
     # Toast messages (inherited from BasePage, no redefinition needed)
 

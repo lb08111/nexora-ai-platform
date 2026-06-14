@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-QwenPaw Environments page object.
+JotaDuo Environments page object.
 
 Wraps all interactions on the environment variables configuration page and
 exposes business-level methods.
@@ -29,7 +29,7 @@ class EnvironmentsPage(BasePage):
     - Click the save button
     """
 
-    PAGE_TITLE = "QwenPaw Console"
+    PAGE_TITLE = "JotaDuo Console"
     PAGE_URL = f"{config.base_url}/environments"
 
     # ========== Selector definitions ==========
@@ -39,10 +39,10 @@ class EnvironmentsPage(BasePage):
     PAGE_LOAD_INDICATOR = ENV_PAGE_CONTAINER
 
     # Table-related selectors
-    ENV_TABLE = ".qwenpaw-table"
-    ENV_ROW = ".qwenpaw-table-tbody tr"
+    ENV_TABLE = ".jotaduo-table"
+    ENV_ROW = ".jotaduo-table-tbody tr"
     ADD_BTN = 'button:has-text("添加"), button:has-text("Add")'
-    SAVE_BTN = 'button.qwenpaw-btn-primary:has-text("保存"), button:has-text("Save")'
+    SAVE_BTN = 'button.jotaduo-btn-primary:has-text("保存"), button:has-text("Save")'
 
     # ========== Navigation ==========
 

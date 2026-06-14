@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-QwenPaw Heartbeat page object.
+JotaDuo Heartbeat page object.
 
 Wraps all interactions on the Heartbeat page and exposes business-level methods.
 """
@@ -30,39 +30,39 @@ class HeartbeatPage(BasePage):
     - Save configuration
     """
     
-    PAGE_TITLE = "QwenPaw Console"
+    PAGE_TITLE = "JotaDuo Console"
     PAGE_URL = f"{config.base_url}/heartbeat"
     PAGE_HEADER = "h1, h2, [class*=title], [class*=header]"
     
     # ========== Selector definitions ==========
 
     # Page load indicator (no h1 on the page; use a switch or input instead)
-    PAGE_LOAD_INDICATOR = '.ant-switch, .qwenpaw-switch, input'
+    PAGE_LOAD_INDICATOR = '.ant-switch, .jotaduo-switch, input'
 
     # Configuration card
-    CONFIG_CARD = ".ant-card, .qwenpaw-card, [class*=card]"
-    CONFIG_FORM = ".ant-form, .qwenpaw-form"
+    CONFIG_CARD = ".ant-card, .jotaduo-card, [class*=card]"
+    CONFIG_FORM = ".ant-form, .jotaduo-form"
 
     # Enabled switch (match id="enabled" exactly to avoid the "active hours" switch)
     ENABLED_SWITCH = '#enabled'
-    ENABLED_LABEL = '.ant-form-item:has-text("Enable"), .ant-form-item:has-text("启用"), .qwenpaw-form-item:has-text("启用"), .qwenpaw-form-item:has-text("开启")'
+    ENABLED_LABEL = '.ant-form-item:has-text("Enable"), .ant-form-item:has-text("启用"), .jotaduo-form-item:has-text("启用"), .jotaduo-form-item:has-text("开启")'
 
     # Interval configuration
-    INTERVAL_INPUT = 'input[id*="interval"], input[type="number"], input.qwenpaw-input-number-input'
-    INTERVAL_UNIT_SELECT = '.qwenpaw-select:has(#everyUnit), .ant-select:has(#everyUnit), .ant-select:has-text("seconds"), .ant-select:has-text("minutes"), .ant-select:has-text("hours"), .qwenpaw-select:has-text("秒"), .qwenpaw-select:has-text("分钟"), .qwenpaw-select:has-text("小时")'
+    INTERVAL_INPUT = 'input[id*="interval"], input[type="number"], input.jotaduo-input-number-input'
+    INTERVAL_UNIT_SELECT = '.jotaduo-select:has(#everyUnit), .ant-select:has(#everyUnit), .ant-select:has-text("seconds"), .ant-select:has-text("minutes"), .ant-select:has-text("hours"), .jotaduo-select:has-text("秒"), .jotaduo-select:has-text("分钟"), .jotaduo-select:has-text("小时")'
 
     # Scheduled time
-    TIME_PICKER = '.ant-picker-input > input, .qwenpaw-picker-input > input'
-    TIME_PICKER_PANEL = '.ant-picker-panel, .qwenpaw-picker-panel'
+    TIME_PICKER = '.ant-picker-input > input, .jotaduo-picker-input > input'
+    TIME_PICKER_PANEL = '.ant-picker-panel, .jotaduo-picker-panel'
 
     # Skill configuration
-    SKILL_SELECT = '.ant-select[data-placeholder*="Skill" i], .ant-select:has-text("skill"), .qwenpaw-select[data-placeholder*="技能" i], .qwenpaw-select:has-text("技能")'
+    SKILL_SELECT = '.ant-select[data-placeholder*="Skill" i], .ant-select:has-text("skill"), .jotaduo-select[data-placeholder*="技能" i], .jotaduo-select:has-text("技能")'
 
     # Save button (the actual UI may render "保 存" with a space)
     SAVE_BTN = 'button:has-text("Save"), button:has-text("保存"), button:has-text("保 存")'
 
     # Status indicator
-    STATUS_INDICATOR = '.ant-badge-status, .qwenpaw-badge-status, .status-indicator'
+    STATUS_INDICATOR = '.ant-badge-status, .jotaduo-badge-status, .status-indicator'
 
     # ========== Navigation methods ==========
     
@@ -97,7 +97,7 @@ class HeartbeatPage(BasePage):
         """Return whether the heartbeat is enabled."""
         switch = self.page.locator(self.ENABLED_SWITCH)
         if switch.count() > 0:
-            return switch.evaluate("el => el.classList.contains('ant-switch-checked') || el.classList.contains('qwenpaw-switch-checked') || el.getAttribute('aria-checked') === 'true'")
+            return switch.evaluate("el => el.classList.contains('ant-switch-checked') || el.classList.contains('jotaduo-switch-checked') || el.getAttribute('aria-checked') === 'true'")
         return False
     
     def get_interval(self) -> Dict[str, Any]:
@@ -112,7 +112,7 @@ class HeartbeatPage(BasePage):
 
         if unit_select.count() > 0:
             # Prefer the title attribute, falling back to inner_text
-            selection_item = unit_select.first.locator('.qwenpaw-select-selection-item, .ant-select-selection-item')
+            selection_item = unit_select.first.locator('.jotaduo-select-selection-item, .ant-select-selection-item')
             if selection_item.count() > 0:
                 unit_text = selection_item.get_attribute('title') or selection_item.inner_text().strip()
                 result["unit"] = unit_text if unit_text else None
@@ -176,9 +176,9 @@ class HeartbeatPage(BasePage):
                 clicked = False
                 for alias in aliases:
                     option = self.page.locator(
-                        f'.qwenpaw-select-item-option:has-text("{alias}"), '
+                        f'.jotaduo-select-item-option:has-text("{alias}"), '
                         f'.ant-select-item-option:has-text("{alias}"), '
-                        f'.qwenpaw-select-item:has-text("{alias}"), '
+                        f'.jotaduo-select-item:has-text("{alias}"), '
                         f'.ant-select-item:has-text("{alias}")'
                     )
                     if option.count() > 0:
@@ -278,6 +278,6 @@ class HeartbeatPage(BasePage):
 
     def assert_config_saved(self) -> "HeartbeatPage":
         """Assert the configuration was saved (no error message on the page)."""
-        error_msg = self.page.locator('.ant-message-error, .qwenpaw-message-error')
+        error_msg = self.page.locator('.ant-message-error, .jotaduo-message-error')
         assert error_msg.count() == 0, "Error message appeared after save"
         return self

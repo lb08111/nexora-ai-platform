@@ -21,8 +21,8 @@
 |                        | HiClaw 企业级能力                                         | 计划中 |
 | **上下文管理**         | 个人知识库                                                | 进行中 |
 |                        | 用户可选压缩（细粒度控制）                                | 计划中 |
-| **QwenPaw 应用**       | QwenPaw Creator                                           | 进行中 |
-|                        | QwenPaw Insight                                           | 进行中 |
+| **JotaDuo 应用**       | JotaDuo Creator                                           | 进行中 |
+|                        | JotaDuo Insight                                           | 进行中 |
 
 _状态说明：**进行中** — 正在积极开发；**计划中** — 已排队或设计中，也欢迎贡献；**征集中** — 我们强烈鼓励社区参与。_
 
@@ -30,7 +30,7 @@ _状态说明：**进行中** — 正在积极开发；**计划中** — 已排�
 
 ## 参与贡献
 
-QwenPaw 在开放协作中持续演进，欢迎各种形式的参与！请参考上表（尤其是标记为 **征集中** 的项）选择你感兴趣的方向，并阅读 [CONTRIBUTING](https://github.com/agentscope-ai/QwenPaw/blob/main/CONTRIBUTING.md) 了解如何开始。我们特别欢迎：
+JotaDuo 在开放协作中持续演进，欢迎各种形式的参与！请参考上表（尤其是标记为 **征集中** 的项）选择你感兴趣的方向，并阅读 [CONTRIBUTING](https://github.com/agentscope-ai/QwenPaw/blob/main/CONTRIBUTING.md) 了解如何开始。我们特别欢迎：
 
 - **横向拓展** — 新频道、模型提供商、技能、MCP。
 - **已有功能扩展与完善** — 展示与交互优化、下载提示、Windows 路径兼容等。

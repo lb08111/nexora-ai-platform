@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-QwenPaw E2E Test Framework - Utility Functions
+JotaDuo E2E Test Framework - Utility Functions
 
 Provides common test helper functions.
 """

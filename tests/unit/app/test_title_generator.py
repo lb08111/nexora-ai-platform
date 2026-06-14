@@ -9,10 +9,10 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from qwenpaw.app.runner.manager import ChatManager
-from qwenpaw.app.runner.models import ChatSpec, ChatUpdate
-from qwenpaw.app.runner.repo.json_repo import JsonChatRepository
-from qwenpaw.app.runner.title_generator import (
+from jotaduo.app.runner.manager import ChatManager
+from jotaduo.app.runner.models import ChatSpec, ChatUpdate
+from jotaduo.app.runner.repo.json_repo import JsonChatRepository
+from jotaduo.app.runner.title_generator import (
     MAX_TITLE_CHARS,
     _clean_title,
     _extract_text_from_response,
@@ -201,11 +201,11 @@ def _patch_model_factory(
     function-local import inside :mod:`title_generator` picks up the mock."""
     if factory_error is not None:
         return patch(
-            "qwenpaw.agents.model_factory.create_model_and_formatter",
+            "jotaduo.agents.model_factory.create_model_and_formatter",
             side_effect=factory_error,
         )
     return patch(
-        "qwenpaw.agents.model_factory.create_model_and_formatter",
+        "jotaduo.agents.model_factory.create_model_and_formatter",
         return_value=(model, MagicMock()),
     )
 
@@ -228,7 +228,7 @@ def _stub_load_agent_config():
     enabled ``AutoTitleConfig`` so tests do not have to set up a real
     workspace on disk."""
     with patch(
-        "qwenpaw.config.config.load_agent_config",
+        "jotaduo.config.config.load_agent_config",
         return_value=_stub_agent_config(),
     ) as mocked:
         yield mocked

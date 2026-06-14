@@ -16,7 +16,7 @@ Options:
 
 Behavior:
 1) Links:
-   - .env    -> <shared-dir>/env/qwenpaw.env
+   - .env    -> <shared-dir>/env/jotaduo.env
    - tenants -> <shared-dir>/tenants
    - uploads -> <shared-dir>/uploads
 2) Runs pnpm install --prefer-offline (root package.json, or console/ fallback)
@@ -102,7 +102,7 @@ create_link() {
 }
 
 echo ">> Linking shared resources"
-create_link "$shared_dir/env/qwenpaw.env" ".env"
+create_link "$shared_dir/env/jotaduo.env" ".env"
 create_link "$shared_dir/tenants" "tenants"
 create_link "$shared_dir/uploads" "uploads"
 

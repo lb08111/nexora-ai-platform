@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import pytest
 
-from qwenpaw.agents.br_team.prompts import PROMPTS_BY_ROLE
+from jotaduo.agents.br_team.prompts import PROMPTS_BY_ROLE
 
 
 @pytest.mark.parametrize("role", sorted(PROMPTS_BY_ROLE))

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Plugin entry point: register the CopilotKit router with QwenPaw."""
+"""Plugin entry point: register the CopilotKit router with JotaDuo."""
 
 # pylint: disable=wrong-import-position,wrong-import-order
 
@@ -7,7 +7,7 @@ import logging
 import sys
 from pathlib import Path
 
-# ``qwenpaw plugin install`` execs this file as a plain module (no
+# ``jotaduo plugin install`` execs this file as a plain module (no
 # package), so sibling modules are not reachable via relative imports
 # unless the plugin directory is on sys.path before importing them.
 _plugin_dir = str(Path(__file__).resolve().parent)
@@ -16,7 +16,7 @@ if _plugin_dir not in sys.path:
 
 from router import build_router, get_session_manager  # noqa: E402
 
-logger = logging.getLogger("qwenpaw.discovery_copilotkit")
+logger = logging.getLogger("jotaduo.discovery_copilotkit")
 
 
 class DiscoveryCopilotKitPlugin:
@@ -46,15 +46,15 @@ class DiscoveryCopilotKitPlugin:
         """Optionally swap the session factory to the live agent.
 
         Defaults to the scripted (LLM-free) session so the plugin works
-        out of the box; setting ``QWENPAW_DISCOVERY_LIVE=1`` flips it to
+        out of the box; setting ``JOTADUO_DISCOVERY_LIVE=1`` flips it to
         the real LLM-driven session — same env switch the discovery
         runner uses, so the two stay in sync.
         """
         import os
 
-        if os.environ.get("QWENPAW_DISCOVERY_LIVE") == "1":
+        if os.environ.get("JOTADUO_DISCOVERY_LIVE") == "1":
             try:
-                from qwenpaw.discovery import LiveDiscoverySession
+                from jotaduo.discovery import LiveDiscoverySession
 
                 get_session_manager().set_factory(LiveDiscoverySession)
                 logger.info(
@@ -68,7 +68,7 @@ class DiscoveryCopilotKitPlugin:
         else:
             logger.info(
                 "discovery-copilotkit: using ScriptedDiscoverySession "
-                "(set QWENPAW_DISCOVERY_LIVE=1 for live mode)",
+                "(set JOTADUO_DISCOVERY_LIVE=1 for live mode)",
             )
 
     def _shutdown(self) -> None:

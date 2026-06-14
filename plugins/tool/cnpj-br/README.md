@@ -1,6 +1,6 @@
 # CNPJ Brasil — Consultas Cadastrais
 
-Plugin tool-type leve para consultas cadastrais brasileiras na Nexora AI Platform.
+Plugin tool-type leve para consultas cadastrais brasileiras na Jotaduo AI Platform.
 
 ## O que faz
 

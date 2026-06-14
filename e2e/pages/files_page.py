@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-QwenPaw Files page object.
+JotaDuo Files page object.
 
 Wraps all interactions on the Files page and exposes business-level methods.
 """
@@ -29,7 +29,7 @@ class FilesPage(BasePage):
     - Check whether a file is enabled
     """
 
-    PAGE_TITLE = "QwenPaw Console"
+    PAGE_TITLE = "JotaDuo Console"
     WORKSPACE_URL = f"{config.base_url}/workspace"
     PAGE_URL = WORKSPACE_URL
 
@@ -42,7 +42,7 @@ class FilesPage(BasePage):
     FILE_ITEM_SELECTOR = 'div[class*="fileItem"]'
     FILE_NAME_SELECTOR = 'div[class*="fileItemName"]'
     FILE_META_SELECTOR = 'div[class*="fileItemMeta"]'
-    SWITCH_SELECTOR = 'button.qwenpaw-switch[role="switch"]'
+    SWITCH_SELECTOR = 'button.jotaduo-switch[role="switch"]'
     DRAG_HANDLE_SELECTOR = 'div[class*="dragHandle"]'
 
     # ========== Navigation ==========
@@ -101,7 +101,7 @@ class FilesPage(BasePage):
         switch = item.locator(self.SWITCH_SELECTOR).first
         if switch.count() > 0:
             return switch.evaluate(
-                "el => el.classList.contains('qwenpaw-switch-checked') || "
+                "el => el.classList.contains('jotaduo-switch-checked') || "
                 "el.getAttribute('aria-checked') === 'true'"
             )
         return False

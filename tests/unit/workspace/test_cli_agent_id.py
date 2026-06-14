@@ -7,12 +7,12 @@ from unittest.mock import patch, MagicMock
 import pytest
 from click.testing import CliRunner
 
-from qwenpaw.cli.channels_cmd import channels_group
-from qwenpaw.cli.cron_cmd import cron_group
-from qwenpaw.cli.daemon_cmd import daemon_group
-from qwenpaw.cli.chats_cmd import chats_group
-from qwenpaw.cli.skills_cmd import skills_group
-from qwenpaw.config.config import AgentProfileConfig
+from jotaduo.cli.channels_cmd import channels_group
+from jotaduo.cli.cron_cmd import cron_group
+from jotaduo.cli.daemon_cmd import daemon_group
+from jotaduo.cli.chats_cmd import chats_group
+from jotaduo.cli.skills_cmd import skills_group
+from jotaduo.config.config import AgentProfileConfig
 
 
 @pytest.fixture
@@ -37,7 +37,7 @@ def temp_config_dir():
 def test_channels_list_default_agent(
     temp_config_dir,
 ):  # pylint: disable=W0621,W0613
-    """Test qwenpaw channels list uses default agent by default."""
+    """Test jotaduo channels list uses default agent by default."""
     _, default_ws, _ = temp_config_dir
 
     # Create agent config for default
@@ -54,7 +54,7 @@ def test_channels_list_default_agent(
 
     runner = CliRunner()
 
-    with patch("qwenpaw.cli.channels_cmd.load_agent_config") as mock_load:
+    with patch("jotaduo.cli.channels_cmd.load_agent_config") as mock_load:
         mock_load.return_value = agent_config
         runner.invoke(channels_group, ["list"])
 
@@ -65,7 +65,7 @@ def test_channels_list_default_agent(
 def test_channels_list_custom_agent(
     temp_config_dir,
 ):  # pylint: disable=W0621,W0613
-    """Test qwenpaw channels list with custom agent_id."""
+    """Test jotaduo channels list with custom agent_id."""
     _, _, test_ws = temp_config_dir
 
     # Create agent config for test agent
@@ -82,7 +82,7 @@ def test_channels_list_custom_agent(
 
     runner = CliRunner()
 
-    with patch("qwenpaw.cli.channels_cmd.load_agent_config") as mock_load:
+    with patch("jotaduo.cli.channels_cmd.load_agent_config") as mock_load:
         mock_load.return_value = agent_config
         runner.invoke(
             channels_group,
@@ -94,10 +94,10 @@ def test_channels_list_custom_agent(
 
 
 def test_cron_list_with_agent_id():
-    """Test qwenpaw cron list with --agent-id."""
+    """Test jotaduo cron list with --agent-id."""
     runner = CliRunner()
 
-    with patch("qwenpaw.cli.cron_cmd.client") as mock_client:
+    with patch("jotaduo.cli.cron_cmd.client") as mock_client:
         mock_response = MagicMock()
         mock_response.json.return_value = {"jobs": []}
         mock_response.raise_for_status = MagicMock()
@@ -120,11 +120,11 @@ def test_cron_list_with_agent_id():
 
 
 def test_daemon_status_default_agent():
-    """Test qwenpaw daemon status defaults to 'default' agent."""
+    """Test jotaduo daemon status defaults to 'default' agent."""
     runner = CliRunner()
 
-    with patch("qwenpaw.cli.daemon_cmd.run_daemon_status") as mock_status:
-        with patch("qwenpaw.cli.daemon_cmd._get_agent_workspace") as mock_ws:
+    with patch("jotaduo.cli.daemon_cmd.run_daemon_status") as mock_status:
+        with patch("jotaduo.cli.daemon_cmd._get_agent_workspace") as mock_ws:
             mock_ws.return_value = "/tmp/default"
             mock_status.return_value = "Status: OK"
 
@@ -135,11 +135,11 @@ def test_daemon_status_default_agent():
 
 
 def test_daemon_status_custom_agent():
-    """Test qwenpaw daemon status with custom agent."""
+    """Test jotaduo daemon status with custom agent."""
     runner = CliRunner()
 
-    with patch("qwenpaw.cli.daemon_cmd.run_daemon_status") as mock_status:
-        with patch("qwenpaw.cli.daemon_cmd._get_agent_workspace") as mock_ws:
+    with patch("jotaduo.cli.daemon_cmd.run_daemon_status") as mock_status:
+        with patch("jotaduo.cli.daemon_cmd._get_agent_workspace") as mock_ws:
             mock_ws.return_value = "/tmp/xyz789"
             mock_status.return_value = "Status: OK"
 
@@ -153,13 +153,13 @@ def test_daemon_status_custom_agent():
 
 
 def test_skills_list_default_agent():
-    """Test qwenpaw skills list defaults to 'default' agent."""
+    """Test jotaduo skills list defaults to 'default' agent."""
     runner = CliRunner()
 
     with patch(
-        "qwenpaw.cli.skills_cmd._get_agent_workspace",
+        "jotaduo.cli.skills_cmd._get_agent_workspace",
     ) as mock_ws:
-        with patch("qwenpaw.cli.skills_cmd.SkillService") as mock_service:
+        with patch("jotaduo.cli.skills_cmd.SkillService") as mock_service:
             mock_ws.return_value = "/tmp/default"
             mock_service_instance = MagicMock()
             mock_service_instance.list_all_skills.return_value = []
@@ -172,13 +172,13 @@ def test_skills_list_default_agent():
 
 
 def test_skills_list_custom_agent():
-    """Test qwenpaw skills list with custom agent."""
+    """Test jotaduo skills list with custom agent."""
     runner = CliRunner()
 
     with patch(
-        "qwenpaw.cli.skills_cmd._get_agent_workspace",
+        "jotaduo.cli.skills_cmd._get_agent_workspace",
     ) as mock_ws:
-        with patch("qwenpaw.cli.skills_cmd.SkillService") as mock_service:
+        with patch("jotaduo.cli.skills_cmd.SkillService") as mock_service:
             mock_ws.return_value = "/tmp/abc123"
             mock_service_instance = MagicMock()
             mock_service_instance.list_all_skills.return_value = []
@@ -194,10 +194,10 @@ def test_skills_list_custom_agent():
 
 
 def test_chats_list_with_agent_id():
-    """Test qwenpaw chats list with --agent-id."""
+    """Test jotaduo chats list with --agent-id."""
     runner = CliRunner()
 
-    with patch("qwenpaw.cli.chats_cmd.client") as mock_client:
+    with patch("jotaduo.cli.chats_cmd.client") as mock_client:
         mock_response = MagicMock()
         mock_response.json.return_value = []
         mock_response.raise_for_status = MagicMock()
@@ -223,7 +223,7 @@ def test_chats_update_uses_minimal_payload():
     """Chat rename should send only the intended patch fields."""
     runner = CliRunner()
 
-    with patch("qwenpaw.cli.chats_cmd.client") as mock_client:
+    with patch("jotaduo.cli.chats_cmd.client") as mock_client:
         mock_response = MagicMock()
         mock_response.raise_for_status = MagicMock()
         mock_response.json.return_value = {"id": "chat-1", "name": "Renamed"}

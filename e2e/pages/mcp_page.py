@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-QwenPaw MCP page object.
+JotaDuo MCP page object.
 
 Wraps all interactions on the MCP page and exposes business-level methods.
 """
@@ -27,7 +27,7 @@ class McpPage(BasePage):
     - View MCP configuration
     """
 
-    PAGE_TITLE = "QwenPaw Console"
+    PAGE_TITLE = "JotaDuo Console"
     PAGE_URL = f"{config.base_url}/mcp"
 
     # ========== Selector definitions ==========
@@ -38,7 +38,7 @@ class McpPage(BasePage):
     # MCP card selectors
     MCP_CARD_SELECTOR = 'div[class*="mcpCard"]'
     TOGGLE_BTN_SELECTOR = 'button[class*="toggleButton"]'
-    CREATE_BTN_SELECTOR = 'button.qwenpaw-btn-primary:has-text("创建客户端")'
+    CREATE_BTN_SELECTOR = 'button.jotaduo-btn-primary:has-text("创建客户端")'
 
     # Inner card elements
     CARD_TITLE_SELECTOR = 'h3[class*="mcpTitle"]'
@@ -49,8 +49,8 @@ class McpPage(BasePage):
     BREADCRUMB_SELECTOR = 'span[class*="breadcrumbCurrent"]:has-text("MCP")'
 
     # Create dialog
-    MODAL_CONTENT_SELECTOR = '.qwenpaw-modal-content'
-    MODAL_TITLE_SELECTOR = '.qwenpaw-spark-modal-title'
+    MODAL_CONTENT_SELECTOR = '.jotaduo-modal-content'
+    MODAL_TITLE_SELECTOR = '.jotaduo-spark-modal-title'
 
     # ========== Navigation methods ==========
 

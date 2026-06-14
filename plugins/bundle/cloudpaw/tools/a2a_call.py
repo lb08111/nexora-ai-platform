@@ -7,7 +7,7 @@ applied from the stored registration.
 
 The tool is an ``AsyncGenerator`` that yields intermediate
 ``ToolResponse(stream=True, is_last=False)`` chunks as SSE events
-arrive from the remote agent, so the QwenPaw frontend can render
+arrive from the remote agent, so the JotaDuo frontend can render
 incremental progress in real time via the tool renderer.  The final
 chunk carries ``is_last=True``.
 """
@@ -19,7 +19,7 @@ from collections.abc import AsyncGenerator
 from agentscope.message import TextBlock
 from agentscope.tool import ToolResponse
 
-logger = logging.getLogger("qwenpaw").getChild(
+logger = logging.getLogger("jotaduo").getChild(
     __name__.replace("plugin_cloudpaw.", ""),
 )
 

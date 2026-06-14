@@ -59,7 +59,7 @@ type BroadcastConflict =
       current_language: string;
     };
 
-const BUILTIN_NOTICE_ACK_STORAGE_KEY = "qwenpaw.skill-pool.builtin-notice.ack";
+const BUILTIN_NOTICE_ACK_STORAGE_KEY = "jotaduo.skill-pool.builtin-notice.ack";
 
 function readBuiltinNoticeAcknowledgement(): string {
   if (typeof window === "undefined") return "";

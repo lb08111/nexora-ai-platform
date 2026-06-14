@@ -8,7 +8,7 @@
     "pt-BR": "Centraliza todas as produções dos agentes de IA (posts, peças, landing pages, documentos, e-mails, scripts) com fluxo de aprovação humana e envio de notificações. Cada produção entra em 'pending_approval' e só vai para 'published' depois de confirmada por uma pessoa.",
     "en-US": "Showcase + approval queue for everything AI agents produce (posts, marketing assets, landing pages, documents, emails, scripts). Each artifact lands as 'pending_approval', fires a notification, and goes to 'published' only after a human confirms."
   },
-  "author": "Nexora",
+  "author": "Jotaduo",
   "entry": {
     "backend": "plugin.py"
   },

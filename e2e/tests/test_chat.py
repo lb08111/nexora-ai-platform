@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-QwenPaw Chat module P0-level end-to-end test cases.
+JotaDuo Chat module P0-level end-to-end test cases.
 
 P0 criteria:
 - Core user flows
@@ -610,9 +610,9 @@ class TestChatMessageSearch:
         # The search input class is .searchInput (CSS Module); it is an antd Input (allowClear).
         search_input = None
         search_input_selectors = [
-            '.qwenpaw-drawer input.qwenpaw-input',
-            '.qwenpaw-drawer input[type="text"]',
-            '.qwenpaw-drawer-body input',
+            '.jotaduo-drawer input.jotaduo-input',
+            '.jotaduo-drawer input[type="text"]',
+            '.jotaduo-drawer-body input',
             '[class*="searchSection"] input',
             '[class*="searchInput"]',
             'input[placeholder*="搜索"], input[placeholder*="Search"]',
@@ -640,16 +640,16 @@ class TestChatMessageSearch:
         search_results = clean_chat_page.page.locator(
             '[class*="searchResultItem"], [class*="searchResult"], '
             '[class*="search-result"], [class*="SearchResult"], '
-            '.qwenpaw-list-item, .ant-list-item, '
+            '.jotaduo-list-item, .ant-list-item, '
             '[class*="resultItem"], [class*="result-item"]'
         ).all()
         if len(search_results) == 0:
             # Try checking any list item or highlighted text inside the drawer
             drawer_items = clean_chat_page.page.locator(
-                '.qwenpaw-drawer-body .qwenpaw-list-item, '
-                '.qwenpaw-drawer-body li, '
-                '.qwenpaw-drawer-body mark, '
-                '.qwenpaw-drawer-body [class*="highlight"]'
+                '.jotaduo-drawer-body .jotaduo-list-item, '
+                '.jotaduo-drawer-body li, '
+                '.jotaduo-drawer-body mark, '
+                '.jotaduo-drawer-body [class*="highlight"]'
             ).all()
             if len(drawer_items) > 0:
                 search_results = drawer_items
@@ -658,15 +658,15 @@ class TestChatMessageSearch:
                 # Wait and retry once
                 clean_chat_page.wait(3000)
                 search_results = clean_chat_page.page.locator(
-                    '.qwenpaw-drawer-body [class*="Item"], '
-                    '.qwenpaw-drawer-body [class*="result"]'
+                    '.jotaduo-drawer-body [class*="Item"], '
+                    '.jotaduo-drawer-body [class*="result"]'
                 ).all()
                 assert len(search_results) > 0, "Search did not return any recognizable result elements"
         logger.info(f"Found {len(search_results)} search result element(s)")
 
         # First, check the result-count text on the page (e.g. "Found X results")
         result_count_text = clean_chat_page.page.locator(
-            '.qwenpaw-drawer-body'
+            '.jotaduo-drawer-body'
         ).text_content() or ""
         logger.info(f"Search panel content: {result_count_text[:200]}")
 
@@ -680,7 +680,7 @@ class TestChatMessageSearch:
             # Search panel explicitly shows 0 results; retry with a shorter keyword
             logger.info("Initial search returned 0 results; retrying with a shorter keyword")
             search_input_retry = clean_chat_page.page.locator(
-                '.qwenpaw-drawer input.qwenpaw-input, .qwenpaw-drawer input[type="text"]'
+                '.jotaduo-drawer input.jotaduo-input, .jotaduo-drawer input[type="text"]'
             ).first
             search_input_retry.clear()
             clean_chat_page.wait(500)
@@ -688,7 +688,7 @@ class TestChatMessageSearch:
             search_input_retry.fill(short_keyword)
             clean_chat_page.wait(3000)
 
-            retry_text = clean_chat_page.page.locator('.qwenpaw-drawer-body').text_content() or ""
+            retry_text = clean_chat_page.page.locator('.jotaduo-drawer-body').text_content() or ""
             logger.info(f"Retry search '{short_keyword}' result: {retry_text[:200]}")
             has_zero_results = "找到 0" in retry_text or "未找到" in retry_text or "no result" in retry_text.lower()
             latest_drawer_text = retry_text  # Use new text for final assertion after retry
@@ -696,8 +696,8 @@ class TestChatMessageSearch:
             try:
                 refreshed_results = clean_chat_page.page.locator(
                     '[class*="searchResultItem"], [class*="searchResult"], '
-                    '.qwenpaw-drawer-body .qwenpaw-list-item, '
-                    '.qwenpaw-drawer-body li'
+                    '.jotaduo-drawer-body .jotaduo-list-item, '
+                    '.jotaduo-drawer-body li'
                 ).all()
                 if len(refreshed_results) > 0:
                     search_results = refreshed_results

@@ -6,7 +6,7 @@ import time
 
 import pytest
 
-from qwenpaw.providers.rate_limiter import LLMRateLimiter, _limiters
+from jotaduo.providers.rate_limiter import LLMRateLimiter, _limiters
 
 
 @pytest.fixture(autouse=True)
@@ -130,7 +130,7 @@ async def test_qpm_zero_disables_window() -> None:
 
 
 async def test_get_rate_limiter_returns_same_instance() -> None:
-    from qwenpaw.providers.rate_limiter import get_rate_limiter
+    from jotaduo.providers.rate_limiter import get_rate_limiter
 
     limiter1 = await get_rate_limiter(limiter_key="test:model")
     limiter2 = await get_rate_limiter(limiter_key="test:model")
@@ -138,7 +138,7 @@ async def test_get_rate_limiter_returns_same_instance() -> None:
 
 
 async def test_get_rate_limiter_different_keys() -> None:
-    from qwenpaw.providers.rate_limiter import get_rate_limiter
+    from jotaduo.providers.rate_limiter import get_rate_limiter
 
     limiter_a = await get_rate_limiter(limiter_key="provider_a:model")
     limiter_b = await get_rate_limiter(limiter_key="provider_b:model")

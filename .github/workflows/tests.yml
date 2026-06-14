@@ -74,9 +74,9 @@ jobs:
       - name: Copy console build into package
         shell: bash
         run: |
-          rm -rf src/qwenpaw/console/*
-          mkdir -p src/qwenpaw/console
-          cp -R console/dist/* src/qwenpaw/console/
+          rm -rf src/jotaduo/console/*
+          mkdir -p src/jotaduo/console
+          cp -R console/dist/* src/jotaduo/console/
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
@@ -101,7 +101,7 @@ jobs:
           if [ "${{ matrix.os }}" = "ubuntu-latest" ] && \
              [ "${{ matrix.python-version }}" = "3.13" ]; then
             pytest tests/unit -v \
-              --cov=src/qwenpaw \
+              --cov=src/jotaduo \
               --cov-report=xml:coverage.unit.xml \
               --cov-fail-under=0
           else
@@ -159,9 +159,9 @@ jobs:
       - name: Copy console build into package
         shell: bash
         run: |
-          rm -rf src/qwenpaw/console/*
-          mkdir -p src/qwenpaw/console
-          cp -R console/dist/* src/qwenpaw/console/
+          rm -rf src/jotaduo/console/*
+          mkdir -p src/jotaduo/console
+          cp -R console/dist/* src/jotaduo/console/
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
@@ -184,7 +184,7 @@ jobs:
           if [ "${{ matrix.os }}" = "ubuntu-latest" ] && \
              [ "${{ matrix.python-version }}" = "3.13" ]; then
             pytest tests/contract -v \
-              --cov=src/qwenpaw \
+              --cov=src/jotaduo \
               --cov-report=xml:coverage.contract.xml \
               --cov-fail-under=0
           else
@@ -242,9 +242,9 @@ jobs:
       - name: Copy console build into package
         shell: bash
         run: |
-          rm -rf src/qwenpaw/console/*
-          mkdir -p src/qwenpaw/console
-          cp -R console/dist/* src/qwenpaw/console/
+          rm -rf src/jotaduo/console/*
+          mkdir -p src/jotaduo/console
+          cp -R console/dist/* src/jotaduo/console/
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
@@ -291,7 +291,7 @@ jobs:
           # Subprocess coverage on the ubuntu/py3.13 entry only. conftest.py
           # treats empty / missing as off, so the other matrix entries do
           # not pay the tracer overhead.
-          QWENPAW_INTEGRATION_COVERAGE: ${{ (matrix.os == 'ubuntu-latest' && matrix.python-version == '3.13') && '1' || '' }}
+          JOTADUO_INTEGRATION_COVERAGE: ${{ (matrix.os == 'ubuntu-latest' && matrix.python-version == '3.13') && '1' || '' }}
         run: |
           if [ "${{ matrix.os }}" = "ubuntu-latest" ] && \
              [ "${{ matrix.python-version }}" = "3.13" ]; then
@@ -423,7 +423,7 @@ jobs:
           script: |
             const fs = require('fs');
             const body = fs.readFileSync('coverage_summary.md', 'utf8');
-            const marker = '<!-- qwenpaw-coverage-summary -->';
+            const marker = '<!-- jotaduo-coverage-summary -->';
             const finalBody = `${marker}\n${body}`;
             const comments = await github.paginate(
               github.rest.issues.listComments,

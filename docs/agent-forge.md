@@ -1,12 +1,12 @@
 # AgentForge — meta-agente scaffolder
 
-> **Pacote:** `qwenpaw.agents.forge`
+> **Pacote:** `jotaduo.agents.forge`
 > **Skill:** `agent_forge-pt`
 > **Status:** estável (v1.0, 19 testes verdes, flake8 limpo)
 
 AgentForge é um agente ReAct que **cria outros agentes, times, skills
 e plugins** seguindo as convenções deste monorepo. Foi projetado para
-ser invocado a partir do QwenPaw quando o usuário pede algo como:
+ser invocado a partir do JotaDuo quando o usuário pede algo como:
 
 - _"Crie um agente que faça reembolso para e-commerce"_
 - _"Monte um time para clínica veterinária"_
@@ -16,7 +16,7 @@ ser invocado a partir do QwenPaw quando o usuário pede algo como:
 ## Arquitetura
 
 ```
-src/qwenpaw/agents/
+src/jotaduo/agents/
 ├── forge/
 │   ├── __init__.py        # lazy load público
 │   ├── _paths.py          # safe_join, ALLOWED_ROOTS, slugify, write_files
@@ -37,8 +37,8 @@ src/qwenpaw/agents/
 
 1. **Path guard.** Toda escrita passa por `safe_join(rel_path)`. Os
    únicos roots permitidos são:
-   - `src/qwenpaw/agents/`
-   - `src/qwenpaw/agents/skills/`
+   - `src/jotaduo/agents/`
+   - `src/jotaduo/agents/skills/`
    - `plugins/bundle/`
    - `tests/unit/agents/`
    - `tests/unit/plugins/`
@@ -61,11 +61,11 @@ Lista skills, agentes, plugins e times já existentes. **Read-only.**
 Sempre chame antes de scaffoldar.
 
 ### `scaffold_skill(name, description, when_to_use, emoji, body_markdown)`
-Gera 1 arquivo: `src/qwenpaw/agents/skills/<kebab>/SKILL.md` com
+Gera 1 arquivo: `src/jotaduo/agents/skills/<kebab>/SKILL.md` com
 frontmatter YAML completo.
 
 ### `scaffold_agent(name, role, description, system_prompt, max_iters=12)`
-Gera 1 arquivo: `src/qwenpaw/agents/<snake>_agent.py` com classe
+Gera 1 arquivo: `src/jotaduo/agents/<snake>_agent.py` com classe
 `<Camel>Agent(ReActAgent)` + factory `build_<snake>()`.
 
 ### `scaffold_team(name, roles, default_prompt_prefix)`
@@ -75,14 +75,14 @@ Gera 5 arquivos formando um pacote-time inspirado em `br_team`:
 
 ### `scaffold_plugin(name, description, author, min_version="1.1.7")`
 Gera 7 arquivos compondo um bundle plugin no padrão CloudPaw /
-nexora-team: `plugin.json`, `__init__.py`, `plugin.py`,
+jotaduo-team: `plugin.json`, `__init__.py`, `plugin.py`,
 `routers_setup.py`, `routers/__init__.py`, `routers/health.py`,
 `README.md`.
 
 ## Uso programático
 
 ```python
-from qwenpaw.agents.forge import build_agent_forge
+from jotaduo.agents.forge import build_agent_forge
 
 forge = build_agent_forge()
 resposta = await forge(Msg(name="user", role="user",
@@ -93,7 +93,7 @@ Ou diretamente sem o loop ReAct:
 
 ```python
 import asyncio
-from qwenpaw.agents.forge import FORGE_TOOLS
+from jotaduo.agents.forge import FORGE_TOOLS
 
 scaffold_plugin = next(t for t in FORGE_TOOLS
                        if t.__name__ == "scaffold_plugin")
@@ -121,7 +121,7 @@ print(plan)
 
 ```bash
 pytest tests/unit/agents/forge/ -q
-flake8 src/qwenpaw/agents/forge/ tests/unit/agents/forge/
+flake8 src/jotaduo/agents/forge/ tests/unit/agents/forge/
 ```
 
 19 testes cobrindo:

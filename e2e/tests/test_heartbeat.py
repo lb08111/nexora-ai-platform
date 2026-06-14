@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-QwenPaw Heartbeat module P0 end-to-end tests
+JotaDuo Heartbeat module P0 end-to-end tests
 
 P0 definition:
 - Core user operation flows
@@ -253,7 +253,7 @@ class TestHeartbeatTargetAndActiveHours:
 
         log_test_step("3. Find target session selector (main/last)")
         target_session_selector = heartbeat_page.page.locator(
-            '.qwenpaw-radio-group, .qwenpaw-select, [class*="targetSession"], [class*="target"]'
+            '.jotaduo-radio-group, .jotaduo-select, [class*="targetSession"], [class*="target"]'
         ).first
         expect(target_session_selector).to_be_visible(timeout=3000)
         logger.info("Target session selector exists")
@@ -261,11 +261,11 @@ class TestHeartbeatTargetAndActiveHours:
         log_test_step("4. Verify selector exists and record current value")
         current_target = ""
         main_option = heartbeat_page.page.locator(
-            '.qwenpaw-radio-label:has-text("main"), .qwenpaw-radio-label:has-text("主会话"), '
+            '.jotaduo-radio-label:has-text("main"), .jotaduo-radio-label:has-text("主会话"), '
             '[class*="radio"]:has-text("main"), [class*="radio"]:has-text("主")'
         ).first
         last_option = heartbeat_page.page.locator(
-            '.qwenpaw-radio-label:has-text("last"), .qwenpaw-radio-label:has-text("最近"), '
+            '.jotaduo-radio-label:has-text("last"), .jotaduo-radio-label:has-text("最近"), '
             '[class*="radio"]:has-text("last"), [class*="radio"]:has-text("最近")'
         ).first
 
@@ -287,7 +287,7 @@ class TestHeartbeatTargetAndActiveHours:
 
         log_test_step("6. Find active hours toggle")
         active_hours_switch = heartbeat_page.page.locator(
-            '.qwenpaw-switch, [class*="activeHours"], [class*="active"]'
+            '.jotaduo-switch, [class*="activeHours"], [class*="active"]'
         ).first
         expect(active_hours_switch).to_be_visible(timeout=3000)
         logger.info("Active hours toggle exists")
@@ -301,13 +301,13 @@ class TestHeartbeatTargetAndActiveHours:
 
         log_test_step("8. Set start time")
         start_time_picker = heartbeat_page.page.locator(
-            '.qwenpaw-picker, .qwenpaw-time-picker, [class*="startTime"], [class*="start"]'
+            '.jotaduo-picker, .jotaduo-time-picker, [class*="startTime"], [class*="start"]'
         ).first
         if start_time_picker.is_visible():
             start_time_picker.click()
             heartbeat_page.page.wait_for_timeout(500)
             # Select 09:00
-            time_option = heartbeat_page.page.locator('.qwenpaw-picker-panel li, .ant-picker-panel li').filter(has_text="09").first
+            time_option = heartbeat_page.page.locator('.jotaduo-picker-panel li, .ant-picker-panel li').filter(has_text="09").first
             if time_option.is_visible():
                 time_option.click()
                 heartbeat_page.page.wait_for_timeout(500)
@@ -315,13 +315,13 @@ class TestHeartbeatTargetAndActiveHours:
 
         log_test_step("9. Set end time")
         end_time_picker = heartbeat_page.page.locator(
-            '.qwenpaw-picker, .qwenpaw-time-picker, [class*="endTime"], [class*="end"]'
+            '.jotaduo-picker, .jotaduo-time-picker, [class*="endTime"], [class*="end"]'
         ).first
         if end_time_picker.is_visible():
             end_time_picker.click()
             heartbeat_page.page.wait_for_timeout(500)
             # Select 18:00
-            time_option = heartbeat_page.page.locator('.qwenpaw-picker-panel li, .ant-picker-panel li').filter(has_text="18").first
+            time_option = heartbeat_page.page.locator('.jotaduo-picker-panel li, .ant-picker-panel li').filter(has_text="18").first
             if time_option.is_visible():
                 time_option.click()
                 heartbeat_page.page.wait_for_timeout(500)
@@ -370,12 +370,12 @@ class TestHeartbeatIntervalUnit:
 
         log_test_step("Find interval unit selector")
         # The unit selector on the page has input id=everyUnit and class containing everyUnit
-        # Need to locate the .qwenpaw-select container that wraps this input
-        unit_select = page.locator('.qwenpaw-select:has(#everyUnit)').first
+        # Need to locate the .jotaduo-select container that wraps this input
+        unit_select = page.locator('.jotaduo-select:has(#everyUnit)').first
 
         if unit_select.count() > 0:
             # Get currently selected unit text (use selection-item to avoid duplicate text)
-            selection_item = unit_select.locator('.qwenpaw-select-selection-item')
+            selection_item = unit_select.locator('.jotaduo-select-selection-item')
             if selection_item.count() > 0:
                 current_unit = selection_item.get_attribute('title') or selection_item.inner_text().strip()
             else:
@@ -386,7 +386,7 @@ class TestHeartbeatIntervalUnit:
             unit_select.click()
             page.wait_for_timeout(500)
 
-            options = page.locator('.qwenpaw-select-item-option').all()
+            options = page.locator('.jotaduo-select-item-option').all()
             assert len(options) > 0, "Unit dropdown options should not be empty"
             logger.info(f"Found {len(options)} unit options")
 
@@ -423,7 +423,7 @@ class TestHeartbeatIntervalUnit:
                 log_test_step("Restore original unit")
                 unit_select.click()
                 page.wait_for_timeout(500)
-                restore_option = page.locator(f'.qwenpaw-select-item-option:has-text("{current_unit}")').first
+                restore_option = page.locator(f'.jotaduo-select-item-option:has-text("{current_unit}")').first
                 if restore_option.count() > 0:
                     restore_option.click()
                     page.wait_for_timeout(500)

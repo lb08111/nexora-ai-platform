@@ -14,8 +14,8 @@ import pytest
 
 logger = logging.getLogger(__name__)
 
-_DEFAULT_PROVIDER = os.getenv("QWENPAW_MODEL_PROVIDER", "dashscope")
-_DEFAULT_MODEL = os.getenv("QWENPAW_DEFAULT_MODEL", "qwen3.6-plus")
+_DEFAULT_PROVIDER = os.getenv("JOTADUO_MODEL_PROVIDER", "dashscope")
+_DEFAULT_MODEL = os.getenv("JOTADUO_DEFAULT_MODEL", "qwen3.6-plus")
 
 _SEED_FILE_NAME = "_e2e_test_note.md"
 _SEED_FILE_CONTENT = "# E2E Test Note\n\nThis file was created by the E2E test framework.\n"
@@ -33,10 +33,10 @@ Placeholder skill for E2E tests.
 
 @pytest.fixture(scope="session", autouse=True)
 def setup_default_model(api_context):
-    """Configure provider API key and set a global default model when QWENPAW_DASHSCOPE_API_KEY is set."""
-    model_key = os.getenv("QWENPAW_DASHSCOPE_API_KEY")
+    """Configure provider API key and set a global default model when JOTADUO_DASHSCOPE_API_KEY is set."""
+    model_key = os.getenv("JOTADUO_DASHSCOPE_API_KEY")
     if not model_key:
-        logger.info("QWENPAW_DASHSCOPE_API_KEY not set, skipping model setup")
+        logger.info("JOTADUO_DASHSCOPE_API_KEY not set, skipping model setup")
         yield
         return
 

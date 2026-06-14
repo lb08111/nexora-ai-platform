@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-QwenPaw Channels page object.
+JotaDuo Channels page object.
 
 Wraps all interactions on the Channels page and exposes business-level methods.
 """
@@ -29,7 +29,7 @@ class ChannelsPage(BasePage):
     - Save/cancel channel configuration
     """
 
-    PAGE_TITLE = "QwenPaw Console"
+    PAGE_TITLE = "JotaDuo Console"
     PAGE_URL = f"{config.base_url}/channels"
 
     # ========== Selector definitions ==========
@@ -58,22 +58,22 @@ class ChannelsPage(BasePage):
     CHANNEL_BOT_PREFIX = '[class*=channelCard] [class*=botPrefix]'
 
     # Edit drawer (match only the visible drawer to avoid strict mode violations)
-    CHANNEL_DRAWER = '.qwenpaw-drawer:visible, .ant-drawer:visible'
-    DRAWER_TITLE = '.qwenpaw-drawer-title, .ant-drawer-title'
-    DRAWER_CLOSE_BTN = '.qwenpaw-drawer-close, .ant-drawer-close'
+    CHANNEL_DRAWER = '.jotaduo-drawer:visible, .ant-drawer:visible'
+    DRAWER_TITLE = '.jotaduo-drawer-title, .ant-drawer-title'
+    DRAWER_CLOSE_BTN = '.jotaduo-drawer-close, .ant-drawer-close'
 
     # Form fields
-    FORM_ITEM = '.ant-form-item, .qwenpaw-form-item'
-    FORM_LABEL = '.ant-form-item-label, .qwenpaw-form-item-label'
-    FORM_INPUT = 'input.ant-input, input.qwenpaw-input'
-    FORM_SWITCH = '.ant-switch, .qwenpaw-switch'
-    FORM_SELECT = '.ant-select-selector, .qwenpaw-select-selector'
-    FORM_SUBMIT_BTN = '.qwenpaw-drawer button:has-text("保 存"), .qwenpaw-drawer button:has-text("保存"), .qwenpaw-drawer button:has-text("Save"), .ant-drawer button:has-text("Save")'
-    FORM_CANCEL_BTN = '.qwenpaw-drawer button:has-text("取 消"), .qwenpaw-drawer button:has-text("取消"), .qwenpaw-drawer button:has-text("Cancel"), .ant-drawer button:has-text("Cancel")'
+    FORM_ITEM = '.ant-form-item, .jotaduo-form-item'
+    FORM_LABEL = '.ant-form-item-label, .jotaduo-form-item-label'
+    FORM_INPUT = 'input.ant-input, input.jotaduo-input'
+    FORM_SWITCH = '.ant-switch, .jotaduo-switch'
+    FORM_SELECT = '.ant-select-selector, .jotaduo-select-selector'
+    FORM_SUBMIT_BTN = '.jotaduo-drawer button:has-text("保 存"), .jotaduo-drawer button:has-text("保存"), .jotaduo-drawer button:has-text("Save"), .ant-drawer button:has-text("Save")'
+    FORM_CANCEL_BTN = '.jotaduo-drawer button:has-text("取 消"), .jotaduo-drawer button:has-text("取消"), .jotaduo-drawer button:has-text("Cancel"), .ant-drawer button:has-text("Cancel")'
 
     # Channel-specific field selectors (composed dynamically per channel type)
-    BOT_PREFIX_INPUT = '.qwenpaw-drawer input[placeholder*="@bot"], .qwenpaw-drawer input[placeholder*="bot prefix" i], input[placeholder*="Bot Prefix" i], input[placeholder*="机器人前缀" i]'
-    ENABLE_TOGGLE = '.ant-switch, .qwenpaw-switch'
+    BOT_PREFIX_INPUT = '.jotaduo-drawer input[placeholder*="@bot"], .jotaduo-drawer input[placeholder*="bot prefix" i], input[placeholder*="Bot Prefix" i], input[placeholder*="机器人前缀" i]'
+    ENABLE_TOGGLE = '.ant-switch, .jotaduo-switch'
 
     # Toast messages and loading state (inherited from BasePage; no redefinition needed)
 
@@ -279,7 +279,7 @@ class ChannelsPage(BasePage):
         timeout = timeout or self.timeout
         logger.info("Waiting for drawer to open")
         try:
-            self.page.locator('.qwenpaw-drawer, .ant-drawer').first.wait_for(state="visible", timeout=timeout)
+            self.page.locator('.jotaduo-drawer, .ant-drawer').first.wait_for(state="visible", timeout=timeout)
             return True
         except Exception:
             return False
@@ -332,8 +332,8 @@ class ChannelsPage(BasePage):
         """
         logger.info(f"Toggling enable to: {enable}")
         # Locate the switch inside the drawer
-        drawer = self.page.locator('.qwenpaw-drawer, .ant-drawer')
-        switch = drawer.locator('.qwenpaw-switch, .ant-switch').first
+        drawer = self.page.locator('.jotaduo-drawer, .ant-drawer')
+        switch = drawer.locator('.jotaduo-switch, .ant-switch').first
 
         # Read the current state
         aria_checked = switch.get_attribute('aria-checked') or 'false'
@@ -388,7 +388,7 @@ class ChannelsPage(BasePage):
     def has_form_validation_errors(self) -> bool:
         """Check whether the form has validation errors."""
         errors = self.page.locator(
-            '.qwenpaw-form-item-explain-error, .ant-form-item-explain-error'
+            '.jotaduo-form-item-explain-error, .ant-form-item-explain-error'
         )
         count = errors.count()
         if count > 0:

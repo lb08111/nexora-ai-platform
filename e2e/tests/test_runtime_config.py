@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-QwenPaw Runtime Config (Agent Config) module P0 end-to-end test cases.
+JotaDuo Runtime Config (Agent Config) module P0 end-to-end test cases.
 
 Combined test cases:
 - AGCFG-001: ReAct agent tab display + language dropdown + timezone verification
@@ -74,17 +74,17 @@ class TestReActAgentConfig:
 
         # Step 3: Verify tabs exist
         log_test_step("3. Verify tabs exist")
-        react_tab = page.locator('[data-node-key="reactAgent"] .qwenpaw-tabs-tab-btn').first
+        react_tab = page.locator('[data-node-key="reactAgent"] .jotaduo-tabs-tab-btn').first
         expect(react_tab).to_be_visible(timeout=5000)
         logger.info("ReAct agent tab visible")
 
         # Step 4: Verify the ReAct agent tab is active by default
         log_test_step("4. Verify the ReAct agent tab is active by default")
-        active_panel = page.locator('.qwenpaw-tabs-tabpane-active').first
+        active_panel = page.locator('.jotaduo-tabs-tabpane-active').first
         expect(active_panel).to_be_visible(timeout=5000)
 
         # Verify the card title
-        card_title = active_panel.locator('.qwenpaw-spark-title').first
+        card_title = active_panel.locator('.jotaduo-spark-title').first
         expect(card_title).to_be_visible(timeout=5000)
         title_text = card_title.inner_text()
         assert "ReAct" in title_text, f"Card title does not contain ReAct: {title_text}"
@@ -100,20 +100,20 @@ class TestReActAgentConfig:
             logger.warning("Agent language label not found, skipping verification")
 
         # Find the language dropdown (first select)
-        language_select = active_panel.locator('.qwenpaw-select').first
+        language_select = active_panel.locator('.jotaduo-select').first
         expect(language_select).to_be_visible(timeout=5000)
 
         # Read the currently selected value
-        current_value = language_select.locator('.qwenpaw-select-selection-item').first.inner_text()
+        current_value = language_select.locator('.jotaduo-select-selection-item').first.inner_text()
         logger.info(f"Current agent language: {current_value}")
 
         # Click to expand the dropdown
         language_select.click()
         page.wait_for_timeout(1000)
 
-        dropdown = page.locator('.qwenpaw-select-dropdown:visible').first
+        dropdown = page.locator('.jotaduo-select-dropdown:visible').first
         if dropdown.is_visible():
-            options = dropdown.locator('.qwenpaw-select-item-option').all()
+            options = dropdown.locator('.jotaduo-select-item-option').all()
             option_texts = [opt.inner_text() for opt in options]
             logger.info(f"Language options: {option_texts}")
             assert len(options) >= 2, f"Insufficient language options: {len(options)}"
@@ -137,10 +137,10 @@ class TestReActAgentConfig:
             logger.warning("User timezone label not found, skipping verification")
 
         # The timezone dropdown is the second select
-        selects = active_panel.locator('.qwenpaw-select').all()
+        selects = active_panel.locator('.jotaduo-select').all()
         assert len(selects) >= 2, f"Insufficient dropdowns (expected >= 2): {len(selects)}"
         timezone_select = selects[1]
-        timezone_value = timezone_select.locator('.qwenpaw-select-selection-item').first.inner_text()
+        timezone_value = timezone_select.locator('.jotaduo-select-selection-item').first.inner_text()
         assert len(timezone_value) > 0, "Timezone value is empty"
         logger.info(f"Current timezone: {timezone_value}")
 
@@ -180,59 +180,59 @@ class TestAgentConfigTabSwitch:
         tab_keys = ["reactAgent", "llmRetry", "llmRateLimiter", "lightContext"]
 
         for key in tab_keys:
-            tab_btn = page.locator(f'[data-node-key="{key}"] .qwenpaw-tabs-tab-btn').first
+            tab_btn = page.locator(f'[data-node-key="{key}"] .jotaduo-tabs-tab-btn').first
             expect(tab_btn).to_be_visible(timeout=5000)
 
         logger.info(f"All {len(tab_keys)} tabs are visible")
 
         # Step 3: Switch to the LLM auto-retry tab
         log_test_step("3. Switch to the LLM auto-retry tab")
-        llm_retry_tab = page.locator('[data-node-key="llmRetry"] .qwenpaw-tabs-tab-btn').first
+        llm_retry_tab = page.locator('[data-node-key="llmRetry"] .jotaduo-tabs-tab-btn').first
         llm_retry_tab.click()
         page.wait_for_timeout(1500)
 
-        retry_panel = page.locator('.qwenpaw-tabs-tabpane-active').first
+        retry_panel = page.locator('.jotaduo-tabs-tabpane-active').first
         expect(retry_panel).to_be_visible(timeout=5000)
 
-        retry_switches = retry_panel.locator('button.qwenpaw-switch[role="switch"]').all()
-        retry_inputs = retry_panel.locator('.qwenpaw-input, .qwenpaw-input-number, .qwenpaw-select').all()
+        retry_switches = retry_panel.locator('button.jotaduo-switch[role="switch"]').all()
+        retry_inputs = retry_panel.locator('.jotaduo-input, .jotaduo-input-number, .jotaduo-select').all()
         assert len(retry_switches) + len(retry_inputs) >= 1, "No config items in LLM auto-retry tab"
         logger.info(f"LLM auto-retry tab - switches: {len(retry_switches)}, inputs: {len(retry_inputs)}")
 
         # Step 4: Switch to the LLM rate limiter tab
         log_test_step("4. Switch to the LLM rate limiter tab")
-        rate_limiter_tab = page.locator('[data-node-key="llmRateLimiter"] .qwenpaw-tabs-tab-btn').first
+        rate_limiter_tab = page.locator('[data-node-key="llmRateLimiter"] .jotaduo-tabs-tab-btn').first
         rate_limiter_tab.click()
         page.wait_for_timeout(1500)
 
-        rate_panel = page.locator('.qwenpaw-tabs-tabpane-active').first
+        rate_panel = page.locator('.jotaduo-tabs-tabpane-active').first
         expect(rate_panel).to_be_visible(timeout=5000)
 
-        rate_switches = rate_panel.locator('button.qwenpaw-switch[role="switch"]').all()
-        rate_inputs = rate_panel.locator('.qwenpaw-input, .qwenpaw-input-number, .qwenpaw-select').all()
+        rate_switches = rate_panel.locator('button.jotaduo-switch[role="switch"]').all()
+        rate_inputs = rate_panel.locator('.jotaduo-input, .jotaduo-input-number, .jotaduo-select').all()
         assert len(rate_switches) + len(rate_inputs) >= 1, "No config items in LLM rate limiter tab"
         logger.info(f"LLM rate limiter tab - switches: {len(rate_switches)}, inputs: {len(rate_inputs)}")
 
         # Step 5: Switch to the context management tab
         log_test_step("5. Switch to the context management tab")
-        context_tab = page.locator('[data-node-key="lightContext"] .qwenpaw-tabs-tab-btn').first
+        context_tab = page.locator('[data-node-key="lightContext"] .jotaduo-tabs-tab-btn').first
         context_tab.click()
         page.wait_for_timeout(1500)
 
-        context_panel = page.locator('.qwenpaw-tabs-tabpane-active').first
+        context_panel = page.locator('.jotaduo-tabs-tabpane-active').first
         expect(context_panel).to_be_visible(timeout=5000)
 
-        context_inputs = context_panel.locator('.qwenpaw-input, .qwenpaw-input-number, .qwenpaw-select').all()
+        context_inputs = context_panel.locator('.jotaduo-input, .jotaduo-input-number, .jotaduo-select').all()
         assert len(context_inputs) >= 1, "No config items in context management tab"
         logger.info(f"Context management tab - inputs: {len(context_inputs)}")
 
         # Step 6: Switch back to the ReAct agent tab to confirm round-trip
         log_test_step("6. Switch back to the ReAct agent tab")
-        react_tab = page.locator('[data-node-key="reactAgent"] .qwenpaw-tabs-tab-btn').first
+        react_tab = page.locator('[data-node-key="reactAgent"] .jotaduo-tabs-tab-btn').first
         react_tab.click()
         page.wait_for_timeout(1000)
 
-        react_panel = page.locator('.qwenpaw-tabs-tabpane-active').first
+        react_panel = page.locator('.jotaduo-tabs-tabpane-active').first
         expect(react_panel).to_be_visible(timeout=5000)
         logger.info("Switched back to ReAct agent tab")
 
@@ -275,18 +275,18 @@ class TestAgentConfigSaveAndReset:
 
         # Step 2: Switch to the long-term memory tab (context compaction was merged in; this tab has a toggle switch)
         log_test_step("2. Switch to the long-term memory tab")
-        context_tab = page.locator('[data-node-key="remeLightMemory"] .qwenpaw-tabs-tab-btn').first
+        context_tab = page.locator('[data-node-key="remeLightMemory"] .jotaduo-tabs-tab-btn').first
         expect(context_tab).to_be_visible(timeout=5000)
         context_tab.click()
         page.wait_for_timeout(1500)
 
-        context_panel = page.locator('.qwenpaw-tabs-tabpane-active').first
+        context_panel = page.locator('.jotaduo-tabs-tabpane-active').first
         expect(context_panel).to_be_visible(timeout=5000)
         logger.info("Switched to long-term memory tab")
 
         # Step 3: Locate the enable switch and record its initial state
         log_test_step("3. Record the initial switch state")
-        enable_switch = context_panel.locator('.qwenpaw-switch').first
+        enable_switch = context_panel.locator('.jotaduo-switch').first
         expect(enable_switch).to_be_visible(timeout=5000)
 
         initial_checked = enable_switch.get_attribute('aria-checked')
@@ -304,17 +304,17 @@ class TestAgentConfigSaveAndReset:
 
         # Step 5: Locate the save button and click it
         log_test_step("5. Click the save button")
-        save_btn = page.locator('button.qwenpaw-btn-primary:has-text("Save")').first
+        save_btn = page.locator('button.jotaduo-btn-primary:has-text("Save")').first
         if not save_btn.is_visible():
             # Fall back to the footer area
-            save_btn = page.locator('div[class*="footer"] button.qwenpaw-btn-primary').first
+            save_btn = page.locator('div[class*="footer"] button.jotaduo-btn-primary').first
         expect(save_btn).to_be_visible(timeout=5000)
         save_btn.click()
         page.wait_for_timeout(2000)
 
         # Step 6: Verify the save success notification
         log_test_step("6. Verify the save success notification")
-        success_msg = page.locator('.qwenpaw-message-success, .qwenpaw-message-notice-content:has-text("Save")').first
+        success_msg = page.locator('.jotaduo-message-success, .jotaduo-message-notice-content:has-text("Save")').first
         try:
             expect(success_msg).to_be_visible(timeout=3000)
             logger.info("Save success notification visible")
@@ -329,17 +329,17 @@ class TestAgentConfigSaveAndReset:
 
         # Step 8: Switch to the long-term memory tab
         log_test_step("8. Switch to the long-term memory tab")
-        context_tab_refreshed = page.locator('[data-node-key="remeLightMemory"] .qwenpaw-tabs-tab-btn').first
+        context_tab_refreshed = page.locator('[data-node-key="remeLightMemory"] .jotaduo-tabs-tab-btn').first
         expect(context_tab_refreshed).to_be_visible(timeout=5000)
         context_tab_refreshed.click()
         page.wait_for_timeout(1500)
 
-        context_panel_refreshed = page.locator('.qwenpaw-tabs-tabpane-active').first
+        context_panel_refreshed = page.locator('.jotaduo-tabs-tabpane-active').first
         expect(context_panel_refreshed).to_be_visible(timeout=5000)
 
         # Step 9: Verify the switch state was persisted
         log_test_step("9. Verify the switch state was persisted")
-        enable_switch_refreshed = context_panel_refreshed.locator('.qwenpaw-switch').first
+        enable_switch_refreshed = context_panel_refreshed.locator('.jotaduo-switch').first
         expect(enable_switch_refreshed).to_be_visible(timeout=5000)
 
         persisted_checked = enable_switch_refreshed.get_attribute('aria-checked')
@@ -360,9 +360,9 @@ class TestAgentConfigSaveAndReset:
         logger.info(f"Switch restored to initial state: {restored_checked}")
 
         # Save again
-        save_btn_refreshed = page.locator('button.qwenpaw-btn-primary:has-text("Save")').first
+        save_btn_refreshed = page.locator('button.jotaduo-btn-primary:has-text("Save")').first
         if not save_btn_refreshed.is_visible():
-            save_btn_refreshed = page.locator('div[class*="footer"] button.qwenpaw-btn-primary').first
+            save_btn_refreshed = page.locator('div[class*="footer"] button.jotaduo-btn-primary').first
         if save_btn_refreshed.is_visible():
             save_btn_refreshed.click()
             page.wait_for_timeout(2000)
@@ -402,8 +402,8 @@ class TestLlmRetryConfig:
         runtime_config_page.switch_to_llm_retry_tab()
 
         # Verify the card title
-        active_panel = page.locator('.qwenpaw-tabs-tabpane-active').first
-        card_title = active_panel.locator('.qwenpaw-spark-title').first
+        active_panel = page.locator('.jotaduo-tabs-tabpane-active').first
+        card_title = active_panel.locator('.jotaduo-spark-title').first
         expect(card_title).to_be_visible()
         title_text = card_title.inner_text()
         assert "LLM" in title_text or "Retry" in title_text, \
@@ -411,7 +411,7 @@ class TestLlmRetryConfig:
         logger.info("LLM retry config card title verified")
 
         # Verify the retry switch exists
-        switch_selector = '.qwenpaw-switch'
+        switch_selector = '.jotaduo-switch'
         retry_switch = active_panel.locator(switch_selector).first
         expect(retry_switch).to_be_visible()
         logger.info("LLM retry switch verified")
@@ -456,7 +456,7 @@ class TestLlmRetryConfig:
             page.reload(wait_until="domcontentloaded")
             page.wait_for_timeout(3000)
             runtime_config_page.switch_to_llm_retry_tab()
-            active_panel = page.locator('.qwenpaw-tabs-tabpane-active').first
+            active_panel = page.locator('.jotaduo-tabs-tabpane-active').first
             persisted_value = active_panel.locator('#llm_max_retries').first.input_value()
             assert persisted_value == '5', f"After reload, max_retries should be '5', got '{persisted_value}'"
             logger.info("LLM retry config persistence verified")
@@ -465,7 +465,7 @@ class TestLlmRetryConfig:
             try:
                 navigate_to_agent_config(page)
                 runtime_config_page.switch_to_llm_retry_tab()
-                active_panel = page.locator('.qwenpaw-tabs-tabpane-active').first
+                active_panel = page.locator('.jotaduo-tabs-tabpane-active').first
                 active_panel.locator('#llm_max_retries').first.fill(original_max_retries)
                 active_panel.locator('#llm_backoff_base').first.fill(original_backoff_base)
                 active_panel.locator('#llm_backoff_cap').first.fill(original_backoff_cap)
@@ -501,8 +501,8 @@ class TestLlmRateLimiterConfig:
         runtime_config_page.switch_to_llm_rate_limiter_tab()
 
         # Verify the card title
-        active_panel = page.locator('.qwenpaw-tabs-tabpane-active').first
-        card_title = active_panel.locator('.qwenpaw-spark-title').first
+        active_panel = page.locator('.jotaduo-tabs-tabpane-active').first
+        card_title = active_panel.locator('.jotaduo-spark-title').first
         expect(card_title).to_be_visible()
         title_text = card_title.inner_text()
         assert "LLM" in title_text or "Rate" in title_text, \
@@ -558,7 +558,7 @@ class TestLlmRateLimiterConfig:
             page.reload(wait_until="domcontentloaded")
             page.wait_for_timeout(3000)
             runtime_config_page.switch_to_llm_rate_limiter_tab()
-            active_panel = page.locator('.qwenpaw-tabs-tabpane-active').first
+            active_panel = page.locator('.jotaduo-tabs-tabpane-active').first
             persisted_concurrent = active_panel.locator('#llm_max_concurrent').first.input_value()
             assert persisted_concurrent == '10', f"After reload, max_concurrent should be '10', got '{persisted_concurrent}'"
             logger.info("LLM rate limiter config persistence verified")
@@ -567,7 +567,7 @@ class TestLlmRateLimiterConfig:
             try:
                 navigate_to_agent_config(page)
                 runtime_config_page.switch_to_llm_rate_limiter_tab()
-                active_panel = page.locator('.qwenpaw-tabs-tabpane-active').first
+                active_panel = page.locator('.jotaduo-tabs-tabpane-active').first
                 active_panel.locator('#llm_max_concurrent').first.fill(original_concurrent)
                 active_panel.locator('#llm_max_qpm').first.fill(original_qpm)
                 active_panel.locator('#llm_rate_limit_pause').first.fill(original_pause)
@@ -603,7 +603,7 @@ class TestToolResultCompactConfig:
         runtime_config_page.switch_to_context_compact_tab()
 
         # Verify the panel is visible
-        active_panel = page.locator('.qwenpaw-tabs-tabpane-active').first
+        active_panel = page.locator('.jotaduo-tabs-tabpane-active').first
         expect(active_panel).to_be_visible(timeout=5000)
 
         # Verify the panel contains context-management related content
@@ -613,7 +613,7 @@ class TestToolResultCompactConfig:
         logger.info("Context management panel content verified")
 
         # Verify there are config items (inputs or selects)
-        inputs = active_panel.locator('.qwenpaw-input, .qwenpaw-input-number, .qwenpaw-select').all()
+        inputs = active_panel.locator('.jotaduo-input, .jotaduo-input-number, .jotaduo-select').all()
         assert len(inputs) >= 1, f"No config items found on context management panel; found {len(inputs)}"
         logger.info(f"Found {len(inputs)} config items on context management panel")
 
@@ -643,7 +643,7 @@ class TestEmbeddingConfig:
         runtime_config_page.switch_to_memory_summary_tab()
 
         # Verify the panel is visible
-        active_panel = page.locator('.qwenpaw-tabs-tabpane-active').first
+        active_panel = page.locator('.jotaduo-tabs-tabpane-active').first
         expect(active_panel).to_be_visible(timeout=5000)
 
         # Verify the panel contains long-term memory related content
@@ -653,7 +653,7 @@ class TestEmbeddingConfig:
         logger.info("Long-term memory panel content verified")
 
         # Verify there are switches
-        switches = active_panel.locator('.qwenpaw-switch').all()
+        switches = active_panel.locator('.jotaduo-switch').all()
         assert len(switches) >= 1, f"No switches found on long-term memory panel; found {len(switches)}"
         logger.info(f"Found {len(switches)} switches on long-term memory panel")
 
@@ -685,8 +685,8 @@ class TestContextCompactConfig:
 
         log_test_step("Switch to the context management tab")
         context_tab = page.locator(
-            '[data-node-key="lightContext"] .qwenpaw-tabs-tab-btn, '
-            '.qwenpaw-tabs-tab-btn:has-text("Context")'
+            '[data-node-key="lightContext"] .jotaduo-tabs-tab-btn, '
+            '.jotaduo-tabs-tab-btn:has-text("Context")'
         ).first
         expect(context_tab).to_be_visible(timeout=5000)
         context_tab.click()
@@ -694,11 +694,11 @@ class TestContextCompactConfig:
         logger.info("Switched to Context Compact tab")
 
         log_test_step("Verify active panel content")
-        active_panel = page.locator('.qwenpaw-tabs-tabpane-active').first
+        active_panel = page.locator('.jotaduo-tabs-tabpane-active').first
         expect(active_panel).to_be_visible(timeout=5000)
 
         # Verify the card title
-        card_title = active_panel.locator('.qwenpaw-spark-title').first
+        card_title = active_panel.locator('.jotaduo-spark-title').first
         expect(card_title).to_be_visible()
         title_text = card_title.inner_text()
         assert "Context" in title_text or "Compact" in title_text, \
@@ -707,9 +707,9 @@ class TestContextCompactConfig:
 
         log_test_step("Verify context management config items exist")
         # The context management tab may have switches, sliders, inputs or selects
-        switches = active_panel.locator('.qwenpaw-switch').all()
-        sliders = active_panel.locator('.qwenpaw-slider').all()
-        inputs = active_panel.locator('.qwenpaw-input, .qwenpaw-input-number, .qwenpaw-select').all()
+        switches = active_panel.locator('.jotaduo-switch').all()
+        sliders = active_panel.locator('.jotaduo-slider').all()
+        inputs = active_panel.locator('.jotaduo-input, .jotaduo-input-number, .jotaduo-select').all()
         total_controls = len(switches) + len(sliders) + len(inputs)
         assert total_controls >= 1, \
             f"No config items on context management panel: switches={len(switches)}, sliders={len(sliders)}, inputs={len(inputs)}"
@@ -754,7 +754,7 @@ class TestConfigDynamicLinkage:
         navigate_to_agent_config(page)
 
         log_test_step("Verify tab switching linkage")
-        tabs = page.locator('.qwenpaw-tabs-tab').all()
+        tabs = page.locator('.jotaduo-tabs-tab').all()
         assert len(tabs) >= 3, f"Insufficient tabs: {len(tabs)}"
         logger.info(f"Found {len(tabs)} config tabs")
 
@@ -762,7 +762,7 @@ class TestConfigDynamicLinkage:
         for i in range(min(3, len(tabs))):
             tabs[i].click()
             page.wait_for_timeout(1000)
-            active_panel = page.locator('.qwenpaw-tabs-tabpane-active').first
+            active_panel = page.locator('.jotaduo-tabs-tabpane-active').first
             panel_content = active_panel.inner_text()
             logger.info(f"Tab {i+1} panel content length: {len(panel_content)}")
             assert len(panel_content) > 10, f"Tab {i+1} panel content is empty"
@@ -798,8 +798,8 @@ class TestMemorySummaryConfig:
 
         log_test_step("Switch to the Memory Summary tab")
         memory_tab = page.locator(
-            '[data-node-key="memorySummary"] .qwenpaw-tabs-tab-btn, '
-            '.qwenpaw-tabs-tab-btn:has-text("Memory")'
+            '[data-node-key="memorySummary"] .jotaduo-tabs-tab-btn, '
+            '.jotaduo-tabs-tab-btn:has-text("Memory")'
         ).first
         expect(memory_tab).to_be_visible(timeout=5000)
         memory_tab.click()
@@ -807,11 +807,11 @@ class TestMemorySummaryConfig:
         logger.info("Switched to Memory Summary tab")
 
         log_test_step("Verify active panel content")
-        active_panel = page.locator('.qwenpaw-tabs-tabpane-active').first
+        active_panel = page.locator('.jotaduo-tabs-tabpane-active').first
         expect(active_panel).to_be_visible(timeout=5000)
 
         # Verify the card title
-        card_title = active_panel.locator('.qwenpaw-spark-title').first
+        card_title = active_panel.locator('.jotaduo-spark-title').first
         expect(card_title).to_be_visible()
         title_text = card_title.inner_text()
         assert "Memory" in title_text or "Summary" in title_text, \
@@ -819,7 +819,7 @@ class TestMemorySummaryConfig:
         logger.info(f"Card title verified: {title_text}")
 
         log_test_step("Verify the memory summary switch exists")
-        switches = active_panel.locator('.qwenpaw-switch').all()
+        switches = active_panel.locator('.jotaduo-switch').all()
         assert len(switches) >= 1, f"Memory summary switch not found; found {len(switches)} switches"
         logger.info(f"Found {len(switches)} switches")
 
@@ -831,7 +831,7 @@ class TestMemorySummaryConfig:
         logger.info("Cron expression input present")
 
         log_test_step("Verify number inputs exist")
-        number_inputs = active_panel.locator('.qwenpaw-input-number').all()
+        number_inputs = active_panel.locator('.jotaduo-input-number').all()
         assert len(number_inputs) >= 1, f"No number inputs found; got {len(number_inputs)}"
         logger.info(f"Found {len(number_inputs)} number inputs")
 

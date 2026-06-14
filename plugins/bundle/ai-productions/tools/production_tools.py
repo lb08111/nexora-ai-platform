@@ -16,7 +16,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from qwenpaw.agents.br_team.tools._utils import json_response, text_response
+from jotaduo.agents.br_team.tools._utils import json_response, text_response
 
 from ..constants import (
     DEFAULT_REQUIRES_APPROVAL,
@@ -39,7 +39,7 @@ __all__ = [
     "send_team_notification",
 ]
 
-logger = logging.getLogger("qwenpaw").getChild(
+logger = logging.getLogger("jotaduo").getChild(
     "plugin.ai-productions.tools",
 )
 

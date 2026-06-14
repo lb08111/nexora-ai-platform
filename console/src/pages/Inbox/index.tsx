@@ -47,7 +47,7 @@ import {
 import styles from "./index.module.less";
 
 type TabKey = "approvals" | "messages";
-const INBOX_TAB_STORAGE_KEY = "qwenpaw.inbox.activeTab";
+const INBOX_TAB_STORAGE_KEY = "jotaduo.inbox.activeTab";
 const PUSH_MESSAGES_PAGE_SIZE = 5;
 
 const resolveInitialTab = (): TabKey => {

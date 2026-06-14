@@ -9,10 +9,10 @@ from types import SimpleNamespace
 
 import pytest
 
-from qwenpaw.app.mcp.manager import MCPClientManager
-from qwenpaw.app.workspace.service_factories import create_mcp_service
-from qwenpaw.app.workspace.workspace import Workspace
-from qwenpaw.config.config import MCPClientConfig, MCPConfig
+from jotaduo.app.mcp.manager import MCPClientManager
+from jotaduo.app.workspace.service_factories import create_mcp_service
+from jotaduo.app.workspace.workspace import Workspace
+from jotaduo.config.config import MCPClientConfig, MCPConfig
 
 
 class _Runner:

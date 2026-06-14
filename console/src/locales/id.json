@@ -91,7 +91,7 @@
     }
   },
   "login": {
-    "title": "Masuk ke QwenPaw",
+    "title": "Masuk ke JotaDuo",
     "registerTitle": "Buat Akun",
     "firstUserHint": "Buat akun admin untuk memulai",
     "usernamePlaceholder": "Nama pengguna",
@@ -258,7 +258,7 @@
     "nameRequired": "Masukkan nama agen",
     "namePlaceholder": "contoh: Agen Saya",
     "descriptionPlaceholder": "Jelaskan singkat tujuan agen ini...",
-    "workspaceHelp": "Kosongkan untuk dibuat otomatis di ~/.qwenpaw/workspaces/<id>",
+    "workspaceHelp": "Kosongkan untuk dibuat otomatis di ~/.jotaduo/workspaces/<id>",
     "defaultNotEditable": "Agen default tidak dapat diedit",
     "defaultNotDeletable": "Agen default tidak dapat dihapus",
     "disable": "Nonaktifkan",
@@ -606,7 +606,7 @@
     "restoreModeFullDisabled": "Hanya cadangan penuh",
     "restoreCustomSummary": "{{existing}} yang sudah ada · {{added}} baru dipilih",
     "defaultWorkspaceDir": "Direktori ruang kerja default agen",
-    "defaultWorkspaceDirPlaceholder": "Biarkan kosong untuk menggunakan ~/.qwenpaw/workspaces",
+    "defaultWorkspaceDirPlaceholder": "Biarkan kosong untuk menggunakan ~/.jotaduo/workspaces",
     "defaultWorkspaceDirHint": "Jika jalur ruang kerja asli agen tidak ada, agen akan disimpan di <jalur default>/<ID agen>. Jika ada, jalur ruang kerja asli agen akan digunakan.",
     "restoreStrategy": "Strategi pemulihan",
     "restoreStrategyPreserve": "Pertahankan keamanan lokal dan MCP",
@@ -760,7 +760,7 @@
   "codingMode": {
     "title": "Mode Coding",
     "experimental": "Fitur Eksperimental",
-    "experimentalDesc": "Mode Coding mengubah QwenPaw menjadi Web IDE ringan dengan editor kode, pohon file, integrasi Git, dan bantuan coding bertenaga AI.",
+    "experimentalDesc": "Mode Coding mengubah JotaDuo menjadi Web IDE ringan dengan editor kode, pohon file, integrasi Git, dan bantuan coding bertenaga AI.",
     "experimentalNote": "Fitur ini masih eksperimental dan dalam pengembangan aktif. Beberapa fungsi mungkin terbatas atau berubah pada pembaruan mendatang.",
     "confirmBtn": "Aktifkan Mode Coding",
     "enterTooltip": "Masuk ke Mode Coding",

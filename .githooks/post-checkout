@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [[ "${QWENPAW_WORKTREE_HOOK_DISABLE:-0}" == "1" ]]; then
+if [[ "${JOTADUO_WORKTREE_HOOK_DISABLE:-0}" == "1" ]]; then
     exit 0
 fi
 

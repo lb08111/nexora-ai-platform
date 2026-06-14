@@ -1,7 +1,7 @@
 [project]
-name = "qwenpaw"
+name = "jotaduo"
 dynamic = ["version"]
-description = "QwenPaw is a **personal assistant** that runs in your own environment. It talks to you over multiple channels (DingTalk, Feishu, QQ, Discord, iMessage, etc.) and runs scheduled tasks according to your configuration. **What it can do is driven by Skills — the possibilities are open-ended.** Built-in skills include cron, PDF/Office handling, news digest, file reading, and more; you can add custom skills. All data and tasks run on your machine; no third-party hosting."
+description = "JotaDuo is a **personal assistant** that runs in your own environment. It talks to you over multiple channels (DingTalk, Feishu, QQ, Discord, iMessage, etc.) and runs scheduled tasks according to your configuration. **What it can do is driven by Skills — the possibilities are open-ended.** Built-in skills include cron, PDF/Office handling, news digest, file reading, and more; you can add custom skills. All data and tasks run on your machine; no third-party hosting."
 readme = "README.md"
 requires-python = ">=3.10,<3.14"
 dependencies = [
@@ -47,7 +47,7 @@ dependencies = [
     "agent-client-protocol>=0.9.0",
     "psutil>=6.0.0",
     "openai>=2.0.0,<=2.33.0",
-    # anyio 4.13.0: _deliver_cancellation busy-loop / getpid storm (QwenPaw#2632)
+    # anyio 4.13.0: _deliver_cancellation busy-loop / getpid storm (JotaDuo#2632)
     "anyio>=4.0.0,<4.13.0",
     "watchfiles>=0.22",
     "orjson>=3.9",
@@ -61,15 +61,15 @@ dependencies = [
 ]
 
 [tool.setuptools.dynamic]
-version = {attr = "qwenpaw.__version__.__version__"}
+version = {attr = "jotaduo.__version__.__version__"}
 
 [tool.setuptools]
 packages = { find = { where = ["src"] } }
 include-package-data = true
 
 [tool.setuptools.package-data]
-# Dockerfile copies console build output to src/qwenpaw/console/ (no dist subdir).
-"qwenpaw" = [
+# Dockerfile copies console build output to src/jotaduo/console/ (no dist subdir).
+"jotaduo" = [
     "console/**",
     "agents/md_files/**",
     "agents/skills/**",
@@ -86,11 +86,11 @@ requires = ["setuptools>=42", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project.scripts]
-qwenpaw = "qwenpaw.cli.main:cli"
-copaw = "qwenpaw.cli.main:cli"
+jotaduo = "jotaduo.cli.main:cli"
+copaw = "jotaduo.cli.main:cli"
 
 # Optional doctor plugins: callable (DoctorRunContext) -> list[str]
-# [project.entry-points."qwenpaw.doctor"]
+# [project.entry-points."jotaduo.doctor"]
 # my_pkg = "my_pkg.doctor:doctor_notes"
 # Legacy group "copaw.doctor" is still loaded when present.
 
@@ -112,7 +112,7 @@ whisper = [
     "openai-whisper>=20231117",
 ]
 full = [
-    "qwenpaw[local,whisper]",
+    "jotaduo[local,whisper]",
 ]
 sip = [
     "pyVoIP>=1.6.0",
@@ -121,7 +121,7 @@ sip = [
     "audioop-lts; python_version >= '3.13'",
 ]
 sip-livekit = [
-    "qwenpaw[sip]",
+    "jotaduo[sip]",
     "livekit>=1.0.0",
     "livekit-api>=0.6.0",
 ]
@@ -143,7 +143,7 @@ testpaths = [
 ]
 
 [tool.coverage.run]
-source = ["src/qwenpaw"]
+source = ["src/jotaduo"]
 omit = [
     "*/tests/*",
     "*/test_*",

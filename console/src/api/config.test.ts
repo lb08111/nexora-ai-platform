@@ -39,7 +39,7 @@ describe("getApiToken", () => {
   });
 
   it("returns token from localStorage when present", () => {
-    localStorage.setItem("qwenpaw_auth_token", "stored-token");
+    localStorage.setItem("jotaduo_auth_token", "stored-token");
     expect(getApiToken()).toBe("stored-token");
   });
 
@@ -58,13 +58,13 @@ describe("setAuthToken / clearAuthToken", () => {
 
   it("setAuthToken writes to localStorage", () => {
     setAuthToken("my-token");
-    expect(localStorage.getItem("qwenpaw_auth_token")).toBe("my-token");
+    expect(localStorage.getItem("jotaduo_auth_token")).toBe("my-token");
   });
 
   it("clearAuthToken removes token from localStorage", () => {
-    localStorage.setItem("qwenpaw_auth_token", "my-token");
+    localStorage.setItem("jotaduo_auth_token", "my-token");
     clearAuthToken();
-    expect(localStorage.getItem("qwenpaw_auth_token")).toBeNull();
+    expect(localStorage.getItem("jotaduo_auth_token")).toBeNull();
   });
 
   it("getApiToken returns empty string after clearAuthToken", () => {

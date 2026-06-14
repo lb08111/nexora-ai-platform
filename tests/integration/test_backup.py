@@ -127,7 +127,7 @@ def test_backup_get_detail_returns_404_for_missing(app_server) -> None:
     """
     resp = app_server.api_request(
         "GET",
-        "/api/backups/qwenpaw-missing-integ-0001",
+        "/api/backups/jotaduo-missing-integ-0001",
         timeout=_BACKUP_HTTP_TIMEOUT,
     )
     assert resp.status_code == 404, app_server.logs_tail()
@@ -151,7 +151,7 @@ def test_backup_restore_returns_404_for_missing(app_server) -> None:
     """
     resp = app_server.api_request(
         "POST",
-        "/api/backups/qwenpaw-missing-integ-0002/restore",
+        "/api/backups/jotaduo-missing-integ-0002/restore",
         json={
             "include_agents": False,
             "agent_ids": [],
@@ -286,7 +286,7 @@ def test_backup_export_returns_404_for_missing(app_server) -> None:
     """
     resp = app_server.api_request(
         "GET",
-        "/api/backups/qwenpaw-missing-export-integ-0001/export",
+        "/api/backups/jotaduo-missing-export-integ-0001/export",
         timeout=_BACKUP_HTTP_TIMEOUT,
     )
     assert resp.status_code == 404, app_server.logs_tail()

@@ -4,8 +4,8 @@ from types import SimpleNamespace
 import pytest
 from agentscope_runtime.engine.schemas.exception import ConfigurationException
 
-from qwenpaw.app import multi_agent_manager as manager_module
-from qwenpaw.app.multi_agent_manager import MultiAgentManager
+from jotaduo.app import multi_agent_manager as manager_module
+from jotaduo.app.multi_agent_manager import MultiAgentManager
 
 
 class FakeTaskTracker:

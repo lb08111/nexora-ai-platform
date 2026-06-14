@@ -20,10 +20,10 @@ from agentscope.message import TextBlock
 from agentscope.tool import ToolResponse
 
 # pylint: disable=no-name-in-module
-from qwenpaw.app.interaction import InteractionManager
-from qwenpaw.app.agent_context import get_current_session_id
+from jotaduo.app.interaction import InteractionManager
+from jotaduo.app.agent_context import get_current_session_id
 
-logger = logging.getLogger("qwenpaw").getChild(
+logger = logging.getLogger("jotaduo").getChild(
     __name__.replace("plugin_cloudpaw.", ""),
 )
 

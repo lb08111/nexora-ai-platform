@@ -19,10 +19,10 @@ jobs:
     environment: staging
 
     env:
-      QWENPAW_BASE_URL: http://localhost:8088
-      QWENPAW_HEADLESS: 'true'
-      QWENPAW_TIMEOUT: '60000'
-      QWENPAW_DASHSCOPE_API_KEY: ${{ secrets.QWENPAW_DASHSCOPE_API_KEY }}
+      JOTADUO_BASE_URL: http://localhost:8088
+      JOTADUO_HEADLESS: 'true'
+      JOTADUO_TIMEOUT: '60000'
+      JOTADUO_DASHSCOPE_API_KEY: ${{ secrets.JOTADUO_DASHSCOPE_API_KEY }}
 
     steps:
       - uses: actions/checkout@v4
@@ -44,9 +44,9 @@ jobs:
       - name: Copy console build into package
         shell: bash
         run: |
-          rm -rf src/qwenpaw/console/*
-          mkdir -p src/qwenpaw/console
-          cp -R console/dist/* src/qwenpaw/console/
+          rm -rf src/jotaduo/console/*
+          mkdir -p src/jotaduo/console
+          cp -R console/dist/* src/jotaduo/console/
 
       # ---- Install Python dependencies ----
       - name: Set up Python 3.10
@@ -68,7 +68,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p .e2e_coverage
-          SRC_ABS=$(cd src/qwenpaw && pwd)
+          SRC_ABS=$(cd src/jotaduo && pwd)
           {
             echo "[run]"
             echo "parallel = true"
@@ -81,25 +81,25 @@ jobs:
           } > .e2e_coverage/coverage_e2e.ini
 
       # ---- Start backend (isolated) ----
-      - name: Start QwenPaw backend
+      - name: Start JotaDuo backend
         shell: bash
         run: |
-          QWENPAW_E2E_DIR=$(mktemp -d)
-          echo "QWENPAW_E2E_DIR=$QWENPAW_E2E_DIR" >> "$GITHUB_ENV"
-          mkdir -p "$QWENPAW_E2E_DIR/working" \
-                   "$QWENPAW_E2E_DIR/secret" \
-                   "$QWENPAW_E2E_DIR/backups"
+          JOTADUO_E2E_DIR=$(mktemp -d)
+          echo "JOTADUO_E2E_DIR=$JOTADUO_E2E_DIR" >> "$GITHUB_ENV"
+          mkdir -p "$JOTADUO_E2E_DIR/working" \
+                   "$JOTADUO_E2E_DIR/secret" \
+                   "$JOTADUO_E2E_DIR/backups"
 
-          QWENPAW_WORKING_DIR="$QWENPAW_E2E_DIR/working" \
-          QWENPAW_SECRET_DIR="$QWENPAW_E2E_DIR/secret" \
-          QWENPAW_BACKUP_DIR="$QWENPAW_E2E_DIR/backups" \
-          QWENPAW_AUTH_ENABLED=false \
+          JOTADUO_WORKING_DIR="$JOTADUO_E2E_DIR/working" \
+          JOTADUO_SECRET_DIR="$JOTADUO_E2E_DIR/secret" \
+          JOTADUO_BACKUP_DIR="$JOTADUO_E2E_DIR/backups" \
+          JOTADUO_AUTH_ENABLED=false \
           PYTHONUNBUFFERED=1 \
           COVERAGE_PROCESS_START="${{ github.workspace }}/.e2e_coverage/coverage_e2e.ini" \
           COVERAGE_FILE="${{ github.workspace }}/.e2e_coverage/e2e_subproc" \
-          python -m qwenpaw app --host 127.0.0.1 --port 8088 --log-level info &
+          python -m jotaduo app --host 127.0.0.1 --port 8088 --log-level info &
 
-          echo $! > /tmp/qwenpaw-e2e.pid
+          echo $! > /tmp/jotaduo-e2e.pid
 
       - name: Wait for backend ready
         shell: bash
@@ -126,8 +126,8 @@ jobs:
         if: always()
         shell: bash
         run: |
-          if [ -f /tmp/qwenpaw-e2e.pid ]; then
-            PID=$(cat /tmp/qwenpaw-e2e.pid)
+          if [ -f /tmp/jotaduo-e2e.pid ]; then
+            PID=$(cat /tmp/jotaduo-e2e.pid)
             kill -INT "$PID" 2>/dev/null || true
             for i in $(seq 1 15); do
               kill -0 "$PID" 2>/dev/null || break

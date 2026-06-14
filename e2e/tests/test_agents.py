@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-QwenPaw Agents module P0-level end-to-end test cases.
+JotaDuo Agents module P0-level end-to-end test cases.
 
 Combined test cases:
 - AGENT-001: Agent list display and refresh
@@ -573,9 +573,9 @@ class TestToggleAgent:
             # since refreshing may filter out disabled agents)
             log_test_step("4. Verify the post-disable state")
             # Approach 1: check whether the Disabled tag appears on the current page
-            disabled_tag = page.locator(f'.qwenpaw-table-row:has-text("{agent_name}") .qwenpaw-tag:has-text("Disabled")')
+            disabled_tag = page.locator(f'.jotaduo-table-row:has-text("{agent_name}") .jotaduo-tag:has-text("Disabled")')
             # Approach 2: check the success toast
-            success_msg = page.locator('.qwenpaw-message-success, .qwenpaw-notification-success')
+            success_msg = page.locator('.jotaduo-message-success, .jotaduo-notification-success')
             tag_visible = disabled_tag.count() > 0 and disabled_tag.first.is_visible()
             msg_visible = success_msg.count() > 0
             assert tag_visible or msg_visible, \
@@ -585,13 +585,13 @@ class TestToggleAgent:
             # Step 5: Enable the agent (operate directly on the current page, no refresh)
             log_test_step("5. Enable the agent")
             # Locate the agent row again and click the toggle
-            agent_row = page.locator(f'.qwenpaw-table-row:has-text("{agent_name}")').first
+            agent_row = page.locator(f'.jotaduo-table-row:has-text("{agent_name}")').first
             if agent_row.is_visible():
-                toggle_btn = agent_row.locator('.qwenpaw-space-item:nth-child(2) button').first
+                toggle_btn = agent_row.locator('.jotaduo-space-item:nth-child(2) button').first
                 toggle_btn.click()
                 page.wait_for_timeout(500)
                 # Handle a possible confirm popover
-                popconfirm_btn = page.locator('.qwenpaw-popconfirm-buttons button.qwenpaw-btn-primary').first
+                popconfirm_btn = page.locator('.jotaduo-popconfirm-buttons button.jotaduo-btn-primary').first
                 if popconfirm_btn.is_visible():
                     popconfirm_btn.click()
                 page.wait_for_timeout(2000)
@@ -599,7 +599,7 @@ class TestToggleAgent:
             # Step 6: Verify the post-enable state is restored
             log_test_step("6. Verify the post-enable state")
             # The Disabled tag should disappear
-            disabled_tag_after = page.locator(f'.qwenpaw-table-row:has-text("{agent_name}") .qwenpaw-tag:has-text("Disabled")')
+            disabled_tag_after = page.locator(f'.jotaduo-table-row:has-text("{agent_name}") .jotaduo-tag:has-text("Disabled")')
             is_still_disabled = disabled_tag_after.count() > 0 and disabled_tag_after.first.is_visible()
             assert not is_still_disabled, "Agent should be enabled (Disabled tag should disappear)"
             logger.info("Enabled state verified")
@@ -937,7 +937,7 @@ class TestAgentSkillAssociation:
         page.wait_for_timeout(3000)
 
         log_test_step("Look for agent cards")
-        agent_cards = page.locator('.qwenpaw-card, [class*="agentCard"]').all()
+        agent_cards = page.locator('.jotaduo-card, [class*="agentCard"]').all()
         if len(agent_cards) == 0:
             logger.info("No agent card found, skipping test")
             log_test_result(test_name, True, 0)
@@ -951,7 +951,7 @@ class TestAgentSkillAssociation:
         log_test_step("Verify the agent detail view is open")
         # Clicking the card may open a modal/drawer or navigate to a new page
         detail_area = page.locator(
-            '.qwenpaw-modal, .ant-modal, .qwenpaw-drawer, .ant-drawer, '
+            '.jotaduo-modal, .ant-modal, .jotaduo-drawer, .ant-drawer, '
             '[class*="detail"], [class*="config"], [class*="agent"]'
         ).first
 
@@ -980,8 +980,8 @@ class TestAgentSkillAssociation:
 
         # Verify the page has interactive elements (inputs, switches, selects, etc.)
         interactive_elements = page.locator(
-            'input, textarea, .qwenpaw-switch, .qwenpaw-select, '
-            '.qwenpaw-radio-group, button'
+            'input, textarea, .jotaduo-switch, .jotaduo-select, '
+            '.jotaduo-radio-group, button'
         ).all()
         visible_interactive = [el for el in interactive_elements if el.is_visible()]
         assert len(visible_interactive) > 0, "Detail view should have interactive elements"

@@ -7,7 +7,7 @@
     "zh-CN": "使用阿里云 Qwen-Image 模型生成与编辑图像",
     "en-US": "Generate and edit images using Alibaba Qwen-Image models"
   },
-  "author": "QwenPaw Team",
+  "author": "JotaDuo Team",
   "entry": {
     "backend": "qwen_image.py"
   },

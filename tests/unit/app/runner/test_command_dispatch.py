@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Unit tests for ``qwenpaw.app.runner.command_dispatch``.
+"""Unit tests for ``jotaduo.app.runner.command_dispatch``.
 
 Covers the pure helpers: ``_get_last_user_text``, ``_is_conversation_command``,
 ``_is_control_command`` and ``_is_command``.  The ``run_command_path``
@@ -13,7 +13,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from qwenpaw.app.runner import command_dispatch as cd
+from jotaduo.app.runner import command_dispatch as cd
 
 
 # ---------------------------------------------------------------------------
@@ -174,7 +174,7 @@ def test_is_command_recognises_daemon_command(monkeypatch):
         lambda q: ("status", []),
     )
 
-    assert cd._is_command("/qwenpaw status") is True
+    assert cd._is_command("/jotaduo status") is True
 
 
 def test_is_command_unknown_slash_query_returns_false():

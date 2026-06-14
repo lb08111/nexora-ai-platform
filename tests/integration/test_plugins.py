@@ -76,7 +76,7 @@ def _build_sample_plugin_zip(
         "version": version,
         "name": name or plugin_id,
         "description": "Sprint 1.3 integration sample plugin",
-        "author": "qwenpaw-test",
+        "author": "jotaduo-test",
         "plugin_type": "general",
         "entry": {"backend": "plugin.py"},
     }

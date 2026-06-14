@@ -2,7 +2,7 @@
 import pytest
 from pydantic import ValidationError
 
-from qwenpaw.discovery.state import (
+from jotaduo.discovery.state import (
     DiscoveryState,
     OpenArea,
     TeamBlueprint,

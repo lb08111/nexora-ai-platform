@@ -9,7 +9,7 @@ import httpx
 
 logger = logging.getLogger(__name__)
 
-_HEADERS = {"User-Agent": "nexora-ai-platform/1.0 cnpj-br-plugin"}
+_HEADERS = {"User-Agent": "jotaduo-ai-platform/1.0 cnpj-br-plugin"}
 _CACHE: dict[tuple[str, str], tuple[float, dict[str, Any]]] = {}
 
 

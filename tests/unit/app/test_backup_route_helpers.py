@@ -4,11 +4,11 @@ from __future__ import annotations
 import json
 import zipfile
 
-from qwenpaw.app.routers import _backup_helpers as helpers
-from qwenpaw.app.routers._backup_helpers import restored_local_keys
-from qwenpaw.backup._utils import constants
-from qwenpaw.backup._utils.constants import META_FILE, PREFIX_CONFIG
-from qwenpaw.backup.models import BackupMeta, BackupScope, RestoreBackupRequest
+from jotaduo.app.routers import _backup_helpers as helpers
+from jotaduo.app.routers._backup_helpers import restored_local_keys
+from jotaduo.backup._utils import constants
+from jotaduo.backup._utils.constants import META_FILE, PREFIX_CONFIG
+from jotaduo.backup.models import BackupMeta, BackupScope, RestoreBackupRequest
 
 
 def _meta(*, include_global_config: bool) -> BackupMeta:

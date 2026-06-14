@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from types import SimpleNamespace
 
-from qwenpaw.agents.acp.server import _StreamTracker, _msg_to_updates
+from jotaduo.agents.acp.server import _StreamTracker, _msg_to_updates
 
 
 def _msg(tool_calls):

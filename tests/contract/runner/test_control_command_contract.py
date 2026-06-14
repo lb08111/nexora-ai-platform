@@ -22,8 +22,8 @@ from typing import get_type_hints
 
 import pytest
 
-from qwenpaw.app.runner import control_commands
-from qwenpaw.app.runner.control_commands.base import (
+from jotaduo.app.runner import control_commands
+from jotaduo.app.runner.control_commands.base import (
     BaseControlCommandHandler,
 )
 

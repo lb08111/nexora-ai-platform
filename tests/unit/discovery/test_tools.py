@@ -3,8 +3,8 @@ import json
 
 import pytest
 
-from qwenpaw.discovery.state import DiscoveryState, OpenArea
-from qwenpaw.discovery.tools import InterviewSession
+from jotaduo.discovery.state import DiscoveryState, OpenArea
+from jotaduo.discovery.tools import InterviewSession
 
 
 def _text(resp):
