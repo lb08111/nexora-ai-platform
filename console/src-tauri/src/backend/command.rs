@@ -15,18 +15,18 @@ pub(super) fn create(app: &tauri::AppHandle) -> Result<Command, String> {
     let source_path = repo_root.join("src");
     let command = if command_exists("uv") {
         log::info!(
-            "[backend] dev command: uv run python -m qwenpaw.tauri.entry cwd={}",
+            "[backend] dev command: uv run python -m jotaduo.tauri.entry cwd={}",
             repo_root.display(),
         );
         app.shell()
             .command("uv")
-            .args(["run", "python", "-m", "qwenpaw.tauri.entry"])
+            .args(["run", "python", "-m", "jotaduo.tauri.entry"])
             .current_dir(repo_root)
             .env("PYTHONPATH", source_path.display().to_string())
     } else {
         let (python, prefix_args) = python_command(&repo_root);
         let mut args = prefix_args;
-        args.extend(["-m", "qwenpaw.tauri.entry"]);
+        args.extend(["-m", "jotaduo.tauri.entry"]);
         log::info!(
             "[backend] dev command: {} {} cwd={}",
             python,
@@ -65,16 +65,16 @@ pub(super) fn create(app: &tauri::AppHandle) -> Result<Command, String> {
 #[cfg(not(debug_assertions))]
 fn packaged_backend_executable(app: &tauri::AppHandle) -> Result<PathBuf, String> {
     let executable_name = if cfg!(windows) {
-        "qwenpaw-backend.exe"
+        "jotaduo-backend.exe"
     } else {
-        "qwenpaw-backend"
+        "jotaduo-backend"
     };
     let path = app
         .path()
         .resource_dir()
         .map_err(|err| format!("failed to resolve resource directory: {err}"))?
         .join("binaries")
-        .join("qwenpaw-backend")
+        .join("jotaduo-backend")
         .join(executable_name);
 
     if path.is_file() {

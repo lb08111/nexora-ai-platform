@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Unit tests for ``qwenpaw.app.runner.session``.
+"""Unit tests for ``jotaduo.app.runner.session``.
 
 Covers:
 - ``_safe_json_loads`` recovery from corrupted JSON
@@ -17,14 +17,14 @@ from pathlib import Path
 
 import pytest
 
-from qwenpaw.app.runner import session as session_mod
-from qwenpaw.app.runner.session import (
+from jotaduo.app.runner import session as session_mod
+from jotaduo.app.runner.session import (
     SafeJSONSession,
     _safe_json_loads,
     migrate_legacy_weixin_session_files,
     sanitize_filename,
 )
-from qwenpaw.exceptions import AgentStateError
+from jotaduo.exceptions import AgentStateError
 
 
 class _StateModule:

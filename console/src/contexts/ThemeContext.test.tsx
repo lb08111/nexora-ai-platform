@@ -65,7 +65,7 @@ describe("ThemeProvider + useTheme", () => {
     act(() => {
       result.current.setThemeMode("dark");
     });
-    expect(localStorage.getItem("qwenpaw-theme")).toBe("dark");
+    expect(localStorage.getItem("jotaduo-theme")).toBe("dark");
   });
 
   it("toggleTheme switches between light and dark", () => {
@@ -88,7 +88,7 @@ describe("ThemeProvider + useTheme", () => {
   });
 
   it("reads initial mode from localStorage", () => {
-    localStorage.setItem("qwenpaw-theme", "dark");
+    localStorage.setItem("jotaduo-theme", "dark");
     const { result } = renderHook(() => useTheme(), { wrapper });
     expect(result.current.themeMode).toBe("dark");
     expect(result.current.isDark).toBe(true);

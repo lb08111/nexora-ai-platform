@@ -5,12 +5,12 @@ from __future__ import annotations
 
 import pytest
 
-from qwenpaw.agents.br_team.factory import (
+from jotaduo.agents.br_team.factory import (
     SPECIALIST_REGISTRY,
     build_team_from_blueprint,
     resolve_role,
 )
-from qwenpaw.discovery.state import (
+from jotaduo.discovery.state import (
     AgentSpec,
     CompanyProfile,
     TeamBlueprint,

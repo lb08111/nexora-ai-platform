@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 from types import SimpleNamespace
 
-from qwenpaw.app.routers import agents as agents_router
+from jotaduo.app.routers import agents as agents_router
 
 
 def _stub_global_config(language: str = "en") -> SimpleNamespace:
@@ -20,7 +20,7 @@ def test_initialize_agent_workspace_creates_runtime_compatible_files(
     tmp_path,
 ):
     """New workspaces should match the runtime file contract."""
-    import qwenpaw.config as config_module
+    import jotaduo.config as config_module
 
     monkeypatch.setattr(
         config_module,
@@ -59,7 +59,7 @@ def test_initialize_agent_workspace_applies_md_template_with_language(
     tmp_path,
 ):
     """Workspace initialization should pass language and md_template_id."""
-    import qwenpaw.config as config_module
+    import jotaduo.config as config_module
 
     recorded_calls: list[tuple[str, Path, str | None]] = []
 

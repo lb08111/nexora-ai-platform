@@ -71,7 +71,7 @@ def test_plugin_exports_plugin_object():
     module = _load_plugin_module()
     assert hasattr(
         module, "plugin"
-    ), "plugin.py must export `plugin` (per QwenPaw plugin contract)"
+    ), "plugin.py must export `plugin` (per JotaDuo plugin contract)"
     assert hasattr(module.plugin, "register")
 
 
@@ -109,7 +109,7 @@ def test_router_has_expected_routes():
 
 def test_startup_hook_in_scripted_mode_does_not_raise(monkeypatch):
     module = _load_plugin_module()
-    monkeypatch.delenv("QWENPAW_DISCOVERY_LIVE", raising=False)
+    monkeypatch.delenv("JOTADUO_DISCOVERY_LIVE", raising=False)
     plugin = module.plugin
     # Should be a no-op (scripted is the default factory) and must not
     # raise — guards against accidentally requiring the live agent at

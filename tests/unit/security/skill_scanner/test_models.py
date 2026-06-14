@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Tests for qwenpaw.security.skill_scanner.models.
+"""Tests for jotaduo.security.skill_scanner.models.
 
 Covers:
 - Severity and ThreatCategory enums
@@ -12,7 +12,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 
-from qwenpaw.security.skill_scanner.models import (
+from jotaduo.security.skill_scanner.models import (
     Finding,
     ScanResult,
     Severity,

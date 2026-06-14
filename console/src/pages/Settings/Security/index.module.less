@@ -6,7 +6,7 @@
   width: 100%;
 
   :global {
-    .qwenpaw-tabs-nav {
+    .jotaduo-tabs-nav {
       padding: 0 16px !important;
     }
   }
@@ -103,7 +103,7 @@
 
 /* ---- Main Tabs (Tool Guard / Skill Scanner) ---- */
 .mainTabs {
-  :global(.qwenpaw-tabs-nav) {
+  :global(.jotaduo-tabs-nav) {
     margin-bottom: 20px;
 
     &::before {
@@ -111,7 +111,7 @@
     }
   }
 
-  :global(.qwenpaw-tabs-tab) {
+  :global(.jotaduo-tabs-tab) {
     padding: 10px 4px;
     font-size: 14px;
     font-weight: 500;
@@ -122,12 +122,12 @@
     }
   }
 
-  :global(.qwenpaw-tabs-tab-active .qwenpaw-tabs-tab-btn) {
+  :global(.jotaduo-tabs-tab-active .jotaduo-tabs-tab-btn) {
     color: #ff7f16 !important;
     font-weight: 600;
   }
 
-  :global(.qwenpaw-tabs-ink-bar) {
+  :global(.jotaduo-tabs-ink-bar) {
     background: #ff7f16 !important;
     height: 3px;
     border-radius: 2px 2px 0 0;
@@ -136,30 +136,30 @@
 
 :global(.dark-mode) {
   .mainTabs {
-    :global(.qwenpaw-tabs-tab .qwenpaw-tabs-tab-btn) {
+    :global(.jotaduo-tabs-tab .jotaduo-tabs-tab-btn) {
       color: #ffffff !important;
     }
 
-    :global(.qwenpaw-tabs-tab-active .qwenpaw-tabs-tab-btn) {
+    :global(.jotaduo-tabs-tab-active .jotaduo-tabs-tab-btn) {
       color: #ff7f16 !important;
       font-weight: 600;
     }
 
-    :global(.qwenpaw-tabs-ink-bar) {
+    :global(.jotaduo-tabs-ink-bar) {
       background: #ff7f16 !important;
     }
   }
 
   .innerTabs {
-    :global(.qwenpaw-tabs-tab .qwenpaw-tabs-tab-btn) {
+    :global(.jotaduo-tabs-tab .jotaduo-tabs-tab-btn) {
       color: #ffffff !important;
     }
 
-    :global(.qwenpaw-tabs-tab-active .qwenpaw-tabs-tab-btn) {
+    :global(.jotaduo-tabs-tab-active .jotaduo-tabs-tab-btn) {
       color: #ff7f16 !important;
     }
 
-    :global(.qwenpaw-tabs-ink-bar) {
+    :global(.jotaduo-tabs-ink-bar) {
       background: #ff7f16 !important;
     }
   }
@@ -185,20 +185,20 @@
 
   .tableCard {
     :global(.ant-table-thead > tr > th),
-    :global(.qwenpaw-table-thead > tr > th) {
+    :global(.jotaduo-table-thead > tr > th) {
       background: rgba(255, 255, 255, 0.04) !important;
       color: rgba(255, 255, 255, 0.7) !important;
       border-bottom-color: rgba(255, 255, 255, 0.08) !important;
     }
 
     :global(.ant-table-tbody > tr > td),
-    :global(.qwenpaw-table-tbody > tr > td) {
+    :global(.jotaduo-table-tbody > tr > td) {
       color: rgba(255, 255, 255, 0.75);
       border-bottom-color: rgba(255, 255, 255, 0.06);
     }
 
     :global(.ant-table-tbody > tr:hover > td),
-    :global(.qwenpaw-table-tbody > tr:hover > td) {
+    :global(.jotaduo-table-tbody > tr:hover > td) {
       background: rgba(255, 255, 255, 0.06) !important;
     }
   }
@@ -222,9 +222,9 @@
   .sectionContainer {
     .tableCard {
       :global {
-        .qwenpaw-table-wrapper
-          .qwenpaw-table-container
-          .qwenpaw-table-thead
+        .jotaduo-table-wrapper
+          .jotaduo-table-container
+          .jotaduo-table-thead
           > tr
           > th {
           background: rgba(255, 255, 255, 0.04) !important;
@@ -266,13 +266,13 @@
     padding: 0 !important;
 
     :global {
-      .qwenpaw-spark-card-wrapper {
+      .jotaduo-spark-card-wrapper {
         padding: 0 !important;
       }
 
-      .qwenpaw-table-wrapper
-        .qwenpaw-table-container
-        .qwenpaw-table-thead
+      .jotaduo-table-wrapper
+        .jotaduo-table-container
+        .jotaduo-table-thead
         > tr
         > th {
         background: #f9f8f4 !important;
@@ -290,7 +290,7 @@
 .innerTabs {
   margin-top: 20px;
 
-  :global(.qwenpaw-tabs-nav) {
+  :global(.jotaduo-tabs-nav) {
     margin-bottom: 16px;
 
     &::before {
@@ -298,7 +298,7 @@
     }
   }
 
-  :global(.qwenpaw-tabs-tab) {
+  :global(.jotaduo-tabs-tab) {
     font-size: 13px;
     font-weight: 500;
     color: #666 !important;
@@ -308,11 +308,11 @@
     }
   }
 
-  :global(.qwenpaw-tabs-tab-active .qwenpaw-tabs-tab-btn) {
+  :global(.jotaduo-tabs-tab-active .jotaduo-tabs-tab-btn) {
     color: #ff7f16 !important;
   }
 
-  :global(.qwenpaw-tabs-ink-bar) {
+  :global(.jotaduo-tabs-ink-bar) {
     background: #ff7f16 !important;
   }
 }
@@ -397,9 +397,9 @@
 /* ---- Rule Table ---- */
 .ruleTable {
   :global(.ant-table-thead > tr > th),
-  :global(.qwenpaw-table-thead > tr > th),
+  :global(.jotaduo-table-thead > tr > th),
   :global(.ant-table-tbody > tr > td),
-  :global(.qwenpaw-table-tbody > tr > td) {
+  :global(.jotaduo-table-tbody > tr > td) {
     padding-left: 16px !important;
     padding-right: 16px !important;
   }
@@ -410,32 +410,32 @@
   background: transparent;
   border: none;
 
-  :global(.qwenpaw-collapse-item) {
+  :global(.jotaduo-collapse-item) {
     margin-bottom: 12px;
     border: 1px solid #e8e8e8;
     border-radius: 8px !important;
     overflow: hidden;
   }
 
-  :global(.qwenpaw-collapse-header) {
+  :global(.jotaduo-collapse-header) {
     font-weight: 600;
     font-size: 14px;
     padding: 12px 16px !important;
     background: #fafafa;
   }
 
-  :global(.qwenpaw-collapse-content-box) {
+  :global(.jotaduo-collapse-content-box) {
     padding: 0 !important;
   }
 }
 
 :global(.dark-mode) {
   .ruleCollapse {
-    :global(.qwenpaw-collapse-item) {
+    :global(.jotaduo-collapse-item) {
       border-color: rgba(255, 255, 255, 0.1);
     }
 
-    :global(.qwenpaw-collapse-header) {
+    :global(.jotaduo-collapse-header) {
       background: rgba(255, 255, 255, 0.04);
     }
   }

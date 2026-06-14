@@ -3,7 +3,7 @@
 
 import logging
 
-logger = logging.getLogger("qwenpaw").getChild(
+logger = logging.getLogger("jotaduo").getChild(
     "plugin.ai-productions.routers_setup",
 )
 

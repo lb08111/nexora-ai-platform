@@ -6,7 +6,7 @@ $RepoRoot = (Get-Item $PSScriptRoot).Parent.FullName
 Set-Location $RepoRoot
 
 $ConsoleDir = Join-Path $RepoRoot "console"
-$ConsoleDest = Join-Path $RepoRoot "src\qwenpaw\console"
+$ConsoleDest = Join-Path $RepoRoot "src\jotaduo\console"
 
 Write-Host "[wheel_build] Building console frontend..."
 Push-Location $ConsoleDir
@@ -19,7 +19,7 @@ try {
   Pop-Location
 }
 
-Write-Host "[wheel_build] Copying console/dist/* -> src/qwenpaw/console/..."
+Write-Host "[wheel_build] Copying console/dist/* -> src/jotaduo/console/..."
 if (Test-Path $ConsoleDest) {
   Remove-Item -Path (Join-Path $ConsoleDest "*") -Recurse -Force -ErrorAction SilentlyContinue
 } else {
@@ -30,7 +30,7 @@ Copy-Item -Path (Join-Path $ConsoleDist "*") -Destination $ConsoleDest -Recurse 
 
 Write-Host "[wheel_build] Bundling website docs into package..."
 $DocsSrc = Join-Path $RepoRoot "website\public\docs"
-$DocsDest = Join-Path $RepoRoot "src\qwenpaw\docs"
+$DocsDest = Join-Path $RepoRoot "src\jotaduo\docs"
 if (Test-Path $DocsDest) { Remove-Item -Recurse -Force $DocsDest }
 New-Item -ItemType Directory -Force -Path $DocsDest | Out-Null
 Copy-Item -Path (Join-Path $DocsSrc "*.md") -Destination $DocsDest -Force

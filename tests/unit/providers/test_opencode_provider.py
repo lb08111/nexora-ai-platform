@@ -5,12 +5,12 @@ After review feedback: OPENCODE_MODELS reduced to 8 intersection models
 (Zen ∩ Go), endpoint filtering removed for minimal diff.
 """
 
-from qwenpaw.providers.provider_manager import (
+from jotaduo.providers.provider_manager import (
     OPENCODE_MODELS,
     PROVIDER_OPENCODE,
     ProviderManager,
 )
-from qwenpaw.providers.openai_provider import OpenAIProvider
+from jotaduo.providers.openai_provider import OpenAIProvider
 
 
 class TestOpenCodeProvider:

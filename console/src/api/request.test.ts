@@ -79,7 +79,7 @@ describe("request", () => {
 
   it("DELETE request with body automatically adds Content-Type", async () => {
     mockFetch(200, { status: "ok" });
-    await request("/nexora/agent-grants/Test-bot", {
+    await request("/jotaduo/agent-grants/Test-bot", {
       method: "DELETE",
       body: JSON.stringify({ usernames: ["alice"] }),
     });

@@ -1,4 +1,4 @@
-# Build QwenPaw multi-arch Docker image and push to DockerHub + Aliyun ACR on release.
+# Build JotaDuo multi-arch Docker image and push to DockerHub + Aliyun ACR on release.
 # Pre-release: update <version> and pre only.
 # Formal release: update <version>, pre and latest.
 #
@@ -86,7 +86,7 @@ jobs:
         env:
           VERSION: ${{ steps.vars.outputs.version }}
           IS_PRERELEASE: ${{ steps.vars.outputs.is_prerelease }}
-          QWENPAW_DISABLED_CHANNELS: "imessage"
+          JOTADUO_DISABLED_CHANNELS: "imessage"
         run: |
           TAGS="-t ${ACR_REGISTRY}/${IMAGE}:${VERSION} -t ${ACR_REGISTRY}/${IMAGE}:pre"
           TAGS="${TAGS} -t docker.io/${IMAGE}:${VERSION} -t docker.io/${IMAGE}:pre"
@@ -95,5 +95,5 @@ jobs:
           fi
           docker buildx build --platform linux/amd64,linux/arm64 \
             -f deploy/Dockerfile \
-            --build-arg QWENPAW_DISABLED_CHANNELS="${QWENPAW_DISABLED_CHANNELS}" \
+            --build-arg JOTADUO_DISABLED_CHANNELS="${JOTADUO_DISABLED_CHANNELS}" \
             ${TAGS} --push .

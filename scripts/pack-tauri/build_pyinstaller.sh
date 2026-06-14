@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Build QwenPaw backend with PyInstaller for Tauri sidecar
+# Build JotaDuo backend with PyInstaller for Tauri sidecar
 # Creates an onedir backend bundle with embedded Python runtime
 #
 # Usage:
@@ -15,10 +15,10 @@ REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$REPO_ROOT"
 
 DIST="${DIST:-dist}"
-VERSION=$(sed -n 's/^__version__[[:space:]]*=[[:space:]]*"\([^"]*\)".*/\1/p' src/qwenpaw/__version__.py)
+VERSION=$(sed -n 's/^__version__[[:space:]]*=[[:space:]]*"\([^"]*\)".*/\1/p' src/jotaduo/__version__.py)
 
 echo "========================================="
-echo "QwenPaw PyInstaller Build"
+echo "JotaDuo PyInstaller Build"
 echo "========================================="
 echo "Version: ${VERSION}"
 echo "Repository: ${REPO_ROOT}"
@@ -84,7 +84,7 @@ echo ""
 echo "== Running PyInstaller =="
 echo "Building onedir backend bundle..."
 
-SPEC_FILE="${REPO_ROOT}/scripts/pack-tauri/qwenpaw.spec"
+SPEC_FILE="${REPO_ROOT}/scripts/pack-tauri/jotaduo.spec"
 if [ ! -f "$SPEC_FILE" ]; then
     echo "ERROR: Spec file not found at ${SPEC_FILE}"
     exit 1
@@ -100,9 +100,9 @@ echo "PyInstaller build complete"
 echo ""
 
 # Verify output
-BACKEND_DIR="${DIST}/pyinstaller/qwenpaw-backend"
-BACKEND_EXE="${BACKEND_DIR}/qwenpaw-backend"
-CLI_EXE="${BACKEND_DIR}/qwenpaw"
+BACKEND_DIR="${DIST}/pyinstaller/jotaduo-backend"
+BACKEND_EXE="${BACKEND_DIR}/jotaduo-backend"
+CLI_EXE="${BACKEND_DIR}/jotaduo"
 if [ ! -d "${BACKEND_DIR}" ]; then
     echo "ERROR: Backend bundle directory not found at ${BACKEND_DIR}"
     exit 1
@@ -128,12 +128,12 @@ echo "== Copying to Tauri binaries directory =="
 BINARIES_DIR="${REPO_ROOT}/console/src-tauri/binaries"
 mkdir -p "${BINARIES_DIR}"
 
-DEST="${BINARIES_DIR}/qwenpaw-backend"
+DEST="${BINARIES_DIR}/jotaduo-backend"
 mkdir -p "${DEST}"
 find "${DEST}" -mindepth 1 -exec rm -rf {} +
 cp -R "${BACKEND_DIR}/." "${DEST}/"
-chmod +x "${DEST}/qwenpaw-backend"
-chmod +x "${DEST}/qwenpaw"
+chmod +x "${DEST}/jotaduo-backend"
+chmod +x "${DEST}/jotaduo"
 echo "Copied to: ${DEST}"
 echo ""
 

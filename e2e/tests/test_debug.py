@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-QwenPaw Debug page E2E tests
+JotaDuo Debug page E2E tests
 
 Functional coverage:
 1. Debug page load and basic display
@@ -62,7 +62,7 @@ class TestDebugPageDisplay:
         navigate_to_debug(page)
 
         log_test_step("2. Verify page description Alert")
-        info_alert = page.locator('.qwenpaw-alert-info, .qwenpaw-alert').first
+        info_alert = page.locator('.jotaduo-alert-info, .jotaduo-alert').first
         expect(info_alert).to_be_visible(timeout=5000)
         alert_text = info_alert.inner_text()
         debug_keywords = ["Debug", "debug", "调试", "日志", "log", "diagnose", "排查"]
@@ -71,9 +71,9 @@ class TestDebugPageDisplay:
         logger.info(f"Page description Alert visible: {alert_text[:80]}")
 
         log_test_step("3. Verify backend log card")
-        log_card = page.locator('.qwenpaw-card').first
+        log_card = page.locator('.jotaduo-card').first
         expect(log_card).to_be_visible(timeout=5000)
-        card_title = log_card.locator('.qwenpaw-card-head-title').first
+        card_title = log_card.locator('.jotaduo-card-head-title').first
         if card_title.is_visible(timeout=3000):
             title_text = card_title.inner_text()
             logger.info(f"Log card title: {title_text}")
@@ -130,7 +130,7 @@ class TestDebugLogControls:
         refresh_btn.click()
         page.wait_for_timeout(2000)
         # Verify no errors after refresh
-        error_alert = page.locator('.qwenpaw-alert-error').first
+        error_alert = page.locator('.jotaduo-alert-error').first
         if error_alert.is_visible(timeout=2000):
             logger.info("Error alert appears after refresh (backend may be down)")
         else:
@@ -145,7 +145,7 @@ class TestDebugLogControls:
         logger.info("Copy logs button visible")
 
         log_test_step("5. Verify auto-refresh toggle")
-        switches = page.locator('.qwenpaw-card-extra .qwenpaw-switch, .qwenpaw-card-head .qwenpaw-switch').all()
+        switches = page.locator('.jotaduo-card-extra .jotaduo-switch, .jotaduo-card-head .jotaduo-switch').all()
         assert len(switches) >= 2, f"Should have at least 2 switches (auto-refresh + newest-first), actual: {len(switches)}"
         logger.info(f"Found {len(switches)} switches")
 
@@ -205,7 +205,7 @@ class TestDebugLogLevelFilter:
         navigate_to_debug(page)
 
         log_test_step("2. Verify level filter dropdown")
-        level_select = page.locator('.qwenpaw-select').first
+        level_select = page.locator('.jotaduo-select').first
         expect(level_select).to_be_visible(timeout=5000)
         logger.info("Level filter dropdown visible")
 
@@ -214,12 +214,12 @@ class TestDebugLogLevelFilter:
         page.wait_for_timeout(500)
 
         log_test_step("4. Verify dropdown options")
-        dropdown = page.locator('.qwenpaw-select-dropdown').first
+        dropdown = page.locator('.jotaduo-select-dropdown').first
         expect(dropdown).to_be_visible(timeout=3000)
 
         expected_levels = ["All", "ERROR", "WARNING", "INFO", "DEBUG"]
         for level in expected_levels:
-            option = dropdown.locator(f'.qwenpaw-select-item:has-text("{level}")').first
+            option = dropdown.locator(f'.jotaduo-select-item:has-text("{level}")').first
             if option.is_visible(timeout=2000):
                 logger.info(f"  Level option '{level}' exists")
             else:
@@ -227,8 +227,8 @@ class TestDebugLogLevelFilter:
 
         log_test_step("5. Select ERROR level")
         error_option = dropdown.locator(
-            '.qwenpaw-select-item:has-text("ERROR"), '
-            '.qwenpaw-select-item:has(.qwenpaw-tag)'
+            '.jotaduo-select-item:has-text("ERROR"), '
+            '.jotaduo-select-item:has(.jotaduo-tag)'
         ).first
         if error_option.is_visible(timeout=2000):
             error_option.click()
@@ -241,7 +241,7 @@ class TestDebugLogLevelFilter:
         log_test_step("6. Switch back to All level")
         level_select.click()
         page.wait_for_timeout(500)
-        all_option = page.locator('.qwenpaw-select-dropdown .qwenpaw-select-item').first
+        all_option = page.locator('.jotaduo-select-dropdown .jotaduo-select-item').first
         if all_option.is_visible(timeout=2000):
             all_option.click()
             page.wait_for_timeout(1000)
@@ -282,7 +282,7 @@ class TestDebugLogSearch:
         search_input = page.locator(
             'input[placeholder*="Search"], '
             'input[placeholder*="搜索"], '
-            '.qwenpaw-input[placeholder*="log"]'
+            '.jotaduo-input[placeholder*="log"]'
         ).first
         expect(search_input).to_be_visible(timeout=5000)
         logger.info("Search input visible")
@@ -304,7 +304,7 @@ class TestDebugLogSearch:
             logger.info("Log content area not visible")
 
         log_test_step("5. Clear search")
-        clear_btn = search_input.locator('..').locator('.qwenpaw-input-clear-icon').first
+        clear_btn = search_input.locator('..').locator('.jotaduo-input-clear-icon').first
         if clear_btn.is_visible(timeout=2000):
             clear_btn.click()
             page.wait_for_timeout(500)
@@ -370,7 +370,7 @@ class TestDebugLogFileInfo:
                 logger.info("Updated timestamp not shown (logs not yet loaded)")
 
         log_test_step("5. Check warning when log file is missing")
-        warning_alert = page.locator('.qwenpaw-alert-warning').first
+        warning_alert = page.locator('.jotaduo-alert-warning').first
         if warning_alert.is_visible(timeout=2000):
             warning_text = warning_alert.inner_text()
             logger.info(f"Log file not found warning: {warning_text[:100]}")

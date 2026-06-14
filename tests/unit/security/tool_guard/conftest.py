@@ -8,7 +8,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from qwenpaw.security.tool_guard.models import (
+from jotaduo.security.tool_guard.models import (
     GuardFinding,
     GuardSeverity,
     GuardThreatCategory,
@@ -23,7 +23,7 @@ from qwenpaw.security.tool_guard.models import (
 
 @pytest.fixture
 def mock_config():
-    """Patch ``qwenpaw.config.load_config`` to return a mock
+    """Patch ``jotaduo.config.load_config`` to return a mock
     with tool_guard config."""
     tool_guard_cfg = MagicMock()
     tool_guard_cfg.guarded_tools = None
@@ -36,7 +36,7 @@ def mock_config():
     app_cfg = MagicMock()
     app_cfg.security = security_cfg
 
-    with patch("qwenpaw.config.load_config", return_value=app_cfg) as patched:
+    with patch("jotaduo.config.load_config", return_value=app_cfg) as patched:
         yield patched
 
 
@@ -44,7 +44,7 @@ def mock_config():
 def mock_env_loader():
     """Patch ``EnvVarLoader.get_str`` so no real env vars are read."""
     with patch(
-        "qwenpaw.constant.EnvVarLoader.get_str",
+        "jotaduo.constant.EnvVarLoader.get_str",
         return_value="",
     ) as patched:
         yield patched
@@ -56,7 +56,7 @@ def mock_workspace(tmp_path: Path):
     workspace = tmp_path / "workspace"
     workspace.mkdir()
     with patch(
-        "qwenpaw.config.context.get_current_workspace_dir",
+        "jotaduo.config.context.get_current_workspace_dir",
         return_value=workspace,
     ):
         yield workspace

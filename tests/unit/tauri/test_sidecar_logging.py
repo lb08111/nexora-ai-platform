@@ -6,7 +6,7 @@ import io
 import logging
 import sys
 
-from qwenpaw.tauri import sidecar_logging as tauri_logging
+from jotaduo.tauri import sidecar_logging as tauri_logging
 
 
 def test_tee_stream_writes_text_to_both_streams():
@@ -50,7 +50,7 @@ def test_install_sidecar_logging_writes_startup_context_and_tees_output(
         sys.stderr.flush()
 
         content = log_path.read_text(encoding="utf-8")
-        assert "qwenpaw tauri sidecar" in content
+        assert "jotaduo tauri sidecar" in content
         assert "stdout hello" in content
         assert "stderr hello" in content
         assert primary_stdout.getvalue().strip() == "stdout hello"
@@ -61,7 +61,7 @@ def test_install_sidecar_logging_writes_startup_context_and_tees_output(
         if tauri_logging._LOG_FILE is not None:
             tauri_logging._LOG_FILE.close()
             tauri_logging._LOG_FILE = None
-        logger = logging.getLogger("qwenpaw")
+        logger = logging.getLogger("jotaduo")
         for handler in list(logger.handlers):
             base = getattr(handler, "baseFilename", None)
             if base is not None and base == str(log_path.resolve()):

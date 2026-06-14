@@ -466,7 +466,7 @@ class ChatExtensionsRegistry {
       try {
         fn();
       } catch (err) {
-        console.warn("[QwenPaw] chatExtensions listener threw:", err);
+        console.warn("[JotaDuo] chatExtensions listener threw:", err);
       }
     }
   }

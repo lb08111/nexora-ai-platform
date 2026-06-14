@@ -8,7 +8,7 @@ import ConsolePollService from "../../components/ConsolePollService";
 import { ChunkErrorBoundary } from "../../components/ChunkErrorBoundary";
 import { lazyImportWithRetry, lazyWithRetry } from "../../utils/lazyWithRetry";
 import { usePlugins } from "../../plugins/PluginContext";
-import { auditApi } from "../../nexora/api/audit";
+import { auditApi } from "../../jotaduo/api/audit";
 import { useCodingMode } from "../../stores/codingModeStore";
 import { useSyncCodingMode } from "../../stores/useSyncCodingMode";
 import styles from "../index.module.less";
@@ -44,20 +44,20 @@ const VoiceTranscriptionPage = lazyImportWithRetry(
 );
 const AgentsPage = lazyImportWithRetry("../../pages/Settings/Agents");
 const UserManagementPage = lazyWithRetry(
-  () => import("../../nexora/pages/UserManagement"),
-  "nexora/UserManagement/index",
+  () => import("../../jotaduo/pages/UserManagement"),
+  "jotaduo/UserManagement/index",
 );
 const OpsGovernancePage = lazyWithRetry(
-  () => import("../../nexora/pages/OpsGovernance"),
-  "nexora/OpsGovernance/index",
+  () => import("../../jotaduo/pages/OpsGovernance"),
+  "jotaduo/OpsGovernance/index",
 );
 const ApprovalCenterPage = lazyWithRetry(
-  () => import("../../nexora/pages/ApprovalCenter"),
-  "nexora/ApprovalCenter/index",
+  () => import("../../jotaduo/pages/ApprovalCenter"),
+  "jotaduo/ApprovalCenter/index",
 );
 const AuditLogsPage = lazyWithRetry(
-  () => import("../../nexora/pages/AuditLogs"),
-  "nexora/AuditLogs/index",
+  () => import("../../jotaduo/pages/AuditLogs"),
+  "jotaduo/AuditLogs/index",
 );
 const DebugPage = lazyImportWithRetry("../../pages/Settings/Debug");
 const BackupsPage = lazyImportWithRetry("../../pages/Settings/Backups");

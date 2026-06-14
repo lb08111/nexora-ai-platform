@@ -6,11 +6,11 @@ Imagine the LLM's context window as a **backpack with limited capacity** 🎒. E
 
 **Context management** is a set of mechanisms that help you "manage your backpack", ensuring the AI can work continuously and efficiently.
 
-> The context management mechanism is inspired by [OpenClaw](https://github.com/openclaw/openclaw) and independently implemented via **LightContextManager** in QwenPaw.
+> The context management mechanism is inspired by [OpenClaw](https://github.com/openclaw/openclaw) and independently implemented via **LightContextManager** in JotaDuo.
 
 ### How It Works — Summary
 
-QwenPaw context management uses two parallel offload paths to handle the limited context window:
+JotaDuo context management uses two parallel offload paths to handle the limited context window:
 
 | Mechanism                          | Triggered When                        | Offload Target            | What Stays in Context                    |
 | ---------------------------------- | ------------------------------------- | ------------------------- | ---------------------------------------- |
@@ -37,7 +37,7 @@ flowchart LR
 
 ### In-Memory Data Structure
 
-QwenPaw's context consists of two components:
+JotaDuo's context consists of two components:
 
 ```mermaid
 flowchart TD
@@ -116,9 +116,9 @@ graph LR
 
 ### Related Code
 
-- [LightContextManager](https://github.com/agentscope-ai/QwenPaw/blob/main/src/qwenpaw/agents/context/light_context_manager.py)
-- [AsMsgHandler](https://github.com/agentscope-ai/QwenPaw/blob/main/src/qwenpaw/agents/context/as_msg_handler.py) — Context checking and message formatting
-- [compactor_prompts](https://github.com/agentscope-ai/QwenPaw/blob/main/src/qwenpaw/agents/context/compactor_prompts.py) — Compaction prompts
+- [LightContextManager](https://github.com/agentscope-ai/QwenPaw/blob/main/src/jotaduo/agents/context/light_context_manager.py)
+- [AsMsgHandler](https://github.com/agentscope-ai/QwenPaw/blob/main/src/jotaduo/agents/context/as_msg_handler.py) — Context checking and message formatting
+- [compactor_prompts](https://github.com/agentscope-ai/QwenPaw/blob/main/src/jotaduo/agents/context/compactor_prompts.py) — Compaction prompts
 
 ### Execution Flow
 
@@ -143,7 +143,7 @@ flowchart LR
 
 ## Compaction Mechanism
 
-When the context approaches its limit, QwenPaw automatically triggers compaction, condensing old conversations into a structured summary.
+When the context approaches its limit, JotaDuo automatically triggers compaction, condensing old conversations into a structured summary.
 
 ### 1. compact_tool_result — Tool Result Compaction
 
@@ -262,7 +262,7 @@ graph TB
 
 ## Configuration
 
-Configuration is located in `~/.qwenpaw/workspaces/{agent_id}/agent.json` under `agents.running`:
+Configuration is located in `~/.jotaduo/workspaces/{agent_id}/agent.json` under `agents.running`:
 
 **`running` top-level fields:**
 

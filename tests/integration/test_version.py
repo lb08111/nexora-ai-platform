@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Integrated tests for QwenPaw version."""
+"""Integrated tests for JotaDuo version."""
 from __future__ import annotations
 
 import subprocess
@@ -17,13 +17,13 @@ def test_version_import() -> None:
       version metadata in release artifacts.
 
     Test flow:
-    1. Import ``__version__`` from ``qwenpaw.__version__``.
+    1. Import ``__version__`` from ``jotaduo.__version__``.
     2. Assert it is a non-empty string.
 
     API endpoints:
     - None (Python module import only)
     """
-    from qwenpaw.__version__ import __version__
+    from jotaduo.__version__ import __version__
 
     assert __version__ is not None
     assert isinstance(__version__, str)
@@ -44,7 +44,7 @@ def test_version_pep440_compliant() -> None:
     API endpoints:
     - None (Python version-format validation only)
     """
-    from qwenpaw.__version__ import __version__
+    from jotaduo.__version__ import __version__
 
     try:
         parsed_version = Version(__version__)
@@ -71,7 +71,7 @@ def test_version_via_subprocess() -> None:
         [
             sys.executable,
             "-c",
-            "from qwenpaw.__version__ import __version__; print(__version__)",
+            "from jotaduo.__version__ import __version__; print(__version__)",
         ],
         capture_output=True,
         text=True,

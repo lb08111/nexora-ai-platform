@@ -5,12 +5,12 @@ import json
 import logging
 from pathlib import Path
 
-from qwenpaw.app.runner.control_commands.base import (
+from jotaduo.app.runner.control_commands.base import (
     BaseControlCommandHandler,
     ControlContext,
 )
 
-logger = logging.getLogger("qwenpaw").getChild(
+logger = logging.getLogger("jotaduo").getChild(
     __name__.replace("plugin_cloudpaw.", ""),
 )
 

@@ -16,14 +16,14 @@ from unittest.mock import patch
 
 import pytest
 
-from qwenpaw.security.tool_guard.guardians import BaseToolGuardian
-from qwenpaw.security.tool_guard.guardians.file_guardian import (
+from jotaduo.security.tool_guard.guardians import BaseToolGuardian
+from jotaduo.security.tool_guard.guardians.file_guardian import (
     FilePathToolGuardian,
 )
-from qwenpaw.security.tool_guard.guardians.rule_guardian import (
+from jotaduo.security.tool_guard.guardians.rule_guardian import (
     RuleBasedToolGuardian,
 )
-from qwenpaw.security.tool_guard.models import GuardFinding
+from jotaduo.security.tool_guard.models import GuardFinding
 
 
 # ---------------------------------------------------------------------------
@@ -35,15 +35,15 @@ from qwenpaw.security.tool_guard.models import GuardFinding
 def file_guardian():
     """Create a disabled FilePathToolGuardian for contract testing."""
     with patch(
-        "qwenpaw.security.tool_guard.guardians.file_guardian"
+        "jotaduo.security.tool_guard.guardians.file_guardian"
         "._is_file_guard_enabled",
         return_value=False,
     ), patch(
-        "qwenpaw.security.tool_guard.guardians.file_guardian"
+        "jotaduo.security.tool_guard.guardians.file_guardian"
         "._load_sensitive_files_from_config",
         return_value=set(),
     ), patch(
-        "qwenpaw.security.tool_guard.guardians.file_guardian"
+        "jotaduo.security.tool_guard.guardians.file_guardian"
         "._workspace_root",
         return_value=Path("/tmp"),
     ):
@@ -54,11 +54,11 @@ def file_guardian():
 def rule_guardian():
     """Create a RuleBasedToolGuardian with no rules for contract testing."""
     with patch(
-        "qwenpaw.security.tool_guard.guardians.rule_guardian"
+        "jotaduo.security.tool_guard.guardians.rule_guardian"
         "._load_config_rules",
         return_value=([], set()),
     ), patch(
-        "qwenpaw.security.tool_guard.guardians.rule_guardian"
+        "jotaduo.security.tool_guard.guardians.rule_guardian"
         "._get_workspace_root",
         return_value=Path("/tmp"),
     ):
@@ -89,11 +89,11 @@ class TestGuardReturnsList:
     def test_file_guardian_findings_are_guard_finding(self, file_guardian):
         """All items in the result must be GuardFinding instances."""
         with patch(
-            "qwenpaw.security.tool_guard.guardians.file_guardian"
+            "jotaduo.security.tool_guard.guardians.file_guardian"
             "._is_file_guard_enabled",
             return_value=True,
         ), patch(
-            "qwenpaw.security.tool_guard.guardians.file_guardian"
+            "jotaduo.security.tool_guard.guardians.file_guardian"
             "._load_sensitive_files_from_config",
             return_value={"/etc/passwd"},
         ):
@@ -190,15 +190,15 @@ class TestFindingFieldsPopulated:
     def test_file_guardian_finding_fields(self):
         """FilePathToolGuardian findings have required fields."""
         with patch(
-            "qwenpaw.security.tool_guard.guardians.file_guardian"
+            "jotaduo.security.tool_guard.guardians.file_guardian"
             "._is_file_guard_enabled",
             return_value=True,
         ), patch(
-            "qwenpaw.security.tool_guard.guardians.file_guardian"
+            "jotaduo.security.tool_guard.guardians.file_guardian"
             "._load_sensitive_files_from_config",
             return_value={"/etc/passwd"},
         ), patch(
-            "qwenpaw.security.tool_guard.guardians.file_guardian"
+            "jotaduo.security.tool_guard.guardians.file_guardian"
             "._workspace_root",
             return_value=Path("/tmp"),
         ):
@@ -228,11 +228,11 @@ class TestFindingFieldsPopulated:
         }
         (tmp_path / "rules.yaml").write_text(yaml.dump([rule_data]))
         with patch(
-            "qwenpaw.security.tool_guard.guardians.rule_guardian"
+            "jotaduo.security.tool_guard.guardians.rule_guardian"
             "._load_config_rules",
             return_value=([], set()),
         ), patch(
-            "qwenpaw.security.tool_guard.guardians.rule_guardian"
+            "jotaduo.security.tool_guard.guardians.rule_guardian"
             "._get_workspace_root",
             return_value=Path("/tmp"),
         ):

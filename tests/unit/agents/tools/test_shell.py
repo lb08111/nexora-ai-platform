@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Tests for qwenpaw.agents.tools.shell.
+"""Tests for jotaduo.agents.tools.shell.
 
 Covers:
 - _collapse_newlines_outside_quotes
@@ -18,7 +18,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from qwenpaw.agents.tools.shell import (
+from jotaduo.agents.tools.shell import (
     _collapse_embedded_newlines,
     _collapse_newlines_outside_quotes,
     _extract_powershell_command,
@@ -145,13 +145,13 @@ class TestCollapseEmbeddedNewlines:
     def test_no_newlines_unchanged(self):
         assert _collapse_embedded_newlines("echo hello") == "echo hello"
 
-    @patch("qwenpaw.agents.tools.shell.sys")
+    @patch("jotaduo.agents.tools.shell.sys")
     def test_windows_collapses_all(self, mock_sys):
         mock_sys.platform = "win32"
         result = _collapse_embedded_newlines('echo "hello\nworld"')
         assert "\n" not in result
 
-    @patch("qwenpaw.agents.tools.shell.sys")
+    @patch("jotaduo.agents.tools.shell.sys")
     def test_unix_preserves_quoted(self, mock_sys):
         mock_sys.platform = "linux"
         result = _collapse_embedded_newlines('echo "hello\nworld"')
@@ -285,9 +285,9 @@ class TestExecuteShellCommand:
     """Tests for execute_shell_command with mocked subprocess."""
 
     @pytest.mark.asyncio
-    @patch("qwenpaw.agents.tools.shell.get_current_shell_command_timeout")
-    @patch("qwenpaw.agents.tools.shell.get_current_workspace_dir")
-    @patch("qwenpaw.agents.tools.shell.get_current_shell_command_executable")
+    @patch("jotaduo.agents.tools.shell.get_current_shell_command_timeout")
+    @patch("jotaduo.agents.tools.shell.get_current_workspace_dir")
+    @patch("jotaduo.agents.tools.shell.get_current_shell_command_executable")
     async def test_simple_command_success(
         self,
         mock_shell_exe,
@@ -309,13 +309,13 @@ class TestExecuteShellCommand:
         mock_proc.pid = 12345
 
         with patch(
-            "qwenpaw.agents.tools.shell.asyncio.create_subprocess_shell",
+            "jotaduo.agents.tools.shell.asyncio.create_subprocess_shell",
             AsyncMock(return_value=mock_proc),
         ), patch(
-            "qwenpaw.agents.tools.shell.asyncio.wait_for",
+            "jotaduo.agents.tools.shell.asyncio.wait_for",
             side_effect=fake_wait_for,
         ):
-            from qwenpaw.agents.tools.shell import (
+            from jotaduo.agents.tools.shell import (
                 execute_shell_command,
             )
 
@@ -325,9 +325,9 @@ class TestExecuteShellCommand:
             assert "hello" in text
 
     @pytest.mark.asyncio
-    @patch("qwenpaw.agents.tools.shell.get_current_shell_command_timeout")
-    @patch("qwenpaw.agents.tools.shell.get_current_workspace_dir")
-    @patch("qwenpaw.agents.tools.shell.get_current_shell_command_executable")
+    @patch("jotaduo.agents.tools.shell.get_current_shell_command_timeout")
+    @patch("jotaduo.agents.tools.shell.get_current_workspace_dir")
+    @patch("jotaduo.agents.tools.shell.get_current_shell_command_executable")
     async def test_command_failure(
         self,
         mock_shell_exe,
@@ -349,13 +349,13 @@ class TestExecuteShellCommand:
         mock_proc.pid = 12345
 
         with patch(
-            "qwenpaw.agents.tools.shell.asyncio.create_subprocess_shell",
+            "jotaduo.agents.tools.shell.asyncio.create_subprocess_shell",
             AsyncMock(return_value=mock_proc),
         ), patch(
-            "qwenpaw.agents.tools.shell.asyncio.wait_for",
+            "jotaduo.agents.tools.shell.asyncio.wait_for",
             side_effect=fake_wait_for,
         ):
-            from qwenpaw.agents.tools.shell import (
+            from jotaduo.agents.tools.shell import (
                 execute_shell_command,
             )
 
@@ -364,9 +364,9 @@ class TestExecuteShellCommand:
             assert "failed" in text.lower() or "error" in text.lower()
 
     @pytest.mark.asyncio
-    @patch("qwenpaw.agents.tools.shell.get_current_shell_command_timeout")
-    @patch("qwenpaw.agents.tools.shell.get_current_workspace_dir")
-    @patch("qwenpaw.agents.tools.shell.get_current_shell_command_executable")
+    @patch("jotaduo.agents.tools.shell.get_current_shell_command_timeout")
+    @patch("jotaduo.agents.tools.shell.get_current_workspace_dir")
+    @patch("jotaduo.agents.tools.shell.get_current_shell_command_executable")
     async def test_empty_command(
         self,
         mock_shell_exe,
@@ -386,13 +386,13 @@ class TestExecuteShellCommand:
         mock_proc.pid = 12345
 
         with patch(
-            "qwenpaw.agents.tools.shell.asyncio.create_subprocess_shell",
+            "jotaduo.agents.tools.shell.asyncio.create_subprocess_shell",
             AsyncMock(return_value=mock_proc),
         ), patch(
-            "qwenpaw.agents.tools.shell.asyncio.wait_for",
+            "jotaduo.agents.tools.shell.asyncio.wait_for",
             side_effect=fake_wait_for,
         ):
-            from qwenpaw.agents.tools.shell import (
+            from jotaduo.agents.tools.shell import (
                 execute_shell_command,
             )
 
@@ -401,9 +401,9 @@ class TestExecuteShellCommand:
             assert "successfully" in text.lower()
 
     @pytest.mark.asyncio
-    @patch("qwenpaw.agents.tools.shell.get_current_shell_command_timeout")
-    @patch("qwenpaw.agents.tools.shell.get_current_workspace_dir")
-    @patch("qwenpaw.agents.tools.shell.get_current_shell_command_executable")
+    @patch("jotaduo.agents.tools.shell.get_current_shell_command_timeout")
+    @patch("jotaduo.agents.tools.shell.get_current_workspace_dir")
+    @patch("jotaduo.agents.tools.shell.get_current_shell_command_executable")
     async def test_timeout_string_converted(
         self,
         mock_shell_exe,
@@ -423,13 +423,13 @@ class TestExecuteShellCommand:
         mock_proc.pid = 12345
 
         with patch(
-            "qwenpaw.agents.tools.shell.asyncio.create_subprocess_shell",
+            "jotaduo.agents.tools.shell.asyncio.create_subprocess_shell",
             AsyncMock(return_value=mock_proc),
         ), patch(
-            "qwenpaw.agents.tools.shell.asyncio.wait_for",
+            "jotaduo.agents.tools.shell.asyncio.wait_for",
             side_effect=fake_wait_for,
         ):
-            from qwenpaw.agents.tools.shell import (
+            from jotaduo.agents.tools.shell import (
                 execute_shell_command,
             )
 
@@ -438,9 +438,9 @@ class TestExecuteShellCommand:
             assert result.content is not None
 
     @pytest.mark.asyncio
-    @patch("qwenpaw.agents.tools.shell.get_current_shell_command_timeout")
-    @patch("qwenpaw.agents.tools.shell.get_current_workspace_dir")
-    @patch("qwenpaw.agents.tools.shell.get_current_shell_command_executable")
+    @patch("jotaduo.agents.tools.shell.get_current_shell_command_timeout")
+    @patch("jotaduo.agents.tools.shell.get_current_workspace_dir")
+    @patch("jotaduo.agents.tools.shell.get_current_shell_command_executable")
     async def test_invalid_timeout_defaults(
         self,
         mock_shell_exe,
@@ -460,13 +460,13 @@ class TestExecuteShellCommand:
         mock_proc.pid = 12345
 
         with patch(
-            "qwenpaw.agents.tools.shell.asyncio.create_subprocess_shell",
+            "jotaduo.agents.tools.shell.asyncio.create_subprocess_shell",
             AsyncMock(return_value=mock_proc),
         ), patch(
-            "qwenpaw.agents.tools.shell.asyncio.wait_for",
+            "jotaduo.agents.tools.shell.asyncio.wait_for",
             side_effect=fake_wait_for,
         ):
-            from qwenpaw.agents.tools.shell import (
+            from jotaduo.agents.tools.shell import (
                 execute_shell_command,
             )
 

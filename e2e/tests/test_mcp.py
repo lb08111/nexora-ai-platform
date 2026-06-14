@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-QwenPaw MCP module P0 end-to-end tests
+JotaDuo MCP module P0 end-to-end tests
 
 Combined test design:
 - MCP-001: Page load + card info hard assertions + enable/disable toggle + state restore
@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 MCP_URL = f"{config.base_url}/mcp"
 MCP_CARD_SELECTOR = 'div[class*="mcpCard"]'
 TOGGLE_BTN_SELECTOR = 'button[class*="toggleButton"]'
-CREATE_BTN_SELECTOR = 'button.qwenpaw-btn-primary:has-text("创建客户端"), button.qwenpaw-btn-primary:has-text("Create Client"), button.qwenpaw-btn-primary:has-text("Create")'
+CREATE_BTN_SELECTOR = 'button.jotaduo-btn-primary:has-text("创建客户端"), button.jotaduo-btn-primary:has-text("Create Client"), button.jotaduo-btn-primary:has-text("Create")'
 
 
 def navigate_to_mcp(page: Page):
@@ -194,13 +194,13 @@ class TestCreateMCPClient:
 
         # Step 3: Verify dialog opens
         log_test_step("3. Verify dialog opens")
-        modal = page.locator('.qwenpaw-modal-content').first
+        modal = page.locator('.jotaduo-modal-content').first
         expect(modal).to_be_visible(timeout=5000)
         logger.info("Create dialog opened")
 
         # Step 4: Verify dialog title
         log_test_step("4. Verify dialog title")
-        modal_title = modal.locator('.qwenpaw-spark-modal-title').first
+        modal_title = modal.locator('.jotaduo-spark-modal-title').first
         expect(modal_title).to_be_visible(timeout=3000)
         title_text = modal_title.inner_text()
         assert "创建客户端" in title_text or "Create" in title_text, f"Unexpected dialog title: {title_text}"
@@ -319,7 +319,7 @@ class TestMCPClientCreateAndDelete:
 
             # Step 4: Verify dialog opens
             log_test_step("4. Verify dialog opens")
-            modal = page.locator('.qwenpaw-modal-content').first
+            modal = page.locator('.jotaduo-modal-content').first
             expect(modal).to_be_visible(timeout=5000)
             logger.info("Create dialog opened")
 
@@ -351,9 +351,9 @@ class TestMCPClientCreateAndDelete:
 
             # Step 6: Click confirm/create button
             log_test_step("6. Click confirm/create button")
-            confirm_btn = modal.locator('button.qwenpaw-btn-primary:has-text("确 定"), button:has-text("确定"), button:has-text("创建")').first
+            confirm_btn = modal.locator('button.jotaduo-btn-primary:has-text("确 定"), button:has-text("确定"), button:has-text("创建")').first
             if not confirm_btn.is_visible():
-                confirm_btn = modal.locator('button.qwenpaw-btn-primary').last
+                confirm_btn = modal.locator('button.jotaduo-btn-primary').last
             expect(confirm_btn).to_be_visible(timeout=5000)
             confirm_btn.click()
             page.wait_for_timeout(2000)
@@ -411,7 +411,7 @@ class TestMCPClientCreateAndDelete:
                                 if delete_btn.is_visible():
                                     delete_btn.click()
                                     page.wait_for_timeout(1000)
-                                    confirm_delete_btn = page.locator('button.qwenpaw-btn-danger:has-text("删除"), .qwenpaw-modal-confirm button.qwenpaw-btn-primary, button:has-text("确 定"), button:has-text("确定")').first
+                                    confirm_delete_btn = page.locator('button.jotaduo-btn-danger:has-text("删除"), .jotaduo-modal-confirm button.jotaduo-btn-primary, button:has-text("确 定"), button:has-text("确定")').first
                                     if confirm_delete_btn.is_visible():
                                         confirm_delete_btn.click()
                                         page.wait_for_timeout(2000)
@@ -462,7 +462,7 @@ class TestMcpClientEdit:
         page.wait_for_timeout(2000)
 
         log_test_step("Verify config Modal opened")
-        modal = page.locator('.qwenpaw-modal').last
+        modal = page.locator('.jotaduo-modal').last
         expect(modal).to_be_visible(timeout=5000)
         logger.info("Config Modal opened")
 
@@ -480,7 +480,7 @@ class TestMcpClientEdit:
             page.wait_for_timeout(1500)
 
             log_test_step("Verify JSON edit area exists and test editing")
-            json_editor = modal.locator('textarea, .qwenpaw-input-textarea, [class*="editor"]').first
+            json_editor = modal.locator('textarea, .jotaduo-input-textarea, [class*="editor"]').first
             if json_editor.count() > 0:
                 expect(json_editor).to_be_visible(timeout=5000)
                 tag_name = json_editor.evaluate('el => el.tagName')
@@ -513,7 +513,7 @@ class TestMcpClientEdit:
             logger.info(f"Modal content length: {len(modal_content)}")
 
         log_test_step("Close Modal")
-        close_btn = modal.locator('.qwenpaw-modal-close, button:has-text("Cancel"), button:has-text("取消"), button:has-text("Close"), button:has-text("关闭")').first
+        close_btn = modal.locator('.jotaduo-modal-close, button:has-text("Cancel"), button:has-text("取消"), button:has-text("Close"), button:has-text("关闭")').first
         if close_btn.count() > 0:
             close_btn.click()
         else:
@@ -567,11 +567,11 @@ class TestMcpMultiProtocol:
         log_test_step("Verify create dialog/area")
         # Create uses JSON TextArea input; exclude hidden textareas
         # First search within the dialog/drawer context
-        modal_or_drawer = page.locator('.qwenpaw-modal, .ant-modal, .qwenpaw-drawer, .ant-drawer').last
+        modal_or_drawer = page.locator('.jotaduo-modal, .ant-modal, .jotaduo-drawer, .ant-drawer').last
         if modal_or_drawer.count() > 0:
             json_input = modal_or_drawer.locator(
                 'textarea:not([aria-hidden="true"]), '
-                '.qwenpaw-input-textarea textarea, '
+                '.jotaduo-input-textarea textarea, '
                 '[class*="editor"], [class*="CodeMirror"]'
             ).first
         else:
@@ -597,7 +597,7 @@ class TestMcpMultiProtocol:
             page.wait_for_timeout(500)
         else:
             logger.info("No JSON input area found, may be using a different creation method")
-            modal = page.locator('.qwenpaw-modal, .ant-modal').last
+            modal = page.locator('.jotaduo-modal, .ant-modal').last
             if modal.count() > 0:
                 modal_content = modal.inner_text()
                 logger.info(f"Dialog content length: {len(modal_content)}")

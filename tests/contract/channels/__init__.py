@@ -95,7 +95,7 @@ class ChannelContractTest(BaseContractTest):
         This checks that methods marked with 'raise NotImplementedError'
         in BaseChannel have been properly overridden by subclasses.
         """
-        from qwenpaw.app.channels.base import BaseChannel
+        from jotaduo.app.channels.base import BaseChannel
 
         cls = instance.__class__
         required_methods = [

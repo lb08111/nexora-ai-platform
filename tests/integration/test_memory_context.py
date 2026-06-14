@@ -2,7 +2,7 @@
 """Integration tests for memory, system-prompt-files, running-config,
 and inbox event lifecycle.
 
-Sprint 2.3 — Memory & Context.  All tests use the real ``qwenpaw app``
+Sprint 2.3 — Memory & Context.  All tests use the real ``jotaduo app``
 subprocess.  A/B classes are pure HTTP; C class covers inbox event
 lifecycle driven entirely by Mock LLM heartbeat runs.
 

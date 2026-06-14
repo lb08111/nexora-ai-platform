@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-QwenPaw Backups module end-to-end test cases.
+JotaDuo Backups module end-to-end test cases.
 
 Backups module tests:
 - BACKUP-001: Backups page load and list display (P0)
@@ -92,12 +92,12 @@ class TestBackupPageDisplay:
 
             # 4. Verify list area (table or empty state)
             log_test_step("4. Verify list area")
-            table = page.locator(".qwenpaw-table").first
-            empty_state = page.locator(".qwenpaw-empty, [class*='empty']").first
+            table = page.locator(".jotaduo-table").first
+            empty_state = page.locator(".jotaduo-empty, [class*='empty']").first
 
             if table.is_visible(timeout=5000):
                 # Has backup data: verify column headers
-                headers = page.locator(".qwenpaw-table-thead th").all()
+                headers = page.locator(".jotaduo-table-thead th").all()
                 header_texts = [h.inner_text().strip() for h in headers if h.inner_text().strip()]
                 logger.info(f"Table column headers: {header_texts}")
                 assert len(header_texts) > 0, "Table should have column headers"
@@ -158,13 +158,13 @@ class TestCreateBackupModalAndCancel:
 
             # 3. Verify modal popped up
             log_test_step("3. Verify modal popped up")
-            modal = page.locator(".qwenpaw-modal, .qwenpaw-drawer").first
+            modal = page.locator(".jotaduo-modal, .jotaduo-drawer").first
             expect(modal).to_be_visible(timeout=5000)
             logger.info("Create-backup modal/drawer opened")
 
             # Verify modal title
             modal_title = modal.locator(
-                '.qwenpaw-modal-title, .qwenpaw-drawer-title, h2, h3'
+                '.jotaduo-modal-title, .jotaduo-drawer-title, h2, h3'
             ).first
             if modal_title.is_visible(timeout=3000):
                 title_text = modal_title.inner_text().strip()
@@ -193,7 +193,7 @@ class TestCreateBackupModalAndCancel:
             cancel_btn = modal.locator(
                 'button:has-text("Cancel"), button:has-text("取消")'
             ).first
-            close_btn = modal.locator('.qwenpaw-modal-close, .qwenpaw-drawer-close').first
+            close_btn = modal.locator('.jotaduo-modal-close, .jotaduo-drawer-close').first
 
             if cancel_btn.is_visible(timeout=3000):
                 cancel_btn.click()
@@ -205,13 +205,13 @@ class TestCreateBackupModalAndCancel:
             page.wait_for_timeout(500)
 
             # Verify modal closed
-            modal_still = page.locator(".qwenpaw-modal, .qwenpaw-drawer").first
+            modal_still = page.locator(".jotaduo-modal, .jotaduo-drawer").first
             if modal_still.is_visible(timeout=2000):
                 logger.warning("Modal did not fully close, trying Escape key")
                 page.keyboard.press("Escape")
                 page.wait_for_timeout(500)
 
-            expect(page.locator(".qwenpaw-modal, .qwenpaw-drawer").first).not_to_be_visible(timeout=5000)
+            expect(page.locator(".jotaduo-modal, .jotaduo-drawer").first).not_to_be_visible(timeout=5000)
             logger.info("Cancel complete, modal closed")
 
             log_test_result(test_name, True, 0)
@@ -255,7 +255,7 @@ class TestCreateFullBackup:
             page.wait_for_timeout(1500)
 
             # Record initial backup count
-            initial_rows = page.locator(".qwenpaw-table-tbody tr").all()
+            initial_rows = page.locator(".jotaduo-table-tbody tr").all()
             initial_count = len(initial_rows)
             logger.info(f"Initial backup count: {initial_count}")
 
@@ -267,7 +267,7 @@ class TestCreateFullBackup:
             create_btn.click()
             page.wait_for_timeout(500)
 
-            modal = page.locator(".qwenpaw-modal, .qwenpaw-drawer").first
+            modal = page.locator(".jotaduo-modal, .jotaduo-drawer").first
             expect(modal).to_be_visible(timeout=5000)
 
             # 3. Select full backup mode
@@ -285,7 +285,7 @@ class TestCreateFullBackup:
             import time
             backup_name = f"e2e-test-backup-{int(time.time())}"
             name_input = modal.locator(
-                'input[placeholder*="name"], input[placeholder*="名称"], input.qwenpaw-input'
+                'input[placeholder*="name"], input[placeholder*="名称"], input.jotaduo-input'
             ).first
             if name_input.is_visible(timeout=3000):
                 name_input.fill(backup_name)
@@ -294,7 +294,7 @@ class TestCreateFullBackup:
             # 5. Confirm creation
             log_test_step("5. Confirm create backup")
             confirm_btn = modal.locator(
-                'button.qwenpaw-btn-primary, button:has-text("OK"), '
+                'button.jotaduo-btn-primary, button:has-text("OK"), '
                 'button:has-text("确定"), button:has-text("Create"), button:has-text("创建")'
             ).first
             expect(confirm_btn).to_be_visible(timeout=5000)
@@ -303,9 +303,9 @@ class TestCreateFullBackup:
 
             # 6. Verify creation result
             log_test_step("6. Verify creation result")
-            progress = page.locator('.qwenpaw-progress, [class*="progress"]').first
+            progress = page.locator('.jotaduo-progress, [class*="progress"]').first
             success_msg = page.locator(
-                '.qwenpaw-message-success, .qwenpaw-notification-success'
+                '.jotaduo-message-success, .jotaduo-notification-success'
             ).first
 
             creation_confirmed = False
@@ -323,7 +323,7 @@ class TestCreateFullBackup:
 
             if not creation_confirmed:
                 page.wait_for_timeout(3000)
-                modal_gone = not page.locator(".qwenpaw-modal, .qwenpaw-drawer").first.is_visible(timeout=2000)
+                modal_gone = not page.locator(".jotaduo-modal, .jotaduo-drawer").first.is_visible(timeout=2000)
                 if modal_gone:
                     logger.info("Modal closed (backup may have been created)")
                     creation_confirmed = True
@@ -332,7 +332,7 @@ class TestCreateFullBackup:
 
             # Verify the backup list has a new entry
             page.wait_for_timeout(1000)
-            final_rows = page.locator(".qwenpaw-table-tbody tr").all()
+            final_rows = page.locator(".jotaduo-table-tbody tr").all()
             final_count = len(final_rows)
             assert final_count >= initial_count, \
                 f"Backup count should not decrease after create: initial={initial_count}, current={final_count}"
@@ -348,7 +348,7 @@ class TestCreateFullBackup:
             page.wait_for_timeout(1500)
 
             restore_succeeded = False
-            rows = page.locator(".qwenpaw-table-tbody tr").all()
+            rows = page.locator(".jotaduo-table-tbody tr").all()
             if len(rows) > 0:
                 # Find the just-created backup row (first row is usually the latest)
                 target_row = rows[0]
@@ -360,16 +360,16 @@ class TestCreateFullBackup:
                 # If no inline restore button, try opening the action menu
                 if not restore_btn.is_visible(timeout=3000):
                     more_btn = target_row.locator(
-                        'button[class*="more"], .qwenpaw-dropdown-trigger, '
+                        'button[class*="more"], .jotaduo-dropdown-trigger, '
                         'button:has-text("..."), [class*="action"]'
                     ).first
                     if more_btn.is_visible(timeout=3000):
                         more_btn.click()
                         page.wait_for_timeout(500)
                         restore_btn = page.locator(
-                            '.qwenpaw-dropdown-menu [class*="restore"], '
-                            '.qwenpaw-dropdown-menu :has-text("Restore"), '
-                            '.qwenpaw-dropdown-menu :has-text("恢复")'
+                            '.jotaduo-dropdown-menu [class*="restore"], '
+                            '.jotaduo-dropdown-menu :has-text("Restore"), '
+                            '.jotaduo-dropdown-menu :has-text("恢复")'
                         ).first
 
                 if restore_btn.is_visible(timeout=3000):
@@ -377,13 +377,13 @@ class TestCreateFullBackup:
                     page.wait_for_timeout(500)
 
                     # Handle the restore confirmation modal
-                    restore_modal = page.locator(".qwenpaw-modal, .qwenpaw-drawer").first
-                    restore_confirm = page.locator('.qwenpaw-popconfirm, .qwenpaw-popover').first
+                    restore_modal = page.locator(".jotaduo-modal, .jotaduo-drawer").first
+                    restore_confirm = page.locator('.jotaduo-popconfirm, .jotaduo-popover').first
 
                     if restore_modal.is_visible(timeout=5000):
                         # Click confirm restore
                         confirm_restore_btn = restore_modal.locator(
-                            'button.qwenpaw-btn-primary, button:has-text("OK"), '
+                            'button.jotaduo-btn-primary, button:has-text("OK"), '
                             'button:has-text("确定"), button:has-text("Restore"), button:has-text("恢复")'
                         ).first
                         if confirm_restore_btn.is_visible(timeout=3000):
@@ -395,11 +395,11 @@ class TestCreateFullBackup:
                     elif restore_confirm.is_visible(timeout=3000):
                         # popconfirm confirmation
                         pop_ok = page.locator(
-                            '.qwenpaw-popconfirm button.qwenpaw-btn-primary, '
-                            '.qwenpaw-popconfirm button:has-text("OK"), '
-                            '.qwenpaw-popconfirm button:has-text("确定"), '
-                            '.qwenpaw-popconfirm button:has-text("Yes"), '
-                            '.qwenpaw-popconfirm button:has-text("是")'
+                            '.jotaduo-popconfirm button.jotaduo-btn-primary, '
+                            '.jotaduo-popconfirm button:has-text("OK"), '
+                            '.jotaduo-popconfirm button:has-text("确定"), '
+                            '.jotaduo-popconfirm button:has-text("Yes"), '
+                            '.jotaduo-popconfirm button:has-text("是")'
                         ).first
                         if pop_ok.is_visible(timeout=3000):
                             pop_ok.click()
@@ -408,9 +408,9 @@ class TestCreateFullBackup:
                     # Wait for restore completion
                     page.wait_for_timeout(2000)
                     restore_success_msg = page.locator(
-                        '.qwenpaw-message-success, .qwenpaw-notification-success'
+                        '.jotaduo-message-success, .jotaduo-notification-success'
                     ).first
-                    restore_progress = page.locator('.qwenpaw-progress, [class*="progress"]').first
+                    restore_progress = page.locator('.jotaduo-progress, [class*="progress"]').first
 
                     if restore_success_msg.is_visible(timeout=30000):
                         logger.info("Restore succeeded")
@@ -425,7 +425,7 @@ class TestCreateFullBackup:
                             logger.warning("Restore timeout, may still be in progress")
                     else:
                         # Treat modal close as an indirect success indicator
-                        modal_gone = not page.locator(".qwenpaw-modal, .qwenpaw-drawer").first.is_visible(timeout=3000)
+                        modal_gone = not page.locator(".jotaduo-modal, .jotaduo-drawer").first.is_visible(timeout=3000)
                         if modal_gone:
                             logger.info("Restore modal closed (restore may be complete)")
                             restore_succeeded = True
@@ -461,12 +461,12 @@ class TestCreateFullBackup:
                     page.wait_for_timeout(1500)
 
                     # Close any leftover modal
-                    leftover_modal = page.locator(".qwenpaw-modal, .qwenpaw-drawer").first
+                    leftover_modal = page.locator(".jotaduo-modal, .jotaduo-drawer").first
                     if leftover_modal.is_visible(timeout=1000):
                         page.keyboard.press("Escape")
                         page.wait_for_timeout(500)
 
-                    rows = page.locator(".qwenpaw-table-tbody tr").all()
+                    rows = page.locator(".jotaduo-table-tbody tr").all()
                     if len(rows) > 0:
                         target_row = rows[0]
                         delete_btn = target_row.locator(
@@ -476,15 +476,15 @@ class TestCreateFullBackup:
 
                         if not delete_btn.is_visible(timeout=3000):
                             more_btn = target_row.locator(
-                                'button[class*="more"], .qwenpaw-dropdown-trigger, '
+                                'button[class*="more"], .jotaduo-dropdown-trigger, '
                                 'button:has-text("..."), [class*="action"]'
                             ).first
                             if more_btn.is_visible(timeout=3000):
                                 more_btn.click()
                                 page.wait_for_timeout(500)
                                 delete_btn = page.locator(
-                                    '.qwenpaw-dropdown-menu :has-text("Delete"), '
-                                    '.qwenpaw-dropdown-menu :has-text("删除")'
+                                    '.jotaduo-dropdown-menu :has-text("Delete"), '
+                                    '.jotaduo-dropdown-menu :has-text("删除")'
                                 ).first
 
                         if delete_btn.is_visible(timeout=3000):
@@ -493,14 +493,14 @@ class TestCreateFullBackup:
 
                             # Confirm delete (popconfirm or modal)
                             confirm_delete = page.locator(
-                                '.qwenpaw-popconfirm button.qwenpaw-btn-primary, '
-                                '.qwenpaw-popconfirm button:has-text("OK"), '
-                                '.qwenpaw-popconfirm button:has-text("确定"), '
-                                '.qwenpaw-popconfirm button:has-text("Yes"), '
-                                '.qwenpaw-popconfirm button:has-text("是"), '
-                                '.qwenpaw-modal button.qwenpaw-btn-primary, '
-                                '.qwenpaw-modal button:has-text("OK"), '
-                                '.qwenpaw-modal button:has-text("确定")'
+                                '.jotaduo-popconfirm button.jotaduo-btn-primary, '
+                                '.jotaduo-popconfirm button:has-text("OK"), '
+                                '.jotaduo-popconfirm button:has-text("确定"), '
+                                '.jotaduo-popconfirm button:has-text("Yes"), '
+                                '.jotaduo-popconfirm button:has-text("是"), '
+                                '.jotaduo-modal button.jotaduo-btn-primary, '
+                                '.jotaduo-modal button:has-text("OK"), '
+                                '.jotaduo-modal button:has-text("确定")'
                             ).first
                             if confirm_delete.is_visible(timeout=5000):
                                 confirm_delete.click()
@@ -565,7 +565,7 @@ class TestImportBackupEntry:
                 page.wait_for_timeout(500)
 
                 # Check whether a file picker or modal popped up
-                modal = page.locator(".qwenpaw-modal, .qwenpaw-drawer").first
+                modal = page.locator(".jotaduo-modal, .jotaduo-drawer").first
                 if modal.is_visible(timeout=3000):
                     logger.info("Import modal/drawer popped up")
                     # Close modal
@@ -622,7 +622,7 @@ class TestBackupSearchAndFilter:
             # 2. Find search input
             log_test_step("2. Find search input")
             search_input = page.locator(
-                '.qwenpaw-input-search input, input[placeholder*="search"], '
+                '.jotaduo-input-search input, input[placeholder*="search"], '
                 'input[placeholder*="搜索"], input[placeholder*="Search"], '
                 'input[placeholder*="ID"], input[placeholder*="name"]'
             ).first
@@ -635,7 +635,7 @@ class TestBackupSearchAndFilter:
             logger.info("Search input is visible")
 
             # 3. Record row count before searching
-            initial_rows = page.locator(".qwenpaw-table-tbody tr").all()
+            initial_rows = page.locator(".jotaduo-table-tbody tr").all()
             initial_count = len(initial_rows)
             logger.info(f"Backup count before search: {initial_count}")
 
@@ -644,9 +644,9 @@ class TestBackupSearchAndFilter:
             search_input.fill("nonexistent-backup-xyz")
             page.wait_for_timeout(1500)
 
-            filtered_rows = page.locator(".qwenpaw-table-tbody tr").all()
+            filtered_rows = page.locator(".jotaduo-table-tbody tr").all()
             filtered_count = len(filtered_rows)
-            empty_state = page.locator(".qwenpaw-empty, [class*='empty']").first
+            empty_state = page.locator(".jotaduo-empty, [class*='empty']").first
 
             search_cleared = (filtered_count == 0 or empty_state.is_visible(timeout=2000))
             assert search_cleared, \
@@ -658,7 +658,7 @@ class TestBackupSearchAndFilter:
             search_input.fill("")
             page.wait_for_timeout(1500)
 
-            restored_rows = page.locator(".qwenpaw-table-tbody tr").all()
+            restored_rows = page.locator(".jotaduo-table-tbody tr").all()
             restored_count = len(restored_rows)
             logger.info(f"Backup count after clearing search: {restored_count}")
 
@@ -708,7 +708,7 @@ class TestBackupRestoreModal:
 
             # 2. Check whether any backup records exist
             log_test_step("2. Check backup records")
-            rows = page.locator(".qwenpaw-table-tbody tr").all()
+            rows = page.locator(".jotaduo-table-tbody tr").all()
             if len(rows) == 0:
                 logger.info("No backup records, skipping restore modal verification")
                 log_test_result(test_name, True, 0)
@@ -725,16 +725,16 @@ class TestBackupRestoreModal:
             # If no inline restore button, try opening the action menu
             if not restore_btn.is_visible(timeout=3000):
                 more_btn = first_row.locator(
-                    'button[class*="more"], .qwenpaw-dropdown-trigger, '
+                    'button[class*="more"], .jotaduo-dropdown-trigger, '
                     'button:has-text("..."), [class*="action"]'
                 ).first
                 if more_btn.is_visible(timeout=3000):
                     more_btn.click()
                     page.wait_for_timeout(500)
                     restore_btn = page.locator(
-                        '.qwenpaw-dropdown-menu [class*="restore"], '
-                        '.qwenpaw-dropdown-menu :has-text("Restore"), '
-                        '.qwenpaw-dropdown-menu :has-text("恢复")'
+                        '.jotaduo-dropdown-menu [class*="restore"], '
+                        '.jotaduo-dropdown-menu :has-text("Restore"), '
+                        '.jotaduo-dropdown-menu :has-text("恢复")'
                     ).first
 
             if not restore_btn.is_visible(timeout=3000):
@@ -747,8 +747,8 @@ class TestBackupRestoreModal:
 
             # 4. Verify restore modal
             log_test_step("4. Verify restore modal")
-            modal = page.locator(".qwenpaw-modal, .qwenpaw-drawer").first
-            confirm_dialog = page.locator('.qwenpaw-popconfirm, .qwenpaw-popover').first
+            modal = page.locator(".jotaduo-modal, .jotaduo-drawer").first
+            confirm_dialog = page.locator('.jotaduo-popconfirm, .jotaduo-popover').first
 
             restore_ui_appeared = modal.is_visible(timeout=5000) or confirm_dialog.is_visible(timeout=2000)
             assert restore_ui_appeared, "A modal or confirm dialog should appear after clicking restore"
@@ -823,7 +823,7 @@ class TestBackupDeleteAndCancel:
             page.wait_for_timeout(1500)
 
             # 2. Check whether any backup records exist
-            rows = page.locator(".qwenpaw-table-tbody tr").all()
+            rows = page.locator(".jotaduo-table-tbody tr").all()
             if len(rows) == 0:
                 logger.info("No backup records, skipping delete verification")
                 log_test_result(test_name, True, 0)
@@ -843,15 +843,15 @@ class TestBackupDeleteAndCancel:
             if not delete_btn.is_visible(timeout=3000):
                 # Try opening the action menu
                 more_btn = first_row.locator(
-                    'button[class*="more"], .qwenpaw-dropdown-trigger, '
+                    'button[class*="more"], .jotaduo-dropdown-trigger, '
                     'button:has-text("..."), [class*="action"]'
                 ).first
                 if more_btn.is_visible(timeout=3000):
                     more_btn.click()
                     page.wait_for_timeout(500)
                     delete_btn = page.locator(
-                        '.qwenpaw-dropdown-menu :has-text("Delete"), '
-                        '.qwenpaw-dropdown-menu :has-text("删除")'
+                        '.jotaduo-dropdown-menu :has-text("Delete"), '
+                        '.jotaduo-dropdown-menu :has-text("删除")'
                     ).first
 
             if not delete_btn.is_visible(timeout=3000):
@@ -865,10 +865,10 @@ class TestBackupDeleteAndCancel:
             # 4. Cancel delete
             log_test_step("3. Cancel delete")
             cancel_btn = page.locator(
-                '.qwenpaw-popconfirm button:has-text("Cancel"), '
-                '.qwenpaw-popconfirm button:has-text("取消"), '
-                '.qwenpaw-modal button:has-text("Cancel"), '
-                '.qwenpaw-modal button:has-text("取消"), '
+                '.jotaduo-popconfirm button:has-text("Cancel"), '
+                '.jotaduo-popconfirm button:has-text("取消"), '
+                '.jotaduo-modal button:has-text("Cancel"), '
+                '.jotaduo-modal button:has-text("取消"), '
                 'button:has-text("No"), button:has-text("否")'
             ).first
 
@@ -884,7 +884,7 @@ class TestBackupDeleteAndCancel:
             # 5. Verify backup not deleted
             log_test_step("4. Verify backup not deleted")
             page.wait_for_timeout(1000)
-            after_rows = page.locator(".qwenpaw-table-tbody tr").all()
+            after_rows = page.locator(".jotaduo-table-tbody tr").all()
             after_count = len(after_rows)
             assert after_count == initial_count, \
                 f"Count should be unchanged after cancel: initial={initial_count}, current={after_count}"
@@ -928,7 +928,7 @@ class TestBackupExport:
             page.wait_for_timeout(1500)
 
             # 2. Check whether any backup records exist
-            rows = page.locator(".qwenpaw-table-tbody tr").all()
+            rows = page.locator(".jotaduo-table-tbody tr").all()
             if len(rows) == 0:
                 logger.info("No backup records, skipping export verification")
                 log_test_result(test_name, True, 0)
@@ -945,17 +945,17 @@ class TestBackupExport:
 
             if not export_btn.is_visible(timeout=3000):
                 more_btn = first_row.locator(
-                    'button[class*="more"], .qwenpaw-dropdown-trigger, '
+                    'button[class*="more"], .jotaduo-dropdown-trigger, '
                     'button:has-text("..."), [class*="action"]'
                 ).first
                 if more_btn.is_visible(timeout=3000):
                     more_btn.click()
                     page.wait_for_timeout(500)
                     export_btn = page.locator(
-                        '.qwenpaw-dropdown-menu :has-text("Export"), '
-                        '.qwenpaw-dropdown-menu :has-text("导出"), '
-                        '.qwenpaw-dropdown-menu :has-text("Download"), '
-                        '.qwenpaw-dropdown-menu :has-text("下载")'
+                        '.jotaduo-dropdown-menu :has-text("Export"), '
+                        '.jotaduo-dropdown-menu :has-text("导出"), '
+                        '.jotaduo-dropdown-menu :has-text("Download"), '
+                        '.jotaduo-dropdown-menu :has-text("下载")'
                     ).first
 
             if not export_btn.is_visible(timeout=3000):
@@ -979,7 +979,7 @@ class TestBackupExport:
                 if "Download" in str(download_err) or "download" in str(download_err):
                     # May use pywebview native save; check for toast or status change after click
                     success_msg = page.locator(
-                        '.qwenpaw-message-success, .qwenpaw-notification-success'
+                        '.jotaduo-message-success, .jotaduo-notification-success'
                     ).first
                     if success_msg.is_visible(timeout=3000):
                         logger.info("Export succeeded (confirmed via success message)")
@@ -1039,7 +1039,7 @@ class TestCreatePartialBackup:
             create_btn.click()
             page.wait_for_timeout(500)
 
-            modal = page.locator(".qwenpaw-modal, .qwenpaw-drawer").first
+            modal = page.locator(".jotaduo-modal, .jotaduo-drawer").first
             expect(modal).to_be_visible(timeout=5000)
 
             # 3. Select partial backup mode
@@ -1067,7 +1067,7 @@ class TestCreatePartialBackup:
                 or "agent" in modal_text
                 or "部分" in modal_text
                 or "partial" in modal_text.lower()
-                or modal.locator('input[type="checkbox"], .qwenpaw-checkbox, .qwenpaw-select, .qwenpaw-switch').first.is_visible(timeout=3000)
+                or modal.locator('input[type="checkbox"], .jotaduo-checkbox, .jotaduo-select, .jotaduo-switch').first.is_visible(timeout=3000)
                 or modal.locator('input[placeholder*="备份"], textarea').first.is_visible(timeout=3000)
                 or 'radio' in modal_html.lower()
             )
@@ -1077,7 +1077,7 @@ class TestCreatePartialBackup:
 
             # 5. Verify configuration item selection (global config, skill pool, secrets, etc.)
             log_test_step("5. Verify configuration item selection")
-            checkboxes = modal.locator('.qwenpaw-checkbox, .qwenpaw-switch').all()
+            checkboxes = modal.locator('.jotaduo-checkbox, .jotaduo-switch').all()
             logger.info(f"Found {len(checkboxes)} configuration options")
 
             # 6. Cancel
@@ -1130,9 +1130,9 @@ class TestBackupListRefreshAndEmpty:
 
             # 2. Record current state
             log_test_step("2. Record current state")
-            initial_rows = page.locator(".qwenpaw-table-tbody tr").all()
+            initial_rows = page.locator(".jotaduo-table-tbody tr").all()
             initial_count = len(initial_rows)
-            has_empty = page.locator(".qwenpaw-empty, [class*='empty']").first.is_visible(timeout=2000)
+            has_empty = page.locator(".jotaduo-empty, [class*='empty']").first.is_visible(timeout=2000)
             logger.info(f"Initial backup count: {initial_count}, empty state: {has_empty}")
 
             # 3. Reload page
@@ -1142,9 +1142,9 @@ class TestBackupListRefreshAndEmpty:
 
             # 4. Verify state persists
             log_test_step("4. Verify state persists")
-            refreshed_rows = page.locator(".qwenpaw-table-tbody tr").all()
+            refreshed_rows = page.locator(".jotaduo-table-tbody tr").all()
             refreshed_count = len(refreshed_rows)
-            refreshed_empty = page.locator(".qwenpaw-empty, [class*='empty']").first.is_visible(timeout=2000)
+            refreshed_empty = page.locator(".jotaduo-empty, [class*='empty']").first.is_visible(timeout=2000)
 
             logger.info(f"After reload backup count: {refreshed_count}, empty state: {refreshed_empty}")
 
@@ -1159,7 +1159,7 @@ class TestBackupListRefreshAndEmpty:
             # 5. Verify empty state display (if no data)
             if refreshed_count == 0:
                 log_test_step("5. Verify empty state display")
-                empty_el = page.locator(".qwenpaw-empty, [class*='empty']").first
+                empty_el = page.locator(".jotaduo-empty, [class*='empty']").first
                 if empty_el.is_visible(timeout=5000):
                     logger.info("Empty state displayed correctly")
                 else:

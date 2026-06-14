@@ -25,13 +25,13 @@ import {
 } from "./constants";
 
 describe("URL constants", () => {
-  it("PYPI_URL points to qwenpaw json endpoint", () => {
-    expect(PYPI_URL).toBe("https://pypi.org/pypi/qwenpaw/json");
+  it("PYPI_URL points to jotaduo json endpoint", () => {
+    expect(PYPI_URL).toBe("https://pypi.org/pypi/jotaduo/json");
   });
 
-  it("GITHUB_URL points to QwenPaw repo", () => {
+  it("GITHUB_URL points to JotaDuo repo", () => {
     expect(GITHUB_URL).toContain("github.com");
-    expect(GITHUB_URL).toContain("QwenPaw");
+    expect(GITHUB_URL).toContain("JotaDuo");
   });
 });
 

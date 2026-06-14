@@ -7,13 +7,13 @@ REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$REPO_ROOT"
 PACK_DIR="$(cd "$(dirname "$0")" && pwd)"
 DIST="${DIST:-dist}"
-ARCHIVE="${DIST}/qwenpaw-env.tar.gz"
+ARCHIVE="${DIST}/jotaduo-env.tar.gz"
 APP_NAME="QwenPaw"
 APP_DIR="${DIST}/${APP_NAME}.app"
 
 echo "== Building wheel (includes console frontend) =="
 # Skip wheel_build if dist already has a wheel for current version
-VERSION_FILE="${REPO_ROOT}/src/qwenpaw/__version__.py"
+VERSION_FILE="${REPO_ROOT}/src/jotaduo/__version__.py"
 CURRENT_VERSION=""
 if [[ -f "${VERSION_FILE}" ]]; then
   CURRENT_VERSION="$(
@@ -23,12 +23,12 @@ if [[ -f "${VERSION_FILE}" ]]; then
 fi
 if [[ -n "${CURRENT_VERSION}" ]]; then
   shopt -s nullglob
-  whls=("${REPO_ROOT}/dist/qwenpaw-${CURRENT_VERSION}-"*.whl)
+  whls=("${REPO_ROOT}/dist/jotaduo-${CURRENT_VERSION}-"*.whl)
   if [[ ${#whls[@]} -gt 0 ]]; then
     echo "dist/ already has wheel for version ${CURRENT_VERSION}, skipping."
   else
     # Clean up old wheels to avoid confusion
-    old_whls=("${REPO_ROOT}/dist/qwenpaw-"*.whl)
+    old_whls=("${REPO_ROOT}/dist/jotaduo-"*.whl)
     if [[ ${#old_whls[@]} -gt 0 ]]; then
       echo "Removing old wheel files: ${old_whls[*]}"
       rm -f "${old_whls[@]}"
@@ -56,15 +56,15 @@ if [[ -x "${APP_DIR}/Contents/Resources/env/bin/conda-unpack" ]]; then
   (cd "${APP_DIR}/Contents/Resources/env" && ./bin/conda-unpack)
 fi
 
-# Launcher: force packed env; when no TTY log to ~/.qwenpaw/desktop.log (no exec so we see errors)
+# Launcher: force packed env; when no TTY log to ~/.jotaduo/desktop.log (no exec so we see errors)
 cat > "${APP_DIR}/Contents/MacOS/${APP_NAME}" << 'LAUNCHER'
 #!/usr/bin/env bash
 ENV_DIR="$(cd "$(dirname "$0")/../Resources/env" && pwd)"
-LOG="$HOME/.qwenpaw/desktop.log"
+LOG="$HOME/.jotaduo/desktop.log"
 unset PYTHONPATH
 export PYTHONHOME="$ENV_DIR"
 export PYTHONNOUSERSITE=1
-export QWENPAW_DESKTOP_APP=1
+export JOTADUO_DESKTOP_APP=1
 
 # Preserve system PATH for accessing system commands (e.g. imsg, brew)
 # Prepend packaged env/bin so packaged Python takes precedence
@@ -84,12 +84,12 @@ fi
 
 cd "$HOME" || true
 
-# Log level: env var QWENPAW_LOG_LEVEL or default to "info"
-LOG_LEVEL="${QWENPAW_LOG_LEVEL:-info}"
+# Log level: env var JOTADUO_LOG_LEVEL or default to "info"
+LOG_LEVEL="${JOTADUO_LOG_LEVEL:-info}"
 
 if [ ! -t 2 ]; then
-  mkdir -p "$HOME/.qwenpaw"
-  { echo "=== $(date) QwenPaw starting ==="
+  mkdir -p "$HOME/.jotaduo"
+  { echo "=== $(date) JotaDuo starting ==="
     echo "ENV_DIR=$ENV_DIR"
     echo "Python: $ENV_DIR/bin/python (exists=$([ -x "$ENV_DIR/bin/python" ] && echo yes || echo no))"
     echo "PATH=$PATH"
@@ -109,11 +109,11 @@ if [ ! -t 2 ]; then
     echo "ERROR: python not executable at $ENV_DIR/bin/python"
     exit 1
   fi
-  if [ ! -f "$HOME/.qwenpaw/config.json" ]; then
-    "$ENV_DIR/bin/python" -u -m qwenpaw init --defaults --accept-security
+  if [ ! -f "$HOME/.jotaduo/config.json" ]; then
+    "$ENV_DIR/bin/python" -u -m jotaduo init --defaults --accept-security
   fi
   echo "Launching python with log-level=$LOG_LEVEL..."
-  "$ENV_DIR/bin/python" -u -m qwenpaw desktop --log-level "$LOG_LEVEL"
+  "$ENV_DIR/bin/python" -u -m jotaduo desktop --log-level "$LOG_LEVEL"
   EXIT=$?
   if [ $EXIT -ge 128 ]; then
     SIG=$((EXIT - 128))
@@ -124,10 +124,10 @@ if [ ! -t 2 ]; then
   echo "--- Full log: $LOG (scroll up for Python traceback if app exited early) ---"
   exit $EXIT
 fi
-if [ ! -f "$HOME/.qwenpaw/config.json" ]; then
-  "$ENV_DIR/bin/python" -u -m qwenpaw init --defaults --accept-security
+if [ ! -f "$HOME/.jotaduo/config.json" ]; then
+  "$ENV_DIR/bin/python" -u -m jotaduo init --defaults --accept-security
 fi
-exec "$ENV_DIR/bin/python" -u -m qwenpaw desktop --log-level "$LOG_LEVEL"
+exec "$ENV_DIR/bin/python" -u -m jotaduo desktop --log-level "$LOG_LEVEL"
 LAUNCHER
 chmod +x "${APP_DIR}/Contents/MacOS/${APP_NAME}"
 
@@ -145,7 +145,7 @@ VERSION="${CURRENT_VERSION}"
 if [[ -z "${VERSION}" ]]; then
   # Fallback: try to get version from packed env metadata
   VERSION="$("${APP_DIR}/Contents/Resources/env/bin/python" -c \
-    "from importlib.metadata import version; print(version('qwenpaw'))" 2>/dev/null \
+    "from importlib.metadata import version; print(version('jotaduo'))" 2>/dev/null \
     || echo "0.0.0")"
   echo "Using version from packed env metadata: ${VERSION}"
 else
@@ -164,13 +164,13 @@ cat > "${APP_DIR}/Contents/Info.plist" << INFOPLIST
 <plist version="1.0">
 <dict>
   <key>CFBundleExecutable</key><string>${APP_NAME}</string>
-  <key>CFBundleIdentifier</key><string>com.qwenpaw.desktop</string>
+  <key>CFBundleIdentifier</key><string>com.jotaduo.desktop</string>
   <key>CFBundleName</key><string>${APP_NAME}</string>
   <key>CFBundleVersion</key><string>${VERSION}</string>
   <key>CFBundleShortVersionString</key><string>${VERSION}</string>
   ${ICON_PLIST}<key>NSHighResolutionCapable</key><true/>
   <key>LSMinimumSystemVersion</key><string>14.0</string>
-  <key>NSDesktopFolderUsageDescription</key><string>QwenPaw may access files in your Desktop folder if you use file-related features. You can choose Don'\''t Allow; the app will still run with limited file access.</string>
+  <key>NSDesktopFolderUsageDescription</key><string>JotaDuo may access files in your Desktop folder if you use file-related features. You can choose Don'\''t Allow; the app will still run with limited file access.</string>
 </dict>
 </plist>
 INFOPLIST
@@ -178,7 +178,7 @@ INFOPLIST
 echo "== Built ${APP_DIR} =="
 # Optional: create zip for distribution (set CREATE_ZIP=1)
 if [[ -n "${CREATE_ZIP}" ]]; then
-  ZIP_NAME="${DIST}/QwenPaw-${VERSION}-macOS.zip"
+  ZIP_NAME="${DIST}/JotaDuo-${VERSION}-macOS.zip"
   ditto -c -k --sequesterRsrc --keepParent "${APP_DIR}" "${ZIP_NAME}"
   echo "== Created ${ZIP_NAME} =="
 fi

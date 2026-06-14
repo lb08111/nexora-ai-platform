@@ -4,7 +4,7 @@
 Intentionally empty so the directory works under both load paths the
 platform supports:
 
-1. ``qwenpaw.plugins.loader`` loads ``plugin.py`` via
+1. ``jotaduo.plugins.loader`` loads ``plugin.py`` via
    ``importlib.util.spec_from_file_location`` with
    ``submodule_search_locations``; the modules ``plugin.py`` imports use
    the sys.path trick (see ``plugin.py``).

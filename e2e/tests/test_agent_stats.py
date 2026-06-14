@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-QwenPaw agent statistics dashboard module end-to-end tests
+JotaDuo agent statistics dashboard module end-to-end tests
 
 AgentStats module tests:
 - ASTAT-001: Stats page load and summary cards display (P0)
@@ -78,17 +78,17 @@ class TestAgentStatsPageDisplay:
             # Look for summary cards (SummaryCard component)
             cards = page.locator(
                 '[class*="summaryCard"], [class*="SummaryCard"], '
-                '.qwenpaw-statistic, [class*="statistic"]'
+                '.jotaduo-statistic, [class*="statistic"]'
             ).all()
 
             # Fall back to generic card lookup if specific classes are not found
             if len(cards) == 0:
-                cards = page.locator('.qwenpaw-card').all()
+                cards = page.locator('.jotaduo-card').all()
 
             logger.info(f"Found {len(cards)} summary cards")
 
             # Page should display either summary cards or empty state
-            empty = page.locator(".qwenpaw-empty, [class*='empty']").first
+            empty = page.locator(".jotaduo-empty, [class*='empty']").first
             has_cards_or_empty = len(cards) > 0 or empty.is_visible(timeout=3000)
             assert has_cards_or_empty, "Page should display summary cards or empty state"
 
@@ -162,7 +162,7 @@ class TestAgentStatsDatePicker:
             # 2. Find date range picker
             log_test_step("2. Find date range picker")
             date_picker = page.locator(
-                '.qwenpaw-picker-range, .qwenpaw-picker, '
+                '.jotaduo-picker-range, .jotaduo-picker, '
                 '[class*="datePicker"], [class*="DatePicker"], '
                 '[class*="dateRange"], [class*="DateRange"]'
             ).first
@@ -177,15 +177,15 @@ class TestAgentStatsDatePicker:
 
             # Check whether calendar panel is expanded
             panel = page.locator(
-                '.qwenpaw-picker-dropdown, .qwenpaw-picker-panel-container, '
-                '.qwenpaw-picker-panel, '
+                '.jotaduo-picker-dropdown, .jotaduo-picker-panel-container, '
+                '.jotaduo-picker-panel, '
                 '[class*="pickerPanel"], [class*="calendar"]'
             ).first
             assert panel.is_visible(timeout=3000), "Calendar panel should pop up after clicking date picker"
             logger.info("Calendar panel expanded")
 
             # Verify panel contains date content (prefer date cells, fallback to other rendering)
-            date_cells = panel.locator('.qwenpaw-picker-cell, td[class*="cell"]')
+            date_cells = panel.locator('.jotaduo-picker-cell, td[class*="cell"]')
             cell_count = date_cells.count()
             if cell_count > 0:
                 logger.info(f"Calendar panel contains {cell_count} date cells")
@@ -255,7 +255,7 @@ class TestAgentStatsCharts:
                         f"Chart containers: {len(chart_containers)}")
 
             # Page should display chart elements or empty state
-            empty = page.locator(".qwenpaw-empty, [class*='empty']").first
+            empty = page.locator(".jotaduo-empty, [class*='empty']").first
             has_charts_or_empty = (total_charts > 0 or len(chart_containers) > 0
                                    or empty.is_visible(timeout=3000))
             assert has_charts_or_empty, \
@@ -337,7 +337,7 @@ class TestAgentStatsChannelDistribution:
                 or ("Distribution" in page_text and "Channel" in page_text)
             )
 
-            empty = page.locator(".qwenpaw-empty, .ant-empty, [class*='empty']").first
+            empty = page.locator(".jotaduo-empty, .ant-empty, [class*='empty']").first
             assert has_channel_section or (empty.count() > 0 and empty.is_visible(timeout=3000)), \
                 "Page should contain channel distribution area or display empty state"
 
@@ -408,7 +408,7 @@ class TestAgentStatsDateFilter:
             # 2. Find date picker
             log_test_step("2. Find date picker")
             date_picker = page.locator(
-                '.qwenpaw-picker-range, .qwenpaw-picker, '
+                '.jotaduo-picker-range, .jotaduo-picker, '
                 '[class*="datePicker"], [class*="DatePicker"]'
             ).first
 
@@ -417,7 +417,7 @@ class TestAgentStatsDateFilter:
             # 3. Record current card data
             log_test_step("3. Record current card data")
             cards_before = page.locator(
-                '[class*="summaryCard"], [class*="SummaryCard"], .qwenpaw-statistic, .qwenpaw-card'
+                '[class*="summaryCard"], [class*="SummaryCard"], .jotaduo-statistic, .jotaduo-card'
             ).all()
             data_before = []
             for card in cards_before:
@@ -431,8 +431,8 @@ class TestAgentStatsDateFilter:
 
             # Try selecting a preset range (e.g. "last 30 days")
             preset_buttons = page.locator(
-                '.qwenpaw-picker-presets button, '
-                '.qwenpaw-picker-ranges button, '
+                '.jotaduo-picker-presets button, '
+                '.jotaduo-picker-ranges button, '
                 '[class*="preset"]'
             ).all()
 
@@ -451,7 +451,7 @@ class TestAgentStatsDateFilter:
             page.wait_for_timeout(2000)
 
             # Wait for any loading state to finish
-            spin = page.locator(".qwenpaw-spin, [class*='loading']").first
+            spin = page.locator(".jotaduo-spin, [class*='loading']").first
             if spin.is_visible(timeout=2000):
                 logger.info("Data refreshing (loading state visible)")
                 try:
@@ -461,9 +461,9 @@ class TestAgentStatsDateFilter:
 
             # After filter, should still have cards or empty state
             cards_after = page.locator(
-                '[class*="summaryCard"], [class*="SummaryCard"], .qwenpaw-statistic, .qwenpaw-card'
+                '[class*="summaryCard"], [class*="SummaryCard"], .jotaduo-statistic, .jotaduo-card'
             ).all()
-            empty_state = page.locator(".qwenpaw-empty, [class*='empty']").first
+            empty_state = page.locator(".jotaduo-empty, [class*='empty']").first
             assert len(cards_after) > 0 or empty_state.is_visible(timeout=3000), \
                 "After date filter, should still have cards or display empty state"
             logger.info(f"Date filter refresh validation passed (cards: {len(cards_after)})")
@@ -510,7 +510,7 @@ class TestAgentStatsCardTooltip:
             log_test_step("2. Find summary cards")
             cards = page.locator(
                 '[class*="summaryCard"], [class*="SummaryCard"], '
-                '.qwenpaw-statistic, .qwenpaw-card'
+                '.jotaduo-statistic, .jotaduo-card'
             ).all()
 
             if len(cards) == 0:
@@ -535,7 +535,7 @@ class TestAgentStatsCardTooltip:
             page.wait_for_timeout(500)
 
             tooltip = page.locator(
-                '.qwenpaw-tooltip, [role="tooltip"], [class*="tooltip"]'
+                '.jotaduo-tooltip, [role="tooltip"], [class*="tooltip"]'
             ).first
             if tooltip.is_visible(timeout=3000):
                 tooltip_text = tooltip.inner_text().strip()
@@ -583,7 +583,7 @@ class TestAgentStatsEmptyAndLoading:
 
             # 2. Check loading state
             log_test_step("2. Check loading state")
-            spin = page.locator(".qwenpaw-spin, [class*='loading'], [class*='spin']").first
+            spin = page.locator(".jotaduo-spin, [class*='loading'], [class*='spin']").first
             if spin.is_visible(timeout=3000):
                 logger.info("Loading state (Spin) visible")
                 # Wait for loading to finish
@@ -600,9 +600,9 @@ class TestAgentStatsEmptyAndLoading:
 
             # 3. Check empty state
             log_test_step("3. Check empty state or data display")
-            empty = page.locator(".qwenpaw-empty, [class*='empty']").first
+            empty = page.locator(".jotaduo-empty, [class*='empty']").first
             cards = page.locator(
-                '[class*="summaryCard"], [class*="SummaryCard"], .qwenpaw-statistic, .qwenpaw-card'
+                '[class*="summaryCard"], [class*="SummaryCard"], .jotaduo-statistic, .jotaduo-card'
             ).all()
 
             # Page should display one of: data cards, empty state, or error state + retry button
@@ -668,7 +668,7 @@ class TestAgentStatsRefresh:
             # 2. Record initial state
             log_test_step("2. Record initial state")
             cards_before = page.locator(
-                '[class*="summaryCard"], [class*="SummaryCard"], .qwenpaw-statistic, .qwenpaw-card'
+                '[class*="summaryCard"], [class*="SummaryCard"], .jotaduo-statistic, .jotaduo-card'
             ).all()
             card_count_before = len(cards_before)
             canvas_count_before = len(page.locator("canvas").all())
@@ -682,7 +682,7 @@ class TestAgentStatsRefresh:
             # 4. Verify data persists
             log_test_step("4. Verify data persists")
             cards_after = page.locator(
-                '[class*="summaryCard"], [class*="SummaryCard"], .qwenpaw-statistic, .qwenpaw-card'
+                '[class*="summaryCard"], [class*="SummaryCard"], .jotaduo-statistic, .jotaduo-card'
             ).all()
             card_count_after = len(cards_after)
             canvas_count_after = len(page.locator("canvas").all())

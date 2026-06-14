@@ -8,7 +8,7 @@ import re
 
 import pytest
 
-from qwenpaw.agents.br_team.tools import (
+from jotaduo.agents.br_team.tools import (
     book_appointment,
     check_slot_availability,
     consultar_cep,

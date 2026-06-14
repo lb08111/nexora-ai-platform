@@ -93,7 +93,7 @@ export function FAQ() {
                 <li>{t("homeFaq.quickStart.update.li1")}</li>
                 <li>
                   {t("homeFaq.quickStart.update.li2Prefix")}{" "}
-                  <code>pip install --upgrade qwenpaw</code>
+                  <code>pip install --upgrade jotaduo</code>
                 </li>
                 <li>{t("homeFaq.quickStart.update.li3")}</li>
                 <li>{t("homeFaq.quickStart.update.li4")}</li>
@@ -128,10 +128,10 @@ export function FAQ() {
             <>
               <p>
                 {t("homeFaq.quickStart.initialize.p1")}{" "}
-                <code>qwenpaw init --defaults</code>
+                <code>jotaduo init --defaults</code>
               </p>
               <p>
-                {t("homeFaq.quickStart.initialize.p2")} <code>qwenpaw app</code>
+                {t("homeFaq.quickStart.initialize.p2")} <code>jotaduo app</code>
               </p>
               <p className="mt-2">
                 {t("homeFaq.quickStart.initialize.p3Prefix")}{" "}
@@ -190,9 +190,9 @@ export function FAQ() {
               <p className="mt-2">{t("homeFaq.features.models.p3")}</p>
               <p className="mt-2">
                 {t("homeFaq.features.models.p4Prefix")}{" "}
-                <code>qwenpaw models</code> {t("homeFaq.features.models.p4Mid")}{" "}
+                <code>jotaduo models</code> {t("homeFaq.features.models.p4Mid")}{" "}
                 <Link
-                  to="/docs/cli#qwenpaw-models"
+                  to="/docs/cli#jotaduo-models"
                   className="text-(--color-primary) no-underline transition hover:brightness-110"
                 >
                   {t("homeFaq.features.models.cliLink")}
@@ -351,7 +351,7 @@ export function FAQ() {
                     {t("homeFaq.troubleshooting.help.githubIssues")}
                   </a>{" "}
                   {t("homeFaq.troubleshooting.help.s2Mid")}{" "}
-                  <code>qwenpaw_query_error_qzbx1mv1.json</code>
+                  <code>jotaduo_query_error_qzbx1mv1.json</code>
                   {t("homeFaq.troubleshooting.help.s2Suffix")}
                 </li>
               </ol>
@@ -375,12 +375,12 @@ export function FAQ() {
       initial="hidden"
       whileInView="show"
       viewport={{ once: true, amount: 0.2 }}
-      aria-labelledby="qwenpaw-faq-heading"
+      aria-labelledby="jotaduo-faq-heading"
     >
       <div className="mx-auto max-w-7xl">
         <div className="grid gap-8 md:grid-cols-[40%_60%] md:gap-12">
           <motion.div variants={itemVariants}>
-            <h2 id="qwenpaw-faq-heading" className={sectionStyles.title}>
+            <h2 id="jotaduo-faq-heading" className={sectionStyles.title}>
               {t("homeFaq.title")}
             </h2>
             <p

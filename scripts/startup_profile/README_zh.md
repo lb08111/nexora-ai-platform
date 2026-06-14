@@ -1,6 +1,6 @@
-# 🚀 QwenPaw 启动性能分析工具
+# 🚀 JotaDuo 启动性能分析工具
 
-一键分析 QwenPaw 启动性能，识别瓶颈，提供优化建议。
+一键分析 JotaDuo 启动性能，识别瓶颈，提供优化建议。
 
 ## 快速开始
 
@@ -21,7 +21,7 @@ python scripts/startup_profile/serve.py
 **注意**：由于浏览器安全限制（CORS），直接用 `file://` 协议打开 HTML 无法加载数据。
 请使用 `serve.py` 或手动启动 HTTP 服务器：
 ```bash
-cd /path/to/QwenPaw
+cd /path/to/JotaDuo
 python -m http.server 8000
 # 访问: http://localhost:8000/scripts/startup_profile/output/report.html
 ```
@@ -38,7 +38,7 @@ output/
 
 ## 报告功能
 
-- **Import 时间分析** - QwenPaw 模块和第三方库导入耗时排名
+- **Import 时间分析** - JotaDuo 模块和第三方库导入耗时排名
 - **函数执行时间** - Top 20 函数执行时间统计
 - **函数调用树** - 完整的函数调用层级关系和耗时（限制深度 5 层，每层最多显示前 10 个调用）
 - **交互式图表** - Chart.js 横向柱状图可视化
@@ -53,7 +53,7 @@ output/
 
 2. **数据分析**
    - 解析日志文件
-   - 分类统计（QwenPaw/第三方/标准库）
+   - 分类统计（JotaDuo/第三方/标准库）
    - 计算占比和性能指标
 
 3. **可视化展示**
@@ -82,16 +82,16 @@ A: 正常现象，不影响 import 分析。可单独使用 `exec_tracer`。
 ## 技术细节
 
 - Python 3.8+
-- 无额外依赖（除了 QwenPaw 本身）
+- 无额外依赖（除了 JotaDuo 本身）
 - 纯 JSON 数据输出
 - HTML 独立运行，可离线查看
 
 ## 相关工具
 
-- `src/qwenpaw/utils/startup_display.py` - 启动横幅显示
+- `src/jotaduo/utils/startup_display.py` - 启动横幅显示
 
 ---
 
 **版本**: 2.0.0
-**作者**: QwenPaw Team
+**作者**: JotaDuo Team
 **更新**: 2026-04-17

@@ -12,7 +12,7 @@ import logging
 import os
 import time
 
-logger = logging.getLogger("qwenpaw").getChild(
+logger = logging.getLogger("jotaduo").getChild(
     __name__.replace("plugin_cloudpaw.", ""),
 )
 

@@ -28,7 +28,7 @@ from ..constants import (
 )
 from ..store import Notification, get_notification_store
 
-logger = logging.getLogger("qwenpaw").getChild(
+logger = logging.getLogger("jotaduo").getChild(
     "plugin.ai-productions.routers.notifications",
 )
 

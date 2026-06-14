@@ -6,13 +6,13 @@ from pathlib import Path
 
 import pytest
 
-from qwenpaw.discovery.state import (
+from jotaduo.discovery.state import (
     DiscoveryState,
     OpenArea,
     TeamBlueprint,
     Integration,
 )
-from qwenpaw.discovery.tools import InterviewSession
+from jotaduo.discovery.tools import InterviewSession
 
 
 # --- Edge cases em DiscoveryState ---

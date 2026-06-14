@@ -1,6 +1,6 @@
 # Backup & Restore
 
-**Backup & Restore** lets you create snapshots of your QwenPaw instance: visually create, export, import, and restore your entire agent environment. It is designed for scenarios such as **rolling back before a version upgrade, migrating between machines, or keeping a safety net before risky changes**.
+**Backup & Restore** lets you create snapshots of your JotaDuo instance: visually create, export, import, and restore your entire agent environment. It is designed for scenarios such as **rolling back before a version upgrade, migrating between machines, or keeping a safety net before risky changes**.
 
 > Sidebar: **Settings → Backup**
 
@@ -8,14 +8,14 @@
 
 ## What's Inside a Backup
 
-A backup is a single zip file (stored at `~/.qwenpaw.backups/<backup_id>.zip`) that may contain up to four kinds of content:
+A backup is a single zip file (stored at `~/.jotaduo.backups/<backup_id>.zip`) that may contain up to four kinds of content:
 
 | Module               | Path                                | Actual content                                                                                                                                                                        |
 | -------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Agent workspaces** | `~/.qwenpaw/workspaces/<agent_id>/` | Every file inside each agent's workspace, e.g. persona files, memory, skills, chat history, and channel configs (including channel credentials such as `bot_token` and `app_secret`). |
-| **Global settings**  | `~/.qwenpaw/config.json`            | Runtime parameters, security rules, and other global settings.                                                                                                                        |
-| **Skill pool**       | `~/.qwenpaw/skill_pool/`            | The globally shared skill repository.                                                                                                                                                 |
-| **Secrets**          | `~/.qwenpaw.secret/`                | **LLM provider configuration (including API keys)**, plus environment variables used by tools and skills.                                                                             |
+| **Agent workspaces** | `~/.jotaduo/workspaces/<agent_id>/` | Every file inside each agent's workspace, e.g. persona files, memory, skills, chat history, and channel configs (including channel credentials such as `bot_token` and `app_secret`). |
+| **Global settings**  | `~/.jotaduo/config.json`            | Runtime parameters, security rules, and other global settings.                                                                                                                        |
+| **Skill pool**       | `~/.jotaduo/skill_pool/`            | The globally shared skill repository.                                                                                                                                                 |
+| **Secrets**          | `~/.jotaduo.secret/`                | **LLM provider configuration (including API keys)**, plus environment variables used by tools and skills.                                                                             |
 
 > **Not packaged**: local model weights (too large — re-download on the target machine), runtime caches, and temporary files.
 
@@ -31,7 +31,7 @@ The internal layout of a backup zip looks like this:
    └─ secrets/...                   # Only present when "Secrets" is included
 ```
 
-A backup ID has the format `qwenpaw-<version>-<timestamp>-<short8>`, which makes it easy to identify the source version and creation time across machines.
+A backup ID has the format `jotaduo-<version>-<timestamp>-<short8>`, which makes it easy to identify the source version and creation time across machines.
 
 > **Tip**: An LLM provider's API key belongs to **Secrets**, **not Global settings**. If you only back up the global settings without the secrets, you will need to re-enter your model API keys in the Console after restoring.
 
@@ -69,7 +69,7 @@ A partial backup is best for migrating only specific modules or syncing only a f
    - **Agent workspaces**: after enabling this, pick the specific agent workspaces to back up.
    - **Global settings**: whether to include the global settings (i.e. `config.json`).
    - **Skill pool**: whether to include the skill pool (i.e. the `skill_pool/` directory).
-   - **Secrets**: whether to include the secrets (i.e. the `~/.qwenpaw.secret/` directory). Off by default; turning it on shows the same red sensitive-content warning.
+   - **Secrets**: whether to include the secrets (i.e. the `~/.jotaduo.secret/` directory). Off by default; turning it on shows the same red sensitive-content warning.
 3. Fill in the name and description, then click **Create**.
 
 ---
@@ -82,7 +82,7 @@ A partial backup is best for migrating only specific modules or syncing only a f
 
 ![Create a pre-restore backup](https://img.alicdn.com/imgextra/i3/O1CN01MwWjoy24qx3N2wfoR_!!6000000007443-2-tps-861-314.png)
 
-When you click the **Restore** button on any backup row, QwenPaw first opens the **Pre-restore backup** dialog:
+When you click the **Restore** button on any backup row, JotaDuo first opens the **Pre-restore backup** dialog:
 
 - We strongly recommend ticking **"Create a pre-restore backup first"** to take a one-click snapshot of the current state.
 - If anything goes wrong, you can immediately roll back to the state right before the restore using that snapshot.
@@ -111,7 +111,7 @@ Steps:
 
 **Fine-grained control** over what gets restored, to avoid accidental deletions:
 
-- **Pick agents one by one**: restore only the agents you tick; agents outside the restore scope are kept as they are. You can also specify the default storage location for newly added agents at restore time; if unspecified, they go to `~/.qwenpaw/workspaces/<agent_id>/`.
+- **Pick agents one by one**: restore only the agents you tick; agents outside the restore scope are kept as they are. You can also specify the default storage location for newly added agents at restore time; if unspecified, they go to `~/.jotaduo/workspaces/<agent_id>/`.
 - **Global settings / skill pool / secrets**: each can be toggled independently. If toggled on, it fully replaces the current instance's content.
 
 Steps:
@@ -158,7 +158,7 @@ Steps:
 
 | Item             | Path / Default                 |
 | ---------------- | ------------------------------ |
-| Backup directory | `~/.qwenpaw.backups/`          |
+| Backup directory | `~/.jotaduo.backups/`          |
 | Single backup    | `<backup-dir>/<backup_id>.zip` |
 
 ---
@@ -167,13 +167,13 @@ Steps:
 
 The backup directory inside a Docker container is `/app/working.backups`. If you deploy with Docker, you need to mount this directory to persist backup data — otherwise all backups will be lost when the container is recreated.
 
-Add `-v qwenpaw-backups:/app/working.backups` to your `docker run` command:
+Add `-v jotaduo-backups:/app/working.backups` to your `docker run` command:
 
 ```bash
 docker run -p 127.0.0.1:8088:8088 \
-  -v qwenpaw-data:/app/working \
-  -v qwenpaw-secrets:/app/working.secret \
-  -v qwenpaw-backups:/app/working.backups \
+  -v jotaduo-data:/app/working \
+  -v jotaduo-secrets:/app/working.secret \
+  -v jotaduo-backups:/app/working.backups \
   agentscope/qwenpaw:latest
 ```
 
@@ -185,7 +185,7 @@ docker run -p 127.0.0.1:8088:8088 \
 A: No. Models are too large; backups only cover small assets such as configuration, skills, and memory. Re-download the models you need after migrating to a new machine.
 
 **Q: I see "Backup already exists" when importing — what should I do?**
-A: QwenPaw shows an overwrite confirmation; confirm it to continue importing and overwrite the existing backup.
+A: JotaDuo shows an overwrite confirmation; confirm it to continue importing and overwrite the existing backup.
 
 **Q: What's the real difference between Full restore and Custom restore?**
 A: Full restore restores the whole instance as it was at backup time — think of it as "delete the old instance → create a new one". Custom restore restores only the parts you select (e.g. some agents); anything outside the restore scope is kept as it is.

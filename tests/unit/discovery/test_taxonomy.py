@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pytest
 
-from qwenpaw.discovery.segments.taxonomy import load_segments, lookup_segment
+from jotaduo.discovery.segments.taxonomy import load_segments, lookup_segment
 
 
 def test_load_segments():

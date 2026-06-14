@@ -509,7 +509,7 @@ function useMessageHistoryNavigation(
 // Chat input draft persistence
 // ---------------------------------------------------------------------------
 
-const DRAFT_STORAGE_KEY_PREFIX = "qwenpaw_chat_input_draft";
+const DRAFT_STORAGE_KEY_PREFIX = "jotaduo_chat_input_draft";
 let draftSuppressed = false;
 
 function getDraftStorageKey(agentId?: string): string {
@@ -1569,8 +1569,8 @@ export default function ChatPage() {
       },
       welcome: {
         ...i18nConfig.welcome,
-        nick: extNick ?? "QwenPaw",
-        avatar: extAvatar ?? "/qwenpaw.png",
+        nick: extNick ?? "JotaDuo",
+        avatar: extAvatar ?? "/jotaduo.png",
         ...(extGreeting !== undefined ? { greeting: extGreeting } : {}),
         ...(extDescription !== undefined
           ? { description: extDescription }

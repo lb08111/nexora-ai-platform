@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Unit tests for ``qwenpaw.app.runner.manager.ChatManager``.
+"""Unit tests for ``jotaduo.app.runner.manager.ChatManager``.
 
 Uses the real :class:`JsonChatRepository` backed by ``tmp_path`` so the
 tests cover the integrated CRUD path without mocking the repo away.
@@ -12,10 +12,10 @@ from pathlib import Path
 
 import pytest
 
-from qwenpaw.app.runner.manager import ChatManager
-from qwenpaw.app.runner.models import ChatSpec, ChatUpdate, SessionSource
-from qwenpaw.app.runner.repo import JsonChatRepository
-from qwenpaw.app.channels.schema import DEFAULT_CHANNEL
+from jotaduo.app.runner.manager import ChatManager
+from jotaduo.app.runner.models import ChatSpec, ChatUpdate, SessionSource
+from jotaduo.app.runner.repo import JsonChatRepository
+from jotaduo.app.channels.schema import DEFAULT_CHANNEL
 
 
 @pytest.fixture

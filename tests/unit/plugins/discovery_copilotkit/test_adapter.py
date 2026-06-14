@@ -15,7 +15,7 @@ from copilotkit_adapter import (
 )
 import pytest
 
-from qwenpaw.discovery import ScriptedDiscoverySession
+from jotaduo.discovery import ScriptedDiscoverySession
 
 
 @pytest.mark.asyncio

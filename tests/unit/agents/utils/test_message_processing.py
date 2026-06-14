@@ -8,7 +8,7 @@ Covers:
 # pylint: disable=redefined-outer-name
 from unittest.mock import MagicMock
 
-from qwenpaw.agents.utils.message_processing import (
+from jotaduo.agents.utils.message_processing import (
     is_first_user_interaction,
     prepend_to_message_content,
 )

@@ -226,14 +226,14 @@
     "providerTypeLocalWhisperDesc": "Run transcription locally using the openai-whisper Python library. Requires both ffmpeg and openai-whisper to be installed.",
     "localWhisperReady": "Local Whisper is ready. Both ffmpeg and openai-whisper are installed.",
     "localWhisperMissing": "Local Whisper is not ready. Missing dependencies must be installed.",
-    "localWhisperMissingDesc": "ffmpeg: {{ffmpeg}} | openai-whisper: {{whisper}}. Install missing dependencies: ffmpeg (system package) and openai-whisper (uv pip install openai-whisper, or install QwenPaw with the [whisper] extra).",
+    "localWhisperMissingDesc": "ffmpeg: {{ffmpeg}} | openai-whisper: {{whisper}}. Install missing dependencies: ffmpeg (system package) and openai-whisper (uv pip install openai-whisper, or install JotaDuo with the [whisper] extra).",
     "providerLabel": "Whisper API Provider",
     "providerDescription": "Select which provider to use for audio transcription via the Whisper API. Only providers with a Whisper-compatible endpoint are shown.",
     "providerPlaceholder": "Select a provider...",
     "noProvidersWarning": "No transcription-capable providers found. Configure an OpenAI provider to enable voice transcription.",
     "transcriptionInfoTitle": "How transcription works",
     "transcriptionInfoDesc": "Whisper API transcription uses an OpenAI-compatible /v1/audio/transcriptions endpoint. This requires a configured provider with a Whisper-compatible endpoint — for example, an OpenAI provider. Select a specific provider above to enable transcription.",
-    "transcriptionInfoDescLocal": "Local Whisper transcription runs the openai-whisper library directly on your machine. It requires both ffmpeg (for audio decoding) and the openai-whisper Python package to be installed. No API key or network connection is needed. Install with: uv pip install 'qwenpaw[whisper]'."
+    "transcriptionInfoDescLocal": "Local Whisper transcription runs the openai-whisper library directly on your machine. It requires both ffmpeg (for audio decoding) and the openai-whisper Python package to be installed. No API key or network connection is needed. Install with: uv pip install 'jotaduo[whisper]'."
   },
   "backup": {
     "title": "Backups",
@@ -314,7 +314,7 @@
     "restoreModeCustomDesc": "Select the contents to restore, such as specific agents, config, etc.; existing agents not included in this restore will be preserved",
     "restoreModeFullDisabled": "Full backup only",
     "defaultWorkspaceDir": "Agent Default Workspace Directory",
-    "defaultWorkspaceDirPlaceholder": "Leave empty to use ~/.qwenpaw/workspaces",
+    "defaultWorkspaceDirPlaceholder": "Leave empty to use ~/.jotaduo/workspaces",
     "defaultWorkspaceDirHint": "If the agent's original workspace path does not exist, the agent will be saved under <default path>/<agent ID>. If it exists, the agent's original workspace path will be used.",
     "restoreStrategy": "Restore strategy",
     "restoreStrategyPreserve": "Preserve local security and MCP",
@@ -424,7 +424,7 @@
     "nameRequired": "Please enter agent name",
     "namePlaceholder": "e.g.: My Agent",
     "descriptionPlaceholder": "Briefly describe this agent's purpose...",
-    "workspaceHelp": "Leave empty to auto-generate in ~/.qwenpaw/workspaces/<id>",
+    "workspaceHelp": "Leave empty to auto-generate in ~/.jotaduo/workspaces/<id>",
     "dragHandleTooltip": "Drag to reorder agents",
     "reorderSuccess": "Agent order saved",
     "reorderFailed": "Failed to save agent order",
@@ -1053,7 +1053,7 @@
     "welcomeGreeting": "Welcome Greeting",
     "welcomeText": "Welcome Message",
     "welcomeTextTooltip": "Message automatically sent when a user enters a single chat session with the bot for the first time that day",
-    "welcomeTextPlaceholder": "e.g. Hello! I'm QwenPaw. How can I help you?",
+    "welcomeTextPlaceholder": "e.g. Hello! I'm JotaDuo. How can I help you?",
     "loginWeCom": "Get WeCom QR Code",
     "wecomSetupGuide": "When creating a bot via QR code, please select \"Skip Authorization\" when asked to authorize bot capabilities. If you select \"Confirm Authorization\", users other than the bot creator may not be able to interact with the bot.",
     "wecomScanAuth": "Scan to Authorize",
@@ -1119,7 +1119,7 @@
     "wechatBotTokenTooltip": "Bearer token obtained after QR code login. Leave empty to trigger QR code login on startup.",
     "wechatBotTokenPlaceholder": "Auto-filled after QR login, or paste manually",
     "wechatBotTokenFile": "Token File Path",
-    "wechatBotTokenFileTooltip": "Path to persist the bot token. Defaults to ~/.qwenpaw/wechat_bot_token",
+    "wechatBotTokenFileTooltip": "Path to persist the bot token. Defaults to ~/.jotaduo/wechat_bot_token",
     "wechatMediaDir": "Media Directory",
     "wechatMessageMerge": "Message Merge",
     "wechatMessageMergeTooltip": "Merge multiple reply messages into fewer messages to avoid hitting the WeChat 10-message limit per context_token. When enabled with delay 0, all text replies are merged into a single message sent at the end. A positive delay (in ms) merges adjacent messages within that time window.",
@@ -1672,7 +1672,7 @@
     "contextManagementTitle": "Context Management",
     "memoryManagerBackend": "Memory Manager Backend",
     "memoryManagerBackendTooltip": "Backend for the memory manager. Choose remelight (local files) or adbpg (cloud database).",
-    "memoryManagerBackendRestartWarning": "Switching the memory manager backend does not support hot reload. Save and restart QwenPaw for changes to take effect.",
+    "memoryManagerBackendRestartWarning": "Switching the memory manager backend does not support hot reload. Save and restart JotaDuo for changes to take effect.",
     "maxIters": "Max Iterations",
     "maxItersTooltip": "Maximum number of reasoning-acting iterations for ReAct agent",
     "maxItersPlaceholder": "Enter max iterations",
@@ -1775,7 +1775,7 @@
     "dreamCronTooltip": "Cron expression for periodically optimizing long-term memories through dream state (leave empty to disable)",
     "dreamCronPlaceholder": "0 23 * * *",
     "autoMemorySearch": "Auto Memory Search (beta)",
-    "autoMemorySearchTooltip": "Auto memory search to run on every conversation turn. Each query will automatically invoke memory search capabilities, helping QwenPaw understand you better — but this increases token consumption.",
+    "autoMemorySearchTooltip": "Auto memory search to run on every conversation turn. Each query will automatically invoke memory search capabilities, helping JotaDuo understand you better — but this increases token consumption.",
     "autoMaxResults": "Auto Search Max Results",
     "autoMaxResultsTooltip": "Maximum number of results returned when auto memory search is enabled",
     "autoMaxResultsRequired": "Max results is required",
@@ -1857,7 +1857,7 @@
     "recursiveFileWatcherTooltip": "Watch the memory directory recursively. Enable to include files in subdirectories like memory/subdirectory/* in vector search indexing.",
     "contextManagerBackend": "Context Manager Backend",
     "contextManagerBackendTooltip": "Backend type for the context manager. Currently only Light is supported.",
-    "backendRestartWarning": "Switching backends does not support hot reload. Save and restart QwenPaw for changes to take effect.",
+    "backendRestartWarning": "Switching backends does not support hot reload. Save and restart JotaDuo for changes to take effect.",
     "adbpgMemoryTitle": "ADBPG Long-term Memory",
     "adbpgConfig": {
       "title": "ADBPG Memory Configuration",
@@ -2235,7 +2235,7 @@
     }
   },
   "login": {
-    "title": "Login to QwenPaw",
+    "title": "Login to JotaDuo",
     "registerTitle": "Create Account",
     "firstUserHint": "Create your admin account to get started",
     "usernamePlaceholder": "Username",
@@ -2291,6 +2291,23 @@
     "denyFailed": "Failed to deny",
     "timeoutAutoDenied": "Timed out, auto denied",
     "acknowledge": "Got it"
+  },
+  "agentComm": {
+    "title": "Agent message",
+    "defaultAgentName": "Agent",
+    "placeholder": "Reply to the agent…",
+    "submitHint": "Press Ctrl/Cmd + Enter to send",
+    "send": "Send",
+    "dismiss": "Dismiss",
+    "yes": "Yes",
+    "no": "No",
+    "timedOut": "This request has timed out.",
+    "status": {
+      "waiting": "Waiting for you",
+      "thinking": "Thinking…",
+      "done": "Done",
+      "error": "Error"
+    }
   },
   "plan": {
     "title": "Plan",
@@ -2367,7 +2384,7 @@
   "codingMode": {
     "title": "Coding Mode",
     "experimental": "Experimental Feature",
-    "experimentalDesc": "Coding Mode transforms QwenPaw into a lightweight Web IDE with a code editor, file tree, Git integration, and AI-powered coding assistance.",
+    "experimentalDesc": "Coding Mode transforms JotaDuo into a lightweight Web IDE with a code editor, file tree, Git integration, and AI-powered coding assistance.",
     "experimentalNote": "This feature is experimental and still under active development. Some functionality may be limited or change in future updates.",
     "confirmBtn": "Confirm",
     "enterTooltip": "Enter Coding Mode",

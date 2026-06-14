@@ -9,8 +9,8 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-import qwenpaw.tunnel.binary_manager as bm_module
-from qwenpaw.tunnel.binary_manager import BinaryManager, _download_file
+import jotaduo.tunnel.binary_manager as bm_module
+from jotaduo.tunnel.binary_manager import BinaryManager, _download_file
 
 # ---------------------------------------------------------------------------
 # BinaryManager.get_binary_path — PATH lookup
@@ -150,7 +150,7 @@ async def test_download_file_http_error() -> None:
 def test_platform_key_returns_tuple(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr("platform.system", lambda: "Linux")
     monkeypatch.setattr("platform.machine", lambda: "x86_64")
-    from qwenpaw.tunnel.binary_manager import _platform_key
+    from jotaduo.tunnel.binary_manager import _platform_key
 
     key = _platform_key()
     assert key == ("Linux", "x86_64")

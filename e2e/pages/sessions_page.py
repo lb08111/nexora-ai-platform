@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-QwenPaw Sessions page object.
+JotaDuo Sessions page object.
 
 Wraps all interactions on the Sessions page and exposes business-level methods.
 """
@@ -30,24 +30,24 @@ class SessionsPage(BasePage):
     - Batch delete
     """
 
-    PAGE_TITLE = "QwenPaw Console"
+    PAGE_TITLE = "JotaDuo Console"
     PAGE_URL = f"{config.base_url}/sessions"
 
     # ========== Selector definitions ==========
 
     # Page-loaded indicator (the page has no h1; use the table as the load-complete marker)
-    PAGE_LOAD_INDICATOR = '.ant-table, .qwenpaw-table, table'
+    PAGE_LOAD_INDICATOR = '.ant-table, .jotaduo-table, table'
 
     # Filter bar
     FILTER_USER_ID_INPUT = 'input[placeholder*="User ID" i], input[placeholder*="用户" i]'
-    FILTER_CHANNEL_SELECT = '.ant-select[data-placeholder*="Channel" i], .qwenpaw-select'
+    FILTER_CHANNEL_SELECT = '.ant-select[data-placeholder*="Channel" i], .jotaduo-select'
     FILTER_RESET_BTN = 'button:has-text("Reset"), button:has-text("重置")'
 
     # Session table
-    SESSION_TABLE = '.ant-table, .qwenpaw-table, table'
-    SESSION_ROW = '.ant-table-tbody tr, .qwenpaw-table-tbody tr, table tbody tr'
-    SESSION_TABLE_ROW = '.ant-table-tbody tr, .qwenpaw-table-tbody tr, table tbody tr'
-    SESSION_ROW_SELECTED = '.ant-table-tbody tr.ant-table-row-selected, .qwenpaw-table-tbody tr.qwenpaw-table-row-selected'
+    SESSION_TABLE = '.ant-table, .jotaduo-table, table'
+    SESSION_ROW = '.ant-table-tbody tr, .jotaduo-table-tbody tr, table tbody tr'
+    SESSION_TABLE_ROW = '.ant-table-tbody tr, .jotaduo-table-tbody tr, table tbody tr'
+    SESSION_ROW_SELECTED = '.ant-table-tbody tr.ant-table-row-selected, .jotaduo-table-tbody tr.jotaduo-table-row-selected'
 
     # Table columns
     SESSION_ID_COL = 'td:nth-child(1)'
@@ -68,16 +68,16 @@ class SessionsPage(BasePage):
     EDIT_BTN = (
         'button:has-text("Edit"), button:has-text("编辑"), '
         'a:has-text("Edit"), a:has-text("编辑"), '
-        '.qwenpaw-table-cell-fix-right button:has-text("Edit"), '
-        '.qwenpaw-table-cell-fix-right button:has-text("编辑"), '
+        '.jotaduo-table-cell-fix-right button:has-text("Edit"), '
+        '.jotaduo-table-cell-fix-right button:has-text("编辑"), '
         '.ant-table-cell-fix-right button:has-text("Edit"), '
         '.ant-table-cell-fix-right button:has-text("编辑")'
     )
     DELETE_BTN = (
         'button:has-text("Delete"), button:has-text("删除"), '
         'a:has-text("Delete"), a:has-text("删除"), '
-        '.qwenpaw-table-cell-fix-right button:has-text("Delete"), '
-        '.qwenpaw-table-cell-fix-right button:has-text("删除"), '
+        '.jotaduo-table-cell-fix-right button:has-text("Delete"), '
+        '.jotaduo-table-cell-fix-right button:has-text("删除"), '
         '.ant-table-cell-fix-right button:has-text("Delete"), '
         '.ant-table-cell-fix-right button:has-text("删除")'
     )
@@ -89,21 +89,21 @@ class SessionsPage(BasePage):
     PAGINATION_PREV = '.ant-pagination-prev'
 
     # Edit drawer
-    SESSION_DRAWER = '[class*=drawer], .ant-drawer, .qwenpaw-drawer'
-    DRAWER_TITLE = '[class*=drawer] .ant-drawer-header-title, .ant-drawer-title, .qwenpaw-drawer-title'
-    DRAWER_CLOSE = '.ant-drawer-close, .qwenpaw-drawer-close'
+    SESSION_DRAWER = '[class*=drawer], .ant-drawer, .jotaduo-drawer'
+    DRAWER_TITLE = '[class*=drawer] .ant-drawer-header-title, .ant-drawer-title, .jotaduo-drawer-title'
+    DRAWER_CLOSE = '.ant-drawer-close, .jotaduo-drawer-close'
 
     # Form fields
     FORM_NAME_INPUT = 'input[name="name"], input[placeholder*="Name" i], input[placeholder*="名称" i]'
     FORM_USERID_INPUT = 'input[name="user_id"], input[placeholder*="User ID" i], input[placeholder*="用户" i]'
-    FORM_CHANNEL_SELECT = '.ant-select[name="channel"], .qwenpaw-select[name="channel"]'
-    FORM_SUBMIT_BTN = '[class*=drawer] button.ant-btn-primary, [class*=drawer] button.qwenpaw-btn-primary, button:has-text("Save"), button:has-text("保存")'
+    FORM_CHANNEL_SELECT = '.ant-select[name="channel"], .jotaduo-select[name="channel"]'
+    FORM_SUBMIT_BTN = '[class*=drawer] button.ant-btn-primary, [class*=drawer] button.jotaduo-btn-primary, button:has-text("Save"), button:has-text("保存")'
     FORM_CANCEL_BTN = '[class*=drawer] button:has-text("Cancel"), [class*=drawer] button:has-text("取消")'
 
     # Confirmation dialog
-    CONFIRM_MODAL = '.ant-modal, .qwenpaw-modal'
-    CONFIRM_OK_BTN = '.ant-modal .ant-btn-primary, .qwenpaw-modal .qwenpaw-btn-primary, button:has-text("OK"), button:has-text("确认"), button:has-text("确定")'
-    CONFIRM_CANCEL_BTN = '.ant-modal .ant-btn:not(.ant-btn-primary), .qwenpaw-modal .qwenpaw-btn:not(.qwenpaw-btn-primary), button:has-text("Cancel"), button:has-text("取消")'
+    CONFIRM_MODAL = '.ant-modal, .jotaduo-modal'
+    CONFIRM_OK_BTN = '.ant-modal .ant-btn-primary, .jotaduo-modal .jotaduo-btn-primary, button:has-text("OK"), button:has-text("确认"), button:has-text("确定")'
+    CONFIRM_CANCEL_BTN = '.ant-modal .ant-btn:not(.ant-btn-primary), .jotaduo-modal .jotaduo-btn:not(.jotaduo-btn-primary), button:has-text("Cancel"), button:has-text("取消")'
 
     # Empty state
     EMPTY_STATE = '.ant-empty, [class*=empty]'

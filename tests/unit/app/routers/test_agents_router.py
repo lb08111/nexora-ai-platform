@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Unit tests for ``qwenpaw.app.routers.agents``.
+"""Unit tests for ``jotaduo.app.routers.agents``.
 
 Covers the 5 highest-value flows:
 
@@ -19,8 +19,8 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from agentscope_runtime.engine.schemas.exception import AppBaseException
-from qwenpaw.app.routers.agents import router as agents_router
-from qwenpaw.config.config import AgentProfileConfig, AgentProfileRef
+from jotaduo.app.routers.agents import router as agents_router
+from jotaduo.config.config import AgentProfileConfig, AgentProfileRef
 
 
 def _ref(agent_id: str, *, enabled: bool = True) -> AgentProfileRef:
@@ -91,11 +91,11 @@ def test_list_agents_returns_all_profiles(client, fake_config):
 
     with (
         patch(
-            "qwenpaw.app.routers.agents.load_config",
+            "jotaduo.app.routers.agents.load_config",
             return_value=fake_config,
         ),
         patch(
-            "qwenpaw.app.routers.agents.load_agent_config",
+            "jotaduo.app.routers.agents.load_agent_config",
             side_effect=fake_load,
         ),
     ):
@@ -111,11 +111,11 @@ def test_list_agents_falls_back_to_id_when_load_fails(client, fake_config):
     # the agent with a derived name rather than 500-ing the whole list.
     with (
         patch(
-            "qwenpaw.app.routers.agents.load_config",
+            "jotaduo.app.routers.agents.load_config",
             return_value=fake_config,
         ),
         patch(
-            "qwenpaw.app.routers.agents.load_agent_config",
+            "jotaduo.app.routers.agents.load_agent_config",
             side_effect=RuntimeError("config broken"),
         ),
     ):
@@ -141,7 +141,7 @@ def test_get_agent_returns_config(client):
     )
 
     with patch(
-        "qwenpaw.app.routers.agents.load_agent_config",
+        "jotaduo.app.routers.agents.load_agent_config",
         return_value=cfg,
     ):
         response = client.get("/api/agents/bot")
@@ -152,7 +152,7 @@ def test_get_agent_returns_config(client):
 
 def test_get_agent_returns_404_for_missing(client):
     with patch(
-        "qwenpaw.app.routers.agents.load_agent_config",
+        "jotaduo.app.routers.agents.load_agent_config",
         side_effect=ValueError("no such agent"),
     ):
         response = client.get("/api/agents/ghost")
@@ -162,7 +162,7 @@ def test_get_agent_returns_404_for_missing(client):
 
 def test_get_agent_returns_404_for_app_base_exception(client):
     with patch(
-        "qwenpaw.app.routers.agents.load_agent_config",
+        "jotaduo.app.routers.agents.load_agent_config",
         side_effect=AppBaseException(
             status=404,
             code="agent_not_found",
@@ -181,7 +181,7 @@ def test_get_agent_returns_404_for_app_base_exception(client):
 
 def test_reorder_agents_rejects_duplicate_ids(client, fake_config):
     with patch(
-        "qwenpaw.app.routers.agents.load_config",
+        "jotaduo.app.routers.agents.load_config",
         return_value=fake_config,
     ):
         response = client.put(
@@ -195,7 +195,7 @@ def test_reorder_agents_rejects_duplicate_ids(client, fake_config):
 
 def test_reorder_agents_rejects_mismatched_ids(client, fake_config):
     with patch(
-        "qwenpaw.app.routers.agents.load_config",
+        "jotaduo.app.routers.agents.load_config",
         return_value=fake_config,
     ):
         response = client.put(
@@ -209,10 +209,10 @@ def test_reorder_agents_rejects_mismatched_ids(client, fake_config):
 def test_reorder_agents_happy_path_saves(client, fake_config):
     with (
         patch(
-            "qwenpaw.app.routers.agents.load_config",
+            "jotaduo.app.routers.agents.load_config",
             return_value=fake_config,
         ),
-        patch("qwenpaw.app.routers.agents.save_config") as save_mock,
+        patch("jotaduo.app.routers.agents.save_config") as save_mock,
     ):
         response = client.put(
             "/api/agents/order",
@@ -231,7 +231,7 @@ def test_reorder_agents_happy_path_saves(client, fake_config):
 
 def test_delete_agent_refuses_default(client, fake_config):
     with patch(
-        "qwenpaw.app.routers.agents.load_config",
+        "jotaduo.app.routers.agents.load_config",
         return_value=fake_config,
     ):
         response = client.delete("/api/agents/default")
@@ -242,7 +242,7 @@ def test_delete_agent_refuses_default(client, fake_config):
 
 def test_delete_agent_404_when_missing(client, fake_config):
     with patch(
-        "qwenpaw.app.routers.agents.load_config",
+        "jotaduo.app.routers.agents.load_config",
         return_value=fake_config,
     ):
         response = client.delete("/api/agents/ghost")
@@ -257,10 +257,10 @@ def test_delete_agent_happy_path_calls_stop_and_saves(
 ):
     with (
         patch(
-            "qwenpaw.app.routers.agents.load_config",
+            "jotaduo.app.routers.agents.load_config",
             return_value=fake_config,
         ),
-        patch("qwenpaw.app.routers.agents.save_config") as save_mock,
+        patch("jotaduo.app.routers.agents.save_config") as save_mock,
     ):
         response = client.delete("/api/agents/bot")
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Unit tests for ``qwenpaw.app.runner.task_tracker.TaskTracker``.
+"""Unit tests for ``jotaduo.app.runner.task_tracker.TaskTracker``.
 
 Covers:
 - idle/running status before/after a task
@@ -20,7 +20,7 @@ import json
 
 import pytest
 
-from qwenpaw.app.runner.task_tracker import TaskTracker
+from jotaduo.app.runner.task_tracker import TaskTracker
 
 
 # ---------------------------------------------------------------------------

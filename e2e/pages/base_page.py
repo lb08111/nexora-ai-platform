@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-QwenPaw E2E test framework - Page Object base class.
+JotaDuo E2E test framework - Page Object base class.
 
 Provides common page operations; every page object should inherit from this class.
 """
@@ -33,9 +33,9 @@ class BasePage:
     PAGE_URL: str = ""
 
     # Generic selectors (subclasses may override)
-    SUCCESS_MESSAGE = '.ant-message-success, .qwenpaw-message-success, .qwenpaw-notification-success'
-    ERROR_MESSAGE = '.ant-message-error, .qwenpaw-message-error, .qwenpaw-notification-error'
-    LOADING_SPINNER = '.ant-spin, .qwenpaw-spin, [class*=loading]'
+    SUCCESS_MESSAGE = '.ant-message-success, .jotaduo-message-success, .jotaduo-notification-success'
+    ERROR_MESSAGE = '.ant-message-error, .jotaduo-message-error, .jotaduo-notification-error'
+    LOADING_SPINNER = '.ant-spin, .jotaduo-spin, [class*=loading]'
 
     def __init__(self, page: Page):
         self.page = page
@@ -423,7 +423,7 @@ class BasePage:
         """
         Capture a screenshot at a key test step and archive it per test case.
 
-        - The test case name is passed through page._qwenpaw_test_name (injected by conftest).
+        - The test case name is passed through page._jotaduo_test_name (injected by conftest).
         - File name: <seq>_<safe action>_<HHMMSS_ms>.png
         - Defaults to viewport only (full_page=False) to avoid slow long-page captures
           while a "Thinking" spinner is on screen.
@@ -438,7 +438,7 @@ class BasePage:
         """
         try:
             from datetime import datetime as _dt
-            test_name = getattr(self.page, "_qwenpaw_test_name", None) or "unknown_test"
+            test_name = getattr(self.page, "_jotaduo_test_name", None) or "unknown_test"
             # Sanitise: keep only alphanumerics, dash, and underscore
             import re as _re
             safe_test = _re.sub(r"[^A-Za-z0-9_\-]", "_", test_name)[:80]
@@ -449,9 +449,9 @@ class BasePage:
             case_dir.mkdir(parents=True, exist_ok=True)
 
             # Auto-increment sequence (stored on page, counted per test case)
-            seq = getattr(self.page, "_qwenpaw_step_seq", 0) + 1
+            seq = getattr(self.page, "_jotaduo_step_seq", 0) + 1
             try:
-                self.page._qwenpaw_step_seq = seq
+                self.page._jotaduo_step_seq = seq
             except Exception:
                 pass
 

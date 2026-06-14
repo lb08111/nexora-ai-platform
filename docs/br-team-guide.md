@@ -1,15 +1,15 @@
-# BR Team — Sub-Agentes Brasileiros (`qwenpaw.agents.br_team`)
+# BR Team — Sub-Agentes Brasileiros (`jotaduo.agents.br_team`)
 
 > **Status:** v1.0 — implementado, testado (69/69 testes verdes, sem regressão).
-> **Localização do código:** `src/qwenpaw/agents/br_team/`
-> **Skills associados:** `src/qwenpaw/agents/skills/br_*-pt/`
+> **Localização do código:** `src/jotaduo/agents/br_team/`
+> **Skills associados:** `src/jotaduo/agents/skills/br_*-pt/`
 > **Testes:** `tests/unit/agents/br_team/`
 
 ---
 
 ## 1. Visão geral
 
-O `DiscoveryAgent` (`src/qwenpaw/discovery/`) entrevista o dono da empresa e
+O `DiscoveryAgent` (`src/jotaduo/discovery/`) entrevista o dono da empresa e
 emite um `TeamBlueprint` — apenas especificação dos agentes recomendados
 (`proposed_team: list[AgentSpec]`). O pacote **`br_team`** materializa esse
 blueprint em **sub-agentes ReAct concretos**, com prompts em pt-BR, toolkit
@@ -23,7 +23,7 @@ flowchart LR
     A[Empresário pt-BR] -->|entrevista| B(DiscoveryAgent)
     B -->|emit_blueprint| C[TeamBlueprint JSON]
     C -->|build_team_from_blueprint| D[BR Team]
-    D --> E[NexoraOrchestrator]
+    D --> E[JotaduoOrchestrator]
     E -->|chat_with_agent / spawn_subagent| F[8 Especialistas]
     F -->|tools BR| G[(WhatsApp / Pix / Agenda / BrasilAPI)]
 ```
@@ -35,10 +35,10 @@ flowchart LR
 ### 2.1 Estrutura de diretórios
 
 ```
-src/qwenpaw/agents/br_team/
+src/jotaduo/agents/br_team/
 ├── __init__.py              # API pública (lazy load)
 ├── prompts.py               # 9 system prompts pt-BR
-├── orchestrator.py          # NexoraOrchestrator (ReActAgent)
+├── orchestrator.py          # JotaduoOrchestrator (ReActAgent)
 ├── factory.py               # resolve_role + build_team_from_blueprint
 ├── specialists/
 │   ├── __init__.py
@@ -61,7 +61,7 @@ src/qwenpaw/agents/br_team/
 | **L2 — Especialistas** | `ReActAgent` configurado com prompt + tools do papel. | `specialists/base.py` |
 | **L3 — Factory** | Mapeia blueprint do discovery (texto livre) em especialistas concretos. | `factory.py` |
 | **L4 — Orquestrador** | Roteia intenções para o especialista certo via API local. | `orchestrator.py` |
-| **L5 — Skills (qwenpaw)** | SKILL.md com triggers/contratos para o sistema de skills. | `agents/skills/br_*-pt/` |
+| **L5 — Skills (jotaduo)** | SKILL.md com triggers/contratos para o sistema de skills. | `agents/skills/br_*-pt/` |
 
 ### 2.3 Decisões-chave
 
@@ -73,7 +73,7 @@ src/qwenpaw/agents/br_team/
    prompt + subset de tools. Reduz boilerplate sem perder especialização.
 3. **Orquestrador é Hub-and-Spoke**, não in-process. Usa as tools nativas
    `list_agents` / `chat_with_agent` / `submit_to_agent` / `spawn_subagent`
-   já presentes em `qwenpaw.agents.tools.agent_management`. Cada
+   já presentes em `jotaduo.agents.tools.agent_management`. Cada
    especialista pode rodar no seu próprio `Workspace`, com canais
    próprios (WhatsApp, Telegram etc.).
 4. **`resolve_role` é tolerante.** Trabalha em texto pt-BR livre,
@@ -87,19 +87,19 @@ src/qwenpaw/agents/br_team/
 ### 3.1 Imports principais
 
 ```python
-from qwenpaw.agents.br_team import (
-    NexoraOrchestrator,        # orquestrador
+from jotaduo.agents.br_team import (
+    JotaduoOrchestrator,        # orquestrador
     SPECIALIST_REGISTRY,       # dict[role -> factory]
     SpecialistFactory,         # tipo
     build_team_from_blueprint, # blueprint -> time
 )
-from qwenpaw.agents.br_team.factory import resolve_role
-from qwenpaw.agents.br_team.specialists.base import (
+from jotaduo.agents.br_team.factory import resolve_role
+from jotaduo.agents.br_team.specialists.base import (
     BRSpecialistAgent,
     build_specialist,
     TOOLS_BY_ROLE,
 )
-from qwenpaw.agents.br_team.prompts import PROMPTS_BY_ROLE
+from jotaduo.agents.br_team.prompts import PROMPTS_BY_ROLE
 ```
 
 ### 3.2 `build_team_from_blueprint(blueprint, instantiate=True)`
@@ -107,8 +107,8 @@ from qwenpaw.agents.br_team.prompts import PROMPTS_BY_ROLE
 Materializa o blueprint do `DiscoveryAgent` em sub-agentes.
 
 ```python
-from qwenpaw.discovery import build_discovery_agent
-from qwenpaw.agents.br_team import build_team_from_blueprint
+from jotaduo.discovery import build_discovery_agent
+from jotaduo.agents.br_team import build_team_from_blueprint
 
 # blueprint produzido pela entrevista (TeamBlueprint)
 result = build_team_from_blueprint(blueprint, instantiate=True)
@@ -121,13 +121,13 @@ result = build_team_from_blueprint(blueprint, instantiate=True)
 Use `instantiate=False` para **preview sem custo de modelo** (útil em
 CLI/dashboard).
 
-### 3.3 `NexoraOrchestrator()`
+### 3.3 `JotaduoOrchestrator()`
 
 ```python
-from qwenpaw.agents.br_team import NexoraOrchestrator
+from jotaduo.agents.br_team import JotaduoOrchestrator
 from agentscope.message import Msg
 
-orchestrator = NexoraOrchestrator()
+orchestrator = JotaduoOrchestrator()
 resp = await orchestrator.reply(
     Msg(
         name="user",
@@ -149,7 +149,7 @@ sintetizará a resposta.
 Constrói um especialista isolado.
 
 ```python
-from qwenpaw.agents.br_team.specialists.base import build_specialist
+from jotaduo.agents.br_team.specialists.base import build_specialist
 
 vendedor = build_specialist(
     role="vendas",
@@ -230,7 +230,7 @@ para `recepcionista_saude` automaticamente.
 adiciona `+55` automaticamente para 10–11 dígitos.
 
 **Stub:** logger registra envio; troca real plugar em
-`qwenpaw.app.channels.whatsapp.channel.WhatsAppChannel` ou provedor
+`jotaduo.app.channels.whatsapp.channel.WhatsAppChannel` ou provedor
 externo (Z-API, Evolution, Twilio, WhatsApp Cloud API).
 
 ### 5.2 Agenda (`tools/agenda_tools.py`)
@@ -303,9 +303,9 @@ Todos em `prompts.py`, dict `PROMPTS_BY_ROLE`.
 
 ---
 
-## 7. Skills do qwenpaw (formato `SKILL.md`)
+## 7. Skills do jotaduo (formato `SKILL.md`)
 
-9 skills criados em `src/qwenpaw/agents/skills/`:
+9 skills criados em `src/jotaduo/agents/skills/`:
 
 ```
 br_orchestrator-pt/SKILL.md         🇧🇷
@@ -328,7 +328,7 @@ description: "..."         # triggers (frases que disparam o skill)
 when_to_use: "..."
 metadata:
   builtin_skill_version: "1.0"
-  qwenpaw:
+  jotaduo:
     emoji: "..."
     requires: {}
 ---
@@ -359,15 +359,15 @@ python -m pytest tests/unit/agents/ tests/unit/discovery/ -q
 
 ---
 
-## 9. Integração com o resto do qwenpaw
+## 9. Integração com o resto do jotaduo
 
 ### 9.1 O que **já está** plugado
 
 - ✅ Modelo do workspace via `create_model_and_formatter()` —
   mesma estratégia do `discovery/agent.py`.
-- ✅ Tools nativas de coordenação inter-agente do qwenpaw
+- ✅ Tools nativas de coordenação inter-agente do jotaduo
   (`list_agents`, `chat_with_agent`, etc.) consumidas pelo
-  `NexoraOrchestrator`.
+  `JotaduoOrchestrator`.
 - ✅ `TeamBlueprint` (Pydantic) lido pela factory.
 - ✅ Sistema de skills `make-skill` — manifesto compatível.
 
@@ -380,7 +380,7 @@ python -m pytest tests/unit/agents/ tests/unit/discovery/ -q
 | **Gateway Pix real** | `pagamento_tools.py` → provider (Gerencianet/MP/Asaas) |
 | **Google Calendar real** | `agenda_tools.py` → trocar dict in-memory por API |
 | **Auto-registro em `MultiAgentManager`** | gerar `agent.yaml` para cada especialista e adicionar à config |
-| **CLI** | `qwenpaw team build --blueprint <path>` em `src/qwenpaw/cli/` |
+| **CLI** | `jotaduo team build --blueprint <path>` em `src/jotaduo/cli/` |
 | **Auto-pipeline** | ao final da entrevista, `DiscoveryAgent.emit_blueprint` pode chamar `build_team_from_blueprint` e devolver os IDs dos agentes criados |
 
 ---
@@ -393,7 +393,7 @@ python -m pytest tests/unit/agents/ tests/unit/discovery/ -q
    `TOOLS_BY_ROLE` em `specialists/base.py`.
 3. **Sinônimos pt-BR** → adicione tupla em `_ROLE_KEYWORDS` em
    `factory.py` (ordem importa para casos ambíguos).
-4. **Skill** → crie `src/qwenpaw/agents/skills/br_meu_papel-pt/SKILL.md`
+4. **Skill** → crie `src/jotaduo/agents/skills/br_meu_papel-pt/SKILL.md`
    no mesmo padrão dos existentes.
 5. **Teste** → adicione casos em `test_factory.py::test_resolve_role_...`
    e em `test_prompts.py`.
@@ -428,54 +428,54 @@ de `PROMPTS_BY_ROLE` — nenhum boilerplate extra.
 - [x] 588 testes pré-existentes (`agents/`+`discovery/`) passando
 - [x] Documentação (este arquivo)
 - [ ] Provedores reais (WhatsApp/BrasilAPI/Pix) — handoff para usuário
-- [ ] CLI `qwenpaw team build` — handoff
+- [ ] CLI `jotaduo team build` — handoff
 - [ ] Registro auto no `MultiAgentManager` — handoff
 - [ ] Testes de integração ponta-a-ponta com modelo real — handoff
 
 ---
 
-## 13. Plugin `nexora-team` (v1.0)
+## 13. Plugin `jotaduo-team` (v1.0)
 
-Foi adicionado o plugin instalável **`nexora-team`** em
-`plugins/bundle/nexora-team/`, que materializa este pacote dentro do
-QwenPaw — fechando o item "registro auto no `MultiAgentManager`" do
+Foi adicionado o plugin instalável **`jotaduo-team`** em
+`plugins/bundle/jotaduo-team/`, que materializa este pacote dentro do
+JotaDuo — fechando o item "registro auto no `MultiAgentManager`" do
 checklist acima.
 
 ### O que o plugin faz
 
-1. **Registra 5 agentes** (`nexora-orchestrator`, `nexora-atendente`,
-   `nexora-agendamento`, `nexora-vendas`, `nexora-financeiro`)
+1. **Registra 5 agentes** (`jotaduo-orchestrator`, `jotaduo-atendente`,
+   `jotaduo-agendamento`, `jotaduo-vendas`, `jotaduo-financeiro`)
    via `save_agent_config`, com workspace dedicado em
    `<WORKING_DIR>/workspaces/<agent_id>` e `PERSONA.md` semeada
    diretamente do `PROMPTS_BY_ROLE` do `br_team`.
 2. **Publica a ferramenta `convene_meeting`** — paraleliza
    `chat_with_agent` para N especialistas e devolve a transcrição.
-3. **Expõe API HTTP** em `/api/nexora-team/`:
+3. **Expõe API HTTP** em `/api/jotaduo-team/`:
    - `GET /team`, `POST /team/build` (preview do `TeamBlueprint`)
    - `POST /meeting`, `GET /meeting`, `GET /meeting/{id}`,
      `DELETE /meeting`, `GET /meeting/_/participants`
-4. **Ship do skill `nexora-meeting-pt`** instalado no skill pool
+4. **Ship do skill `jotaduo-meeting-pt`** instalado no skill pool
    e linkado ao workspace do orquestrador.
 5. **Hook de uninstall** remove perfis + workspaces + skill.
 
 ### Arquitetura
 
 ```
-plugins/bundle/nexora-team/
+plugins/bundle/jotaduo-team/
 ├── plugin.json
-├── plugin.py           ← NexoraTeamPlugin
+├── plugin.py           ← JotaduoTeamPlugin
 ├── constants.py        ← 5 AGENT_SPECS + role map
 ├── agents_setup.py     ← ensure_builtin_agents / uninstall_agents
 ├── routers_setup.py
 ├── routers/{team,meeting}.py
 ├── tools/meeting_tools.py
 ├── store/meetings.py   ← MeetingStore (thread-safe, evict 200)
-└── skills/nexora-meeting-pt/SKILL.md
+└── skills/jotaduo-meeting-pt/SKILL.md
 ```
 
 ### Testes
 
-- 34 testes verdes em `tests/unit/plugins/nexora_team/`
+- 34 testes verdes em `tests/unit/plugins/jotaduo_team/`
   (store, tool com stub, routers via TestClient, smoke do manifest)
 - 103/103 passando incluindo o `br_team` original — sem regressão
 - flake8 limpo
@@ -489,5 +489,5 @@ as opiniões antes de responder ao cliente. Cada contribuição vai
 com `elapsed_ms`, captura `timeout`/`exception` por agente, e o
 sumário fica em `MeetingStore` para auditoria (LGPD ART. 37).
 
-Detalhes completos: [`plugins/bundle/nexora-team/README.md`](../plugins/bundle/nexora-team/README.md).
+Detalhes completos: [`plugins/bundle/jotaduo-team/README.md`](../plugins/bundle/jotaduo-team/README.md).
 

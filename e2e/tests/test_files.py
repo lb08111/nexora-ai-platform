@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-QwenPaw file management module P0 end-to-end test cases.
+JotaDuo file management module P0 end-to-end test cases.
 
 Combined test cases:
 - FILE-001: Page load + file list hard-assert + click file to open editor + editor content verification
@@ -23,7 +23,7 @@ WORKSPACE_URL = f"{config.base_url}/workspace"
 FILE_ITEM_SELECTOR = 'div[class*="fileItem"]'
 FILE_NAME_SELECTOR = 'div[class*="fileItemName"]'
 FILE_META_SELECTOR = 'div[class*="fileItemMeta"]'
-SWITCH_SELECTOR = 'button.qwenpaw-switch[role="switch"]'
+SWITCH_SELECTOR = 'button.jotaduo-switch[role="switch"]'
 DRAG_HANDLE_SELECTOR = 'div[class*="dragHandle"]'
 
 def navigate_to_workspace(page: Page):
@@ -194,12 +194,12 @@ class TestFileToggleReorderMemory:
 
         # Handle a possible confirm dialog (Ant Popconfirm or Modal)
         popconfirm = page.locator(
-            '.qwenpaw-popconfirm-buttons button.qwenpaw-btn-primary, '
-            '.qwenpaw-modal-footer button.qwenpaw-btn-primary, '
+            '.jotaduo-popconfirm-buttons button.jotaduo-btn-primary, '
+            '.jotaduo-modal-footer button.jotaduo-btn-primary, '
             '.ant-popconfirm-buttons button.ant-btn-primary, '
             '.ant-modal-footer button.ant-btn-primary, '
-            '.qwenpaw-popover button:has-text("OK"), '
-            '.qwenpaw-popover button:has-text("Yes"), '
+            '.jotaduo-popover button:has-text("OK"), '
+            '.jotaduo-popover button:has-text("Yes"), '
             '.ant-popover button:has-text("OK"), '
             '.ant-popover button:has-text("Yes")'
         )
@@ -348,7 +348,7 @@ class TestFileContentEditAndSave:
 
         log_test_step("4. Turn off Markdown preview to enter edit mode")
         # Source: Preview Switch is in the contentLabel area
-        preview_switch = editor_card.locator('button.qwenpaw-switch[role="switch"]').first
+        preview_switch = editor_card.locator('button.jotaduo-switch[role="switch"]').first
         if preview_switch.is_visible():
             # If preview is on (aria-checked=true), click to turn it off
             is_preview_on = preview_switch.get_attribute('aria-checked') == 'true'
@@ -402,7 +402,7 @@ class TestFileContentEditAndSave:
             # Turn off preview again
             editor_card = page.locator('[class*="editorCard"]').first
             expect(editor_card).to_be_visible(timeout=5000)
-            preview_switch = editor_card.locator('button.qwenpaw-switch[role="switch"]').first
+            preview_switch = editor_card.locator('button.jotaduo-switch[role="switch"]').first
             if preview_switch.is_visible() and preview_switch.get_attribute('aria-checked') == 'true':
                 preview_switch.click()
                 page.wait_for_timeout(1000)
@@ -571,7 +571,7 @@ class TestDailyMemoryView:
             logger.info("Daily memory section not found; verifying file list exists")
             file_list = page.locator(
                 '[class*="fileList"], [class*="FileList"], '
-                '.qwenpaw-tree, .ant-tree'
+                '.jotaduo-tree, .ant-tree'
             ).first
             if file_list.count() > 0:
                 logger.info("File list exists")
@@ -585,7 +585,7 @@ class TestDailyMemoryView:
         log_test_step("Find expandable memory items")
         # Daily memory typically uses Collapse or clickable list items
         expandable_items = page.locator(
-            '.qwenpaw-collapse-header, .ant-collapse-header, '
+            '.jotaduo-collapse-header, .ant-collapse-header, '
             '[class*="memoryItem"], [class*="memory-item"], '
             '[class*="dailyMemory"] [class*="header"]'
         ).all()
@@ -599,7 +599,7 @@ class TestDailyMemoryView:
 
             # Verify expanded content
             expanded_content = page.locator(
-                '.qwenpaw-collapse-content-active, .ant-collapse-content-active, '
+                '.jotaduo-collapse-content-active, .ant-collapse-content-active, '
                 '[class*="memoryContent"], [class*="memory-content"]'
             ).first
             if expanded_content.count() > 0:
@@ -656,7 +656,7 @@ class TestMarkdownPreview:
         if len(md_files) == 0:
             # Fall back to any file in the file tree
             file_items = page.locator(
-                '.qwenpaw-tree-treenode, .ant-tree-treenode, '
+                '.jotaduo-tree-treenode, .ant-tree-treenode, '
                 '[class*="fileItem"], [class*="file-item"]'
             ).all()
             if len(file_items) > 0:

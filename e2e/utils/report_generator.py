@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-QwenPaw E2E Test Report Generator
+JotaDuo E2E Test Report Generator
 
 Automatically generates a Markdown test report from pytest results.
 
@@ -83,7 +83,7 @@ def _build_header(total, passed, failed, skipped, rerun, pass_rate, duration_sec
     duration_secs = int(duration_seconds % 60)
 
     lines = [
-        "# QwenPaw E2E Automation Test Report\n",
+        "# JotaDuo E2E Automation Test Report\n",
         f"**Test Environment**: {app_config.server.base_url}  ",
         f"**Execution Time**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}  ",
         f"**Total Duration**: {duration_minutes}m {duration_secs}s  ",

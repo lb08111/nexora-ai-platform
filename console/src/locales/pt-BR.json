@@ -2410,5 +2410,22 @@
       "LOAD_FAILED": "Falha ao carregar a visualização do arquivo.",
       "LOAD_FAILED_DETAIL": "Falha ao carregar a visualização do arquivo: {{detail}}"
     }
+  },
+  "agentComm": {
+    "title": "Mensagem do agente",
+    "defaultAgentName": "Agente",
+    "placeholder": "Responda ao agente…",
+    "submitHint": "Pressione Ctrl/Cmd + Enter para enviar",
+    "send": "Enviar",
+    "dismiss": "Dispensar",
+    "yes": "Sim",
+    "no": "Não",
+    "timedOut": "Esta solicitação expirou.",
+    "status": {
+      "waiting": "Aguardando você",
+      "thinking": "Pensando…",
+      "done": "Concluído",
+      "error": "Erro"
+    }
   }
 }

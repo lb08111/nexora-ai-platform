@@ -50,7 +50,7 @@ from ..store import (
     get_production_store,
 )
 
-logger = logging.getLogger("qwenpaw").getChild(
+logger = logging.getLogger("jotaduo").getChild(
     "plugin.ai-productions.routers.productions",
 )
 

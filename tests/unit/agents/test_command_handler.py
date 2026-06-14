@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pytest
 
-from qwenpaw.agents.command_handler import CommandHandler
+from jotaduo.agents.command_handler import CommandHandler
 
 
 class DummyMemory:
@@ -23,7 +23,7 @@ class DummyMemory:
 @pytest.mark.asyncio
 async def test_process_clear_returns_clear_history_metadata() -> None:
     memory = DummyMemory()
-    handler = CommandHandler(agent_name="QwenPaw", memory=memory)
+    handler = CommandHandler(agent_name="JotaDuo", memory=memory)
 
     msg = await handler.handle_command("/clear")
 

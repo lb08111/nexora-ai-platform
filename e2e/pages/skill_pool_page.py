@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-QwenPaw Skill Pool page object.
+JotaDuo Skill Pool page object.
 
 Wraps all interactions on the Skill Pool page and exposes business-level methods.
 """
@@ -33,7 +33,7 @@ class SkillPoolPage(BasePage):
     # ========== Selector definitions ==========
 
     # Skill card
-    SKILL_CARD = ".qwenpaw-card"
+    SKILL_CARD = ".jotaduo-card"
 
     # Search input
     SEARCH_INPUT = 'input[placeholder*="搜索"], input[placeholder*="Search"]'

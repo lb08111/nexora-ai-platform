@@ -33,7 +33,7 @@ jobs:
         run: |
           pip install setuptools==68.2.2 wheel==0.41.2
 
-      - name: Install QwenPaw with dev dependencies
+      - name: Install JotaDuo with dev dependencies
         run: |
           pip install -q -e ".[dev]"
 

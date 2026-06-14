@@ -10,7 +10,7 @@ from pathlib import Path
 
 from fastapi import APIRouter, HTTPException, Query
 
-logger = logging.getLogger("qwenpaw").getChild("plugin.cloudpaw.routers.prd")
+logger = logging.getLogger("jotaduo").getChild("plugin.cloudpaw.routers.prd")
 
 router = APIRouter(prefix="", tags=["prd"])
 

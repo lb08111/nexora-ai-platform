@@ -1,6 +1,6 @@
-; QwenPaw Desktop NSIS installer. Run makensis from repo root after
+; JotaDuo Desktop NSIS installer. Run makensis from repo root after
 ; building dist/win-unpacked (see scripts/pack/build_win.ps1).
-; Usage: makensis /DQWENPAW_VERSION=1.2.3 /DOUTPUT_EXE=dist\QwenPaw-Setup-1.2.3.exe scripts\pack\desktop.nsi
+; Usage: makensis /DJOTADUO_VERSION=1.2.3 /DOUTPUT_EXE=dist\JotaDuo-Setup-1.2.3.exe scripts\pack\desktop.nsi
 
 !include "MUI2.nsh"
 !define MUI_ABORTWARNING
@@ -8,17 +8,17 @@
 !define MUI_ICON "${UNPACKED}\icon.ico"
 !define MUI_UNICON "${UNPACKED}\icon.ico"
 
-!ifndef QWENPAW_VERSION
-  !define QWENPAW_VERSION "0.0.0"
+!ifndef JOTADUO_VERSION
+  !define JOTADUO_VERSION "0.0.0"
 !endif
 !ifndef OUTPUT_EXE
-  !define OUTPUT_EXE "dist\QwenPaw-Setup-${QWENPAW_VERSION}.exe"
+  !define OUTPUT_EXE "dist\JotaDuo-Setup-${JOTADUO_VERSION}.exe"
 !endif
 
-Name "QwenPaw Desktop"
+Name "JotaDuo Desktop"
 OutFile "${OUTPUT_EXE}"
-InstallDir "$LOCALAPPDATA\QwenPaw"
-InstallDirRegKey HKCU "Software\QwenPaw" "InstallPath"
+InstallDir "$LOCALAPPDATA\JotaDuo"
+InstallDirRegKey HKCU "Software\JotaDuo" "InstallPath"
 RequestExecutionLevel user
 
 !insertmacro MUI_PAGE_DIRECTORY
@@ -33,24 +33,24 @@ RequestExecutionLevel user
   !define UNPACKED "dist\win-unpacked"
 !endif
 
-Section "QwenPaw Desktop" SEC01
+Section "JotaDuo Desktop" SEC01
   SetOutPath "$INSTDIR"
   File /r "${UNPACKED}\*.*"
-  WriteRegStr HKCU "Software\QwenPaw" "InstallPath" "$INSTDIR"
+  WriteRegStr HKCU "Software\JotaDuo" "InstallPath" "$INSTDIR"
   WriteUninstaller "$INSTDIR\Uninstall.exe"
 
   ; Main shortcut - uses VBS to hide console window
-  CreateShortcut "$SMPROGRAMS\QwenPaw Desktop.lnk" "$INSTDIR\QwenPaw Desktop.vbs" "" "$INSTDIR\icon.ico" 0
-  CreateShortcut "$DESKTOP\QwenPaw Desktop.lnk" "$INSTDIR\QwenPaw Desktop.vbs" "" "$INSTDIR\icon.ico" 0
+  CreateShortcut "$SMPROGRAMS\JotaDuo Desktop.lnk" "$INSTDIR\JotaDuo Desktop.vbs" "" "$INSTDIR\icon.ico" 0
+  CreateShortcut "$DESKTOP\JotaDuo Desktop.lnk" "$INSTDIR\JotaDuo Desktop.vbs" "" "$INSTDIR\icon.ico" 0
   
   ; Debug shortcut - shows console window for troubleshooting
-  CreateShortcut "$SMPROGRAMS\QwenPaw Desktop (Debug).lnk" "$INSTDIR\QwenPaw Desktop (Debug).bat" "" "$INSTDIR\icon.ico" 0
+  CreateShortcut "$SMPROGRAMS\JotaDuo Desktop (Debug).lnk" "$INSTDIR\JotaDuo Desktop (Debug).bat" "" "$INSTDIR\icon.ico" 0
 SectionEnd
 
 Section "Uninstall"
-  Delete "$SMPROGRAMS\QwenPaw Desktop.lnk"
-  Delete "$SMPROGRAMS\QwenPaw Desktop (Debug).lnk"
-  Delete "$DESKTOP\QwenPaw Desktop.lnk"
+  Delete "$SMPROGRAMS\JotaDuo Desktop.lnk"
+  Delete "$SMPROGRAMS\JotaDuo Desktop (Debug).lnk"
+  Delete "$DESKTOP\JotaDuo Desktop.lnk"
   RMDir /r "$INSTDIR"
-  DeleteRegKey HKCU "Software\QwenPaw"
+  DeleteRegKey HKCU "Software\JotaDuo"
 SectionEnd

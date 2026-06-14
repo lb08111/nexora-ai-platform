@@ -39,15 +39,15 @@ jobs:
 
       - name: Copy console build into package
         run: |
-          rm -rf src/qwenpaw/console/*
-          mkdir -p src/qwenpaw/console
-          cp -R console/dist/* src/qwenpaw/console/
+          rm -rf src/jotaduo/console/*
+          mkdir -p src/jotaduo/console
+          cp -R console/dist/* src/jotaduo/console/
 
       - name: Bundle docs into package
         run: |
-          rm -rf src/qwenpaw/docs
-          mkdir -p src/qwenpaw/docs
-          cp website/public/docs/*.md src/qwenpaw/docs/
+          rm -rf src/jotaduo/docs
+          mkdir -p src/jotaduo/docs
+          cp website/public/docs/*.md src/jotaduo/docs/
 
       - name: Install build dependencies
         run: |
@@ -60,15 +60,15 @@ jobs:
       - name: Upload dist artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: qwenpaw-dist
+          name: jotaduo-dist
           path: dist/
           retention-days: 7
 
       - name: Upload version metadata
         uses: actions/upload-artifact@v4
         with:
-          name: qwenpaw-version
-          path: src/qwenpaw/__version__.py
+          name: jotaduo-version
+          path: src/jotaduo/__version__.py
           retention-days: 7
 
   # ── Run all verification jobs ──────────────────────────────────────────────

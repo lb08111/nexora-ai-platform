@@ -1,6 +1,6 @@
 # Discovery Agent (CopilotKit) — plugin
 
-Wraps `qwenpaw.discovery` with a CopilotKit-style surface so a React app
+Wraps `jotaduo.discovery` with a CopilotKit-style surface so a React app
 can render the discovery interview as **generative UI** (CoAgent shared
 state + `useCoAgentStateRender`).
 
@@ -24,7 +24,7 @@ FastAPI router (this plugin)
   └─ /api/discovery-copilotkit/components         (GET: manifest)
                        │
                        ▼
-qwenpaw.discovery.DiscoverySession   (Live or Scripted)
+jotaduo.discovery.DiscoverySession   (Live or Scripted)
 ```
 
 O Pydantic `DiscoveryAgentState` espelha o tipo TypeScript do mesmo nome,
@@ -40,11 +40,11 @@ demos, testes de UI e o eval offline.
 ## Modo live (LLM)
 
 ```bash
-export QWENPAW_DISCOVERY_LIVE=1
+export JOTADUO_DISCOVERY_LIVE=1
 ```
 
-No próximo startup do QwenPaw o plugin troca o factory para
-`LiveDiscoverySession`, que dirige o agente real do `qwenpaw.discovery`.
+No próximo startup do JotaDuo o plugin troca o factory para
+`LiveDiscoverySession`, que dirige o agente real do `jotaduo.discovery`.
 
 ## Endpoints
 

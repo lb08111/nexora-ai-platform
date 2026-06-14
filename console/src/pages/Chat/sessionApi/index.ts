@@ -336,7 +336,7 @@ const resolveRealId = (
 // Per-session user message persistence (survives page refresh)
 // ---------------------------------------------------------------------------
 
-const STORAGE_PREFIX = "qwenpaw_pending_user_msg_";
+const STORAGE_PREFIX = "jotaduo_pending_user_msg_";
 
 function savePendingUserMessage(sessionId: string, text: string): void {
   try {

@@ -1,6 +1,6 @@
 # Copilot Kit - Chat & Plugins System
 
-Este é um sistema modular de chat e plugins para a Nexora AI Platform, desenvolvido em React com TypeScript.
+Este é um sistema modular de chat e plugins para a Jotaduo AI Platform, desenvolvido em React com TypeScript.
 
 ## 📋 Estrutura
 

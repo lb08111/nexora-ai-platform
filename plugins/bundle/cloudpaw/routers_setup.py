@@ -7,7 +7,7 @@ Returns FastAPI APIRouter instances that the plugin registers via
 
 import logging
 
-logger = logging.getLogger("qwenpaw").getChild(
+logger = logging.getLogger("jotaduo").getChild(
     __name__.replace("plugin_cloudpaw.", ""),
 )
 

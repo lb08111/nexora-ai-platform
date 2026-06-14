@@ -50,13 +50,13 @@ jobs:
       - name: Download dist artifacts
         uses: actions/download-artifact@v4
         with:
-          name: qwenpaw-dist
+          name: jotaduo-dist
           path: dist
 
       - name: Download version file
         uses: actions/download-artifact@v4
         with:
-          name: qwenpaw-version
+          name: jotaduo-version
           path: version-meta
 
       - name: Set up Python ${{ matrix.python-version }}
@@ -92,7 +92,7 @@ jobs:
       - name: Verify CLI version
         shell: bash
         run: |
-          actual=$(qwenpaw --version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+[a-zA-Z0-9.]*' | head -1)
+          actual=$(jotaduo --version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+[a-zA-Z0-9.]*' | head -1)
           expected="${{ steps.expected.outputs.version }}"
           echo "Expected: $expected"
           echo "Actual:   $actual"
@@ -104,14 +104,14 @@ jobs:
       - name: Verify Python import
         shell: bash
         run: |
-          python -c "from qwenpaw.cli.main import cli; print('import OK')"
+          python -c "from jotaduo.cli.main import cli; print('import OK')"
 
       - name: Initialize and start server
         shell: bash
         run: |
-          qwenpaw init --defaults --accept-security
-          qwenpaw app --host 127.0.0.1 --port 8088 &
-          echo $! > "$RUNNER_TEMP/qwenpaw.pid" || true
+          jotaduo init --defaults --accept-security
+          jotaduo app --host 127.0.0.1 --port 8088 &
+          echo $! > "$RUNNER_TEMP/jotaduo.pid" || true
 
       - name: Wait for /api/version
         shell: bash
@@ -143,8 +143,8 @@ jobs:
         if: always()
         shell: bash
         run: |
-          if [ -f "$RUNNER_TEMP/qwenpaw.pid" ]; then
-            kill "$(cat "$RUNNER_TEMP/qwenpaw.pid")" 2>/dev/null || true
+          if [ -f "$RUNNER_TEMP/jotaduo.pid" ]; then
+            kill "$(cat "$RUNNER_TEMP/jotaduo.pid")" 2>/dev/null || true
           fi
           if [ "$RUNNER_OS" = "Linux" ] || [ "$RUNNER_OS" = "macOS" ]; then
             lsof -ti:8088 | xargs kill 2>/dev/null || true
@@ -191,16 +191,16 @@ jobs:
           fi
           docker build \
             -f deploy/Dockerfile \
-            -t qwenpaw-verify:test \
+            -t jotaduo-verify:test \
             $BUILD_ARGS \
             .
 
       - name: Start container
         run: |
           docker run -d \
-            --name qwenpaw-test \
+            --name jotaduo-test \
             -p 8088:8088 \
-            qwenpaw-verify:test
+            jotaduo-verify:test
 
       - name: Wait for /api/version
         run: |
@@ -213,14 +213,14 @@ jobs:
             sleep 2
           done
           echo "::error::Container did not respond within 180s"
-          docker logs qwenpaw-test
+          docker logs jotaduo-test
           exit 1
 
       - name: Verify container version
         run: |
           expected=$(python3 -c "
           import re, pathlib
-          text = pathlib.Path('src/qwenpaw/__version__.py').read_text()
+          text = pathlib.Path('src/jotaduo/__version__.py').read_text()
           print(re.search(r'__version__\s*=\s*\"([^\"]+)\"', text).group(1))
           ")
           response=$(curl -sf http://127.0.0.1:8088/api/version)
@@ -235,11 +235,11 @@ jobs:
 
       - name: Show container logs
         if: always()
-        run: docker logs qwenpaw-test 2>&1 | tail -50
+        run: docker logs jotaduo-test 2>&1 | tail -50
 
       - name: Stop container
         if: always()
-        run: docker rm -f qwenpaw-test 2>/dev/null || true
+        run: docker rm -f jotaduo-test 2>/dev/null || true
 
   # ── Script install (install.sh / install.ps1) ──────────────────────────────
   verify-script-install:
@@ -275,9 +275,9 @@ jobs:
       - name: Copy console build into package
         shell: bash
         run: |
-          rm -rf src/qwenpaw/console/*
-          mkdir -p src/qwenpaw/console
-          cp -R console/dist/* src/qwenpaw/console/
+          rm -rf src/jotaduo/console/*
+          mkdir -p src/jotaduo/console
+          cp -R console/dist/* src/jotaduo/console/
 
       - name: Run install script (Linux/macOS)
         if: runner.os != 'Windows'
@@ -295,18 +295,18 @@ jobs:
         shell: bash
         run: |
           if [ "$RUNNER_OS" = "Windows" ]; then
-            source "$USERPROFILE/.qwenpaw/venv/Scripts/activate"
+            source "$USERPROFILE/.jotaduo/venv/Scripts/activate"
           else
-            export PATH="$HOME/.qwenpaw/bin:$PATH"
+            export PATH="$HOME/.jotaduo/bin:$PATH"
           fi
 
           # Verify version matches source
           expected=$(python -c "
           import re, pathlib
-          text = pathlib.Path('src/qwenpaw/__version__.py').read_text()
+          text = pathlib.Path('src/jotaduo/__version__.py').read_text()
           print(re.search(r'__version__\s*=\s*\"([^\"]+)\"', text).group(1))
           ")
-          actual=$(qwenpaw --version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+[a-zA-Z0-9.]*' | head -1)
+          actual=$(jotaduo --version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+[a-zA-Z0-9.]*' | head -1)
           echo "Expected: $expected"
           echo "Actual:   $actual"
           if [ "$actual" != "$expected" ]; then
@@ -314,9 +314,9 @@ jobs:
             exit 1
           fi
 
-          qwenpaw init --defaults --accept-security
-          qwenpaw app --host 127.0.0.1 --port 8088 &
-          echo $! > "$RUNNER_TEMP/qwenpaw.pid" || true
+          jotaduo init --defaults --accept-security
+          jotaduo app --host 127.0.0.1 --port 8088 &
+          echo $! > "$RUNNER_TEMP/jotaduo.pid" || true
           for i in $(seq 1 60); do
             if curl -sf http://127.0.0.1:8088/api/version; then
               echo ""
@@ -332,8 +332,8 @@ jobs:
         if: always()
         shell: bash
         run: |
-          if [ -f "$RUNNER_TEMP/qwenpaw.pid" ]; then
-            kill "$(cat "$RUNNER_TEMP/qwenpaw.pid")" 2>/dev/null || true
+          if [ -f "$RUNNER_TEMP/jotaduo.pid" ]; then
+            kill "$(cat "$RUNNER_TEMP/jotaduo.pid")" 2>/dev/null || true
           fi
           if [ "$RUNNER_OS" = "Linux" ] || [ "$RUNNER_OS" = "macOS" ]; then
             lsof -ti:8088 | xargs kill 2>/dev/null || true

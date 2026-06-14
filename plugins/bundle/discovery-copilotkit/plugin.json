@@ -3,12 +3,12 @@
   "name": "Discovery Agent (CopilotKit)",
   "version": "0.1.0",
   "type": "general",
-  "description": "Expõe o discovery agent do QwenPaw com renderização generativa de componentes no padrão CopilotKit (CoAgent shared state + useCoAgentStateRender).",
+  "description": "Expõe o discovery agent do JotaDuo com renderização generativa de componentes no padrão CopilotKit (CoAgent shared state + useCoAgentStateRender).",
   "description_i18n": {
-    "pt-BR": "Expõe o discovery agent do QwenPaw com renderização generativa de componentes no padrão CopilotKit (CoAgent shared state + useCoAgentStateRender).",
-    "en-US": "Wraps the QwenPaw discovery agent with CopilotKit-style generative UI (CoAgent shared state + useCoAgentStateRender)."
+    "pt-BR": "Expõe o discovery agent do JotaDuo com renderização generativa de componentes no padrão CopilotKit (CoAgent shared state + useCoAgentStateRender).",
+    "en-US": "Wraps the JotaDuo discovery agent with CopilotKit-style generative UI (CoAgent shared state + useCoAgentStateRender)."
   },
-  "author": "QwenPaw Discovery Team",
+  "author": "JotaDuo Discovery Team",
   "entry": {
     "backend": "plugin.py",
     "frontend": "components/index.ts"

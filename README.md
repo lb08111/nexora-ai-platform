@@ -1,9 +1,9 @@
 <div align="center">
 
-# QwenPaw
+# JotaDuo
 
 [![GitHub Repo](https://img.shields.io/badge/GitHub-Repo-black.svg?logo=github)](https://github.com/agentscope-ai/QwenPaw)
-[![PyPI](https://img.shields.io/pypi/v/qwenpaw?color=3775A9&label=PyPI&logo=pypi)](https://pypi.org/project/qwenpaw/)
+[![PyPI](https://img.shields.io/pypi/v/jotaduo?color=3775A9&label=PyPI&logo=pypi)](https://pypi.org/project/jotaduo/)
 [![Documentation](https://img.shields.io/badge/Docs-Website-green.svg?logo=readthedocs&label=Docs)](https://qwenpaw.agentscope.io/)
 [![Python Version](https://img.shields.io/badge/python-3.10%20~%20%3C3.14-blue.svg?logo=python&label=Python)](https://www.python.org/downloads/)
 [![Last Commit](https://img.shields.io/github/last-commit/agentscope-ai/QwenPaw)](https://github.com/agentscope-ai/QwenPaw)
@@ -20,7 +20,7 @@
 [[Documentation](https://qwenpaw.agentscope.io/)] [[中文](README_zh.md)] [[日本語](README_ja.md)] [[Русский](README_ru.md)]
 
 <p align="center">
-  <img src="https://gw.alicdn.com/imgextra/i1/O1CN01sens5C1TuwioeGexL_!!6000000002443-55-tps-771-132.svg" alt="QwenPaw Logo" width="120">
+  <img src="https://gw.alicdn.com/imgextra/i1/O1CN01sens5C1TuwioeGexL_!!6000000002443-55-tps-771-132.svg" alt="JotaDuo Logo" width="120">
 </p>
 
 <p align="center"><b>Works for you, grows with you.</b></p>
@@ -33,18 +33,18 @@ Your personal AI assistant — easy to install, deploy locally or in the cloud, 
 >
 > **Under your control** — Memory and personalization fully under your control. Deploy locally (data stays on your machine) or in the cloud (your chosen server). No third-party hosting, no data upload.
 >
-> **Skills extension** — Built-in scheduling, PDF/Office processing, news digest, and more; custom skills auto-loaded, no lock-in. Skills determine what QwenPaw can do.
+> **Skills extension** — Built-in scheduling, PDF/Office processing, news digest, and more; custom skills auto-loaded, no lock-in. Skills determine what JotaDuo can do.
 >
 > **Multi-agent collaboration** — Create multiple independent agents, each with their own role; enable collaboration skills for inter-agent communication to tackle complex tasks together.
 >
 > **Multi-layer security** — Tool guard, file access control, skill security scanning to ensure safe operation.
 >
-> **Every channel** — DingTalk, Feishu, WeChat, Discord, Telegram, and more. One QwenPaw, connect as needed.
+> **Every channel** — DingTalk, Feishu, WeChat, Discord, Telegram, and more. One JotaDuo, connect as needed.
 >
 > **Memory-evolving & proactive** — Agent learns from interactions, reflects on experience, and proactively serves you. Gets smarter the more you use it.
 >
 > <details>
-> <summary><b>What you can do with QwenPaw</b></summary>
+> <summary><b>What you can do with JotaDuo</b></summary>
 >
 > <br>
 >
@@ -61,7 +61,7 @@ Your personal AI assistant — easy to install, deploy locally or in the cloud, 
 
 ## News
 
-- [2026-06-11] **AgentScope Platform is live** — Free QwenPaw deployment, plugin sharing, and Skill marketplace. [Try it now →](https://platform.agentscope.io/)
+- [2026-06-11] **AgentScope Platform is live** — Free JotaDuo deployment, plugin sharing, and Skill marketplace. [Try it now →](https://platform.agentscope.io/)
 
 - [2026-06-10] **v1.1.11 — Free Model OAuth & Plugin Market** | Zero-config free models with one-click OAuth; Plugin Market with AgentScope Platform integration.
 
@@ -77,13 +77,13 @@ Your personal AI assistant — easy to install, deploy locally or in the cloud, 
 
 - [2026-05-27] **v1.1.9** — Coding Mode (three-panel Web IDE), Tauri desktop app, unified access control. [v1.1.9 Release Notes →](https://qwenpaw.agentscope.io/release-notes#v1.1.9)
 
-- [2026-05-19] **v1.1.8** — Official plugin distribution, QwenPaw Pet, streaming cards for DingTalk / Feishu / Telegram. [v1.1.8 Release Notes →](https://qwenpaw.agentscope.io/release-notes#v1.1.8)
+- [2026-05-19] **v1.1.8** — Official plugin distribution, JotaDuo Pet, streaming cards for DingTalk / Feishu / Telegram. [v1.1.8 Release Notes →](https://qwenpaw.agentscope.io/release-notes#v1.1.8)
 
 - [2026-05-14] **v1.1.7** — Browser batch actions, OAuth 2.1 MCP, Cron calendar view, multiple file attachments. [v1.1.7 Release Notes →](https://qwenpaw.agentscope.io/release-notes#v1.1.7)
 
 - [2026-05-09] **v1.1.6** — Whisper voice input, GPT Image 2 plugin, Volcano Engine provider, Mermaid diagrams. [v1.1.6 Release Notes →](https://qwenpaw.agentscope.io/release-notes#v1.1.6)
 
-- [2026-04-12] **CoPaw rebrands to QwenPaw** — deeper Qwen ecosystem integration, same open-source mission. [v1.0.0 Release Notes →](https://qwenpaw.agentscope.io/release-notes#v1.0.0)
+- [2026-04-12] **CoPaw rebrands to JotaDuo** — deeper Qwen ecosystem integration, same open-source mission. [v1.0.0 Release Notes →](https://qwenpaw.agentscope.io/release-notes#v1.0.0)
 
 ---
 
@@ -93,7 +93,7 @@ Your personal AI assistant — easy to install, deploy locally or in the cloud, 
 >
 > - **🚀 I'm new and want to try quickly**: [Quick Start](#quick-start) → three commands to run → [Configure model](#api-key) → chat in Console
 > - **💬 I want to use in DingTalk/Feishu/WeChat**: Complete Quick Start → [Configure model](#api-key) → [Channel setup](https://qwenpaw.agentscope.io/docs/channels)
-> - **🐍 I don't want to install Python**: [Desktop app](#option-6-desktop-application-beta) or [Script install](#option-2-script-install) or [ModelScope Studio](https://modelscope.cn/studios/fork?target=AgentScope/QwenPaw)
+> - **🐍 I don't want to install Python**: [Desktop app](#option-6-desktop-application-beta) or [Script install](#option-2-script-install) or [ModelScope Studio](https://modelscope.cn/studios/fork?target=AgentScope/JotaDuo)
 > - **💻 I want to use local models (no API key needed)**: [Local Models](#local-models) → download model → start using
 > - **🛠️ I want to contribute code or develop new features**: [Install from source](#install-from-source) → [Contributing](#contributing)
 - [News](#news)
@@ -107,7 +107,7 @@ Your personal AI assistant — easy to install, deploy locally or in the cloud, 
 - [Roadmap](#roadmap)
 - [Install from source](#install-from-source)
 - [Contributing](#contributing)
-- [Why QwenPaw?](#why-qwenpaw)
+- [Why JotaDuo?](#why-jotaduo)
 - [Built by](#built-by)
 - [License](#license)
 
@@ -120,9 +120,9 @@ Your personal AI assistant — easy to install, deploy locally or in the cloud, 
 If you prefer managing Python yourself:
 
 ```bash
-pip install qwenpaw
-qwenpaw init --defaults
-qwenpaw app
+pip install jotaduo
+jotaduo init --defaults
+jotaduo app
 ```
 
 Then open the Console in your browser at **http://127.0.0.1:8088/** to configure your model. To chat in DingTalk, Feishu, WeChat, etc., see the [Channel setup](https://qwenpaw.agentscope.io/docs/channels) documentation.
@@ -133,7 +133,7 @@ Then open the Console in your browser at **http://127.0.0.1:8088/** to configure
 
 ### Option 2: Script install
 
-No Python setup required, one command installs everything. The script will automatically download uv (Python package manager), create a virtual environment, and install QwenPaw with all dependencies (including Node.js and frontend assets). Note: May not work in restricted network environments or corporate firewalls.
+No Python setup required, one command installs everything. The script will automatically download uv (Python package manager), create a virtual environment, and install JotaDuo with all dependencies (including Node.js and frontend assets). Note: May not work in restricted network environments or corporate firewalls.
 
 **macOS / Linux:**
 
@@ -162,9 +162,9 @@ irm https://qwenpaw.agentscope.io/install.ps1 | iex
 >
 >    The script completes file installation. Due to **Constrained Language Mode**, it cannot automatically update environment variables. Manually configure as follows:
 >    - **Locate the installation directory**:
->      - Check if `uv` is available: Enter `uv --version` in CMD. If a version number appears, **only configure the QwenPaw path**. If you receive the prompt `'uv' is not recognized as an internal or external command, operable program or batch file,` configure both paths.
+>      - Check if `uv` is available: Enter `uv --version` in CMD. If a version number appears, **only configure the JotaDuo path**. If you receive the prompt `'uv' is not recognized as an internal or external command, operable program or batch file,` configure both paths.
 >      - uv path (choose one based on installation location; use if `uv` fails): Typically `%USERPROFILE%\.local\bin`, `%USERPROFILE%\AppData\Local\uv`, or the `Scripts` folder within your Python installation directory
->      - QwenPaw path: Typically located at `%USERPROFILE%\.qwenpaw\bin`.
+>      - JotaDuo path: Typically located at `%USERPROFILE%\.jotaduo\bin`.
 >    - **Manually add to the system's Path environment variable**:
 >      - Press `Win + R`, type `sysdm.cpl` and press Enter to open System Properties.
 >      - Click “Advanced” -> “Environment Variables”.
@@ -174,15 +174,15 @@ irm https://qwenpaw.agentscope.io/install.ps1 | iex
 >
 >   Due to **Constrained Language Mode**, the script may fail to automatically download `uv`.
 >   - **Manually install uv**: Refer to the [GitHub Release](https://github.com/astral-sh/uv/releases) to download `uv.exe` and place it in `%USERPROFILE%\.local\bin` or `%USERPROFILE%\AppData\Local\uv`; or ensure Python is installed and run `python -m pip install -U uv`.
->   - **Configure `uv` environment variables**: Add the `uv` directory and `%USERPROFILE%\.qwenpaw\bin` to your system's `Path` variable.
->   - **Re-run the installation**: Open a new terminal and execute the installation script again to complete the `QwenPaw` installation.
->   - **Configure the `QwenPaw` environment variable**: Add `%USERPROFILE%\.qwenpaw\bin` to your system's `Path` variable.
+>   - **Configure `uv` environment variables**: Add the `uv` directory and `%USERPROFILE%\.jotaduo\bin` to your system's `Path` variable.
+>   - **Re-run the installation**: Open a new terminal and execute the installation script again to complete the `JotaDuo` installation.
+>   - **Configure the `JotaDuo` environment variable**: Add `%USERPROFILE%\.jotaduo\bin` to your system's `Path` variable.
 
 Once installed, open a new terminal and run:
 
 ```bash
-qwenpaw init --defaults   # or: qwenpaw init (interactive)
-qwenpaw app
+jotaduo init --defaults   # or: jotaduo init (interactive)
+jotaduo app
 ```
 
 <details>
@@ -201,8 +201,8 @@ curl -fsSL ... | bash -s -- --from-source
 curl -fsSL ... | bash
 
 # Uninstall
-qwenpaw uninstall          # keeps config and data
-qwenpaw uninstall --purge  # removes everything
+jotaduo uninstall          # keeps config and data
+jotaduo uninstall --purge  # removes everything
 ```
 
 **Windows (PowerShell):**
@@ -218,8 +218,8 @@ irm ... | iex; .\install.ps1 -Version 0.0.2
 irm ... | iex
 
 # Uninstall
-qwenpaw uninstall          # keeps config and data
-qwenpaw uninstall --purge  # removes everything
+jotaduo uninstall          # keeps config and data
+jotaduo uninstall --purge  # removes everything
 ```
 
 </details>
@@ -234,37 +234,37 @@ Images are on **Docker Hub** (`agentscope/qwenpaw`). Image tags: `latest` (stabl
 ```bash
 docker pull agentscope/qwenpaw:latest
 docker run -p 127.0.0.1:8088:8088 \
-  -v qwenpaw-data:/app/working \
-  -v qwenpaw-secrets:/app/working.secret \
-  -v qwenpaw-backups:/app/working.backups \
+  -v jotaduo-data:/app/working \
+  -v jotaduo-secrets:/app/working.secret \
+  -v jotaduo-backups:/app/working.backups \
   agentscope/qwenpaw:latest
 ```
 
 Also available on Alibaba Cloud Container Registry (ACR) for users in China: `agentscope-registry.ap-southeast-1.cr.aliyuncs.com/agentscope/qwenpaw` (same tags).
 
-Then open **http://127.0.0.1:8088/** for the Console. Config, memory, and skills are stored in the `qwenpaw-data` volume; model provider settings and API keys are in the `qwenpaw-secrets` volume; backup archives are stored in the `qwenpaw-backups` volume. To pass API keys (e.g. `DASHSCOPE_API_KEY`), add `-e VAR=value` or `--env-file .env` to `docker run`.
+Then open **http://127.0.0.1:8088/** for the Console. Config, memory, and skills are stored in the `jotaduo-data` volume; model provider settings and API keys are in the `jotaduo-secrets` volume; backup archives are stored in the `jotaduo-backups` volume. To pass API keys (e.g. `DASHSCOPE_API_KEY`), add `-e VAR=value` or `--env-file .env` to `docker run`.
 
 > **Connecting to Ollama or other services on the host machine**
 >
-> Inside a Docker container, `localhost` refers to the container itself, not your host machine. If you run Ollama (or other model services) on the host and want QwenPaw in Docker to reach them, use one of these approaches:
+> Inside a Docker container, `localhost` refers to the container itself, not your host machine. If you run Ollama (or other model services) on the host and want JotaDuo in Docker to reach them, use one of these approaches:
 >
 > **Option A** — Explicit host binding (all platforms):
 > ```bash
 > docker run -p 127.0.0.1:8088:8088 \
 >   --add-host=host.docker.internal:host-gateway \
->   -v qwenpaw-data:/app/working \
->   -v qwenpaw-secrets:/app/working.secret \
->   -v qwenpaw-backups:/app/working.backups \
+>   -v jotaduo-data:/app/working \
+>   -v jotaduo-secrets:/app/working.secret \
+>   -v jotaduo-backups:/app/working.backups \
 >   agentscope/qwenpaw:latest
 > ```
-> Then in QwenPaw **Settings → Models**, change the Base URL to `http://host.docker.internal:<port>` — for example, `http://host.docker.internal:11434` for Ollama, or `http://host.docker.internal:1234/v1` for LM Studio.
+> Then in JotaDuo **Settings → Models**, change the Base URL to `http://host.docker.internal:<port>` — for example, `http://host.docker.internal:11434` for Ollama, or `http://host.docker.internal:1234/v1` for LM Studio.
 >
 > **Option B** — Host networking (Linux only):
 > ```bash
 > docker run --network=host \
->   -v qwenpaw-data:/app/working \
->   -v qwenpaw-secrets:/app/working.secret \
->   -v qwenpaw-backups:/app/working.backups \
+>   -v jotaduo-data:/app/working \
+>   -v jotaduo-secrets:/app/working.secret \
+>   -v jotaduo-backups:/app/working.backups \
 >   agentscope/qwenpaw:latest
 > ```
 > No port mapping (`-p`) is needed; the container shares the host network directly. Note that all container ports are exposed on the host, which may cause conflicts if the port is already in use.
@@ -276,13 +276,13 @@ The image is built from scratch. To build the image yourself, please refer to th
 
 ### Option 4: Deploy on Alibaba Cloud ECS
 
-To run QwenPaw on Alibaba Cloud (ECS), use the one-click deployment: open the [QwenPaw on Alibaba Cloud (ECS) deployment link](https://computenest.console.aliyun.com/service/instance/create/cn-hangzhou?type=user&ServiceId=service-1ed84201799f40879884) and follow the prompts. For step-by-step instructions, see [Alibaba Cloud Developer: Deploy your AI assistant in 3 minutes](https://developer.aliyun.com/article/1713682).
+To run JotaDuo on Alibaba Cloud (ECS), use the one-click deployment: open the [JotaDuo on Alibaba Cloud (ECS) deployment link](https://computenest.console.aliyun.com/service/instance/create/cn-hangzhou?type=user&ServiceId=service-1ed84201799f40879884) and follow the prompts. For step-by-step instructions, see [Alibaba Cloud Developer: Deploy your AI assistant in 3 minutes](https://developer.aliyun.com/article/1713682).
 
 ---
 
 ### Option 5: Using ModelScope
 
-**No local install?** [ModelScope Studio](https://modelscope.cn/studios/fork?target=AgentScope/QwenPaw) one-click cloud setup. Set your Studio to **non-public** so others cannot control your QwenPaw.
+**No local install?** [ModelScope Studio](https://modelscope.cn/studios/fork?target=AgentScope/JotaDuo) one-click cloud setup. Set your Studio to **non-public** so others cannot control your JotaDuo.
 
 ---
 
@@ -293,13 +293,13 @@ To run QwenPaw on Alibaba Cloud (ECS), use the one-click deployment: open the [Q
 > - **Potential performance issues**: Startup time, memory usage, and other performance aspects may need further optimization
 > - **Features under development**: Some features may be unstable or missing
 
-If you're not comfortable with command-line tools, you can download and use QwenPaw's desktop application without manually configuring Python environments or running commands.
+If you're not comfortable with command-line tools, you can download and use JotaDuo's desktop application without manually configuring Python environments or running commands.
 
 #### Download
 
 Download the desktop app from [GitHub Releases](https://github.com/agentscope-ai/QwenPaw/releases):
-- **Windows**: `QwenPaw-Setup-<version>.exe`
-- **macOS**: `QwenPaw-<version>-macOS.zip` (Apple Silicon recommended)
+- **Windows**: `JotaDuo-Setup-<version>.exe`
+- **macOS**: `JotaDuo-<version>-macOS.zip` (Apple Silicon recommended)
 
 #### Features
 
@@ -314,13 +314,13 @@ Download the desktop app from [GitHub Releases](https://github.com/agentscope-ai
 
 #### macOS: Bypass System Security Restrictions
 
-When you download the QwenPaw macOS app from Releases, macOS may show: *"Apple cannot verify that 'QwenPaw' contains no malicious software"*. This happens because the app is not notarized. You can still open it as follows:
+When you download the JotaDuo macOS app from Releases, macOS may show: *"Apple cannot verify that 'JotaDuo' contains no malicious software"*. This happens because the app is not notarized. You can still open it as follows:
 
 - **Right-click to open (recommended)**
-  Right-click (or Control+click) the QwenPaw app → **Open** → in the dialog click **Open** again. This tells Gatekeeper you trust the app; after that you can double-click to launch as usual.
+  Right-click (or Control+click) the JotaDuo app → **Open** → in the dialog click **Open** again. This tells Gatekeeper you trust the app; after that you can double-click to launch as usual.
 
 - **Allow in System Settings**
-  If it is still blocked, go to **System Settings → Privacy & Security**, scroll to the message like *"QwenPaw was blocked because it is from an unidentified developer"*, and click **Open Anyway** or **Allow**.
+  If it is still blocked, go to **System Settings → Privacy & Security**, scroll to the message like *"JotaDuo was blocked because it is from an unidentified developer"*, and click **Open Anyway** or **Allow**.
 
 - **Remove quarantine attribute (not recommended for most users)**
   In Terminal run:
@@ -333,12 +333,12 @@ For detailed usage instructions, troubleshooting, and common issues, see the [De
 
 ## API Key
 
-If you use a **cloud LLM API** (e.g., Qianwen, Gemini, OpenAI), you must configure an API key before chatting. QwenPaw will not work until a valid key is set. See the [official docs](https://qwenpaw.agentscope.io/docs/models) for details.
+If you use a **cloud LLM API** (e.g., Qianwen, Gemini, OpenAI), you must configure an API key before chatting. JotaDuo will not work until a valid key is set. See the [official docs](https://qwenpaw.agentscope.io/docs/models) for details.
 
 **How to configure:**
 
-1. **Console (recommended)** — After running `qwenpaw app`, open **http://127.0.0.1:8088/** → **Settings** → **Models**. Choose a provider, enter the **API Key**, and enable that provider and model.
-2. **`qwenpaw init`** — When you run `qwenpaw init`, it will guide you through configuring the LLM provider and API key. Follow the prompts to choose a provider and enter your key.
+1. **Console (recommended)** — After running `jotaduo app`, open **http://127.0.0.1:8088/** → **Settings** → **Models**. Choose a provider, enter the **API Key**, and enable that provider and model.
+2. **`jotaduo init`** — When you run `jotaduo init`, it will guide you through configuring the LLM provider and API key. Follow the prompts to choose a provider and enter your key.
 3. **Environment variable** — For DashScope you can set `DASHSCOPE_API_KEY` in your shell or in a `.env` file in the working directory.
 
 Tools that need extra keys (e.g. `TAVILY_API_KEY` for web search) can be set in Console **Settings → Environment variables**, see [Config](https://qwenpaw.agentscope.io/docs/config) for details.
@@ -347,7 +347,7 @@ Tools that need extra keys (e.g. `TAVILY_API_KEY` for web search) can be set in 
 
 ## Local Models
 
-QwenPaw can run LLMs entirely on your machine — no API keys or cloud services required. See the [official docs](https://qwenpaw.agentscope.io/docs/models) for details.
+JotaDuo can run LLMs entirely on your machine — no API keys or cloud services required. See the [official docs](https://qwenpaw.agentscope.io/docs/models) for details.
 
 | Backend       | Best for                                 | Install                                                              |
 | ------------- | ---------------------------------------- | -------------------------------------------------------------------- |
@@ -361,7 +361,7 @@ QwenPaw can run LLMs entirely on your machine — no API keys or cloud services 
 
 | Topic                                                                 | Description                                      |
 | --------------------------------------------------------------------- | ------------------------------------------------ |
-| [Introduction](https://qwenpaw.agentscope.io/docs/intro)                | What QwenPaw is and how to use it                  |
+| [Introduction](https://qwenpaw.agentscope.io/docs/intro)                | What JotaDuo is and how to use it                  |
 | [Quick start](https://qwenpaw.agentscope.io/docs/quickstart)            | Install and run (local or ModelScope Studio)    |
 | [Console](https://qwenpaw.agentscope.io/docs/console)                   | Web UI: chat and agent configuration            |
 | [Models](https://qwenpaw.agentscope.io/docs/models)                     | Configure cloud, local, and custom providers    |
@@ -385,13 +385,13 @@ Full docs in this repo: [website/public/docs/](website/public/docs/).
 
 ## Security Features
 
-QwenPaw includes multi-layer security mechanisms to protect your data and system:
+JotaDuo includes multi-layer security mechanisms to protect your data and system:
 
 - **Tool guard** — Automatically intercepts dangerous shell commands (e.g., `rm -rf /`, fork bombs, reverse shells, etc.)
 - **File access guard** — Restricts agent access to sensitive paths (e.g., `~/.ssh`, key files, system directories, etc.)
 - **Skill security scanning** — Automatically scans before installing skills, detecting risks like prompt injection, command injection, hardcoded keys, data exfiltration, etc.
 - **Local deployment** — All data and memory stored locally, no third-party upload (when using cloud LLM APIs, conversation content is sent to the corresponding API provider)
-- **Web Authentication** — Optional login protection for the Console. Disabled by default; set `QWENPAW_AUTH_ENABLED=true` to enable. See [Web Authentication](https://qwenpaw.agentscope.io/docs/security#Web-Authentication) for details.
+- **Web Authentication** — Optional login protection for the Console. Disabled by default; set `JOTADUO_AUTH_ENABLED=true` to enable. See [Web Authentication](https://qwenpaw.agentscope.io/docs/security#Web-Authentication) for details.
 
 See [Security documentation](https://qwenpaw.agentscope.io/docs/security) for details.
 
@@ -434,38 +434,38 @@ Star QwenPaw on GitHub and be instantly notified of new releases.
 |                          | HiClaw enterprise capabilities                                                               | Planned              |
 | **Context Management**   | Personal Knowledge Base                                                             | In Progress          |
 |                          | User-selectable compression (fine-grained control)                                           | Planned              |
-| **QwenPaw Application**   | QwenPaw Creator                                                             | In Progress          |
-|                          | QwenPaw Insight                                           | In Progress              |
+| **JotaDuo Application**   | JotaDuo Creator                                                             | In Progress          |
+|                          | JotaDuo Insight                                           | In Progress              |
 _Status:_ **In Progress** — actively being worked on; **Planned** — queued or under design, also welcome contributions; **Seeking Contributors** — we strongly encourage community contributions.
 
 ## Install from source
 
 ```bash
 git clone https://github.com/agentscope-ai/QwenPaw.git
-cd QwenPaw
+cd JotaDuo
 
 # Build console frontend first (required for web UI)
 cd console && npm ci && npm run build
 cd ..
 
 # Copy console build output to package directory
-mkdir -p src/qwenpaw/console
-cp -R console/dist/. src/qwenpaw/console/
+mkdir -p src/jotaduo/console
+cp -R console/dist/. src/jotaduo/console/
 
 # Install Python package
 pip install -e .
 ```
 
 - **Dev** (tests, formatting): `pip install -e ".[dev,full]"`
-- **Then**: Run `qwenpaw init --defaults`, then `qwenpaw app`.
+- **Then**: Run `jotaduo init --defaults`, then `jotaduo app`.
 
-> **Note for updates:** When updating to a new major version after `git pull`, please also rebuild the frontend, reinstall the package (`pip install -e .`), restart `qwenpaw app`, and clear your browser cache with `Ctrl+Shift+R` (or `Cmd+Shift+R` on macOS).
+> **Note for updates:** When updating to a new major version after `git pull`, please also rebuild the frontend, reinstall the package (`pip install -e .`), restart `jotaduo app`, and clear your browser cache with `Ctrl+Shift+R` (or `Cmd+Shift+R` on macOS).
 
 ---
 
 ## Contributing
 
-QwenPaw evolves through open collaboration, and we welcome all forms of contribution! Check the [Roadmap](#roadmap) above (especially items marked **Seeking Contributors**) to find areas that interest you, and read [CONTRIBUTING](https://github.com/agentscope-ai/QwenPaw/blob/main/CONTRIBUTING.md) to get started. We particularly welcome:
+JotaDuo evolves through open collaboration, and we welcome all forms of contribution! Check the [Roadmap](#roadmap) above (especially items marked **Seeking Contributors**) to find areas that interest you, and read [CONTRIBUTING](https://github.com/agentscope-ai/QwenPaw/blob/main/CONTRIBUTING.md) to get started. We particularly welcome:
 
 - **Horizontal expansion** — new channels, model providers, skills, MCPs.
 - **Existing feature extension & refinement** — display and interaction improvements, download hints, Windows path compatibility, etc.
@@ -474,9 +474,9 @@ Join [GitHub Discussions](https://github.com/agentscope-ai/QwenPaw/discussions) 
 
 ---
 
-## Why QwenPaw?
+## Why JotaDuo?
 
-QwenPaw stands for Qwen Personal Agent Workstation, and also embodies the wisdom of Qwen and the warmth of a Paw.
+JotaDuo stands for Qwen Personal Agent Workstation, and also embodies the wisdom of Qwen and the warmth of a Paw.
 We hope it is not a cold tool, but an intelligent and warm "little paw" always ready to help—a most intuitive partner in your digital life.
 
 ---
@@ -497,11 +497,11 @@ We hope it is not a cold tool, but an intelligent and warm "little paw" always r
 
 ## Telemetry
 
-QwenPaw collects **anonymous** usage data during `qwenpaw init` to help us understand our user base and prioritize improvements. Data is sent **once per version** — when you upgrade QwenPaw, telemetry is re-collected so we can track version adoption.
+JotaDuo collects **anonymous** usage data during `jotaduo init` to help us understand our user base and prioritize improvements. Data is sent **once per version** — when you upgrade JotaDuo, telemetry is re-collected so we can track version adoption.
 
 **What we collect:**
 
-- QwenPaw version (e.g., 0.0.7)
+- JotaDuo version (e.g., 0.0.7)
 - Install method (pip, Docker, or desktop app)
 - OS and version (e.g., macOS 14.0, Ubuntu 22.04)
 - Python version (e.g., 3.13)
@@ -510,13 +510,13 @@ QwenPaw collects **anonymous** usage data during `qwenpaw init` to help us under
 
 **What we do NOT collect:** No personal data, no files, no credentials, no IP addresses, no identifiable information.
 
-When running `qwenpaw init` interactively, you will be asked whether to opt in. If you choose `--defaults`, telemetry is accepted automatically. The prompt appears once per version and never affects QwenPaw's functionality.
+When running `jotaduo init` interactively, you will be asked whether to opt in. If you choose `--defaults`, telemetry is accepted automatically. The prompt appears once per version and never affects JotaDuo's functionality.
 
 ---
 
 ## License
 
-QwenPaw is released under the [Apache License 2.0](LICENSE).
+JotaDuo is released under the [Apache License 2.0](LICENSE).
 
 ---
 
