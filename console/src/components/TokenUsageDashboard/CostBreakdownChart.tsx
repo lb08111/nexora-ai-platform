@@ -25,7 +25,13 @@ function resolveBuckets(
     cost: computeBucketCost(b, prices),
     color: colorFor(b.key),
   }));
-  enriched.sort((a, b) => b.cost - a.cost || b.promptTokens + b.completionTokens - (a.promptTokens + a.completionTokens));
+  enriched.sort(
+    (a, b) =>
+      b.cost - a.cost ||
+      b.promptTokens +
+        b.completionTokens -
+        (a.promptTokens + a.completionTokens),
+  );
   if (enriched.length <= topN) return enriched;
   const head = enriched.slice(0, topN);
   const tail = enriched.slice(topN);
@@ -51,7 +57,8 @@ const Donut: React.FC<DonutProps> = ({ data, size, metric }) => {
   const radius = size / 2;
   const inner = radius * 0.6;
   const total = data.reduce(
-    (s, d) => s + (metric === "cost" ? d.cost : d.promptTokens + d.completionTokens),
+    (s, d) =>
+      s + (metric === "cost" ? d.cost : d.promptTokens + d.completionTokens),
     0,
   );
   let cumulative = 0;
@@ -155,7 +162,10 @@ const StackedBar: React.FC<StackedBarProps> = ({ data, height, metric }) => {
           metric === "cost" ? d.cost : d.promptTokens + d.completionTokens;
         const pct = (value / max) * 100;
         const promptPct =
-          value > 0 ? (d.promptTokens / (d.promptTokens + d.completionTokens || 1)) * 100 : 0;
+          value > 0
+            ? (d.promptTokens / (d.promptTokens + d.completionTokens || 1)) *
+              100
+            : 0;
         const tip = (
           <div className={styles.tooltipBody}>
             <div className={styles.tooltipTitle}>{d.label ?? d.key}</div>
@@ -264,7 +274,11 @@ const CostBreakdownChart: React.FC<CostBreakdownChartProps> = ({
         <div className={styles.chartEmpty}>No usage data</div>
       ) : kind === "donut" ? (
         <div className={styles.donutLayout}>
-          <Donut data={resolved} size={Math.min(220, Number(height) - 60)} metric={metric} />
+          <Donut
+            data={resolved}
+            size={Math.min(220, Number(height) - 60)}
+            metric={metric}
+          />
           <ul className={styles.legend}>
             {resolved.map((d) => {
               const value =
@@ -281,7 +295,9 @@ const CostBreakdownChart: React.FC<CostBreakdownChartProps> = ({
                     {d.label ?? d.key}
                   </span>
                   <span className={styles.legendValue}>
-                    {metric === "cost" ? formatUsd(d.cost) : formatTokens(value)}
+                    {metric === "cost"
+                      ? formatUsd(d.cost)
+                      : formatTokens(value)}
                   </span>
                 </li>
               );
@@ -289,7 +305,11 @@ const CostBreakdownChart: React.FC<CostBreakdownChartProps> = ({
           </ul>
         </div>
       ) : (
-        <StackedBar data={resolved} height={Number(height) - 48} metric={metric} />
+        <StackedBar
+          data={resolved}
+          height={Number(height) - 48}
+          metric={metric}
+        />
       )}
     </div>
   );

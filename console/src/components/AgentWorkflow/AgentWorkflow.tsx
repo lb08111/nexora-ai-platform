@@ -81,11 +81,7 @@ const AgentWorkflow: React.FC<AgentWorkflowProps> = ({
         </div>
         {!hidePlan && (
           <div className={styles.planPane}>
-            <PlanView
-              plan={plan}
-              agents={agents}
-              onTaskClick={onTaskClick}
-            />
+            <PlanView plan={plan} agents={agents} onTaskClick={onTaskClick} />
           </div>
         )}
       </div>

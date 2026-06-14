@@ -7,7 +7,9 @@ import {
 } from "./index";
 
 vi.mock("react-i18next", () => ({
-  useTranslation: () => ({ t: (_k: string, fallback?: string) => fallback ?? _k }),
+  useTranslation: () => ({
+    t: (_k: string, fallback?: string) => fallback ?? _k,
+  }),
 }));
 
 describe("AgentCommunicationCard", () => {
@@ -43,7 +45,8 @@ describe("AgentCommunicationCard", () => {
     fireEvent.click(screen.getByRole("button", { name: /Send/i }));
 
     await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
-    const payload = onSubmit.mock.calls[0][0] as AgentCommunicationSubmitPayload;
+    const payload = onSubmit.mock
+      .calls[0][0] as AgentCommunicationSubmitPayload;
     expect(payload.kind).toBe("text");
     expect(payload.text).toBe("ok then");
   });
@@ -61,7 +64,10 @@ describe("AgentCommunicationCard", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /Yes/i }));
     await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
-    expect(onSubmit.mock.calls[0][0]).toEqual({ kind: "confirm", value: "yes" });
+    expect(onSubmit.mock.calls[0][0]).toEqual({
+      kind: "confirm",
+      value: "yes",
+    });
   });
 
   it("renders custom choices and emits the chosen value", async () => {

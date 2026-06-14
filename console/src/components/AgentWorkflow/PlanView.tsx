@@ -57,9 +57,7 @@ const PlanView: React.FC<PlanViewProps> = ({ plan, agents, onTaskClick }) => {
         <div className={styles.planTitleRow}>
           <span className={styles.planTitle}>{plan.name}</span>
           <span
-            className={`${styles.taskState} ${
-              STATE_CLASS[plan.state] || ""
-            }`}
+            className={`${styles.taskState} ${STATE_CLASS[plan.state] || ""}`}
           >
             {plan.state}
           </span>

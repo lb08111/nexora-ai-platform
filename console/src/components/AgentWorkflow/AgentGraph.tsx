@@ -136,8 +136,7 @@ function buildEdges(
   agentMessages.forEach((m) => {
     const key = `${m.from}->${m.to}`;
     const recencyIdx = recent.indexOf(m);
-    const recency =
-      recencyIdx === -1 ? 0 : (recencyIdx + 1) / recent.length;
+    const recency = recencyIdx === -1 ? 0 : (recencyIdx + 1) / recent.length;
     const existing = map.get(key);
     if (existing) {
       existing.count += 1;

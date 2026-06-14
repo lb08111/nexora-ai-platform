@@ -12,9 +12,21 @@ A self-contained React component that visualizes a multi-agent system:
 import AgentWorkflow from "@/components/AgentWorkflow";
 
 const agents = [
-  { id: "planner", name: "Planner", role: "Architect", status: "thinking", avatar: "🧠" },
-  { id: "coder",   name: "Coder",   role: "Implementer", status: "working", avatar: "💻" },
-  { id: "qa",      name: "QA",      role: "Reviewer", status: "waiting",  avatar: "🔍" },
+  {
+    id: "planner",
+    name: "Planner",
+    role: "Architect",
+    status: "thinking",
+    avatar: "🧠",
+  },
+  {
+    id: "coder",
+    name: "Coder",
+    role: "Implementer",
+    status: "working",
+    avatar: "💻",
+  },
+  { id: "qa", name: "QA", role: "Reviewer", status: "waiting", avatar: "🔍" },
 ];
 
 const plan = {
@@ -23,21 +35,40 @@ const plan = {
   description: "Implement the agents workflow dashboard end-to-end.",
   state: "in_progress",
   tasks: [
-    { id: "t1", name: "Draft plan",  state: "done",        assignedTo: "planner" },
-    { id: "t2", name: "Build UI",    state: "in_progress", assignedTo: "coder" },
-    { id: "t3", name: "Write tests", state: "todo",        assignedTo: "qa" },
+    { id: "t1", name: "Draft plan", state: "done", assignedTo: "planner" },
+    { id: "t2", name: "Build UI", state: "in_progress", assignedTo: "coder" },
+    { id: "t3", name: "Write tests", state: "todo", assignedTo: "qa" },
   ],
 };
 
 const messages = [
-  { id: "m1", from: "planner", to: "coder", type: "handoff",
-    content: "Use AgentGraph as the canvas.", timestamp: Date.now() - 30000 },
-  { id: "m2", from: "coder",   to: "qa",    type: "request",
-    content: "Ready for review.",           timestamp: Date.now() - 5000 },
+  {
+    id: "m1",
+    from: "planner",
+    to: "coder",
+    type: "handoff",
+    content: "Use AgentGraph as the canvas.",
+    timestamp: Date.now() - 30000,
+  },
+  {
+    id: "m2",
+    from: "coder",
+    to: "qa",
+    type: "request",
+    content: "Ready for review.",
+    timestamp: Date.now() - 5000,
+  },
 ];
 
 export default function Page() {
-  return <AgentWorkflow agents={agents} plan={plan} messages={messages} height={640} />;
+  return (
+    <AgentWorkflow
+      agents={agents}
+      plan={plan}
+      messages={messages}
+      height={640}
+    />
+  );
 }
 ```
 
@@ -47,7 +78,9 @@ If you want to bind to the existing `/agents` and `/plan` APIs that the console
 already exposes, use the included hook:
 
 ```tsx
-import AgentWorkflow, { useLiveAgentWorkflow } from "@/components/AgentWorkflow";
+import AgentWorkflow, {
+  useLiveAgentWorkflow,
+} from "@/components/AgentWorkflow";
 
 export default function LivePage() {
   const { agents, plan, messages, pushMessage } = useLiveAgentWorkflow();
@@ -65,19 +98,19 @@ fetched automatically — feed them through `pushMessage` from your own source.
 
 ## Props
 
-| Prop                    | Type                                     | Default | Description                                   |
-| ----------------------- | ---------------------------------------- | ------- | --------------------------------------------- |
-| `agents`                | `WorkflowAgent[]`                        | —       | Required. List of agents to render.           |
-| `plan`                  | `WorkflowPlan \| null`                   | `null`  | Optional plan with tasks.                     |
-| `messages`              | `WorkflowMessage[]`                      | `[]`    | Inter-agent messages (also drives edges).     |
-| `height`                | `number \| string`                       | `560`   | Component height.                             |
-| `layout`                | `"auto" \| "circle" \| "horizontal" \| "grid"` | `"auto"` | Graph layout. `auto` = horizontal if ≤3 agents, else circle. |
-| `hidePlan`              | `boolean`                                | `false` | Hide the plan side panel.                     |
-| `hideCommunicationLog`  | `boolean`                                | `false` | Hide the bottom message log.                  |
-| `liveEdgeCount`         | `number`                                 | `5`     | Number of recent messages drawn as live edges.|
-| `onAgentClick`          | `(agent) => void`                        | —       | Click handler for agent nodes.                |
-| `onTaskClick`           | `(task) => void`                         | —       | Click handler for task rows.                  |
-| `title`                 | `ReactNode`                              | —       | Override toolbar title.                       |
+| Prop                   | Type                                           | Default  | Description                                                  |
+| ---------------------- | ---------------------------------------------- | -------- | ------------------------------------------------------------ |
+| `agents`               | `WorkflowAgent[]`                              | —        | Required. List of agents to render.                          |
+| `plan`                 | `WorkflowPlan \| null`                         | `null`   | Optional plan with tasks.                                    |
+| `messages`             | `WorkflowMessage[]`                            | `[]`     | Inter-agent messages (also drives edges).                    |
+| `height`               | `number \| string`                             | `560`    | Component height.                                            |
+| `layout`               | `"auto" \| "circle" \| "horizontal" \| "grid"` | `"auto"` | Graph layout. `auto` = horizontal if ≤3 agents, else circle. |
+| `hidePlan`             | `boolean`                                      | `false`  | Hide the plan side panel.                                    |
+| `hideCommunicationLog` | `boolean`                                      | `false`  | Hide the bottom message log.                                 |
+| `liveEdgeCount`        | `number`                                       | `5`      | Number of recent messages drawn as live edges.               |
+| `onAgentClick`         | `(agent) => void`                              | —        | Click handler for agent nodes.                               |
+| `onTaskClick`          | `(task) => void`                               | —        | Click handler for task rows.                                 |
+| `title`                | `ReactNode`                                    | —        | Override toolbar title.                                      |
 
 ### Status values
 

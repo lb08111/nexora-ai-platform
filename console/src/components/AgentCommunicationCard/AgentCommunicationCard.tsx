@@ -368,8 +368,7 @@ export function AgentCommunicationCard({
               onChange={(e) => setValue(e.target.value)}
               onKeyDown={handleTextareaKeyDown}
               placeholder={
-                placeholder ??
-                t("agentComm.placeholder", "Reply to the agent…")
+                placeholder ?? t("agentComm.placeholder", "Reply to the agent…")
               }
               autoSize={{ minRows: 2, maxRows: 8 }}
               maxLength={maxLength}
@@ -408,9 +407,7 @@ export function AgentCommunicationCard({
               onClick={handleTextSubmit}
               loading={submitting === "text" || loading}
               disabled={
-                (required && !value.trim()) ||
-                submitting !== null ||
-                loading
+                (required && !value.trim()) || submitting !== null || loading
               }
             >
               {t("agentComm.send", "Send")}
