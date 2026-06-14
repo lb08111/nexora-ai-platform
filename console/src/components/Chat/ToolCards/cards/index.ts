@@ -39,6 +39,7 @@ export { default as DelegateExternalAgentCard } from "./DelegateExternalAgentCar
 export { default as MaterializeSkillCard } from "./MaterializeSkillCard";
 export { default as ShellCard } from "./ShellCard";
 export { default as GenericToolCard } from "./GenericToolCard";
+export { default as AskUserCard } from "./AskUserCard";
 
 // ── Re-import for registry ────────────────────────────────────────────
 import ReadFileCard from "./ReadFileCard";
@@ -63,6 +64,7 @@ import CheckAgentTaskCard from "./CheckAgentTaskCard";
 import DelegateExternalAgentCard from "./DelegateExternalAgentCard";
 import MaterializeSkillCard from "./MaterializeSkillCard";
 import ShellCard from "./ShellCard";
+import AskUserCard from "./AskUserCard";
 
 // ── Common props type ─────────────────────────────────────────────────
 
@@ -131,4 +133,11 @@ export const BUILTIN_CARD_REGISTRY: Record<string, BuiltinCardComponent> = {
   bash: ShellCard,
   terminal: ShellCard,
   run_command: ShellCard,
+
+  // Agent ⇄ user interaction
+  ask_user: AskUserCard,
+  ask_human: AskUserCard,
+  request_user_input: AskUserCard,
+  user_input: AskUserCard,
+  communicate_with_user: AskUserCard,
 };
