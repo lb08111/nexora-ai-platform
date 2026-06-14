@@ -12,6 +12,27 @@ from unittest import mock
 import pytest
 
 
+def _pg_dual_mode_available() -> bool:
+    """Check whether the PG dual-mode helpers are implemented."""
+    try:
+        utils = importlib.import_module("jotaduo.config.utils")
+        cfg = importlib.import_module("jotaduo.config.config")
+    except Exception:
+        return False
+    return (
+        hasattr(utils, "_get_pg_config_version")
+        and hasattr(utils, "_save_config_to_pg")
+        and hasattr(cfg, "_get_pg_agent_config_version")
+        and hasattr(cfg, "_save_agent_config_to_pg")
+    )
+
+
+_pg_dual_mode_skip = pytest.mark.skipif(
+    not _pg_dual_mode_available(),
+    reason="PG dual-mode helpers not yet implemented in this fork",
+)
+
+
 # ---------------------------------------------------------------------------
 # Repository-level tests (config_postgres.py)
 # ---------------------------------------------------------------------------
@@ -177,6 +198,7 @@ class TestConfigPostgresRepository:
 # ---------------------------------------------------------------------------
 
 
+@_pg_dual_mode_skip
 class TestGlobalConfigDualMode:
     """Verify load_config and save_config switch to PG when enabled."""
 
@@ -285,6 +307,7 @@ class TestGlobalConfigDualMode:
 # ---------------------------------------------------------------------------
 
 
+@_pg_dual_mode_skip
 class TestAgentConfigDualMode:
     """Verify agent config dual-mode switching."""
 

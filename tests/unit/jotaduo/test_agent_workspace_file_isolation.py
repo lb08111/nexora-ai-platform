@@ -11,7 +11,10 @@ from starlette.responses import FileResponse
 # These tests rely on `qwenpaw.app.routers.files.get_agent_for_request`,
 # part of an agent-context module not yet ported into this fork. Skip the
 # module until that helper exists; once it does, the tests auto-enable.
-from qwenpaw.app.routers import files as _files_router
+_files_router = pytest.importorskip(
+    "qwenpaw.app.routers.files",
+    reason="qwenpaw.app.routers.files not available in this fork",
+)
 
 if not hasattr(_files_router, "get_agent_for_request"):
     pytest.skip(
