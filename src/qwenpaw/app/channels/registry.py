@@ -32,9 +32,9 @@ _BUILTIN_SPECS: dict[str, tuple[str, str]] = {
     "sip": (".sip", "SIPChannel"),
     "wecom": (".wecom", "WecomChannel"),
     "xiaoyi": (".xiaoyi", "XiaoYiChannel"),
+    "yuanbao": (".yuanbao", "YuanbaoChannel"),
     "wechat": (".wechat", "WeChatChannel"),
     "onebot": (".onebot", "OneBotChannel"),
-    "whatsapp": (".whatsapp", "WhatsAppChannel"),
 }
 
 # Required channels must load; failures are raised, not skipped.

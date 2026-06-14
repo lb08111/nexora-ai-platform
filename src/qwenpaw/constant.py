@@ -110,6 +110,9 @@ SECRET_DIR = (
     .resolve()
 )
 
+# Env key for overriding the OS keychain account used for the master key.
+KEYRING_ACCOUNT_ENV = "QWENPAW_KEYRING_ACCOUNT"
+
 PROJECT_NAME = "QwenPaw"
 
 # Subdirectory name inside each agent's workspace that holds cloned / imported
@@ -263,6 +266,15 @@ MEMORY_COMPACT_RATIO = EnvVarLoader.get_float(
 # Example: QWENPAW_CORS_ORIGINS="http://localhost:5173,http://127.0.0.1:5173"
 # When unset, CORS middleware is not applied.
 CORS_ORIGINS = EnvVarLoader.get_str("QWENPAW_CORS_ORIGINS", "").strip()
+
+# Upload size limit (MB).  None = no limit.
+UPLOAD_MAX_SIZE_MB: int | None = (
+    int(v)
+    if (v := EnvVarLoader.get_str("QWENPAW_UPLOAD_MAX_SIZE_MB", ""))
+    .strip()
+    .isdigit()
+    else None
+)
 
 # LLM API retry configuration
 LLM_MAX_RETRIES = EnvVarLoader.get_int(

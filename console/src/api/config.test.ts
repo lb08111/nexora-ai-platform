@@ -1,9 +1,9 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { getApiUrl, getApiToken, setAuthToken, clearAuthToken } from "./config";
 
-// VITE_API_BASE_URL / TOKEN are declared globals in config.ts — set via globalThis
+// VITE_API_BASE_URL is read via import.meta.env; TOKEN remains a declared global
 const setViteBase = (v: string) => {
-  (globalThis as any).VITE_API_BASE_URL = v;
+  vi.stubEnv("VITE_API_BASE_URL", v);
 };
 const setToken = (v: string) => {
   (globalThis as any).TOKEN = v;

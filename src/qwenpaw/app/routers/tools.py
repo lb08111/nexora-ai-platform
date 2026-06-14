@@ -149,12 +149,6 @@ def _build_tool_info(tool_config: Any, tool_name: str) -> ToolInfo:
     return tool_info
 
 
-def _ensure_tool_resource_access(agent_id: str, tool_name: str) -> None:
-    from qwenpaw_ext.nexora.governance import ensure_resource_access
-
-    ensure_resource_access(agent_id, "builtin_tool", tool_name)
-
-
 @router.get("", response_model=List[ToolInfo])
 async def list_tools(
     request: Request,
@@ -164,8 +158,6 @@ async def list_tools(
     Returns:
         List of tool information
     """
-    from qwenpaw_ext.nexora.governance import filter_resource_ids_for_agent
-
     from ..agent_context import get_agent_for_request
     from ...config.config import load_agent_config
     from ...plugins.registry import PluginRegistry
@@ -183,14 +175,6 @@ async def list_tools(
         builtin_tools = tools_config.builtin_tools
     else:
         builtin_tools = agent_config.tools.builtin_tools
-
-    allowed_tool_names = set(
-        filter_resource_ids_for_agent(
-            workspace.agent_id,
-            "builtin_tool",
-            [tool_config.name for tool_config in builtin_tools.values()],
-        ),
-    )
 
     # Get plugin registry for config metadata
     registry = PluginRegistry()
@@ -219,8 +203,6 @@ async def list_tools(
 
     tools_list = []
     for tool_config in builtin_tools.values():
-        if tool_config.name not in allowed_tool_names:
-            continue
         tool_info = ToolInfo(
             name=tool_config.name,
             enabled=tool_config.enabled,
@@ -304,7 +286,6 @@ async def toggle_tool(
 
     workspace = await get_agent_for_request(request)
     agent_config = load_agent_config(workspace.agent_id)
-    _ensure_tool_resource_access(workspace.agent_id, tool_name)
 
     if (
         not agent_config.tools
@@ -393,7 +374,6 @@ async def get_tool_config(
     from ..agent_context import get_agent_for_request
 
     workspace = await get_agent_for_request(request)
-    _ensure_tool_resource_access(workspace.agent_id, tool_name)
     registry = PluginRegistry()
 
     # Get tool config for this agent
@@ -458,7 +438,6 @@ async def update_tool_config(
     from ..agent_context import get_agent_for_request
 
     workspace = await get_agent_for_request(request)
-    _ensure_tool_resource_access(workspace.agent_id, tool_name)
     registry = PluginRegistry()
 
     # Get plugin manifest to check for password fields

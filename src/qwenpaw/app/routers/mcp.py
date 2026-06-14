@@ -9,14 +9,6 @@ from typing import Any, Dict, List, Optional, Literal
 from fastapi import APIRouter, Body, HTTPException, Path, Request
 from pydantic import BaseModel, Field
 
-from ._capability_approval import (
-    capability_create_requires_approval,
-    capability_remove_requires_approval,
-    pending_approval_response,
-    record_auto_approved,
-    submit_capability_approval,
-)
-
 from ..utils import schedule_agent_reload
 from ...config.config import MCPClientConfig
 
@@ -69,18 +61,15 @@ class MCPClientInfo(BaseModel):
         default="",
         description="Working directory for stdio MCP command",
     )
+    tools: Optional[List[str]] = Field(
+        default=None,
+        description="Tool whitelist. Only listed tools will be loaded. "
+        "None means load all tools.",
+    )
     oauth_status: Optional[MCPClientOAuthStatus] = Field(
         default=None,
         description="OAuth token status (None if OAuth not configured)",
     )
-
-
-class MCPClientPendingApprovalResponse(BaseModel):
-    """Response returned when MCP creation is waiting for approval."""
-
-    status: Literal["pending_approval"] = "pending_approval"
-    approval_request_id: str
-    message: str
 
 
 class MCPClientCreateRequest(BaseModel):
@@ -119,6 +108,11 @@ class MCPClientCreateRequest(BaseModel):
     cwd: str = Field(
         default="",
         description="Working directory for stdio MCP command",
+    )
+    tools: Optional[List[str]] = Field(
+        default=None,
+        description="Tool whitelist. Only listed tools will be loaded. "
+        "None means load all tools.",
     )
 
 
@@ -159,25 +153,11 @@ class MCPClientUpdateRequest(BaseModel):
         None,
         description="Working directory for stdio MCP command",
     )
-
-
-def _build_mcp_client_config(client: MCPClientCreateRequest) -> MCPClientConfig:
-    return MCPClientConfig(
-        name=client.name,
-        description=client.description,
-        enabled=client.enabled,
-        transport=client.transport,
-        url=client.url,
-        headers=client.headers,
-        command=client.command,
-        args=client.args,
-        env=client.env,
-        cwd=client.cwd,
+    tools: Optional[List[str]] = Field(
+        None,
+        description="Tool whitelist (omit field to leave unchanged). "
+        "Use PUT /mcp/tools/{key} to set or clear the whitelist.",
     )
-
-
-def _mcp_create_requires_approval(request: Request) -> bool:
-    return capability_create_requires_approval(request, "mcp.create")
 
 
 def _restore_original_values(
@@ -272,6 +252,7 @@ def _build_client_info(key: str, client: MCPClientConfig) -> MCPClientInfo:
         args=client.args,
         env=masked_env,
         cwd=client.cwd,
+        tools=client.tools,
         oauth_status=_build_oauth_status(client),
     )
 
@@ -296,6 +277,10 @@ class MCPToolInfo(BaseModel):
 
     name: str = Field(..., description="Tool name")
     description: str = Field(default="", description="Tool description")
+    enabled: bool = Field(
+        default=True,
+        description="Whether this tool is enabled (passes the whitelist)",
+    )
     input_schema: Dict[str, Any] = Field(
         default_factory=dict,
         description="JSON Schema for the tool's input parameters",
@@ -316,8 +301,6 @@ async def list_mcp_tools(
     Returns 503 if the client is not yet connected, empty list if
     disabled, or 502 if the MCP server query fails.
     """
-    from qwenpaw_ext.nexora.governance import ensure_resource_access
-
     from ..agent_context import get_agent_for_request
 
     agent = await get_agent_for_request(request)
@@ -325,8 +308,6 @@ async def list_mcp_tools(
     mcp_config = agent.config.mcp
     if mcp_config is None or client_key not in (mcp_config.clients or {}):
         raise HTTPException(404, detail=f"MCP client '{client_key}' not found")
-
-    ensure_resource_access(agent.agent_id, "mcp", client_key)
 
     client_config = mcp_config.clients[client_key]
     if not client_config.enabled:
@@ -336,18 +317,18 @@ async def list_mcp_tools(
     if mcp_manager is None:
         raise HTTPException(
             503,
-            detail="O gerenciador MCP ainda não está pronto, tente novamente mais tarde",
+            detail="MCP manager is not ready yet, please try again later",
         )
 
     client = await mcp_manager.get_client(client_key)
     if client is None or not getattr(client, "is_connected", False):
         raise HTTPException(
             503,
-            detail="O servidor MCP ainda está se conectando, tente novamente mais tarde",
+            detail="MCP server is still connecting, please try again later",
         )
 
     try:
-        tools = await client.list_tools()
+        tools = await client.list_all_tools()
     except Exception as e:
         logger.warning(
             f"Failed to list tools for MCP client '{client_key}': {e}",
@@ -357,10 +338,94 @@ async def list_mcp_tools(
             detail=f"Failed to query tools from MCP server: {e}",
         ) from e
 
+    whitelist = client_config.tools
+    whitelist_set = set(whitelist) if whitelist is not None else None
+
     return [
         MCPToolInfo(
             name=t.name,
             description=getattr(t, "description", "") or "",
+            enabled=whitelist_set is None or t.name in whitelist_set,
+            input_schema=getattr(t, "inputSchema", {}) or {},
+        )
+        for t in tools
+    ]
+
+
+class MCPToolWhitelistRequest(BaseModel):
+    """Request body for updating tool whitelist."""
+
+    tools: Optional[List[str]] = Field(
+        default=None,
+        description="List of tool names to enable. "
+        "None means enable all tools (remove whitelist).",
+    )
+
+
+@router.put(
+    "/tools/{client_key:path}",
+    response_model=List[MCPToolInfo],
+    summary="Update tool whitelist for an MCP client",
+)
+async def update_mcp_tool_whitelist(
+    request: Request,
+    client_key: str = Path(...),
+    body: MCPToolWhitelistRequest = Body(...),
+) -> List[MCPToolInfo]:
+    """Update which tools are enabled for an MCP client.
+
+    Pass a list of tool names to enable only those tools (whitelist),
+    or None to remove the whitelist and enable all tools.
+    Returns the updated tool list with enabled status.
+    """
+    from ..agent_context import get_agent_for_request
+    from ...config.config import save_agent_config
+
+    agent = await get_agent_for_request(request)
+
+    mcp_config = agent.config.mcp
+    if mcp_config is None or client_key not in (mcp_config.clients or {}):
+        raise HTTPException(404, detail=f"MCP client '{client_key}' not found")
+
+    client_config = mcp_config.clients[client_key]
+    client_config.tools = body.tools
+    save_agent_config(agent.agent_id, agent.config)
+
+    # Hot-patch the running client's whitelist without a full reconnect.
+    # The config watcher will also detect this change and call
+    # _hot_patch_whitelist ~2s later — that's intentionally idempotent.
+    # We patch here for immediate effect.
+    mcp_manager = agent.mcp_manager
+    if mcp_manager is None:
+        raise HTTPException(
+            503,
+            detail="Tool whitelist saved, but MCP manager is not ready. "
+            "Changes will take effect once the server connects.",
+        )
+
+    client = await mcp_manager.get_client(client_key)
+    if client is None or not getattr(client, "is_connected", False):
+        raise HTTPException(
+            503,
+            detail="Tool whitelist saved, but MCP server is not connected. "
+            "Changes will take effect once the server reconnects.",
+        )
+
+    new_whitelist = set(body.tools) if body.tools is not None else None
+    # pylint: disable=protected-access
+    client._tool_whitelist = new_whitelist
+    client._cached_tools = None
+
+    try:
+        tools = await client.list_all_tools()
+    except Exception:
+        return []
+
+    return [
+        MCPToolInfo(
+            name=t.name,
+            description=getattr(t, "description", "") or "",
+            enabled=new_whitelist is None or t.name in new_whitelist,
             input_schema=getattr(t, "inputSchema", {}) or {},
         )
         for t in tools
@@ -374,8 +439,6 @@ async def list_mcp_tools(
 )
 async def list_mcp_clients(request: Request) -> List[MCPClientInfo]:
     """Get list of all configured MCP clients."""
-    from qwenpaw_ext.nexora.governance import filter_resource_ids_for_agent
-
     from ..agent_context import get_agent_for_request
 
     agent = await get_agent_for_request(request)
@@ -383,23 +446,15 @@ async def list_mcp_clients(request: Request) -> List[MCPClientInfo]:
     if mcp_config is None or not mcp_config.clients:
         return []
 
-    allowed_client_keys = set(
-        filter_resource_ids_for_agent(
-            agent.agent_id,
-            "mcp",
-            list(mcp_config.clients.keys()),
-        ),
-    )
     return [
         _build_client_info(key, client)
         for key, client in mcp_config.clients.items()
-        if key in allowed_client_keys
     ]
 
 
 @router.post(
     "",
-    response_model=MCPClientInfo | MCPClientPendingApprovalResponse,
+    response_model=MCPClientInfo,
     summary="Create a new MCP client",
     status_code=201,
 )
@@ -407,7 +462,7 @@ async def create_mcp_client(
     request: Request,
     client_key: str = Body(..., embed=True),
     client: MCPClientCreateRequest = Body(..., embed=True),
-) -> MCPClientInfo | MCPClientPendingApprovalResponse:
+) -> MCPClientInfo:
     """Create a new MCP client configuration."""
     from ..agent_context import get_agent_for_request
     from ...config.config import save_agent_config, MCPConfig
@@ -429,26 +484,19 @@ async def create_mcp_client(
         )
 
     # Create new client config
-    new_client = _build_mcp_client_config(client)
-
-    if _mcp_create_requires_approval(request):
-        approval = submit_capability_approval(
-            request,
-            action="mcp.create",
-            resource_type="mcp",
-            resource_id=client_key,
-            resource_name=client.name,
-            summary=f"Adicionar MCP: {client.name or client_key}",
-            payload={
-                "agent_id": agent.agent_id,
-                "client_key": client_key,
-                "client": new_client.model_dump(mode="json"),
-            },
-        )
-        return MCPClientPendingApprovalResponse(
-            approval_request_id=approval["id"],
-            message="Solicitação de adição de MCP enviada. Será aplicada ao agente após aprovação.",
-        )
+    new_client = MCPClientConfig(
+        name=client.name,
+        description=client.description,
+        enabled=client.enabled,
+        transport=client.transport,
+        url=client.url,
+        headers=client.headers,
+        command=client.command,
+        args=client.args,
+        env=client.env,
+        cwd=client.cwd,
+        tools=client.tools,
+    )
 
     # Add to agent's config and save
     agent.config.mcp.clients[client_key] = new_client
@@ -470,8 +518,6 @@ async def toggle_mcp_client(
     client_key: str = Path(...),
 ) -> MCPClientInfo:
     """Toggle the enabled status of an MCP client."""
-    from qwenpaw_ext.nexora.governance import ensure_resource_access
-
     from ..agent_context import get_agent_for_request
     from ...config.config import save_agent_config
 
@@ -479,7 +525,6 @@ async def toggle_mcp_client(
 
     if agent.config.mcp is None or client_key not in agent.config.mcp.clients:
         raise HTTPException(404, detail=f"MCP client '{client_key}' not found")
-    ensure_resource_access(agent.agent_id, "mcp", client_key)
 
     client = agent.config.mcp.clients[client_key]
 
@@ -509,8 +554,6 @@ async def get_mcp_client(
     client_key: str = Path(...),
 ) -> MCPClientInfo:
     """Get details of a specific MCP client."""
-    from qwenpaw_ext.nexora.governance import ensure_resource_access
-
     from ..agent_context import get_agent_for_request
 
     agent = await get_agent_for_request(request)
@@ -521,7 +564,6 @@ async def get_mcp_client(
     client = mcp_config.clients.get(client_key)
     if client is None:
         raise HTTPException(404, detail=f"MCP client '{client_key}' not found")
-    ensure_resource_access(agent.agent_id, "mcp", client_key)
     return _build_client_info(client_key, client)
 
 
@@ -536,8 +578,6 @@ async def update_mcp_client(
     updates: MCPClientUpdateRequest = Body(...),
 ) -> MCPClientInfo:
     """Update an existing MCP client configuration."""
-    from qwenpaw_ext.nexora.governance import ensure_resource_access
-
     from ..agent_context import get_agent_for_request
     from ...config.config import save_agent_config
 
@@ -545,7 +585,6 @@ async def update_mcp_client(
 
     if agent.config.mcp is None or client_key not in agent.config.mcp.clients:
         raise HTTPException(404, detail=f"MCP client '{client_key}' not found")
-    ensure_resource_access(agent.agent_id, "mcp", client_key)
 
     existing = agent.config.mcp.clients[client_key]
 
@@ -589,8 +628,6 @@ async def delete_mcp_client(
     client_key: str = Path(...),
 ) -> Dict[str, str]:
     """Delete an MCP client configuration."""
-    from qwenpaw_ext.nexora.governance import ensure_resource_access
-
     from ..agent_context import get_agent_for_request
     from ...config.config import save_agent_config
 
@@ -598,29 +635,6 @@ async def delete_mcp_client(
 
     if agent.config.mcp is None or client_key not in agent.config.mcp.clients:
         raise HTTPException(404, detail=f"MCP client '{client_key}' not found")
-    ensure_resource_access(agent.agent_id, "mcp", client_key)
-
-    needs_approval, auto_approve = capability_remove_requires_approval(
-        request, "mcp.delete",
-    )
-    if needs_approval and not auto_approve:
-        approval = submit_capability_approval(
-            request,
-            action="mcp.delete",
-            resource_type="mcp",
-            resource_id=f"{agent.agent_id}:{client_key}",
-            resource_name=client_key,
-            summary=f"Excluir cliente MCP: {client_key}",
-            payload={
-                "operation": "delete",
-                "agent_id": agent.agent_id,
-                "client_key": client_key,
-            },
-        )
-        return pending_approval_response(
-            approval,
-            "Solicitação de exclusão de MCP enviada. Será removido após aprovação.",
-        )
 
     # Remove client
     del agent.config.mcp.clients[client_key]
@@ -628,15 +642,5 @@ async def delete_mcp_client(
 
     # Hot reload config (async, non-blocking)
     schedule_agent_reload(request, agent.agent_id)
-
-    if needs_approval and auto_approve:
-        record_auto_approved(
-            request, action="mcp.delete", resource_type="mcp",
-            resource_id=f"{agent.agent_id}:{client_key}",
-            resource_name=client_key,
-            summary=f"Excluir cliente MCP: {client_key} (aprovação automática)",
-            payload={"operation": "delete", "agent_id": agent.agent_id, "client_key": client_key},
-            result={"deleted": True},
-        )
 
     return {"message": f"MCP client '{client_key}' deleted successfully"}

@@ -27,9 +27,8 @@ export function defaultCreateScope(agentIds: string[]): {
 
 /**
  * Builds the scope and agents list used for the automatic pre-restore backup.
- * Always backs up everything, including secrets. Nexora stores users, roles,
- * governance policies, audit data, and signing keys under the secret directory,
- * so a pre-restore snapshot must include it to be a real rollback point.
+ * Always backs up everything (include_agents=true, include_global_config=true, etc.)
+ * except secrets (excluded by default for safety).
  *
  * @param allAgentIds - All currently known agent IDs (must be the explicit list).
  */
@@ -50,7 +49,7 @@ export function buildPreRestoreScope(allAgentIds: string[]): {
     scope: {
       include_agents: true,
       include_global_config: true,
-      include_secrets: true,
+      include_secrets: false,
       include_skill_pool: true,
     },
     agents: allAgentIds,

@@ -7,7 +7,6 @@ import asyncio
 import copy
 import json
 import logging
-import os
 import shutil
 import tempfile
 import threading
@@ -23,8 +22,6 @@ from pydantic import BaseModel, Field
 from agentscope_runtime.engine.schemas.exception import (
     AppBaseException,
 )
-
-from qwenpaw.constant import SECRET_DIR
 
 from ...agents.skill_system.hub import (
     SkillImportCancelled,
@@ -62,17 +59,11 @@ from ...agents.skill_system.store import (
     read_skill_from_dir,
     read_skill_manifest,
     read_skill_pool_manifest,
+    resolve_pool_skill_dir,
     suggest_conflict_name,
 )
 from ...security.skill_scanner import SkillScanError
-from ..utils import schedule_agent_reload
-from ._capability_approval import (
-    capability_create_requires_approval,
-    capability_remove_requires_approval,
-    pending_approval_response,
-    record_auto_approved,
-    submit_capability_approval,
-)
+from ..utils import check_upload_size, schedule_agent_reload
 
 logger = logging.getLogger(__name__)
 
@@ -136,6 +127,8 @@ class SkillSpec(SkillInfo):
 
 class PoolSkillSpec(SkillInfo):
     protected: bool = False
+    external: bool = False
+    external_path: str = ""
     commit_text: str = ""
     sync_status: str = ""
     latest_version_text: str = ""
@@ -296,7 +289,6 @@ _ALLOWED_ZIP_TYPES = {
     "application/x-zip-compressed",
     "application/octet-stream",
 }
-_MAX_UPLOAD_BYTES = 100 * 1024 * 1024  # 100 MB
 
 
 def _workspace_dir_for_agent(agent_id: str) -> Path:
@@ -307,69 +299,6 @@ def _workspace_dir_for_agent(agent_id: str) -> Path:
         status_code=404,
         detail=f"Workspace '{agent_id}' not found",
     )
-
-
-def _request_user_and_roles(request: Request) -> tuple[str, list[str]]:
-    return (
-        str(getattr(request.state, "user", "") or ""),
-        list(getattr(request.state, "roles", []) or []),
-    )
-
-
-def _filter_workspaces_for_request(
-    workspaces: list[dict[str, Any]],
-    request: Request,
-) -> list[dict[str, Any]]:
-    from qwenpaw_ext.nexora.authorization import filter_agent_ids_for_user
-
-    username, roles = _request_user_and_roles(request)
-    visible_ids = set(
-        filter_agent_ids_for_user(
-            [str(workspace["agent_id"]) for workspace in workspaces],
-            username,
-            roles,
-        ),
-    )
-    return [
-        workspace
-        for workspace in workspaces
-        if str(workspace["agent_id"]) in visible_ids
-    ]
-
-
-def _resolve_pool_download_targets(
-    body: DownloadFromPoolRequest,
-    request: Request,
-) -> list[PoolDownloadTarget]:
-    from qwenpaw_ext.nexora.authorization import ensure_agent_access
-
-    workspaces = list_workspaces()
-    known_ids = {str(workspace["agent_id"]) for workspace in workspaces}
-    username, roles = _request_user_and_roles(request)
-    if body.all_workspaces:
-        return [
-            PoolDownloadTarget(workspace_id=str(workspace["agent_id"]))
-            for workspace in _filter_workspaces_for_request(
-                workspaces,
-                request,
-            )
-        ]
-
-    resolved: list[PoolDownloadTarget] = []
-    seen: set[str] = set()
-    for target in body.targets:
-        workspace_id = str(target.workspace_id)
-        if workspace_id not in known_ids:
-            raise HTTPException(
-                status_code=404,
-                detail=f"Workspace '{workspace_id}' not found",
-            )
-        ensure_agent_access(username, roles, workspace_id)
-        if workspace_id in seen:
-            continue
-        seen.add(workspace_id)
-        resolved.append(PoolDownloadTarget(workspace_id=workspace_id))
-    return resolved
 
 
 def _snapshot_workspace_skill(
@@ -430,12 +359,6 @@ async def _request_workspace_dir(request: Request) -> Path:
     return Path(workspace.workspace_dir)
 
 
-def _ensure_skill_resource_access(agent_id: str, skill_name: str) -> None:
-    from qwenpaw_ext.nexora.governance import ensure_resource_access
-
-    ensure_resource_access(agent_id, "skill", skill_name)
-
-
 async def _hub_task_set_status(
     task_id: str,
     status: HubInstallTaskStatus,
@@ -481,47 +404,8 @@ async def _read_validated_zip_upload(file: UploadFile) -> bytes:
         )
 
     data = await file.read()
-    if len(data) > _MAX_UPLOAD_BYTES:
-        raise HTTPException(
-            status_code=400,
-            detail=(
-                f"File too large ({len(data) // (1024 * 1024)} MB). "
-                f"Maximum is {_MAX_UPLOAD_BYTES // (1024 * 1024)} MB."
-            ),
-        )
+    check_upload_size(data)
     return data
-
-
-def _stage_skill_approval_upload(
-    data: bytes,
-    filename: str,
-) -> Path:
-    upload_dir = SECRET_DIR / "nexora_approval_uploads" / "skills"
-    upload_dir.mkdir(parents=True, exist_ok=True)
-    try:
-        os.chmod(upload_dir, 0o700)
-    except OSError:
-        pass
-    suffix = Path(filename).suffix or ".zip"
-    fd, staged_name = tempfile.mkstemp(
-        prefix="skill_",
-        suffix=suffix,
-        dir=upload_dir,
-    )
-    staged_path = Path(staged_name)
-    try:
-        with os.fdopen(fd, "wb") as fh:
-            fh.write(data)
-            fh.flush()
-            os.fsync(fh.fileno())
-        try:
-            os.chmod(staged_path, 0o600)
-        except OSError:
-            pass
-    except Exception:
-        staged_path.unlink(missing_ok=True)
-        raise
-    return staged_path
 
 
 def _cleanup_imported_skill(workspace_dir: Path, skill_name: str) -> None:
@@ -679,17 +563,22 @@ def _build_pool_skill_specs() -> list[PoolSkillSpec]:
             )
         try:
             source = entry.get("source", "customized")
-            skill_dir = pool_dir / skill_name
+            skill_dir = resolve_pool_skill_dir(skill_name) or (
+                pool_dir / skill_name
+            )
             skill = read_skill_from_dir(skill_dir, source)
             if skill is None:
                 continue
             info = sync_info.get(skill_name, {})
             dump = skill.model_dump(exclude={"version_text"})
             dump["tags"] = entry.get("tags") or []
+            is_external = bool(entry.get("external", False))
             specs.append(
                 PoolSkillSpec(
                     **dump,
                     protected=bool(entry.get("protected", False)),
+                    external=is_external,
+                    external_path=str(skill_dir) if is_external else "",
                     version_text=str(entry.get("version_text", "") or ""),
                     commit_text=str(entry.get("commit_text", "") or ""),
                     sync_status=str(info.get("sync_status", "") or ""),
@@ -726,42 +615,16 @@ def _build_pool_skill_specs() -> list[PoolSkillSpec]:
 
 @router.get("")
 async def list_skills(request: Request) -> list[SkillSpec]:
-    from qwenpaw_ext.nexora.governance import filter_resource_ids_for_agent
-
-    from ..agent_context import get_agent_for_request
-
-    workspace = await get_agent_for_request(request)
-    workspace_dir = Path(workspace.workspace_dir)
-    specs = _build_workspace_skill_specs(workspace_dir)
-    allowed_skill_names = set(
-        filter_resource_ids_for_agent(
-            workspace.agent_id,
-            "skill",
-            [spec.name for spec in specs],
-        ),
-    )
-    return [spec for spec in specs if spec.name in allowed_skill_names]
+    workspace_dir = await _request_workspace_dir(request)
+    return _build_workspace_skill_specs(workspace_dir)
 
 
 @router.post("/refresh")
 async def refresh_skills(request: Request) -> list[SkillSpec]:
     """Force reconcile and return updated workspace skill list."""
-    from qwenpaw_ext.nexora.governance import filter_resource_ids_for_agent
-
-    from ..agent_context import get_agent_for_request
-
-    workspace = await get_agent_for_request(request)
-    workspace_dir = Path(workspace.workspace_dir)
+    workspace_dir = await _request_workspace_dir(request)
     reconcile_workspace_manifest(workspace_dir)
-    specs = _build_workspace_skill_specs(workspace_dir)
-    allowed_skill_names = set(
-        filter_resource_ids_for_agent(
-            workspace.agent_id,
-            "skill",
-            [spec.name for spec in specs],
-        ),
-    )
-    return [spec for spec in specs if spec.name in allowed_skill_names]
+    return _build_workspace_skill_specs(workspace_dir)
 
 
 @router.get("/hub/search")
@@ -785,11 +648,9 @@ async def search_hub(
 
 
 @router.get("/workspaces")
-async def list_workspace_skill_sources(
-    request: Request,
-) -> list[WorkspaceSkillSummary]:
+async def list_workspace_skill_sources() -> list[WorkspaceSkillSummary]:
     summaries: list[WorkspaceSkillSummary] = []
-    workspaces = _filter_workspaces_for_request(list_workspaces(), request)
+    workspaces = list_workspaces()
     for workspace in workspaces:
         workspace_dir = Path(workspace["workspace_dir"])
         summaries.append(
@@ -803,34 +664,12 @@ async def list_workspace_skill_sources(
     return summaries
 
 
-@router.post("/hub/install/start")
+@router.post("/hub/install/start", response_model=HubInstallTask)
 async def start_install_from_hub(
     request_body: HubInstallRequest,
     request: Request,
-) -> HubInstallTask | dict[str, Any]:
-    from ..agent_context import get_agent_for_request
-
-    workspace = await get_agent_for_request(request)
-    workspace_dir = Path(workspace.workspace_dir)
-    if capability_create_requires_approval(request, "skill.create"):
-        resource_name = request_body.target_name or request_body.bundle_url
-        approval = submit_capability_approval(
-            request,
-            action="skill.create",
-            resource_type="skill",
-            resource_id=f"{workspace.agent_id}:{resource_name}",
-            resource_name=resource_name,
-            summary=f"Instalar Skill do Hub: {resource_name}",
-            payload={
-                "operation": "workspace.hub_install",
-                "agent_id": workspace.agent_id,
-                "hub": request_body.model_dump(),
-            },
-        )
-        return pending_approval_response(
-            approval,
-            "Solicitação de instalação de Skill enviada. Será aplicada ao agente após aprovação.",
-        )
+) -> HubInstallTask:
+    workspace_dir = await _request_workspace_dir(request)
     task = HubInstallTask(
         bundle_url=request_body.bundle_url,
         version=request_body.version,
@@ -938,24 +777,6 @@ async def create_skill(
 
     workspace = await get_agent_for_request(request)
     workspace_dir = Path(workspace.workspace_dir)
-    if capability_create_requires_approval(request, "skill.create"):
-        approval = submit_capability_approval(
-            request,
-            action="skill.create",
-            resource_type="skill",
-            resource_id=f"{workspace.agent_id}:{body.name}",
-            resource_name=body.name,
-            summary=f"Adicionar Skill ao agente: {body.name}",
-            payload={
-                "operation": "workspace.create",
-                "agent_id": workspace.agent_id,
-                "skill": body.model_dump(),
-            },
-        )
-        return pending_approval_response(
-            approval,
-            "Skill 新增申请已提交，审批通过后会进入当前智能体。",
-        )
     try:
         created = SkillService(workspace_dir).create_skill(
             name=body.name,
@@ -1009,31 +830,6 @@ async def upload_skill_zip(
                 status_code=400,
                 detail="rename_map must be a JSON object",
             )
-    if capability_create_requires_approval(request, "skill.create"):
-        staged_path = _stage_skill_approval_upload(
-            data,
-            file.filename or "skill.zip",
-        )
-        approval = submit_capability_approval(
-            request,
-            action="skill.create",
-            resource_type="skill",
-            resource_id=f"{workspace.agent_id}:{file.filename or 'skill.zip'}",
-            resource_name=target_name or file.filename or "skill.zip",
-            summary=f"上传智能体 Skill：{target_name or file.filename or 'skill.zip'}",
-            payload={
-                "operation": "workspace.import_zip",
-                "agent_id": workspace.agent_id,
-                "staged_zip_path": str(staged_path),
-                "enable": enable,
-                "target_name": target_name,
-                "rename_map": parsed_rename,
-            },
-        )
-        return pending_approval_response(
-            approval,
-            "Skill 上传申请已提交，审批通过后会进入当前智能体。",
-        )
     try:
         result = await asyncio.to_thread(
             SkillService(workspace_dir).import_from_zip,
@@ -1054,9 +850,7 @@ async def upload_skill_zip(
 
 
 @router.post("/pool/create")
-async def create_pool_skill(
-    body: CreateSkillRequest,
-) -> dict[str, Any]:
+async def create_pool_skill(body: CreateSkillRequest) -> dict[str, Any]:
     try:
         created = SkillPoolService().create_skill(
             name=body.name,
@@ -1209,6 +1003,8 @@ def _preflight_download_conflicts(
             overwrite=overwrite,
         )
         if not result.get("success"):
+            if result.get("reason") == "not_found":
+                raise HTTPException(status_code=404, detail=result)
             conflicts.append(result)
     return conflicts
 
@@ -1252,21 +1048,6 @@ def _resolve_and_preflight(
     return targets, hub_service
 
 
-def _resolved_pool_download_body(
-    body: DownloadFromPoolRequest,
-    targets: list[PoolDownloadTarget],
-    *,
-    preview_only: bool | None = None,
-) -> DownloadFromPoolRequest:
-    return DownloadFromPoolRequest(
-        skill_name=body.skill_name,
-        targets=targets,
-        all_workspaces=False,
-        overwrite=body.overwrite,
-        preview_only=body.preview_only if preview_only is None else preview_only,
-    )
-
-
 def _build_download_plan(
     targets: list[PoolDownloadTarget],
     skill_name: str,
@@ -1289,9 +1070,48 @@ def _build_download_plan(
     return plan
 
 
-def _execute_pool_download(
+def _download_one_or_raise(
+    hub_service: SkillPoolService,
+    plan: dict[str, Any],
+    execution_plan: list[dict[str, Any]],
+    *,
+    skill_name: str,
+    overwrite: bool,
+) -> dict[str, str]:
+    """Download into one workspace; on failure roll back all and raise.
+
+    A missing pool skill is a target-independent 404; any other failure is
+    a per-target 409 conflict.
+    """
+    result = hub_service.download_to_workspace(
+        skill_name=skill_name,
+        workspace_dir=plan["workspace_dir"],
+        overwrite=overwrite,
+    )
+    if not result.get("success"):
+        for rollback in reversed(execution_plan):
+            _restore_workspace_skill(rollback["snapshot"])
+        if result.get("reason") == "not_found":
+            raise HTTPException(status_code=404, detail=result)
+        raise HTTPException(
+            status_code=409,
+            detail={"downloaded": [], "conflicts": [result]},
+        )
+    return {
+        "workspace_id": str(plan["workspace_id"]),
+        "workspace_name": str(result.get("workspace_name", "") or ""),
+        "name": str(result.get("name", "")),
+    }
+
+
+@router.post("/pool/download")
+async def download_pool_skill_to_workspaces(
     body: DownloadFromPoolRequest,
 ) -> dict[str, Any]:
+    """Download one pool skill into one or more workspaces.
+
+    All-or-nothing: if any target conflicts, reject everything.
+    """
     targets, hub_service = _resolve_and_preflight(body)
     if body.preview_only:
         return {"downloaded": []}
@@ -1301,36 +1121,21 @@ def _execute_pool_download(
     downloaded: list[dict[str, str]] = []
     try:
         for plan in execution_plan:
-            result = hub_service.download_to_workspace(
-                skill_name=body.skill_name,
-                workspace_dir=plan["workspace_dir"],
-                overwrite=body.overwrite,
-            )
-            if not result.get("success"):
-                for rollback in reversed(execution_plan):
-                    _restore_workspace_skill(rollback["snapshot"])
-                raise HTTPException(
-                    status_code=409,
-                    detail={
-                        "downloaded": [],
-                        "conflicts": [result],
-                    },
-                )
             downloaded.append(
-                {
-                    "workspace_id": str(plan["workspace_id"]),
-                    "workspace_name": str(
-                        result.get("workspace_name", "") or "",
-                    ),
-                    "name": str(result.get("name", "")),
-                },
+                _download_one_or_raise(
+                    hub_service,
+                    plan,
+                    execution_plan,
+                    skill_name=body.skill_name,
+                    overwrite=body.overwrite,
+                ),
             )
     except HTTPException:
         raise
     except SkillScanError as exc:
         for rollback in reversed(execution_plan):
             _restore_workspace_skill(rollback["snapshot"])
-        raise
+        return _scan_error_response(exc)
     except Exception:
         for rollback in reversed(execution_plan):
             _restore_workspace_skill(rollback["snapshot"])
@@ -1342,54 +1147,6 @@ def _execute_pool_download(
                 shutil.rmtree(Path(backup_dir).parent, ignore_errors=True)
 
     return {"downloaded": downloaded}
-
-
-@router.post("/pool/download")
-async def download_pool_skill_to_workspaces(
-    request: Request,
-    body: DownloadFromPoolRequest,
-) -> dict[str, Any]:
-    """Download one pool skill into one or more workspaces.
-
-    All-or-nothing: if any target conflicts, reject everything.
-    """
-    resolved_targets = _resolve_pool_download_targets(body, request)
-    resolved_body = _resolved_pool_download_body(body, resolved_targets)
-    if not resolved_targets:
-        raise HTTPException(
-            status_code=400,
-            detail="No workspace targets provided",
-        )
-    if (
-        not resolved_body.preview_only
-        and capability_create_requires_approval(request, "skill.create")
-    ):
-        target_ids = [target.workspace_id for target in resolved_targets]
-        approval = submit_capability_approval(
-            request,
-            action="skill.create",
-            resource_type="skill",
-            resource_id=f"pool:{body.skill_name}->{','.join(target_ids)}",
-            resource_name=body.skill_name,
-            summary=(
-                f"广播技能池 Skill：{body.skill_name} "
-                f"到 {len(target_ids)} 个智能体"
-            ),
-            payload={
-                "operation": "workspace.download_from_pool",
-                "skill_name": body.skill_name,
-                "targets": [{"workspace_id": target_id} for target_id in target_ids],
-                "overwrite": body.overwrite,
-            },
-        )
-        return pending_approval_response(
-            approval,
-            "Skill 广播申请已提交，审批通过后会进入目标智能体。",
-        )
-    try:
-        return _execute_pool_download(resolved_body)
-    except SkillScanError as exc:
-        return _scan_error_response(exc)
 
 
 @router.post("/pool/import-builtin")
@@ -1429,40 +1186,12 @@ async def update_pool_builtin(
 
 
 @router.delete("/pool/{skill_name}")
-async def delete_pool_skill(request: Request, skill_name: str) -> dict[str, Any]:
-    needs_approval, auto_approve = capability_remove_requires_approval(
-        request, "skill.delete",
-    )
-    if needs_approval and not auto_approve:
-        approval = submit_capability_approval(
-            request,
-            action="skill.delete",
-            resource_type="skill",
-            resource_id=f"pool:{skill_name}",
-            resource_name=skill_name,
-            summary=f"删除技能池 Skill：{skill_name}",
-            payload={
-                "operation": "pool.delete",
-                "skill_name": skill_name,
-            },
-        )
-        return pending_approval_response(
-            approval,
-            "Solicitação de exclusão de Skill enviada. Será removida após aprovação.",
-        )
+async def delete_pool_skill(skill_name: str) -> dict[str, Any]:
     deleted = SkillPoolService().delete_skill(skill_name)
     if not deleted:
         raise HTTPException(
             status_code=409,
             detail="Skill pool entry cannot be deleted",
-        )
-    if needs_approval and auto_approve:
-        record_auto_approved(
-            request, action="skill.delete", resource_type="skill",
-            resource_id=f"pool:{skill_name}", resource_name=skill_name,
-            summary=f"删除技能池 Skill：{skill_name}（自动审批）",
-            payload={"operation": "pool.delete", "skill_name": skill_name},
-            result={"deleted": True},
         )
     return {"deleted": True}
 
@@ -1548,38 +1277,11 @@ async def batch_delete_skills(
     skills: list[str],
 ) -> dict[str, Any]:
     """Auto-disable then delete each skill. Per-skill results."""
-    from ..agent_context import get_agent_for_request
-
-    workspace = await get_agent_for_request(request)
-    workspace_dir = Path(workspace.workspace_dir)
-
-    needs_approval, auto_approve = capability_remove_requires_approval(
-        request, "skill.delete",
-    )
-    if needs_approval and not auto_approve:
-        approval = submit_capability_approval(
-            request,
-            action="skill.delete",
-            resource_type="skill",
-            resource_id=f"{workspace.agent_id}:{','.join(skills)}",
-            resource_name=", ".join(skills),
-            summary=f"Excluir Skills do agente em lote: {', '.join(skills)}",
-            payload={
-                "operation": "workspace.batch_delete",
-                "agent_id": workspace.agent_id,
-                "skill_names": skills,
-            },
-        )
-        return pending_approval_response(
-            approval,
-            "Solicitação de exclusão em lote de Skills enviada. Serão removidas após aprovação.",
-        )
-
+    workspace_dir = await _request_workspace_dir(request)
     service = SkillService(workspace_dir)
     results: dict[str, Any] = {}
     for skill_name in skills:
         try:
-            _ensure_skill_resource_access(workspace.agent_id, skill_name)
             service.disable_skill(skill_name)
             deleted = service.delete_skill(skill_name)
             results[skill_name] = {
@@ -1591,45 +1293,14 @@ async def batch_delete_skills(
                 "success": False,
                 "reason": str(exc),
             }
-    if needs_approval and auto_approve:
-        record_auto_approved(
-            request, action="skill.delete", resource_type="skill",
-            resource_id=f"{workspace.agent_id}:{','.join(skills)}",
-            resource_name=", ".join(skills),
-            summary=f"Excluir Skills do agente em lote: {', '.join(skills)} (aprovação automática)",
-            payload={"operation": "workspace.batch_delete", "agent_id": workspace.agent_id, "skill_names": skills},
-            result=results,
-        )
     return {"results": results}
 
 
 @router.post("/pool/batch-delete")
 async def batch_delete_pool_skills(
-    request: Request,
     skills: list[str],
 ) -> dict[str, Any]:
     """Delete multiple pool skills. Per-skill results."""
-    needs_approval, auto_approve = capability_remove_requires_approval(
-        request, "skill.delete",
-    )
-    if needs_approval and not auto_approve:
-        approval = submit_capability_approval(
-            request,
-            action="skill.delete",
-            resource_type="skill",
-            resource_id=f"pool:{','.join(skills)}",
-            resource_name=", ".join(skills),
-            summary=f"Excluir Skills do pool em lote: {', '.join(skills)}",
-            payload={
-                "operation": "pool.batch_delete",
-                "skill_names": skills,
-            },
-        )
-        return pending_approval_response(
-            approval,
-            "Solicitação de exclusão em lote de Skills do pool enviada. Serão removidas após aprovação.",
-        )
-
     service = SkillPoolService()
     results: dict[str, Any] = {}
     for skill_name in skills:
@@ -1644,15 +1315,6 @@ async def batch_delete_pool_skills(
                 "success": False,
                 "reason": str(exc),
             }
-    if needs_approval and auto_approve:
-        record_auto_approved(
-            request, action="skill.delete", resource_type="skill",
-            resource_id=f"pool:{','.join(skills)}",
-            resource_name=", ".join(skills),
-            summary=f"Excluir Skills do pool em lote: {', '.join(skills)} (aprovação automática)",
-            payload={"operation": "pool.batch_delete", "skill_names": skills},
-            result=results,
-        )
     return {"results": results}
 
 
@@ -1666,16 +1328,7 @@ async def batch_disable_skills(
     workspace = await get_agent_for_request(request)
     workspace_dir = Path(workspace.workspace_dir)
     service = SkillService(workspace_dir)
-    results: dict[str, Any] = {}
-    for skill in skills:
-        try:
-            _ensure_skill_resource_access(workspace.agent_id, skill)
-            results[skill] = service.disable_skill(skill)
-        except HTTPException as exc:
-            results[skill] = {
-                "success": False,
-                "reason": exc.detail,
-            }
+    results = {skill: service.disable_skill(skill) for skill in skills}
     if any(result.get("success") for result in results.values()):
         schedule_agent_reload(request, workspace.agent_id)
     return {"results": results}
@@ -1701,13 +1354,7 @@ async def batch_enable_skills(
     results: dict[str, Any] = {}
     for skill in skills:
         try:
-            _ensure_skill_resource_access(workspace.agent_id, skill)
             results[skill] = service.enable_skill(skill)
-        except HTTPException as exc:
-            results[skill] = {
-                "success": False,
-                "reason": exc.detail,
-            }
         except SkillScanError as exc:
             results[skill] = {
                 "success": False,
@@ -1731,7 +1378,6 @@ async def disable_skill(
 
     workspace = await get_agent_for_request(request)
     workspace_dir = Path(workspace.workspace_dir)
-    _ensure_skill_resource_access(workspace.agent_id, skill_name)
     result = SkillService(workspace_dir).disable_skill(skill_name)
     if not result.get("success"):
         raise HTTPException(status_code=404, detail="Skill not found")
@@ -1749,7 +1395,6 @@ async def enable_skill(
 
     workspace = await get_agent_for_request(request)
     workspace_dir = Path(workspace.workspace_dir)
-    _ensure_skill_resource_access(workspace.agent_id, skill_name)
     try:
         result = SkillService(workspace_dir).enable_skill(skill_name)
     except SkillScanError as exc:
@@ -1768,34 +1413,7 @@ async def delete_skill(
     request: Request,
     skill_name: str,
 ) -> dict[str, Any]:
-    from ..agent_context import get_agent_for_request
-
-    workspace = await get_agent_for_request(request)
-    workspace_dir = Path(workspace.workspace_dir)
-    _ensure_skill_resource_access(workspace.agent_id, skill_name)
-
-    needs_approval, auto_approve = capability_remove_requires_approval(
-        request, "skill.delete",
-    )
-    if needs_approval and not auto_approve:
-        approval = submit_capability_approval(
-            request,
-            action="skill.delete",
-            resource_type="skill",
-            resource_id=f"{workspace.agent_id}:{skill_name}",
-            resource_name=skill_name,
-            summary=f"Excluir Skill do agente: {skill_name}",
-            payload={
-                "operation": "workspace.delete",
-                "agent_id": workspace.agent_id,
-                "skill_name": skill_name,
-            },
-        )
-        return pending_approval_response(
-            approval,
-            "Solicitação de exclusão de Skill enviada. Será removida após aprovação.",
-        )
-
+    workspace_dir = await _request_workspace_dir(request)
     service = SkillService(workspace_dir)
     service.disable_skill(skill_name)
     deleted = service.delete_skill(skill_name)
@@ -1803,15 +1421,6 @@ async def delete_skill(
         raise HTTPException(
             status_code=409,
             detail="Only disabled workspace skills can be deleted",
-        )
-    if needs_approval and auto_approve:
-        record_auto_approved(
-            request, action="skill.delete", resource_type="skill",
-            resource_id=f"{workspace.agent_id}:{skill_name}",
-            resource_name=skill_name,
-            summary=f"Excluir Skill do agente: {skill_name} (aprovação automática)",
-            payload={"operation": "workspace.delete", "agent_id": workspace.agent_id, "skill_name": skill_name},
-            result={"deleted": True},
         )
     return {"deleted": True}
 
@@ -1822,11 +1431,7 @@ async def load_skill_file(
     skill_name: str,
     file_path: str,
 ) -> dict[str, Any]:
-    from ..agent_context import get_agent_for_request
-
-    workspace = await get_agent_for_request(request)
-    workspace_dir = Path(workspace.workspace_dir)
-    _ensure_skill_resource_access(workspace.agent_id, skill_name)
+    workspace_dir = await _request_workspace_dir(request)
     content = SkillService(workspace_dir).load_skill_file(
         skill_name=skill_name,
         file_path=file_path,
@@ -1845,10 +1450,6 @@ async def save_workspace_skill(
 
     workspace = await get_agent_for_request(request)
     workspace_dir = Path(workspace.workspace_dir)
-    _ensure_skill_resource_access(
-        workspace.agent_id,
-        body.source_name or body.name,
-    )
     try:
         result = SkillService(workspace_dir).save_skill(
             skill_name=body.source_name or body.name,
@@ -1880,7 +1481,6 @@ async def update_skill_channels_endpoint(
 
     workspace = await get_agent_for_request(request)
     workspace_dir = Path(workspace.workspace_dir)
-    _ensure_skill_resource_access(workspace.agent_id, skill_name)
     updated = SkillService(workspace_dir).set_skill_channels(
         skill_name,
         channels,
@@ -1902,7 +1502,6 @@ async def update_skill_tags(
     tags = _validate_tags(tags)
     workspace = await get_agent_for_request(request)
     workspace_dir = Path(workspace.workspace_dir)
-    _ensure_skill_resource_access(workspace.agent_id, skill_name)
     updated = SkillService(workspace_dir).set_skill_tags(
         skill_name,
         tags,
@@ -1917,11 +1516,7 @@ async def get_skill_config_endpoint(
     request: Request,
     skill_name: str,
 ) -> dict[str, Any]:
-    from ..agent_context import get_agent_for_request
-
-    workspace = await get_agent_for_request(request)
-    workspace_dir = Path(workspace.workspace_dir)
-    _ensure_skill_resource_access(workspace.agent_id, skill_name)
+    workspace_dir = await _request_workspace_dir(request)
     manifest = read_skill_manifest(workspace_dir)
     entry = manifest.get("skills", {}).get(skill_name)
     if entry is None:
@@ -1935,11 +1530,7 @@ async def update_skill_config_endpoint(
     skill_name: str,
     body: SkillConfigRequest,
 ) -> dict[str, Any]:
-    from ..agent_context import get_agent_for_request
-
-    workspace = await get_agent_for_request(request)
-    workspace_dir = Path(workspace.workspace_dir)
-    _ensure_skill_resource_access(workspace.agent_id, skill_name)
+    workspace_dir = await _request_workspace_dir(request)
     manifest_path = get_workspace_skill_manifest_path(workspace_dir)
 
     def _update(payload: dict[str, Any]) -> bool:
@@ -1964,11 +1555,7 @@ async def delete_skill_config_endpoint(
     request: Request,
     skill_name: str,
 ) -> dict[str, Any]:
-    from ..agent_context import get_agent_for_request
-
-    workspace = await get_agent_for_request(request)
-    workspace_dir = Path(workspace.workspace_dir)
-    _ensure_skill_resource_access(workspace.agent_id, skill_name)
+    workspace_dir = await _request_workspace_dir(request)
     manifest_path = get_workspace_skill_manifest_path(workspace_dir)
 
     def _update(payload: dict[str, Any]) -> bool:

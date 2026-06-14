@@ -15,14 +15,13 @@ const cssStubPlugin = {
 };
 
 export default defineConfig(({ mode }) => {
+  // Load env to expose VITE_-prefixed vars to import.meta.env (Vite reads
+  // .env / .env.local automatically; loadEnv is needed only if we want to
+  // surface non-VITE_ vars in this config).
   const env = loadEnv(mode, process.cwd(), "");
-  // Empty = same-origin; frontend and backend served together, no hardcoded host.
-  // Use a dedicated Vite-prefixed key so unrelated shell BASE_URL values don't leak into the build.
-  const apiBaseUrl = env.VITE_API_BASE_URL ?? "";
 
   return {
     define: {
-      VITE_API_BASE_URL: JSON.stringify(apiBaseUrl),
       TOKEN: JSON.stringify(env.TOKEN || ""),
       MOBILE: false,
     },
@@ -46,6 +45,12 @@ export default defineConfig(({ mode }) => {
     server: {
       host: "0.0.0.0",
       port: 5173,
+      proxy: {
+        "/api": {
+          target: "http://localhost:8088",
+          changeOrigin: false,
+        },
+      },
     },
     test: {
       globals: true,
@@ -70,6 +75,14 @@ export default defineConfig(({ mode }) => {
           __dirname,
           "src/test/icons-mock.ts",
         ),
+        "@tauri-apps/api/core": path.resolve(
+          __dirname,
+          "src/test/tauri-mock.ts",
+        ),
+        "@tauri-apps/plugin-dialog": path.resolve(
+          __dirname,
+          "src/test/tauri-mock.ts",
+        ),
       },
       exclude: [
         "**/node_modules/**",
@@ -78,19 +91,26 @@ export default defineConfig(({ mode }) => {
         "**/testConnectionMessage.test.ts",
         // ChatPage test causes worker crash - pre-existing issue, needs more mock setup
         "**/pages/Chat/ChatPage.test.tsx",
+        // Tauri modules require @tauri-apps/api which only exists in desktop builds
+        "**/src/tauri/**",
       ],
       coverage: {
         provider: "v8",
-        reporter: ["text", "html", "json", "lcov"],
+        reporter: ["text", "html", "json", "json-summary", "lcov"],
         include: ["src/**/*.{ts,tsx}"],
         exclude: [
           "src/test/**",
+          "src/tauri/**",
           "src/**/*.d.ts",
           "src/main.tsx",
           "src/vite-env.d.ts",
         ],
-        // 第一阶段：记录基线，不强制卡点
-        // 后续稳定后可开启：thresholds: { statements: 60, functions: 60 }
+        thresholds: {
+          statements: 5,
+          branches: 4,
+          functions: 3,
+          lines: 5,
+        },
       },
     },
     optimizeDeps: {

@@ -132,29 +132,6 @@
     -ms-overflow-style: none;
   }
 
-  .settingsMenu {
-    flex: 0 0 auto;
-
-    :global {
-      .qwenpaw-menu-submenu-arrow {
-        display: block !important;
-      }
-
-      .qwenpaw-menu-submenu-title {
-        cursor: pointer;
-
-        &:hover {
-          background: rgba(0, 0, 0, 0.04) !important;
-          color: rgba(26, 23, 22, 0.58) !important;
-        }
-      }
-
-      .qwenpaw-menu-submenu:not(.qwenpaw-menu-submenu-open) > .qwenpaw-menu {
-        display: none !important;
-      }
-    }
-  }
-
   &.siderCollapsed {
     padding: 0 8px;
 
@@ -339,7 +316,7 @@
 }
 
 .logoImg {
-  height: 40px;
+  height: 16px;
   width: auto;
 }
 
@@ -357,19 +334,6 @@
   transform: rotate(90deg);
   z-index: 4;
   border-top: 1px solid rgba(234, 232, 231, 1);
-}
-
-.currentUserName {
-  max-width: 160px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: rgba(43, 18, 0, 0.06);
-  color: rgba(26, 23, 22, 0.72);
-  font-size: 13px;
-  line-height: 18px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .versionBadge {
@@ -398,7 +362,6 @@
 .authActions {
   padding: 12px 16px;
   border-top: 1px solid #f0f0f0;
-  flex-shrink: 0;
 }
 
 .authBtn {
@@ -416,9 +379,6 @@
 
 .authBtnCollapsed {
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  padding: 0;
 }
 
 .authBtn + .authBtn {
@@ -738,15 +698,6 @@
     &:hover {
       color: rgba(255, 255, 255, 0.9) !important;
       background: rgba(255, 255, 255, 0.06) !important;
-    }
-  }
-
-  .settingsMenu {
-    :global {
-      .qwenpaw-menu-submenu-title:hover {
-        background: rgba(255, 255, 255, 0.06) !important;
-        color: rgba(255, 255, 255, 0.78) !important;
-      }
     }
   }
 

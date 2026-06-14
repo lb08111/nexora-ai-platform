@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { AgentSummary } from "../api/types/agents";
+import { menuRegistry } from "../plugins/registry/store";
 
 /**
  * Storage key used by both sessionStorage (per-tab state) and localStorage
@@ -78,6 +79,7 @@ export const useAgentStore = create<AgentStore>()(
 
       setSelectedAgent: (agentId) => {
         set({ selectedAgent: agentId });
+        menuRegistry.refresh();
         // Persist to localStorage so new tabs inherit this choice
         try {
           localStorage.setItem(LAST_USED_AGENT_KEY, agentId);
@@ -86,33 +88,15 @@ export const useAgentStore = create<AgentStore>()(
         }
       },
 
-      setAgents: (agents) =>
-        set((state) => {
-          const selectedVisible = agents.some(
-            (agent) => agent.id === state.selectedAgent,
-          );
-          if (selectedVisible) {
-            return { agents };
-          }
-
-          const nextAgent = agents.find((agent) => agent.enabled) || agents[0];
-          if (nextAgent) {
-            try {
-              localStorage.setItem(LAST_USED_AGENT_KEY, nextAgent.id);
-            } catch {
-              /* ignore */
-            }
-            return { agents, selectedAgent: nextAgent.id };
-          }
-          return { agents, selectedAgent: "default" };
-        }),
+      setAgents: (agents) => set({ agents }),
 
       addAgent: (agent) =>
         set((state) => ({
           agents: [...state.agents, agent],
         })),
 
-      removeAgent: (agentId) =>
+      removeAgent: (agentId) => {
+        const shouldRefresh = get().selectedAgent === agentId;
         set((state) => {
           const { [agentId]: _, ...remainingChatIds } = state.lastChatIdByAgent;
           return {
@@ -122,7 +106,9 @@ export const useAgentStore = create<AgentStore>()(
               ? { selectedAgent: "default" }
               : {}),
           };
-        }),
+        });
+        if (shouldRefresh) menuRegistry.refresh();
+      },
 
       updateAgent: (agentId, updates) =>
         set((state) => ({
