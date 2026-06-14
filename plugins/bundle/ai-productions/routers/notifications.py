@@ -115,7 +115,7 @@ def list_notifications(
 @router.get("/_unread", response_model=UnreadResponse)
 def unread_count(team: str | None = Query(None)) -> UnreadResponse:
     return UnreadResponse(
-        unread=get_notification_store().unread_count(team=team)
+        unread=get_notification_store().unread_count(team=team),
     )
 
 
@@ -129,7 +129,8 @@ def create_notification(body: CreateNotificationRequest) -> NotificationView:
     if body.kind not in ALL_NOTIFICATION_KINDS:
         # Allow it but log
         logger.info(
-            "[ai-productions] free-form notification kind: %s", body.kind
+            "[ai-productions] free-form notification kind: %s",
+            body.kind,
         )
     notif = get_notification_store().create(
         team=body.team,

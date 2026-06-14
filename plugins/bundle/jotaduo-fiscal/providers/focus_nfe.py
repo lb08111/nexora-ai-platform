@@ -32,7 +32,10 @@ class FocusNFeProvider(AbstractFiscalProvider):
     }
 
     def __init__(
-        self, *args: Any, timeout_s: float = 30.0, **kwargs: Any
+        self,
+        *args: Any,
+        timeout_s: float = 30.0,
+        **kwargs: Any,
     ) -> None:
         super().__init__(*args, **kwargs)
         self.timeout_s = timeout_s
@@ -117,7 +120,9 @@ class FocusNFeProvider(AbstractFiscalProvider):
             "cnpj_emitente": self.empresa_cnpj,
         }
         return await self._request(
-            "POST", "/v2/nfe/inutilizacao", json=payload
+            "POST",
+            "/v2/nfe/inutilizacao",
+            json=payload,
         )
 
     async def baixar_xml_danfe(
@@ -178,7 +183,10 @@ class FocusNFeProvider(AbstractFiscalProvider):
                 )
         except httpx.HTTPError as exc:
             logger.warning(
-                "Focus NFe HTTP error on %s %s: %s", method, path, exc
+                "Focus NFe HTTP error on %s %s: %s",
+                method,
+                path,
+                exc,
             )
             return fiscal_response(False, None, f"Focus NFe HTTP error: {exc}")
 
@@ -187,7 +195,7 @@ class FocusNFeProvider(AbstractFiscalProvider):
             data = {
                 "content_type": response.headers.get("content-type"),
                 "content_base64": base64.b64encode(response.content).decode(
-                    "ascii"
+                    "ascii",
                 ),
             }
         else:

@@ -155,7 +155,7 @@ def upsert_resource_policy(policy: dict) -> dict:
                 {
                     **policy,
                     "allowed_agents": _json_for_db(
-                        policy.get("allowed_agents")
+                        policy.get("allowed_agents"),
                     ),
                     "allowed_roles": _json_for_db(policy.get("allowed_roles")),
                 },
@@ -347,7 +347,7 @@ def upsert_approval_policy(policy: dict) -> dict:
                 {
                     **policy,
                     "approver_roles": _json_for_db(
-                        policy.get("approver_roles")
+                        policy.get("approver_roles"),
                     ),
                 },
             )

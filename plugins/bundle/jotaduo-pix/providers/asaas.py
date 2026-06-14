@@ -292,7 +292,10 @@ class AsaasPixProvider(AbstractPixProvider):
         }
 
     async def _request(
-        self, method: str, path: str, **kwargs: Any
+        self,
+        method: str,
+        path: str,
+        **kwargs: Any,
     ) -> dict[str, Any]:
         url = f"{self.base_url}{path}"
         async with httpx.AsyncClient(timeout=30.0) as client:

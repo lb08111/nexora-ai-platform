@@ -162,7 +162,7 @@ def update_approval_request(request_id: str, changes: dict) -> dict | None:
     if not isinstance(existing, dict):
         return None
     item = _normalize_request(
-        {**existing, **changes, "updated_at": int(time.time())}
+        {**existing, **changes, "updated_at": int(time.time())},
     )
     data.setdefault("requests", {})[request_id] = item
     _save_data(data)

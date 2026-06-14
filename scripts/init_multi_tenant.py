@@ -58,7 +58,8 @@ def step1_clear_old_governance():
 
     if changed:
         path.write_text(
-            json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8"
+            json.dumps(data, ensure_ascii=False, indent=2),
+            encoding="utf-8",
         )
         print(f"  [SAVED] {path}")
 
@@ -88,7 +89,7 @@ def step3_init_approval_config():
     print(f"  [OK] {len(configs)} capability approval configs initialized:")
     for c in configs:
         print(
-            f"       {c['capability_type']:8s} add={c['add_approval']} rm={c['remove_approval']} auto={c['auto_approve_remove']}"
+            f"       {c['capability_type']:8s} add={c['add_approval']} rm={c['remove_approval']} auto={c['auto_approve_remove']}",
         )
 
 

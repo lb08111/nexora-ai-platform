@@ -166,7 +166,7 @@ def _parse_capital_social(value: Any) -> float | None:
 
 
 def _normalizar_cnae_principal_brasilapi(
-    raw: dict[str, Any]
+    raw: dict[str, Any],
 ) -> dict[str, Any] | None:
     codigo = raw.get("cnae_fiscal") or raw.get("cnae_fiscal_codigo")
     descricao = raw.get("cnae_fiscal_descricao")
@@ -179,7 +179,7 @@ def _normalizar_cnae_principal_brasilapi(
 
 
 def _normalizar_cnae_principal_receitaws(
-    raw: dict[str, Any]
+    raw: dict[str, Any],
 ) -> dict[str, Any] | None:
     atividades = raw.get("atividade_principal") or []
     if not atividades:
@@ -192,7 +192,8 @@ def _normalizar_cnae_principal_receitaws(
 
 
 def _normalizar_cnaes_secundarios(
-    items: Any, fonte: str
+    items: Any,
+    fonte: str,
 ) -> list[dict[str, Any]]:
     if not isinstance(items, list):
         return []
@@ -340,7 +341,8 @@ def _provider_order(provider: str) -> list[str]:
 
 
 async def _consultar_cnpj_impl(
-    cnpj: str, config_tool_name: str
+    cnpj: str,
+    config_tool_name: str,
 ) -> dict[str, Any]:
     cnpj_limpo = limpar_documento(cnpj)
     if not validar_cnpj(cnpj_limpo):
@@ -363,7 +365,10 @@ async def _consultar_cnpj_impl(
             payload = await brasilapi.cnpj(cnpj_limpo)
             if not _is_client_error(payload):
                 return _result(
-                    True, _normalizar_brasilapi(payload), None, "brasilapi"
+                    True,
+                    _normalizar_brasilapi(payload),
+                    None,
+                    "brasilapi",
                 )
             last_error = _provider_error(payload)
             logger.info("BrasilAPI CNPJ lookup failed: %s", last_error)
@@ -372,7 +377,10 @@ async def _consultar_cnpj_impl(
         payload = await receitaws.cnpj(cnpj_limpo)
         if not _is_client_error(payload) and payload.get("status") != "ERROR":
             return _result(
-                True, _normalizar_receitaws(payload), None, "receitaws"
+                True,
+                _normalizar_receitaws(payload),
+                None,
+                "receitaws",
             )
         last_error = (
             _provider_error(payload)
@@ -419,7 +427,8 @@ async def consultar_cep(cep: str) -> dict[str, Any]:
 
     _, timeout, cache_ttl, _ = _settings("consultar_cep")
     payload = await BrasilApiClient(
-        timeout=timeout, cache_ttl_seconds=cache_ttl
+        timeout=timeout,
+        cache_ttl_seconds=cache_ttl,
     ).cep(
         cep_limpo,
     )
@@ -429,10 +438,10 @@ async def consultar_cep(cep: str) -> dict[str, Any]:
     data = {
         "cep": _formatar_cep(payload.get("cep") or cep_limpo),
         "logradouro": _str_or_none(
-            payload.get("street") or payload.get("logradouro")
+            payload.get("street") or payload.get("logradouro"),
         ),
         "bairro": _str_or_none(
-            payload.get("neighborhood") or payload.get("bairro")
+            payload.get("neighborhood") or payload.get("bairro"),
         ),
         "cidade": _str_or_none(payload.get("city") or payload.get("cidade")),
         "uf": _str_or_none(payload.get("state") or payload.get("uf")),
@@ -511,7 +520,8 @@ def _validar_ie_mg(ie: str) -> bool:
         total += sum(int(part) for part in str(int(digit) * weight))
     first_digit = (10 - (total % 10)) % 10
     second_digit = _mod11_check(
-        digits[:3] + digits[3:12], [3, 2, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2]
+        digits[:3] + digits[3:12],
+        [3, 2, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2],
     )
     return int(digits[11]) == first_digit and int(digits[12]) == second_digit
 
@@ -521,7 +531,8 @@ def _validar_ie_rs(ie: str) -> bool:
     if len(digits) != 10 or _all_same(digits):
         return False
     return int(digits[-1]) == _mod11_check(
-        digits[:9], [2, 9, 8, 7, 6, 5, 4, 3, 2]
+        digits[:9],
+        [2, 9, 8, 7, 6, 5, 4, 3, 2],
     )
 
 
@@ -553,12 +564,16 @@ def _validar_ie_ba(ie: str) -> bool:
     if len(digits) == 8:
         second = _ba_digit(digits[:7], [7, 6, 5, 4, 3, 2, 1], modulo)
         first = _ba_digit(
-            digits[:6] + str(second), [8, 7, 6, 5, 4, 3, 2], modulo
+            digits[:6] + str(second),
+            [8, 7, 6, 5, 4, 3, 2],
+            modulo,
         )
         return int(digits[6]) == first and int(digits[7]) == second
     second = _ba_digit(digits[:8], [8, 7, 6, 5, 4, 3, 2, 1], modulo)
     first = _ba_digit(
-        digits[:7] + str(second), [9, 8, 7, 6, 5, 4, 3, 2], modulo
+        digits[:7] + str(second),
+        [9, 8, 7, 6, 5, 4, 3, 2],
+        modulo,
     )
     return int(digits[7]) == first and int(digits[8]) == second
 
@@ -600,7 +615,8 @@ def _validar_ie_df(ie: str) -> bool:
         return False
     first = _mod11_check(digits[:11], [4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2])
     second = _mod11_check(
-        digits[:11] + str(first), [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
+        digits[:11] + str(first),
+        [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2],
     )
     return int(digits[11]) == first and int(digits[12]) == second
 
@@ -610,7 +626,8 @@ def _validar_ie_sc_es_ce(ie: str) -> bool:
     if len(digits) != 9 or _all_same(digits):
         return False
     return int(digits[-1]) == _mod11_check(
-        digits[:8], [9, 8, 7, 6, 5, 4, 3, 2]
+        digits[:8],
+        [9, 8, 7, 6, 5, 4, 3, 2],
     )
 
 
@@ -703,7 +720,8 @@ def _capital_points(capital: float | None) -> tuple[int, str]:
 
 
 def _cnae_is_high_value(
-    cnae: dict[str, Any] | None, prefixes: set[str]
+    cnae: dict[str, Any] | None,
+    prefixes: set[str],
 ) -> bool:
     if not cnae:
         return False
@@ -755,7 +773,7 @@ async def enriquecer_lead(
     )
 
     capital_points, capital_detail = _capital_points(
-        dados.get("capital_social")
+        dados.get("capital_social"),
     )
     score += capital_points
     breakdown.append(
@@ -768,7 +786,7 @@ async def enriquecer_lead(
 
     cadastro_email = _str_or_none(dados.get("email"))
     cadastro_telefone = _str_or_none(dados.get("telefone")) or _str_or_none(
-        telefone
+        telefone,
     )
     email_points = 10 if cadastro_email else 0
     phone_points = 10 if cadastro_telefone else 0

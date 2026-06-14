@@ -453,7 +453,9 @@ async def conciliar_pagamento(
 
 
 async def devolver_pix(
-    e2eid: str, valor: float, motivo: str
+    e2eid: str,
+    valor: float,
+    motivo: str,
 ) -> dict[str, Any]:
     """Solicita devolução Pix ao PSP pelo E2EID e valor informado."""
     try:

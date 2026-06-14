@@ -124,7 +124,8 @@ def _percentile(values: list[float], pct: float) -> float:
     # Nearest-rank percentile — fine for the small (<=10) samples this
     # eval produces; avoids pulling numpy just for one number.
     k = max(
-        0, min(len(ordered) - 1, int(round(pct / 100.0 * len(ordered))) - 1)
+        0,
+        min(len(ordered) - 1, int(round(pct / 100.0 * len(ordered))) - 1),
     )
     return ordered[k]
 

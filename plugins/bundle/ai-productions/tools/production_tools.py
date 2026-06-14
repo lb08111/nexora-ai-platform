@@ -88,11 +88,11 @@ async def register_production(
     """
     if not title or not title.strip():
         return text_response(
-            "❌ title é obrigatório para registrar uma produção."
+            "❌ title é obrigatório para registrar uma produção.",
         )
     if not type or not type.strip():
         return text_response(
-            "❌ type é obrigatório (ex.: post, landing_page, document)."
+            "❌ type é obrigatório (ex.: post, landing_page, document).",
         )
 
     store = get_production_store()

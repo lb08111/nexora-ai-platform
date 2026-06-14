@@ -45,7 +45,7 @@ def _validate_cnpj_cpf(value: str, field_name: str = "documento") -> str:
     digits = _only_digits(value)
     if len(digits) not in (11, 14):
         raise ValueError(
-            f"{field_name} deve ter CPF (11) ou CNPJ (14) dígitos"
+            f"{field_name} deve ter CPF (11) ou CNPJ (14) dígitos",
         )
     if len(set(digits)) == 1:
         raise ValueError(f"{field_name} parece inválido")
@@ -166,7 +166,7 @@ class NFSeRequest(BaseModel):
         )
         if not doc:
             raise ValueError(
-                "tomador deve informar cnpj_cpf, cnpj, cpf ou documento"
+                "tomador deve informar cnpj_cpf, cnpj, cpf ou documento",
             )
         value = dict(value)
         value["cnpj_cpf"] = _validate_cnpj_cpf(str(doc), "tomador")
@@ -362,7 +362,8 @@ async def consultar_nota(
 
 
 async def cancelar_nota(
-    chave_acesso: str, justificativa: str
+    chave_acesso: str,
+    justificativa: str,
 ) -> dict[str, Any]:
     """Cancela uma nota fiscal autorizada.
 

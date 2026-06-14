@@ -24,7 +24,9 @@ class _BaseHttpClient:
         self.cache_ttl_seconds = int(cache_ttl_seconds)
 
     def _cache_get(
-        self, endpoint: str, identifier: str
+        self,
+        endpoint: str,
+        identifier: str,
     ) -> dict[str, Any] | None:
         if self.cache_ttl_seconds <= 0:
             return None

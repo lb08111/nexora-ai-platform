@@ -68,13 +68,17 @@ class AIOpsUser(HttpUser):
     @task(5)
     def list_agents(self):
         self.client.get(
-            "/api/agents", headers=self.headers, name="/api/agents"
+            "/api/agents",
+            headers=self.headers,
+            name="/api/agents",
         )
 
     @task(5)
     def list_skills(self):
         self.client.get(
-            "/api/skills", headers=self.headers, name="/api/skills"
+            "/api/skills",
+            headers=self.headers,
+            name="/api/skills",
         )
 
     @task(3)
@@ -149,7 +153,9 @@ class AIOpsUser(HttpUser):
         if not self.is_admin:
             return
         self.client.get(
-            "/api/auth/users", headers=self.headers, name="/api/auth/users"
+            "/api/auth/users",
+            headers=self.headers,
+            name="/api/auth/users",
         )
 
     @task(1)

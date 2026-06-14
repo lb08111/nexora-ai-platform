@@ -116,7 +116,8 @@ def _migrate_runtime_config(working_dir: Path) -> dict[str, int]:
                 agent_data = _load_json_dict(agent_json)
                 if agent_data:
                     config_postgres.save_agent_config(
-                        agent_dir.name, agent_data
+                        agent_dir.name,
+                        agent_data,
                     )
                     result["agent_configs"] += 1
 
@@ -124,7 +125,8 @@ def _migrate_runtime_config(working_dir: Path) -> dict[str, int]:
 
 
 def migrate(
-    secret_dir: Path, working_dir: Path | None = None
+    secret_dir: Path,
+    working_dir: Path | None = None,
 ) -> dict[str, int]:
     _ensure_src_on_path()
 
@@ -206,7 +208,7 @@ def migrate(
             roles[role_id] = role
         else:
             existing_permissions = list(
-                roles[role_id].get("permissions") or []
+                roles[role_id].get("permissions") or [],
             )
             roles[role_id]["permissions"] = list(
                 dict.fromkeys(
@@ -327,7 +329,8 @@ def main() -> int:
         else None
     )
     result = migrate(
-        Path(args.secret_dir).expanduser().resolve(), working_dir=wd
+        Path(args.secret_dir).expanduser().resolve(),
+        working_dir=wd,
     )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0

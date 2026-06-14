@@ -24,7 +24,8 @@ class WebManiaProvider(AbstractFiscalProvider):
 
     async def consultar_nota(self, chave_acesso: str) -> FiscalResult:
         return self._not_wired(
-            "consultar_nota", {"chave_acesso": chave_acesso}
+            "consultar_nota",
+            {"chave_acesso": chave_acesso},
         )
 
     async def cancelar_nota(
@@ -75,7 +76,9 @@ class WebManiaProvider(AbstractFiscalProvider):
         )
 
     def _not_wired(
-        self, operation: str, payload: dict[str, Any]
+        self,
+        operation: str,
+        payload: dict[str, Any],
     ) -> FiscalResult:
         return fiscal_response(
             False,

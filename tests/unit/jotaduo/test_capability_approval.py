@@ -32,7 +32,7 @@ class TestCapabilityApprovalConfig:
                     "add_policy": "approval",
                     "remove_policy": "log",
                     "approver_roles": ["admin"],
-                }
+                },
             )
             m.upsert_config(
                 {
@@ -40,7 +40,7 @@ class TestCapabilityApprovalConfig:
                     "add_policy": "none",
                     "remove_policy": "log",
                     "approver_roles": ["admin"],
-                }
+                },
             )
 
             configs = m.list_configs()
@@ -57,7 +57,7 @@ class TestCapabilityApprovalConfig:
                     "capability_type": "skill",
                     "add_policy": "approval",
                     "remove_policy": "none",
-                }
+                },
             )
             config = m.get_config("skill")
             assert config is not None
@@ -75,7 +75,7 @@ class TestCapabilityApprovalConfig:
                     "capability_type": "tool",
                     "add_policy": "none",
                     "remove_policy": "approval",
-                }
+                },
             )
             assert m.requires_approval("tool", "add") is False
             assert m.requires_approval("tool", "remove") is True
@@ -91,7 +91,7 @@ class TestCapabilityApprovalConfig:
                     "capability_type": "mcp",
                     "add_policy": "approval",
                     "remove_policy": "log",
-                }
+                },
             )
             assert m.requires_approval("mcp", "remove") is True
 
@@ -104,7 +104,7 @@ class TestCapabilityApprovalConfig:
                     "capability_type": "mcp",
                     "add_policy": "approval",
                     "remove_policy": "none",
-                }
+                },
             )
             assert m.requires_approval("mcp", "remove") is False
 
@@ -117,7 +117,7 @@ class TestCapabilityApprovalConfig:
                     "capability_type": "mcp",
                     "add_policy": "approval",
                     "remove_policy": "log",
-                }
+                },
             )
             assert m.should_auto_approve("mcp", "add") is False
             assert m.should_auto_approve("mcp", "remove") is True
@@ -131,7 +131,7 @@ class TestCapabilityApprovalConfig:
                     "capability_type": "mcp",
                     "add_policy": "approval",
                     "remove_policy": "approval",
-                }
+                },
             )
             assert m.should_auto_approve("mcp", "remove") is False
 
@@ -144,7 +144,7 @@ class TestCapabilityApprovalConfig:
                     "capability_type": "plugin",
                     "add_policy": "approval",
                     "approver_roles": ["admin"],
-                }
+                },
             )
             assert m.get_approver_roles("plugin") == ["admin"]
             assert m.get_approver_roles("unknown") == ["admin"]
@@ -170,13 +170,13 @@ class TestCapabilityApprovalConfig:
                 {
                     "capability_type": "mcp",
                     "add_policy": "approval",
-                }
+                },
             )
             m.upsert_config(
                 {
                     "capability_type": "mcp",
                     "add_policy": "none",
-                }
+                },
             )
             config = m.get_config("mcp")
             assert config["add_policy"] == "none"
@@ -194,7 +194,7 @@ class TestCapabilityApprovalConfig:
                     "remove_approval": True,
                     "auto_approve_remove": True,
                     "approver_roles": ["admin"],
-                }
+                },
             )
             config = m.get_config("skill")
             assert config["add_policy"] == "approval"
@@ -212,7 +212,7 @@ class TestCapabilityApprovalConfig:
                     "capability_type": "tool",
                     "add_approval": False,
                     "remove_approval": False,
-                }
+                },
             )
             config = m.get_config("tool")
             assert config["add_policy"] == "none"
@@ -228,7 +228,7 @@ class TestCapabilityApprovalConfig:
                     "add_approval": True,
                     "remove_approval": True,
                     "auto_approve_remove": False,
-                }
+                },
             )
             config = m.get_config("acp")
             assert config["add_policy"] == "approval"

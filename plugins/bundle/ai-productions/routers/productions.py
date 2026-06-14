@@ -337,7 +337,8 @@ def edit_production(
         )
     except KeyError as exc:
         raise HTTPException(
-            status_code=404, detail="Production not found"
+            status_code=404,
+            detail="Production not found",
         ) from exc
     return _to_view(prod)
 
@@ -376,7 +377,8 @@ def request_approval_route(
         )
     except KeyError as exc:
         raise HTTPException(
-            status_code=404, detail="Production not found"
+            status_code=404,
+            detail="Production not found",
         ) from exc
     except ProductionTransitionError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
@@ -409,7 +411,8 @@ def approve_route(
         )
     except KeyError as exc:
         raise HTTPException(
-            status_code=404, detail="Production not found"
+            status_code=404,
+            detail="Production not found",
         ) from exc
     except ProductionTransitionError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
@@ -442,7 +445,8 @@ def reject_route(
         )
     except KeyError as exc:
         raise HTTPException(
-            status_code=404, detail="Production not found"
+            status_code=404,
+            detail="Production not found",
         ) from exc
     except ProductionTransitionError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
@@ -474,7 +478,8 @@ def publish_route(
         )
     except KeyError as exc:
         raise HTTPException(
-            status_code=404, detail="Production not found"
+            status_code=404,
+            detail="Production not found",
         ) from exc
     except ProductionTransitionError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
@@ -506,7 +511,8 @@ def archive_route(
         )
     except KeyError as exc:
         raise HTTPException(
-            status_code=404, detail="Production not found"
+            status_code=404,
+            detail="Production not found",
         ) from exc
     except ProductionTransitionError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc

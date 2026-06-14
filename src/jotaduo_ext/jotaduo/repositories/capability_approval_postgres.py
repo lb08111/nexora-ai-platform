@@ -155,7 +155,7 @@ def partial_update(capability_type: str, updates: dict) -> dict:
             {
                 "capability_type": capability_type,
                 **updates,
-            }
+            },
         )
     return _config_row(row)
 

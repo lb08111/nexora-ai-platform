@@ -182,7 +182,7 @@ def resolve_role(spec_role: str, spec_name: str = "") -> Optional[str]:
 
 
 SpecialistFactory = Callable[..., object]
-"""Assinatura: ``(name=..., extra_tools=...) -> ReActAgent``."""
+# Assinatura: ``(name=..., extra_tools=...) -> ReActAgent``
 
 
 def _make_factory(role: str) -> SpecialistFactory:
