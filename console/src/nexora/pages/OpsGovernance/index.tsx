@@ -43,9 +43,9 @@ import styles from "../nexoraPages.module.less";
 const capTypeLabels: Record<string, string> = {
   skill: "Skill",
   mcp: "MCP",
-  tool: "工具",
+  tool: "Ferramenta",
   acp: "ACP",
-  plugin: "插件",
+  plugin: "Plugin",
 };
 
 // ── Component ────────────────────────────────────────────────────────────
@@ -100,7 +100,9 @@ export default function OpsGovernancePage() {
       setApprovalConfigs(configList);
       setTemplates(templateList);
     } catch (error) {
-      message.error(error instanceof Error ? error.message : "加载失败");
+      message.error(
+        error instanceof Error ? error.message : "Falha ao carregar",
+      );
     } finally {
       setLoading(false);
     }
@@ -152,11 +154,11 @@ export default function OpsGovernancePage() {
         await multiTenantApi.batchRevoke(selectedAgentId, toRevoke);
       }
 
-      message.success("授权已更新");
+      message.success("Autorização atualizada");
       setGrantModalOpen(false);
       setSelectedAgentId(null);
     } catch (error) {
-      message.error(error instanceof Error ? error.message : "保存失败");
+      message.error(error instanceof Error ? error.message : "Falha ao salvar");
     } finally {
       setGrantSaving(false);
     }
@@ -170,13 +172,13 @@ export default function OpsGovernancePage() {
 
   const agentColumns: ColumnsType<AgentSummary> = [
     {
-      title: "智能体",
+      title: "Agente",
       key: "name",
       render: (_, record) => (
         <Space direction="vertical" size={2}>
           <Typography.Text strong>{record.name || record.id}</Typography.Text>
           <Typography.Text type="secondary" ellipsis style={{ maxWidth: 400 }}>
-            {record.description || "暂无描述"}
+            {record.description || "Sem descrição"}
           </Typography.Text>
         </Space>
       ),
@@ -193,18 +195,18 @@ export default function OpsGovernancePage() {
       ),
     },
     {
-      title: "状态",
+      title: "Status",
       dataIndex: "enabled",
       key: "enabled",
       width: 90,
       render: (value: boolean) => (
         <Tag color={value ? "green" : "default"}>
-          {value ? "已启用" : "未启用"}
+          {value ? "Ativado" : "Desativado"}
         </Tag>
       ),
     },
     {
-      title: "操作",
+      title: "Ações",
       key: "actions",
       width: 130,
       render: (_, record) => (
@@ -213,7 +215,7 @@ export default function OpsGovernancePage() {
           icon={<TeamOutlined />}
           onClick={() => openGrantModal(record.id)}
         >
-          授权管理
+          Gerenciar autorização
         </Button>
       ),
     },
@@ -234,9 +236,9 @@ export default function OpsGovernancePage() {
       setApprovalConfigs((prev) =>
         prev.map((c) => (c.capability_type === capType ? updated : c)),
       );
-      message.success("配置已更新");
+      message.success("Configuração atualizada");
     } catch (error) {
-      message.error(error instanceof Error ? error.message : "保存失败");
+      message.error(error instanceof Error ? error.message : "Falha ao salvar");
     } finally {
       setApprovalSaving(null);
     }
@@ -254,9 +256,9 @@ export default function OpsGovernancePage() {
       setApprovalConfigs((prev) =>
         prev.map((c) => (c.capability_type === capType ? updated : c)),
       );
-      message.success("配置已更新");
+      message.success("Configuração atualizada");
     } catch (error) {
-      message.error(error instanceof Error ? error.message : "保存失败");
+      message.error(error instanceof Error ? error.message : "Falha ao salvar");
     } finally {
       setApprovalSaving(null);
     }
@@ -264,7 +266,7 @@ export default function OpsGovernancePage() {
 
   const approvalColumns: ColumnsType<CapabilityApprovalConfig> = [
     {
-      title: "能力类型",
+      title: "Tipo de capacidade",
       dataIndex: "capability_type",
       key: "capability_type",
       width: 120,
@@ -275,7 +277,7 @@ export default function OpsGovernancePage() {
       ),
     },
     {
-      title: "新增策略",
+      title: "Política de adição",
       dataIndex: "add_policy",
       key: "add_policy",
       width: 150,
@@ -288,14 +290,14 @@ export default function OpsGovernancePage() {
             handlePolicyChange(record.capability_type, "add_policy", v)
           }
           options={[
-            { value: "none", label: "无需审批" },
-            { value: "approval", label: "需要审批" },
+            { value: "none", label: "Não requer aprovação" },
+            { value: "approval", label: "Requer aprovação" },
           ]}
         />
       ),
     },
     {
-      title: "删除策略",
+      title: "Política de remoção",
       dataIndex: "remove_policy",
       key: "remove_policy",
       width: 160,
@@ -308,15 +310,15 @@ export default function OpsGovernancePage() {
             handlePolicyChange(record.capability_type, "remove_policy", v)
           }
           options={[
-            { value: "none", label: "无需审批" },
-            { value: "log", label: "自动审批" },
-            { value: "approval", label: "需要审批" },
+            { value: "none", label: "Não requer aprovação" },
+            { value: "log", label: "Aprovação automática" },
+            { value: "approval", label: "Requer aprovação" },
           ]}
         />
       ),
     },
     {
-      title: "审批角色",
+      title: "Função aprovadora",
       dataIndex: "approver_roles",
       key: "approver_roles",
       render: (value: string[], record) => (
@@ -365,20 +367,22 @@ export default function OpsGovernancePage() {
 
   const handleTemplateDelete = (tpl: AgentTemplate) => {
     Modal.confirm({
-      title: "删除模板",
-      content: `确认删除模板「${tpl.name}」？`,
-      okText: "删除",
+      title: "Excluir modelo",
+      content: `Confirma a exclusão do modelo "${tpl.name}"?`,
+      okText: "Excluir",
       okButtonProps: { danger: true },
-      cancelText: "取消",
+      cancelText: "Cancelar",
       onOk: async () => {
         try {
           await multiTenantApi.deleteTemplate(tpl.template_id);
-          message.success("模板已删除");
+          message.success("Modelo excluído");
           setTemplates((prev) =>
             prev.filter((t) => t.template_id !== tpl.template_id),
           );
         } catch (error) {
-          message.error(error instanceof Error ? error.message : "删除失败");
+          message.error(
+            error instanceof Error ? error.message : "Falha ao excluir",
+          );
         }
       },
     });
@@ -430,10 +434,10 @@ export default function OpsGovernancePage() {
         setTemplates((prev) => [...prev, created]);
       }
 
-      message.success(editingTemplate ? "模板已更新" : "模板已创建");
+      message.success(editingTemplate ? "Modelo atualizado" : "Modelo criado");
       setTemplateModalOpen(false);
     } catch (error) {
-      message.error(error instanceof Error ? error.message : "保存失败");
+      message.error(error instanceof Error ? error.message : "Falha ao salvar");
     } finally {
       setTemplateSaving(false);
     }
@@ -441,33 +445,33 @@ export default function OpsGovernancePage() {
 
   const templateColumns: ColumnsType<AgentTemplate> = [
     {
-      title: "模板名称",
+      title: "Nome do modelo",
       key: "name",
       render: (_, record) => (
         <Space direction="vertical" size={2}>
           <Space>
             <Typography.Text strong>{record.name}</Typography.Text>
-            {record.builtin && <Tag color="blue">内置</Tag>}
+            {record.builtin && <Tag color="blue">Integrado</Tag>}
           </Space>
           <Typography.Text type="secondary" ellipsis style={{ maxWidth: 400 }}>
-            {record.description || "暂无描述"}
+            {record.description || "Sem descrição"}
           </Typography.Text>
         </Space>
       ),
     },
     {
-      title: "模板 ID",
+      title: "ID do modelo",
       dataIndex: "template_id",
       key: "template_id",
       width: 180,
     },
     {
-      title: "包含能力",
+      title: "Capacidades incluídas",
       key: "capabilities",
       render: (_, record) => {
         const caps = record.capabilities || {};
         const tags: { label: string; items: string[] }[] = [
-          { label: "工具", items: caps.tools || [] },
+          { label: "Ferramenta", items: caps.tools || [] },
           { label: "Skill", items: caps.skills || [] },
           { label: "MCP", items: caps.mcps || [] },
         ];
@@ -481,14 +485,14 @@ export default function OpsGovernancePage() {
                 </Tag>
               ))}
             {tags.every((t) => t.items.length === 0) && (
-              <Typography.Text type="secondary">暂无</Typography.Text>
+              <Typography.Text type="secondary">Nenhuma</Typography.Text>
             )}
           </Space>
         );
       },
     },
     {
-      title: "操作",
+      title: "Ações",
       key: "actions",
       width: 150,
       render: (_, record) => (
@@ -498,7 +502,7 @@ export default function OpsGovernancePage() {
             icon={<EditOutlined />}
             onClick={() => openTemplateEdit(record)}
           >
-            编辑
+            Editar
           </Button>
           {!record.builtin && (
             <Button
@@ -525,16 +529,19 @@ export default function OpsGovernancePage() {
     <div className={styles.nexoraPage}>
       <PageHeader
         className={styles.pageHeader}
-        parent="权限管理"
-        current="智能体授权"
+        parent="Gerenciamento de Permissões"
+        current="Autorização de agentes"
         subRow={
           <Typography.Text type="secondary">
-            管理员创建智能体后授权给用户使用；按能力类型独立配置审批开关；通过模板快速初始化智能体能力。
+            Após criar um agente, o administrador o autoriza para uso pelos
+            usuários; configure o controle de aprovação de forma independente
+            por tipo de capacidade; inicialize rapidamente as capacidades do
+            agente por meio de modelos.
           </Typography.Text>
         }
         extra={
           <Button icon={<ReloadOutlined />} onClick={loadAll} loading={loading}>
-            刷新
+            Atualizar
           </Button>
         }
       />
@@ -544,7 +551,7 @@ export default function OpsGovernancePage() {
           <div className={styles.metricGrid}>
             <Card className={styles.metricCard} size="small">
               <Typography.Text className={styles.metricLabel}>
-                智能体总数
+                Total de agentes
               </Typography.Text>
               <Typography.Title className={styles.metricValue} level={3}>
                 {agents.length}
@@ -552,7 +559,7 @@ export default function OpsGovernancePage() {
             </Card>
             <Card className={styles.metricCard} size="small">
               <Typography.Text className={styles.metricLabel}>
-                平台用户
+                Usuários da plataforma
               </Typography.Text>
               <Typography.Title className={styles.metricValue} level={3}>
                 {users.length}
@@ -560,7 +567,7 @@ export default function OpsGovernancePage() {
             </Card>
             <Card className={styles.metricCard} size="small">
               <Typography.Text className={styles.metricLabel}>
-                审批规则启用
+                Regras de aprovação ativadas
               </Typography.Text>
               <Typography.Title className={styles.metricValue} level={3}>
                 {enabledApprovalCount}/{approvalConfigs.length}
@@ -568,7 +575,7 @@ export default function OpsGovernancePage() {
             </Card>
             <Card className={styles.metricCard} size="small">
               <Typography.Text className={styles.metricLabel}>
-                能力模板
+                Modelos de capacidade
               </Typography.Text>
               <Typography.Title className={styles.metricValue} level={3}>
                 {templates.length}
@@ -581,7 +588,7 @@ export default function OpsGovernancePage() {
             items={[
               {
                 key: "grants",
-                label: "智能体授权",
+                label: "Autorização de agentes",
                 children: (
                   <Card className={styles.tablePanel}>
                     <Table
@@ -596,7 +603,7 @@ export default function OpsGovernancePage() {
               },
               {
                 key: "approval",
-                label: "能力审批配置",
+                label: "Configuração de aprovação de capacidades",
                 children: (
                   <Card className={styles.tablePanel}>
                     <Table
@@ -611,7 +618,7 @@ export default function OpsGovernancePage() {
               },
               {
                 key: "templates",
-                label: "智能体模板",
+                label: "Modelos de agente",
                 children: (
                   <Card className={styles.tablePanel}>
                     <div className={styles.toolbar}>
@@ -620,7 +627,7 @@ export default function OpsGovernancePage() {
                         icon={<PlusOutlined />}
                         onClick={openTemplateCreate}
                       >
-                        新建模板
+                        Adicionar modelo
                       </Button>
                     </div>
                     <Table
@@ -643,7 +650,7 @@ export default function OpsGovernancePage() {
         title={
           <Space>
             <TeamOutlined />
-            <span>授权管理 — {selectedAgentName}</span>
+            <span>Gerenciar autorização — {selectedAgentName}</span>
           </Space>
         }
         open={grantModalOpen}
@@ -653,13 +660,14 @@ export default function OpsGovernancePage() {
         }}
         onOk={handleGrantSave}
         confirmLoading={grantSaving}
-        okText="保存"
-        cancelText="取消"
+        okText="Salvar"
+        cancelText="Cancelar"
         width={640}
         destroyOnHidden
       >
         <Typography.Paragraph type="secondary" style={{ marginBottom: 12 }}>
-          从左侧选择用户授权访问该智能体，右侧为已授权用户。
+          Selecione à esquerda os usuários que terão acesso autorizado a este
+          agente; à direita estão os usuários já autorizados.
         </Typography.Paragraph>
         <Transfer
           dataSource={users.map((u) => ({
@@ -668,7 +676,7 @@ export default function OpsGovernancePage() {
             description: u.roles.join(", "),
             disabled: u.status === "disabled",
           }))}
-          titles={["全部用户", "已授权"]}
+          titles={["Todos os usuários", "Autorizados"]}
           targetKeys={grantTargetKeys}
           onChange={(nextTargetKeys) =>
             setGrantTargetKeys(nextTargetKeys as string[])
@@ -696,46 +704,58 @@ export default function OpsGovernancePage() {
 
       {/* Template Modal */}
       <Modal
-        title={editingTemplate ? "编辑模板" : "新建模板"}
+        title={editingTemplate ? "Editar modelo" : "Adicionar modelo"}
         open={templateModalOpen}
         onCancel={() => setTemplateModalOpen(false)}
         onOk={handleTemplateSave}
         confirmLoading={templateSaving}
-        okText="保存"
-        cancelText="取消"
+        okText="Salvar"
+        cancelText="Cancelar"
         destroyOnHidden
       >
         <Form form={templateForm} layout="vertical">
           <Form.Item
             name="template_id"
-            label="模板 ID"
-            rules={[{ required: true, message: "请输入模板 ID" }]}
+            label="ID do modelo"
+            rules={[{ required: true, message: "Digite o ID do modelo" }]}
           >
             <Input
-              placeholder="如：custom-template-1"
+              placeholder="ex.: custom-template-1"
               disabled={Boolean(editingTemplate)}
             />
           </Form.Item>
           <Form.Item
             name="name"
-            label="模板名称"
-            rules={[{ required: true, message: "请输入模板名称" }]}
+            label="Nome do modelo"
+            rules={[{ required: true, message: "Digite o nome do modelo" }]}
           >
-            <Input placeholder="如：自定义运维包" />
+            <Input placeholder="ex.: Pacote de operações personalizado" />
           </Form.Item>
-          <Form.Item name="description" label="描述">
-            <Input.TextArea rows={2} placeholder="模板用途说明" />
+          <Form.Item name="description" label="Descrição">
+            <Input.TextArea
+              rows={2}
+              placeholder="Descrição da finalidade do modelo"
+            />
           </Form.Item>
-          <Form.Item name="capabilities_tools" label="工具（逗号分隔）">
+          <Form.Item
+            name="capabilities_tools"
+            label="Ferramentas (separadas por vírgula)"
+          >
             <Input.TextArea
               rows={2}
               placeholder="read_file, write_file, execute_command"
             />
           </Form.Item>
-          <Form.Item name="capabilities_skills" label="Skill（逗号分隔）">
+          <Form.Item
+            name="capabilities_skills"
+            label="Skill (separadas por vírgula)"
+          >
             <Input.TextArea rows={2} placeholder="log_query, metric_check" />
           </Form.Item>
-          <Form.Item name="capabilities_mcps" label="MCP（逗号分隔）">
+          <Form.Item
+            name="capabilities_mcps"
+            label="MCP (separados por vírgula)"
+          >
             <Input.TextArea rows={2} placeholder="prometheus, grafana" />
           </Form.Item>
         </Form>

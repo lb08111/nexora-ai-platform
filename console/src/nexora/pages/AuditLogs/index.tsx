@@ -28,40 +28,40 @@ import styles from "../nexoraPages.module.less";
 
 const { RangePicker } = DatePicker;
 
-/* ---- 操作类型中文映射 ---- */
+/* ---- Mapeamento de tipo de operação ---- */
 const actionLabels: Record<string, string> = {
-  "auth.login": "登录",
-  "auth.logout": "退出登录",
-  "auth.register": "注册",
-  "auth.profile.update": "修改账号",
-  "auth.revoke_all_tokens": "注销全部会话",
-  "page.view": "访问页面",
-  "api.mutate": "平台操作",
-  "api.denied": "权限拦截",
-  "chat.create": "创建会话",
-  "chat.update": "更新会话",
-  "chat.delete": "删除会话",
-  "chat.batch_delete": "批量删除会话",
-  "chat.message.send": "发送消息",
-  "chat.reconnect": "重连会话",
-  "chat.stop": "停止会话",
-  "chat.file.upload": "上传附件",
-  "agent.tool.execute": "工具调用",
-  "mcp.create.approved": "MCP 新增审批通过",
-  "mcp.create.rejected": "MCP 新增审批驳回",
-  "skill.create.approved": "技能新增审批通过",
-  "skill.create.rejected": "技能新增审批驳回",
-  "plugin.install.approved": "插件安装审批通过",
-  "plugin.install.rejected": "插件安装审批驳回",
-  "tool.create.approved": "工具新增审批通过",
-  "tool.create.rejected": "工具新增审批驳回",
+  "auth.login": "Login",
+  "auth.logout": "Logout",
+  "auth.register": "Cadastro",
+  "auth.profile.update": "Alteração de conta",
+  "auth.revoke_all_tokens": "Encerrar todas as sessões",
+  "page.view": "Acesso à página",
+  "api.mutate": "Operação na plataforma",
+  "api.denied": "Bloqueio de permissão",
+  "chat.create": "Criar conversa",
+  "chat.update": "Atualizar conversa",
+  "chat.delete": "Excluir conversa",
+  "chat.batch_delete": "Exclusão em lote de conversas",
+  "chat.message.send": "Enviar mensagem",
+  "chat.reconnect": "Reconectar conversa",
+  "chat.stop": "Parar conversa",
+  "chat.file.upload": "Enviar anexo",
+  "agent.tool.execute": "Chamada de ferramenta",
+  "mcp.create.approved": "Criação de MCP aprovada",
+  "mcp.create.rejected": "Criação de MCP rejeitada",
+  "skill.create.approved": "Criação de habilidade aprovada",
+  "skill.create.rejected": "Criação de habilidade rejeitada",
+  "plugin.install.approved": "Instalação de plugin aprovada",
+  "plugin.install.rejected": "Instalação de plugin rejeitada",
+  "tool.create.approved": "Criação de ferramenta aprovada",
+  "tool.create.rejected": "Criação de ferramenta rejeitada",
 };
 
 const statusLabels: Record<string, string> = {
-  success: "成功",
-  failure: "失败",
-  denied: "拒绝",
-  started: "执行中",
+  success: "Sucesso",
+  failure: "Falha",
+  denied: "Negado",
+  started: "Em execução",
 };
 
 const statusColors: Record<string, string> = {
@@ -71,125 +71,146 @@ const statusColors: Record<string, string> = {
   started: "blue",
 };
 
-/* ---- 时间格式化 ---- */
+/* ---- Formatação de data/hora ---- */
 function formatTime(timestamp: number) {
   if (!timestamp) return "-";
   return new Date(timestamp * 1000).toLocaleString();
 }
 
-/* ---- 按 action 类型结构化展示 detail ---- */
+/* ---- Exibe detail estruturado por tipo de action ---- */
 function DetailContent({ event }: { event: AuditEvent }) {
   const { action, detail, resource_id, resource_type } = event;
   const d = detail || {};
 
   const baseItems = [
-    { label: "事件 ID", value: event.id },
-    { label: "操作时间", value: formatTime(event.timestamp) },
-    { label: "操作用户", value: event.actor },
-    { label: "操作类型", value: actionLabels[action] || action },
-    { label: "结果", value: statusLabels[event.status] || event.status },
-    { label: "资源类型", value: resource_type || "-" },
-    { label: "资源 ID", value: resource_id || "-" },
-    { label: "来源 IP", value: event.ip || "-" },
+    { label: "ID do evento", value: event.id },
+    { label: "Data/hora da operação", value: formatTime(event.timestamp) },
+    { label: "Usuário da operação", value: event.actor },
+    { label: "Tipo de operação", value: actionLabels[action] || action },
+    { label: "Resultado", value: statusLabels[event.status] || event.status },
+    { label: "Tipo de recurso", value: resource_type || "-" },
+    { label: "ID do recurso", value: resource_id || "-" },
+    { label: "IP de origem", value: event.ip || "-" },
   ];
 
   if (event.user_agent) {
-    baseItems.push({ label: "浏览器", value: event.user_agent });
+    baseItems.push({ label: "Navegador", value: event.user_agent });
   }
 
   let contextItems: { label: string; value: string }[] = [];
 
   if (action === "chat.message.send") {
     contextItems = [
-      { label: "智能体", value: String(d.agent_id || "-") },
-      { label: "会话 ID", value: String(d.session_id || "-") },
-      { label: "渠道", value: String(d.channel || "-") },
-      { label: "目标用户", value: String(d.target_user || "-") },
-      { label: "消息长度", value: String(d.message_length ?? "-") },
-      { label: "消息内容", value: String(d.message_preview || "-") },
+      { label: "Agente", value: String(d.agent_id || "-") },
+      { label: "ID da conversa", value: String(d.session_id || "-") },
+      { label: "Canal", value: String(d.channel || "-") },
+      { label: "Usuário de destino", value: String(d.target_user || "-") },
+      { label: "Tamanho da mensagem", value: String(d.message_length ?? "-") },
+      {
+        label: "Conteúdo da mensagem",
+        value: String(d.message_preview || "-"),
+      },
     ];
   } else if (action === "agent.tool.execute") {
     contextItems = [
-      { label: "智能体", value: String(d.agent_id || "-") },
-      { label: "调用 ID", value: String(d.tool_call_id || "-") },
-      { label: "会话 ID", value: String(d.session_id || "-") },
-      { label: "渠道", value: String(d.channel || "-") },
-      { label: "触发原因", value: String(d.reason || "-") },
+      { label: "Agente", value: String(d.agent_id || "-") },
+      { label: "ID da chamada", value: String(d.tool_call_id || "-") },
+      { label: "ID da conversa", value: String(d.session_id || "-") },
+      { label: "Canal", value: String(d.channel || "-") },
+      { label: "Motivo do disparo", value: String(d.reason || "-") },
     ];
     if (d.input_preview) {
-      contextItems.push({ label: "输入参数", value: String(d.input_preview) });
+      contextItems.push({
+        label: "Parâmetros de entrada",
+        value: String(d.input_preview),
+      });
     }
     if (d.result_preview) {
-      contextItems.push({ label: "执行结果", value: String(d.result_preview) });
+      contextItems.push({
+        label: "Resultado da execução",
+        value: String(d.result_preview),
+      });
     }
     if (d.error) {
-      contextItems.push({ label: "错误信息", value: String(d.error) });
+      contextItems.push({ label: "Mensagem de erro", value: String(d.error) });
     }
   } else if (action === "api.mutate" || action === "api.denied") {
     contextItems = [
-      { label: "HTTP 方法", value: String(d.method || "-") },
-      { label: "请求路径", value: resource_id || "-" },
-      { label: "所需权限", value: String(d.permission || "-") },
+      { label: "Método HTTP", value: String(d.method || "-") },
+      { label: "Caminho da requisição", value: resource_id || "-" },
+      { label: "Permissão necessária", value: String(d.permission || "-") },
     ];
     if (d.status_code) {
-      contextItems.push({ label: "状态码", value: String(d.status_code) });
+      contextItems.push({
+        label: "Código de status",
+        value: String(d.status_code),
+      });
     }
     if (d.query) {
-      contextItems.push({ label: "查询参数", value: String(d.query) });
+      contextItems.push({
+        label: "Parâmetros de consulta",
+        value: String(d.query),
+      });
     }
   } else if (action === "auth.login") {
     contextItems = [
       {
-        label: "角色",
+        label: "Perfil",
         value: Array.isArray(d.roles)
           ? d.roles.join(", ")
           : String(d.roles || "-"),
       },
     ];
     if (d.reason) {
-      contextItems.push({ label: "失败原因", value: String(d.reason) });
+      contextItems.push({ label: "Motivo da falha", value: String(d.reason) });
     }
   } else if (action === "auth.profile.update") {
     contextItems = [];
     if (d.username_changed !== undefined) {
       contextItems.push({
-        label: "修改用户名",
-        value: d.username_changed ? "是" : "否",
+        label: "Nome de usuário alterado",
+        value: d.username_changed ? "Sim" : "Não",
       });
     }
     if (d.password_changed !== undefined) {
       contextItems.push({
-        label: "修改密码",
-        value: d.password_changed ? "是" : "否",
+        label: "Senha alterada",
+        value: d.password_changed ? "Sim" : "Não",
       });
     }
     if (d.reason) {
-      contextItems.push({ label: "失败原因", value: String(d.reason) });
+      contextItems.push({ label: "Motivo da falha", value: String(d.reason) });
     }
   } else if (action === "page.view") {
     contextItems = [
-      { label: "页面标题", value: String(d.title || "-") },
-      { label: "页面路径", value: resource_id || "-" },
+      { label: "Título da página", value: String(d.title || "-") },
+      { label: "Caminho da página", value: resource_id || "-" },
     ];
   } else if (action === "chat.file.upload") {
     contextItems = [
-      { label: "智能体", value: String(d.agent_id || "-") },
+      { label: "Agente", value: String(d.agent_id || "-") },
       {
-        label: "文件大小",
-        value: d.size ? `${Number(d.size).toLocaleString()} 字节` : "-",
+        label: "Tamanho do arquivo",
+        value: d.size ? `${Number(d.size).toLocaleString()} bytes` : "-",
       },
-      { label: "存储名称", value: String(d.stored_name || "-") },
+      { label: "Nome armazenado", value: String(d.stored_name || "-") },
     ];
   } else if (action.includes(".approved") || action.includes(".rejected")) {
     contextItems = [
-      { label: "审批请求 ID", value: String(d.approval_request_id || "-") },
+      {
+        label: "ID da solicitação de aprovação",
+        value: String(d.approval_request_id || "-"),
+      },
     ];
     if (d.reason) {
-      contextItems.push({ label: "驳回原因", value: String(d.reason) });
+      contextItems.push({
+        label: "Motivo da rejeição",
+        value: String(d.reason),
+      });
     }
     if (d.result) {
       contextItems.push({
-        label: "审批结果",
+        label: "Resultado da aprovação",
         value:
           typeof d.result === "object"
             ? JSON.stringify(d.result, null, 2)
@@ -212,7 +233,7 @@ function DetailContent({ event }: { event: AuditEvent }) {
   return (
     <div>
       <Descriptions
-        title="基本信息"
+        title="Informações básicas"
         column={2}
         bordered
         size="small"
@@ -222,9 +243,9 @@ function DetailContent({ event }: { event: AuditEvent }) {
           <Descriptions.Item
             key={item.label}
             label={item.label}
-            span={item.label === "浏览器" ? 2 : 1}
+            span={item.label === "Navegador" ? 2 : 1}
           >
-            <Typography.Text copyable={item.label === "事件 ID"}>
+            <Typography.Text copyable={item.label === "ID do evento"}>
               {item.value}
             </Typography.Text>
           </Descriptions.Item>
@@ -232,7 +253,12 @@ function DetailContent({ event }: { event: AuditEvent }) {
       </Descriptions>
 
       {contextItems.length > 0 && (
-        <Descriptions title="操作详情" column={1} bordered size="small">
+        <Descriptions
+          title="Detalhes da operação"
+          column={1}
+          bordered
+          size="small"
+        >
           {contextItems.map((item) => (
             <Descriptions.Item key={item.label} label={item.label}>
               {item.value.length > 200 ? (
@@ -250,7 +276,7 @@ function DetailContent({ event }: { event: AuditEvent }) {
   );
 }
 
-/* ---- 主页面 ---- */
+/* ---- Página principal ---- */
 export default function AuditLogsPage() {
   const { message } = useAppMessage();
   const [events, setEvents] = useState<AuditEvent[]>([]);
@@ -279,7 +305,9 @@ export default function AuditLogsPage() {
       setEvents(data);
     } catch (error) {
       message.error(
-        error instanceof Error ? error.message : "加载审计日志失败",
+        error instanceof Error
+          ? error.message
+          : "Falha ao carregar os logs de auditoria",
       );
     } finally {
       setLoading(false);
@@ -304,7 +332,7 @@ export default function AuditLogsPage() {
       }
       const url = auditApi.exportEventsUrl(params);
       const resp = await fetch(url, { headers: buildAuthHeaders() });
-      if (!resp.ok) throw new Error(`导出失败: ${resp.status}`);
+      if (!resp.ok) throw new Error(`Falha na exportação: ${resp.status}`);
       const blob = await resp.blob();
       const disposition = resp.headers.get("Content-Disposition") || "";
       const match = disposition.match(/filename="?([^"]+)"?/);
@@ -314,9 +342,13 @@ export default function AuditLogsPage() {
       a.download = filename;
       a.click();
       URL.revokeObjectURL(a.href);
-      message.success(`已导出 ${events.length > 0 ? "审计日志" : "数据"}`);
+      message.success(
+        `Exportado: ${events.length > 0 ? "logs de auditoria" : "dados"}`,
+      );
     } catch (error) {
-      message.error(error instanceof Error ? error.message : "导出失败");
+      message.error(
+        error instanceof Error ? error.message : "Falha na exportação",
+      );
     } finally {
       setExporting(false);
     }
@@ -326,7 +358,7 @@ export default function AuditLogsPage() {
     void loadEvents({ limit: 200 });
   }, []);
 
-  /* ---- detail 摘要（表格内简短展示） ---- */
+  /* ---- Resumo do detail (exibição curta na tabela) ---- */
   const detailSummary = (event: AuditEvent): string => {
     const { action, detail: d } = event;
     if (!d || Object.keys(d).length === 0) return "-";
@@ -336,34 +368,34 @@ export default function AuditLogsPage() {
     }
     if (action === "agent.tool.execute") {
       const parts: string[] = [];
-      if (d.agent_id) parts.push(`智能体: ${d.agent_id}`);
-      if (d.reason) parts.push(`原因: ${d.reason}`);
-      if (d.error) parts.push(`错误: ${d.error}`);
+      if (d.agent_id) parts.push(`Agente: ${d.agent_id}`);
+      if (d.reason) parts.push(`Motivo: ${d.reason}`);
+      if (d.error) parts.push(`Erro: ${d.error}`);
       return parts.join(" | ") || "-";
     }
     if (action === "api.mutate") {
       return `${d.method || ""} ${event.resource_id || ""}`.trim() || "-";
     }
     if (action === "api.denied") {
-      return `${d.method || ""} ${event.resource_id || ""} (需要 ${
+      return `${d.method || ""} ${event.resource_id || ""} (requer permissão ${
         d.permission || "?"
-      } 权限)`.trim();
+      })`.trim();
     }
     if (action === "page.view") {
       return String(d.title || "-");
     }
     if (action === "auth.login") {
-      if (d.reason) return `失败: ${d.reason}`;
-      if (Array.isArray(d.roles)) return `角色: ${d.roles.join(", ")}`;
+      if (d.reason) return `Falha: ${d.reason}`;
+      if (Array.isArray(d.roles)) return `Perfil: ${d.roles.join(", ")}`;
     }
     if (action === "chat.file.upload") {
-      return `文件: ${d.stored_name || "-"} (${
+      return `Arquivo: ${d.stored_name || "-"} (${
         d.size ? Number(d.size).toLocaleString() + " B" : "-"
       })`;
     }
-    if (action.includes(".approved")) return "审批通过";
+    if (action.includes(".approved")) return "Aprovação concedida";
     if (action.includes(".rejected"))
-      return `审批驳回${d.reason ? ": " + d.reason : ""}`;
+      return `Aprovação rejeitada${d.reason ? ": " + d.reason : ""}`;
 
     const keys = Object.keys(d).slice(0, 3);
     return keys
@@ -376,14 +408,14 @@ export default function AuditLogsPage() {
 
   const columns: ColumnsType<AuditEvent> = [
     {
-      title: "时间",
+      title: "Data/Hora",
       dataIndex: "timestamp",
       key: "timestamp",
       width: 180,
       render: (value: number) => formatTime(value),
     },
     {
-      title: "用户",
+      title: "Usuário",
       dataIndex: "actor",
       key: "actor",
       width: 120,
@@ -392,14 +424,14 @@ export default function AuditLogsPage() {
       ),
     },
     {
-      title: "操作",
+      title: "Operação",
       dataIndex: "action",
       key: "action",
       width: 150,
       render: (value: string) => actionLabels[value] || value,
     },
     {
-      title: "结果",
+      title: "Resultado",
       dataIndex: "status",
       key: "status",
       width: 80,
@@ -410,7 +442,7 @@ export default function AuditLogsPage() {
       ),
     },
     {
-      title: "对象",
+      title: "Objeto",
       key: "resource",
       width: 180,
       ellipsis: true,
@@ -426,7 +458,7 @@ export default function AuditLogsPage() {
       ),
     },
     {
-      title: "摘要",
+      title: "Resumo",
       key: "summary",
       ellipsis: true,
       render: (_, record) => (
@@ -461,12 +493,15 @@ export default function AuditLogsPage() {
     <div className={styles.nexoraPage}>
       <PageHeader
         className={styles.pageHeader}
-        parent="安全管理"
-        current="日志审计"
+        parent="Gerenciamento de Segurança"
+        current="Logs de Auditoria"
         subRow={
           <Typography.Text type="secondary">
-            记录用户登录、聊天消息、工具调用、平台操作和权限拦截，便于安全审计与问题追溯。
-            {events.length > 0 && ` 当前显示 ${events.length} 条记录。`}
+            Registra logins de usuários, mensagens de chat, chamadas de
+            ferramentas, operações na plataforma e bloqueios de permissão,
+            facilitando a auditoria de segurança e o rastreamento de problemas.
+            {events.length > 0 &&
+              ` Exibindo ${events.length} registros no momento.`}
           </Typography.Text>
         }
         extra={
@@ -476,14 +511,14 @@ export default function AuditLogsPage() {
               onClick={handleExport}
               loading={exporting}
             >
-              导出 CSV
+              Exportar CSV
             </Button>
             <Button
               icon={<ReloadOutlined />}
               onClick={() => loadEvents(form.getFieldsValue())}
               loading={loading}
             >
-              刷新
+              Atualizar
             </Button>
           </Space>
         }
@@ -498,14 +533,18 @@ export default function AuditLogsPage() {
               initialValues={{ limit: 200 }}
               onFinish={loadEvents}
             >
-              <Form.Item name="actor" label="用户">
-                <Input allowClear placeholder="用户名" style={{ width: 120 }} />
+              <Form.Item name="actor" label="Usuário">
+                <Input
+                  allowClear
+                  placeholder="Nome de usuário"
+                  style={{ width: 120 }}
+                />
               </Form.Item>
-              <Form.Item name="action" label="操作">
+              <Form.Item name="action" label="Operação">
                 <Select
                   allowClear
                   style={{ width: 180 }}
-                  placeholder="全部"
+                  placeholder="Todos"
                   options={Object.entries(actionLabels).map(
                     ([value, label]) => ({
                       value,
@@ -514,23 +553,23 @@ export default function AuditLogsPage() {
                   )}
                 />
               </Form.Item>
-              <Form.Item name="status" label="结果">
+              <Form.Item name="status" label="Resultado">
                 <Select
                   allowClear
                   style={{ width: 100 }}
-                  placeholder="全部"
+                  placeholder="Todos"
                   options={[
-                    { value: "success", label: "成功" },
-                    { value: "failure", label: "失败" },
-                    { value: "denied", label: "拒绝" },
-                    { value: "started", label: "执行中" },
+                    { value: "success", label: "Sucesso" },
+                    { value: "failure", label: "Falha" },
+                    { value: "denied", label: "Negado" },
+                    { value: "started", label: "Em execução" },
                   ]}
                 />
               </Form.Item>
-              <Form.Item name="timeRange" label="时间范围">
+              <Form.Item name="timeRange" label="Intervalo de tempo">
                 <RangePicker />
               </Form.Item>
-              <Form.Item name="limit" label="数量">
+              <Form.Item name="limit" label="Quantidade">
                 <Select
                   style={{ width: 80 }}
                   options={[
@@ -543,7 +582,7 @@ export default function AuditLogsPage() {
               </Form.Item>
               <Form.Item>
                 <Button type="primary" htmlType="submit" loading={loading}>
-                  查询
+                  Consultar
                 </Button>
               </Form.Item>
             </Form>
@@ -558,7 +597,7 @@ export default function AuditLogsPage() {
               pagination={{
                 pageSize: 20,
                 showSizeChanger: true,
-                showTotal: (total) => `共 ${total} 条`,
+                showTotal: (total) => `Total de ${total}`,
               }}
               size="middle"
             />
@@ -567,7 +606,7 @@ export default function AuditLogsPage() {
       </div>
 
       <Drawer
-        title="审计事件详情"
+        title="Detalhes do evento de auditoria"
         placement="right"
         width={640}
         open={!!drawerEvent}
