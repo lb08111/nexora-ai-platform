@@ -2164,6 +2164,23 @@
     "cancelTask": "Cancelar Task",
     "denyFailed": "Falhou to deny"
   },
+  "agentComm": {
+    "title": "Mensagem do agente",
+    "defaultAgentName": "Agente",
+    "placeholder": "Responda ao agente…",
+    "submitHint": "Pressione Ctrl/Cmd + Enter para enviar",
+    "send": "Enviar",
+    "dismiss": "Dispensar",
+    "yes": "Sim",
+    "no": "Não",
+    "timedOut": "Esta solicitação expirou.",
+    "status": {
+      "waiting": "Aguardando você",
+      "thinking": "Pensando…",
+      "done": "Concluído",
+      "error": "Erro"
+    }
+  },
   "pluginManager": {
     "title": "Gerenciador de Plugins",
     "description": "Instalar, gerenciar e remover plugins sem reiniciar o serviço.",

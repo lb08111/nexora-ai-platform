@@ -1,0 +1,375 @@
+.commCard {
+  background: #ffffff;
+  border: 1px solid #e8ecf1;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.06);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  animation: commFadeInSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &:hover {
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.1);
+  }
+
+  :global(.ant-card-body) {
+    padding: 16px 20px;
+  }
+}
+
+@keyframes commFadeInSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ── Header ─────────────────────────────────────────────────────────────── */
+.header {
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f0f2f5;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.identity {
+  flex: 1;
+  min-width: 0;
+  align-items: center;
+}
+
+.avatarFallback {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.identityText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.agentName {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+  line-height: 1.3;
+}
+
+.roleTag {
+  font-size: 10px;
+  font-weight: 500;
+  padding: 0 6px;
+  border-radius: 4px;
+  border: none;
+  line-height: 18px;
+  letter-spacing: 0.02em;
+}
+
+.subtitle {
+  display: flex;
+  align-items: center;
+}
+
+.subtitleIcon {
+  color: #94a3b8;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.subtitleText {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 400;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.statusTag {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 1px 8px;
+  border-radius: 4px;
+  border: none;
+  letter-spacing: 0.02em;
+  line-height: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.statusIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.timer {
+  background: #f7f8fa;
+  border-radius: 14px;
+  padding: 2px 10px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.timerIcon {
+  color: #94a3b8;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.timerText {
+  font-size: 12px;
+  font-weight: 500;
+  color: #64748b;
+  font-family: "SF Mono", "Monaco", "Consolas", monospace;
+}
+
+/* ── Body ───────────────────────────────────────────────────────────────── */
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.messageBox {
+  position: relative;
+  background: #fafbfc;
+  border-left: 2px solid #d4d9e1;
+  padding: 12px 16px;
+  border-radius: 0 8px 8px 0;
+}
+
+.messageText {
+  margin: 0 !important;
+  font-size: 13px;
+  color: #333;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-word;
+  padding-right: 28px;
+}
+
+.messageNode {
+  font-size: 13px;
+  color: #333;
+  line-height: 1.7;
+  padding-right: 28px;
+}
+
+.copyButton {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: #888;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  padding: 0;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.04);
+    color: #555;
+  }
+
+  &.copied {
+    color: #52c41a;
+  }
+}
+
+/* ── Input ──────────────────────────────────────────────────────────────── */
+.inputArea {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.textarea {
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.6;
+  resize: none;
+}
+
+.hint {
+  font-size: 11px;
+  color: #94a3b8;
+  text-align: right;
+}
+
+/* ── Actions ────────────────────────────────────────────────────────────── */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+  align-items: center;
+  padding-top: 8px;
+  border-top: 1px solid #f0f2f5;
+
+  button {
+    min-width: 80px;
+    height: 32px;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    transition: all 0.2s ease;
+  }
+}
+
+.timeoutHint {
+  margin-right: auto;
+  font-size: 12px;
+  color: #cf1322;
+  font-weight: 500;
+}
+
+/* ── Dark mode ──────────────────────────────────────────────────────────── */
+:global(.dark-mode) {
+  .commCard {
+    background: #1e1e1e;
+    border-color: #333;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+
+    &:hover {
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+  }
+
+  .header {
+    border-bottom-color: #2d2d2d;
+  }
+
+  .agentName {
+    color: rgba(255, 255, 255, 0.88);
+  }
+
+  .subtitleIcon,
+  .subtitleText {
+    color: #999;
+  }
+
+  .timer {
+    background: #2a2a2a;
+  }
+
+  .timerIcon {
+    color: #666;
+  }
+
+  .timerText {
+    color: #999;
+  }
+
+  .messageBox {
+    background: #252525;
+    border-left-color: #555;
+  }
+
+  .messageText,
+  .messageNode {
+    color: #d4d4d4;
+  }
+
+  .copyButton {
+    color: #777;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #bbb;
+    }
+  }
+
+  .hint {
+    color: #666;
+  }
+
+  .textarea {
+    background: #252525;
+    border-color: #3a3a3a;
+    color: #d4d4d4;
+
+    &:focus,
+    &:hover {
+      border-color: #555;
+    }
+
+    &::placeholder {
+      color: #666;
+    }
+  }
+
+  .actions {
+    border-top-color: #2d2d2d;
+
+    .timeoutHint {
+      color: #ff7875;
+    }
+  }
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .commCard {
+    border-radius: 10px;
+
+    :global(.ant-card-body) {
+      padding: 14px 16px;
+    }
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .meta {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .body {
+    gap: 10px;
+  }
+
+  .actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+
+    button {
+      width: 100%;
+      min-width: auto;
+    }
+  }
+}

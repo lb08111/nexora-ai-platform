@@ -2291,6 +2291,23 @@
     "timeoutAutoDenied": "Timed out, auto denied",
     "acknowledge": "Got it"
   },
+  "agentComm": {
+    "title": "Agent message",
+    "defaultAgentName": "Agent",
+    "placeholder": "Reply to the agent…",
+    "submitHint": "Press Ctrl/Cmd + Enter to send",
+    "send": "Send",
+    "dismiss": "Dismiss",
+    "yes": "Yes",
+    "no": "No",
+    "timedOut": "This request has timed out.",
+    "status": {
+      "waiting": "Waiting for you",
+      "thinking": "Thinking…",
+      "done": "Done",
+      "error": "Error"
+    }
+  },
   "plan": {
     "title": "Plan",
     "noPlan": "No active plan",
