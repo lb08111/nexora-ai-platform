@@ -188,7 +188,7 @@ export const CRON_TEMPLATES: CronTemplateDefinition[] = [
     {
       taskType: "agent",
       agentPrompt:
-        "整理今天最值得关注的科技新闻，输出 5-8 条。每条包含：新闻标题、核心进展、为什么值得关注。最后补充一句今日科技趋势判断。",
+        "Reúna as notícias de tecnologia mais relevantes de hoje, com 5 a 8 itens. Cada item deve conter: título da notícia, principal avanço e por que é relevante. Ao final, acrescente uma frase com a tendência tecnológica do dia.",
     },
     ["personal", "reminder", "calendar"],
   ),
@@ -201,7 +201,7 @@ export const CRON_TEMPLATES: CronTemplateDefinition[] = [
     {
       taskType: "agent",
       agentPrompt:
-        "推荐最近热度高、口碑好的电影，给出 5 部。每部包含：类型、一句话看点、适合人群；如果有公开信息，请补充上映/平台情况。",
+        "Recomende 5 filmes recentes em alta e bem avaliados. Para cada um inclua: gênero, um destaque em uma frase e público ideal; se houver informação pública, acrescente data de estreia/plataforma.",
     },
     ["team", "reminder", "calendar"],
   ),
@@ -213,7 +213,7 @@ export const CRON_TEMPLATES: CronTemplateDefinition[] = [
     "*/25 9-17 * * 1-5",
     {
       textContent:
-        "持续工作25分钟啦，起来活动一下，喝口水，顺便看看远处放松眼睛～",
+        "Você já trabalhou 25 minutos seguidos! Levante, movimente-se, beba água e olhe para longe para descansar os olhos ～",
     },
     ["personal", "reminder", "calendar"],
   ),
@@ -224,7 +224,8 @@ export const CRON_TEMPLATES: CronTemplateDefinition[] = [
     "cronJobs.templates.petCareReminder.frequency",
     "0 20 15 * *",
     {
-      textContent: "小提醒：今天记得给毛孩子安排驱虫/疫苗检查喔～",
+      textContent:
+        "Lembrete: hoje não esqueça de agendar o vermífugo/checagem de vacinas do seu pet ～",
     },
     ["personal", "reminder", "calendar"],
   ),
@@ -235,7 +236,8 @@ export const CRON_TEMPLATES: CronTemplateDefinition[] = [
     "cronJobs.templates.onceTextBirthdayReminder.frequency",
     {
       taskType: "text",
-      textContent: "xx在1月1日过生日，别忘了送上祝福～",
+      textContent:
+        "xx faz aniversário em 1º de janeiro, não esqueça de enviar os parabéns ～",
       runAt: dayjs("2026-01-01T09:00:00"),
       repeatEnabled: false,
     },
@@ -249,7 +251,7 @@ export const CRON_TEMPLATES: CronTemplateDefinition[] = [
     {
       taskType: "agent",
       agentPrompt:
-        "我明天要出差，请查询目的地天气，并给出穿衣、携带物品和行程准备建议。",
+        "Vou viajar a trabalho amanhã. Consulte a previsão do tempo do destino e dê sugestões de vestuário, itens para levar e preparação da viagem.",
       runAt: dayjs("2026-01-01T20:00:00"),
       repeatEnabled: false,
     },
@@ -262,7 +264,7 @@ export const CRON_TEMPLATES: CronTemplateDefinition[] = [
     "cronJobs.templates.repeatCountTextMedicineReminder.frequency",
     {
       taskType: "text",
-      textContent: "注意身体，别忘记吃药哦。",
+      textContent: "Cuide-se e não esqueça de tomar o remédio.",
       runAt: dayjs("2026-01-01T09:00:00"),
       repeatEnabled: true,
       repeatEveryDays: 1,
@@ -278,7 +280,8 @@ export const CRON_TEMPLATES: CronTemplateDefinition[] = [
     "cronJobs.templates.repeatCountAgentDietPlan.frequency",
     {
       taskType: "agent",
-      agentPrompt: "我最近在增肌，请为我生成今天的饮食建议。",
+      agentPrompt:
+        "Estou ganhando massa muscular ultimamente. Gere sugestões de alimentação para hoje.",
       runAt: dayjs("2026-01-01T08:00:00"),
       repeatEnabled: true,
       repeatEveryDays: 1,
@@ -294,7 +297,7 @@ export const CRON_TEMPLATES: CronTemplateDefinition[] = [
     "cronJobs.templates.repeatUntilTextWeeklyMeeting.frequency",
     {
       taskType: "text",
-      textContent: "15分钟后周会开始。",
+      textContent: "A reunião semanal começa em 15 minutos.",
       runAt: dayjs("2026-01-02T08:45:00"),
       repeatEnabled: true,
       repeatEveryDays: 7,
@@ -311,7 +314,7 @@ export const CRON_TEMPLATES: CronTemplateDefinition[] = [
     {
       taskType: "agent",
       agentPrompt:
-        "请基于最近一周的 memory，生成本周工作总结，供周会前快速回顾。",
+        "Com base na memory da última semana, gere um resumo do trabalho desta semana para revisão rápida antes da reunião semanal.",
       runAt: dayjs("2026-01-02T08:30:00"),
       repeatEnabled: true,
       repeatEveryDays: 7,

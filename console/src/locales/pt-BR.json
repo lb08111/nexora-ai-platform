@@ -65,7 +65,16 @@
     "debug": "Depuracao",
     "plugins": "Plugins",
     "backups": "Backups",
-    "pluginManager": "Gerenciador de Plugins"
+    "pluginManager": "Gerenciador de Plugins",
+    "inbox": "Central de Aprovações",
+    "market": "Mercado de Skills",
+    "users": "Usuários e Funções",
+    "opsGovernance": "Permissões de Agentes",
+    "permissionManagement": "Gerenciamento de Permissões",
+    "intelligentReports": "Relatórios Inteligentes",
+    "securityManagement": "Gerenciamento de Segurança",
+    "approvalCenter": "Central de Aprovação",
+    "auditLogs": "Logs de Auditoria"
   },
   "debug": {
     "title": "Depuracao",
@@ -1173,6 +1182,9 @@
   },
   "tokenUsage": {
     "title": "Uso de Tokens",
+    "user": "Usuário",
+    "agent": "Agente",
+    "byUser": "Por usuário",
     "description": "View LLM token consumption over time, by date and model.",
     "totalTokens": "Total Tokens",
     "totalCalls": "Total Calls",
