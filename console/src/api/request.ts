@@ -36,13 +36,15 @@ function getErrorMessageFromBody(
   return text;
 }
 
-function buildHeaders(hasBody: boolean, extra?: HeadersInit): Headers {
+function buildHeaders(hasJsonBody: boolean, extra?: HeadersInit): Headers {
   // Normalize extra to a Headers instance for consistent handling
   const headers = extra instanceof Headers ? extra : new Headers(extra);
 
-  // Add Content-Type whenever a request body is present (any method),
-  // but never override a caller-specified Content-Type.
-  if (hasBody && !headers.has("Content-Type")) {
+  // Default Content-Type to application/json only for string bodies
+  // (i.e. JSON.stringify output), regardless of method. Non-string bodies
+  // such as FormData/Blob/ArrayBuffer must set Content-Type themselves (or
+  // let fetch infer the multipart boundary). Never override a caller value.
+  if (hasJsonBody && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
   }
 
@@ -61,7 +63,7 @@ export async function request<T = unknown>(
 ): Promise<T> {
   const url = getApiUrl(path);
   const headers = buildHeaders(
-    options.body !== undefined && options.body !== null,
+    typeof options.body === "string",
     options.headers,
   );
 
