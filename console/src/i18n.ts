@@ -29,7 +29,7 @@ const resources = {
 
 i18n.use(initReactI18next).init({
   resources,
-  lng: localStorage.getItem("language") || navigator.language || "en",
+  lng: localStorage.getItem("language") || "pt-BR",
   fallbackLng: "en",
   // "pt" added so i18next builds a valid resolution chain for "pt-BR"
   supportedLngs: [...Object.keys(resources), "pt"],

@@ -1,6 +1,5 @@
 import { Layout, Space, Badge, Spin, Tooltip, Dropdown } from "antd";
 import type { MenuProps } from "antd";
-import LanguageSwitcher from "../components/LanguageSwitcher/index";
 import ThemeToggleButton from "../components/ThemeToggleButton";
 import CodingModeToggle from "../components/CodingModeToggle";
 import { useTranslation } from "react-i18next";
@@ -269,8 +268,6 @@ export default function Header() {
           </Tooltip>
           <div className={styles.headerDivider} />
           <CodingModeToggle />
-          <div className={styles.headerDivider} />
-          <LanguageSwitcher />
           <ThemeToggleButton />
           {authEnabled && (
             <Button
