@@ -1614,6 +1614,7 @@
     }
   },
   "chat": {
+    "headerTitle": "Nexora",
     "modelSelectTooltip": "Выбор модели",
     "newChatTooltip": "Новый чат",
     "searchTooltip": "Поиск во всех чатах",

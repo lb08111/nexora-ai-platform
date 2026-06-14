@@ -1937,6 +1937,7 @@
     }
   },
   "chat": {
+    "headerTitle": "Nexora",
     "modelSelectTooltip": "Select model",
     "newChatTooltip": "New chat",
     "searchTooltip": "Search all chats",
@@ -1948,11 +1949,11 @@
     "statusIdle": "Idle",
     "statusInProgress": "In progress",
     "disclaimer": "Works for you, grows with you",
-    "greeting": "Hello, how can I help you today?",
-    "description": "I am a helpful assistant that can help you with your questions.",
-    "prompt1": "Let's start a new journey!",
-    "prompt2": "Can you tell me what skills you have?",
-    "inputPlaceholder": "\"↑↓\" for message navigation · \"/\" for quick commands (\"/approve\" or \"/deny\" during approvals)",
+    "greeting": "What should we build today?",
+    "description": "I can plan tasks, run skills, and execute multi-step missions — just describe what you need.",
+    "prompt1": "Plan a task for me",
+    "prompt2": "What can you do?",
+    "inputPlaceholder": "Message Nexora…  (type \"/\" for commands)",
     "commands": {
       "clear": {
         "description": "Clear the conversation context"

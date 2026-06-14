@@ -110,6 +110,7 @@
     "unauthorized": "Tidak berwenang, silakan masuk"
   },
   "chat": {
+    "headerTitle": "Nexora",
     "modelSelectTooltip": "Pilih model",
     "newChatTooltip": "Chat baru",
     "searchTooltip": "Cari semua chat",
