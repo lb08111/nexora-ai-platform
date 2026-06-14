@@ -13,16 +13,11 @@ import json
 from pathlib import Path
 
 from agentscope.message import TextBlock
-from agentscope.tool import ToolResponse, Toolkit
+from agentscope.tool import Toolkit, ToolResponse
 
 from .segments.taxonomy import lookup_segment
-from .state import (
-    OpenArea,
-    ReflectUpdate,
-    TeamBlueprint,
-    Turn,
-)
 from .state import DiscoveryState  # noqa: F401  (re-export p/ tipagem)
+from .state import OpenArea, ReflectUpdate, TeamBlueprint, Turn
 
 
 def _ok(text: str) -> ToolResponse:

@@ -52,7 +52,14 @@ class DiscoveryState(BaseModel):
     transcript: list[Turn] = Field(default_factory=list)
 
     def next_focus(self) -> Optional[OpenArea]:
-        """Área de maior prioridade e menor confiança (não-formulário)."""
+        """Retorna a área de maior prioridade e menor confiança.
+
+        Estratégia de entrevista: não é formulário. Prioriza áreas críticas
+        (priority >= 3) com menor confiança para aprofundar o entendimento.
+
+        Returns:
+            OpenArea: A próxima ramificação a explorar, ou None se nenhuma.
+        """
         if not self.open_areas:
             return None
         return sorted(
@@ -61,7 +68,17 @@ class DiscoveryState(BaseModel):
         )[0]
 
     def ready_to_emit(self, threshold: float = 0.7) -> bool:
-        """Pronto quando toda área prioritária (priority>=3) bate o limiar."""
+        """Verifica se a entrevista atingiu confiança suficiente.
+
+        A sessão está pronta para emitir o blueprint quando todas as áreas
+        prioritárias (priority >= 3) têm confiança acima do limiar.
+
+        Args:
+            threshold: Confiança mínima requerida (0.0-1.0). Default 0.7.
+
+        Returns:
+            bool: True se o estado está pronto para emitir, False caso contrário.
+        """
         critical = [a for a in self.open_areas if a.priority >= 3]
         return all(a.confidence >= threshold for a in critical)
 
