@@ -41,8 +41,8 @@ const DEFAULT_DEMO_VIDEOS: DemoVideoConfig[] = [
     enUrl:
       "https://cloud.video.taobao.com/vod/JoYL8YwV0HXjQFuPCzDN2gaSxmSdudvc5rPWph4N_6s.mp4",
     titleKey: "docs.demoVideos.doctor",
-    docsLinkUrl: "https://qwenpaw.agentscope.io/docs/cli#qwenpaw-doctor",
-    docsLinkEnUrl: "https://qwenpaw.agentscope.io/docs/cli/#qwenpaw-doctor",
+    docsLinkUrl: "https://qwenpaw.agentscope.io/docs/cli#jotaduo-doctor",
+    docsLinkEnUrl: "https://qwenpaw.agentscope.io/docs/cli/#jotaduo-doctor",
   },
   {
     key: "mission-mode",
@@ -55,6 +55,17 @@ const DEFAULT_DEMO_VIDEOS: DemoVideoConfig[] = [
       "https://qwenpaw.agentscope.io/docs/commands#Mission-Mode---%E5%A4%8D%E6%9D%82%E4%BB%BB%E5%8A%A1%E8%87%AA%E4%B8%BB%E6%89%A7%E8%A1%8C",
     docsLinkEnUrl:
       "https://qwenpaw.agentscope.io/docs/commands#Mission-Mode---Autonomous-Execution-for-Complex-Tasks",
+  },
+  {
+    key: "auto-continue",
+    zhUrl:
+      "https://cloud.video.taobao.com/vod/J6A1yjzzFbkHZnadSNMw10rYmvMar_1_zb_VA49jBu8.mp4",
+    enUrl:
+      "https://cloud.video.taobao.com/vod/MqGCwH4FZwe8lnTBkWKxUZPXQAc-cj2hMxKELq6bRxs.mp4",
+    titleKey: "docs.demoVideos.autoContinue",
+    docsLinkUrl:
+      "https://qwenpaw.agentscope.io/docs/console#%E8%BF%90%E8%A1%8C%E9%85%8D%E7%BD%AE",
+    docsLinkEnUrl: "https://qwenpaw.agentscope.io/docs/console#Configuration",
   },
 ];
 

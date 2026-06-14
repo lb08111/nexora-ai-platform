@@ -1,8 +1,8 @@
 # Agent Memory-Evolving & Proactive Interaction (Beta)
 
-> **Beta Feature**: Agent Memory-Evolving & Proactive Interaction is an experimental capability available in QwenPaw versions after 1.1.4beta1. We have been exploring "memory-driven experience loops" and this feature is still under active iteration. If you have any ideas or suggestions, please share them on [GitHub](https://github.com/agentscope-ai/QwenPaw/issues) to help us improve.
+> **Beta Feature**: Agent Memory-Evolving & Proactive Interaction is an experimental capability available in JotaDuo versions after 1.1.4beta1. We have been exploring "memory-driven experience loops" and this feature is still under active iteration. If you have any ideas or suggestions, please share them on [GitHub](https://github.com/agentscope-ai/QwenPaw/issues) to help us improve.
 
-QwenPaw agents achieve continuous evolution without model fine-tuning—through a **memory-driven experience loop**, they get smarter the more they use. The core idea: let the Agent accumulate experience from each interaction, periodically reflect and distill, proactively retrieve and reuse, and ultimately build personalized service capabilities—moving from passive response to proactive service.
+JotaDuo agents achieve continuous evolution without model fine-tuning—through a **memory-driven experience loop**, they get smarter the more they use. The core idea: let the Agent accumulate experience from each interaction, periodically reflect and distill, proactively retrieve and reuse, and ultimately build personalized service capabilities—moving from passive response to proactive service.
 
 ---
 

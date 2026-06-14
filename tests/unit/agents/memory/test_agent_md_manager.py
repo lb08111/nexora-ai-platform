@@ -17,7 +17,7 @@ import pytest
 @pytest.fixture
 def manager(tmp_path):
     """Create AgentMdManager with a fresh temp directory."""
-    from qwenpaw.agents.memory.agent_md_manager import AgentMdManager
+    from jotaduo.agents.memory.agent_md_manager import AgentMdManager
 
     return AgentMdManager(working_dir=tmp_path)
 
@@ -38,7 +38,7 @@ class TestAgentMdManagerInit:
 
     def test_working_dir_created(self, tmp_path):
         """Constructor creates working_dir if not present."""
-        from qwenpaw.agents.memory.agent_md_manager import (
+        from jotaduo.agents.memory.agent_md_manager import (
             AgentMdManager,
         )
 
@@ -49,7 +49,7 @@ class TestAgentMdManagerInit:
 
     def test_memory_dir_created(self, tmp_path):
         """Constructor creates working_dir/memory."""
-        from qwenpaw.agents.memory.agent_md_manager import (
+        from jotaduo.agents.memory.agent_md_manager import (
             AgentMdManager,
         )
 
@@ -58,7 +58,7 @@ class TestAgentMdManagerInit:
 
     def test_accepts_string_path(self, tmp_path):
         """Constructor accepts a string path."""
-        from qwenpaw.agents.memory.agent_md_manager import (
+        from jotaduo.agents.memory.agent_md_manager import (
             AgentMdManager,
         )
 
@@ -165,9 +165,9 @@ class TestAgentMdManagerReadWorkingMd:
 
         (tmp_path / "enc.md").write_text("hello", encoding="utf-8")
         # Use the already-imported module from sys.modules to avoid
-        # patch path resolution issues with qwenpaw.agents.__getattr__
+        # patch path resolution issues with jotaduo.agents.__getattr__
         # on Linux (where the package attr may not yet be set).
-        mod = sys.modules["qwenpaw.agents.memory.agent_md_manager"]
+        mod = sys.modules["jotaduo.agents.memory.agent_md_manager"]
         with patch.object(
             mod,
             "read_text_file_with_encoding_fallback",

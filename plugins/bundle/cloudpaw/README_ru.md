@@ -3,13 +3,13 @@
 </p>
 
 <p align="center">
-  <strong>Плагин расширения облачных возможностей для QwenPaw</strong>
+  <strong>Плагин расширения облачных возможностей для JotaDuo</strong>
 </p>
 
 <p align="center">
   <a href="https://github.com/agentscope-ai/CloudPaw/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License" /></a>
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/Python-3.10%2B-blue.svg" alt="Python" /></a>
-  <a href="#"><img src="https://img.shields.io/badge/version-0.0.2-green.svg" alt="Version" /></a>
+  <a href="#"><img src="https://img.shields.io/badge/version-0.0.3-green.svg" alt="Version" /></a>
 </p>
 
 <p align="center">
@@ -18,7 +18,7 @@
 
 ---
 
-CloudPaw — это плагин расширения облачных возможностей для QwenPaw, объединяющий **QwenPaw + Aliyun CLI** с глубокой интеграцией **IaC**. Это не просто чат-бот — это интеллектуальный ассистент с облачным движком выполнения.
+CloudPaw — это плагин расширения облачных возможностей для JotaDuo, объединяющий **JotaDuo + Aliyun CLI** с глубокой интеграцией **IaC**. Это не просто чат-бот — это интеллектуальный ассистент с облачным движком выполнения.
 
 Просто опишите свои потребности на естественном языке, и CloudPaw автоматизирует весь процесс от создания ресурсов до развёртывания приложений. Например:
 
@@ -34,29 +34,29 @@ CloudPaw полностью работает в вашей собственно�
 
 | Элемент | Требование |
 |---------|------------|
-| **Версия QwenPaw** | **≥ v1.1.7** |
+| **Версия JotaDuo** | **≥ v1.1.7** |
 | **Python** | 3.10 ~ 3.13 |
 | **Аккаунт Alibaba Cloud** | Требуется Access Key для облачных операций |
 
-> Информацию об установке QwenPaw см. в [Быстром старте QwenPaw](https://qwenpaw.agentscope.io/docs/quickstart). Если версия QwenPaw ниже v1.1.7, сначала обновите: `pip install --upgrade qwenpaw>=1.1.7`.
+> Информацию об установке JotaDuo см. в [Быстром старте JotaDuo](https://qwenpaw.agentscope.io/docs/quickstart). Если версия JotaDuo ниже v1.1.7, сначала обновите: `pip install --upgrade jotaduo>=1.1.7`.
 
 ### 1. Установка плагина CloudPaw
 
 **Через консоль (рекомендуется):**
 
-1. Запустите QwenPaw (`qwenpaw app`), откройте http://127.0.0.1:8088/
+1. Запустите JotaDuo (`jotaduo app`), откройте http://127.0.0.1:8088/
 2. Нажмите «Менеджер плагинов» в левой боковой панели (в разделе «Настройки»), затем нажмите «Установить плагин»
 3. Установите одним из способов:
-   - Введите URL для скачивания плагина: `https://qwenpaw-download.oss-ap-southeast-1.aliyuncs.com/files/plugins/cloudpaw/cloudpaw-0.0.2.zip`
-   - Перетащите папку `cloudpaw/` в диалог установки или выберите ZIP-файл (CloudPaw предустановлен в QwenPaw v1.1.7+ в `plugins/bundle/cloudpaw/`)
+   - Введите URL для скачивания плагина: `https://qwenpaw-download.oss-ap-southeast-1.aliyuncs.com/files/plugins/cloudpaw/cloudpaw-0.0.3.zip`
+   - Перетащите папку `cloudpaw/` в диалог установки или выберите ZIP-файл (CloudPaw предустановлен в JotaDuo v1.1.7+ в `plugins/bundle/cloudpaw/`)
 4. Дождитесь завершения установки
 
 **Через CLI:**
 
 ```bash
-qwenpaw plugin install /path/to/cloudpaw
+jotaduo plugin install /path/to/cloudpaw
 # Или установка через URL
-qwenpaw plugin install https://qwenpaw-download.oss-ap-southeast-1.aliyuncs.com/files/plugins/cloudpaw/cloudpaw-0.0.2.zip
+jotaduo plugin install https://qwenpaw-download.oss-ap-southeast-1.aliyuncs.com/files/plugins/cloudpaw/cloudpaw-0.0.3.zip
 ```
 
 > **⚠️ ВАЖНО: После установки необходимо принудительно обновить браузер** (`Ctrl+Shift+R` / `Cmd+Shift+R`) для загрузки обновлений фронтенда. Пользовательские UI-компоненты CloudPaw (выбор предложений, управление PRD и т.д.) не появятся до обновления страницы. Если после установки функции отсутствуют, сначала попробуйте обновить страницу.
@@ -65,9 +65,9 @@ qwenpaw plugin install https://qwenpaw-download.oss-ap-southeast-1.aliyuncs.com/
 
 После установки CloudPaw выполните следующие настройки:
 
-#### ① Модель QwenPaw
+#### ① Модель JotaDuo
 
-Настройте провайдера LLM и API Key в консоли: Настройки → Модели. См. [документацию по моделям QwenPaw](https://qwenpaw.agentscope.io/docs/models).
+Настройте провайдера LLM и API Key в консоли: Настройки → Модели. См. [документацию по моделям JotaDuo](https://qwenpaw.agentscope.io/docs/models).
 
 #### ② Учётные данные Alibaba Cloud
 
@@ -81,11 +81,11 @@ qwenpaw plugin install https://qwenpaw-download.oss-ap-southeast-1.aliyuncs.com/
 
 #### ③ Настройка модели iac-code
 
-CloudPaw использует [iac-code](https://github.com/aliyun/iac-code) (≥ 0.1.2) для генерации IaC-шаблонов. **Ручная настройка модели не требуется** — CloudPaw автоматически синхронизирует активную модель QwenPaw с iac-code.
+CloudPaw использует [iac-code](https://github.com/aliyun/iac-code) (≥ 0.1.2) для генерации IaC-шаблонов. **Ручная настройка модели не требуется** — CloudPaw автоматически синхронизирует активную модель JotaDuo с iac-code.
 
-При запуске плагина CloudPaw записывает `llm_source: qwenpaw` в `~/.iac-code/settings.yml`. Это позволяет iac-code считывать конфигурацию модели (провайдер, API-ключ, название модели и т.д.) напрямую из активной модели QwenPaw. Если вы уже настроили рабочую модель в QwenPaw (шаг ①), iac-code автоматически будет использовать ту же модель — дополнительная настройка не требуется.
+При запуске плагина CloudPaw записывает `llm_source: jotaduo` в `~/.iac-code/settings.yml`. Это позволяет iac-code считывать конфигурацию модели (провайдер, API-ключ, название модели и т.д.) напрямую из активной модели JotaDuo. Если вы уже настроили рабочую модель в JotaDuo (шаг ①), iac-code автоматически будет использовать ту же модель — дополнительная настройка не требуется.
 
-**Ручное переопределение:** Если вам нужно, чтобы iac-code использовал модель, отличную от QwenPaw, установите переменную окружения `IAC_CODE_PROVIDER` (через страницу переменных окружения QwenPaw или системные переменные). При наличии этой переменной CloudPaw пропускает автоматическую инъекцию, и iac-code использует вашу ручную конфигурацию. Подробнее см. [документацию по настройке LLM в iac-code](https://aliyun.github.io/iac-code/docs/configuration/llm-providers).
+**Ручное переопределение:** Если вам нужно, чтобы iac-code использовал модель, отличную от JotaDuo, установите переменную окружения `IAC_CODE_PROVIDER` (через страницу переменных окружения JotaDuo или системные переменные). При наличии этой переменной CloudPaw пропускает автоматическую инъекцию, и iac-code использует вашу ручную конфигурацию. Подробнее см. [документацию по настройке LLM в iac-code](https://aliyun.github.io/iac-code/docs/configuration/llm-providers).
 
 ### 3. Начало использования
 
@@ -100,10 +100,10 @@ CloudPaw использует [iac-code](https://github.com/aliyun/iac-code) (�
 
 ## Архитектура
 
-CloudPaw интегрируется через нативную систему плагинов QwenPaw.
+CloudPaw интегрируется через нативную систему плагинов JotaDuo.
 
 ```
-QwenPaw/
+JotaDuo/
 └── plugins/
     └── bundle/
         └── cloudpaw/           # Плагин CloudPaw (фронтенд и бэкенд)
@@ -122,8 +122,8 @@ QwenPaw/
 
 - **Оркестрация IaC-развёртывания**: Автоматизация развёртывания ресурсов Alibaba Cloud через движок [iac-code](https://github.com/aliyun/iac-code) для генерации ROS/Terraform-шаблонов
 - **Выбор предложений по ресурсам**: Интерактивное сравнение и выбор нескольких предложений с выделенным фронтенд-рендерингом (инструмент `proposal_choice`)
-- **Расширение фронтенда управления PRD**: Кастомный фронтенд-рендеринг для управления PRD в QwenPaw Mission Mode (инструмент `manage_prd`)
-- **Многоагентная коллаборация**: Оркестрация нескольких агентов для сложных задач развёртывания через QwenPaw Mission Mode
+- **Расширение фронтенда управления PRD**: Кастомный фронтенд-рендеринг для управления PRD в JotaDuo Mission Mode (инструмент `manage_prd`)
+- **Многоагентная коллаборация**: Оркестрация нескольких агентов для сложных задач развёртывания через JotaDuo Mission Mode
 - **Интеграция удалённых агентов Alibaba Cloud Skills**: Подключение и вызов удалённых агентов на Alibaba Cloud Skills Hub через протокол A2A с потоковым отображением в реальном времени
 - **Автоматическая настройка зависимостей**: Автоматическая установка `iac-code` и Alibaba Cloud CLI при запуске плагина
 
@@ -175,7 +175,7 @@ CloudPaw предоставляет **два способа** вызова уд�
 
 ## Многоагентная архитектура
 
-CloudPaw реализует многоагентную коллаборацию через **Mission Mode** QwenPaw. Пользователи взаимодействуют с главным агентом, который автоматически разбивает требования в PRD (документ требований к продукту) и делегирует задачи специализированным подагентам по приоритету историй.
+CloudPaw реализует многоагентную коллаборацию через **Mission Mode** JotaDuo. Пользователи взаимодействуют с главным агентом, который автоматически разбивает требования в PRD (документ требований к продукту) и делегирует задачи специализированным подагентам по приоритету историй.
 
 | Агент | Ответственность |
 |---|---|

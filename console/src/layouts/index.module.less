@@ -1,19 +1,42 @@
 // ─── MainLayout ───────────────────────────────────────────────────────────────
 .mainLayout {
   height: 100vh;
+  background: var(--app-bg) !important;
+}
+
+.codingShell {
+  background: var(--app-bg) !important;
+}
+
+.codingShellInner {
+  height: 100vh;
+  background: var(--app-bg) !important;
+}
+
+.codingPageContainer {
+  overflow: hidden !important;
+  background: var(--app-bg) !important;
+}
+
+.codingPageContent {
+  height: 100vh;
+  background: var(--app-bg) !important;
 }
 
 // ─── Header ───────────────────────────────────────────────────────────────────
 .header {
   height: 56px;
-  padding: 0 28px;
+  min-height: 56px;
+  padding: 0 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #f9f8f4;
+  background: var(--app-surface);
+  border-bottom: 1px solid var(--app-border-subtle);
+  color: var(--app-text);
 
   :global {
-    .qwenpaw-space-item {
+    .jotaduo-space-item {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -32,10 +55,10 @@
 
 // ─── Sidebar ─────────────────────────────────────────────────────────────────
 .sider {
-  background: #f9f8f4 !important;
+  background: var(--app-sidebar-bg) !important;
   overflow: auto;
-  height: calc(100vh - 64px);
-  padding: 0 16px;
+  height: calc(100vh - 56px);
+  padding: 12px 10px 8px;
   display: flex;
   flex-direction: column;
 
@@ -62,26 +85,24 @@
 
   // Agent-scoped section: selector + Chat + Control + Workspace
   .agentScopedSection {
-    background: rgba(43, 18, 0, 0.02);
-    border-radius: 12px;
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    padding: 4px;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    padding: 0;
 
     :global {
-      .qwenpaw-menu {
+      .jotaduo-menu {
         background: transparent !important;
       }
     }
   }
-  // AgentSelector + Chat container - sticky at top
+  // AgentSelector + Chat container - fixed visually by normal sidebar flow.
   .agentSelectorContainer {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    margin-bottom: 4px;
-    // Opaque background so scrolled content is hidden behind
-    background: #f9f7f3;
-    border-radius: 12px 12px 0 0;
+    position: static;
+    z-index: auto;
+    margin-bottom: 12px;
+    background: transparent;
+    border-radius: 0;
   }
 
   // Sticky Chat button — matches menu item appearance
@@ -95,19 +116,20 @@
     border: none;
     border-radius: 8px;
     background: transparent;
-    color: rgba(0, 0, 0, 0.88);
+    color: var(--app-text);
     font-size: 14px;
     cursor: pointer;
     transition: background 0.2s;
     padding-left: 12px;
 
     &:hover {
-      background: rgba(0, 0, 0, 0.06);
+      background: var(--app-surface-hover);
     }
   }
 
   .stickyChatButtonActive {
-    background: rgba(43, 18, 0, 0.08);
+    background: var(--app-primary-selected);
+    color: var(--app-primary-text);
   }
 
   // Menu takes remaining space
@@ -132,31 +154,8 @@
     -ms-overflow-style: none;
   }
 
-  .settingsMenu {
-    flex: 0 0 auto;
-
-    :global {
-      .qwenpaw-menu-submenu-arrow {
-        display: block !important;
-      }
-
-      .qwenpaw-menu-submenu-title {
-        cursor: pointer;
-
-        &:hover {
-          background: rgba(0, 0, 0, 0.04) !important;
-          color: rgba(26, 23, 22, 0.58) !important;
-        }
-      }
-
-      .qwenpaw-menu-submenu:not(.qwenpaw-menu-submenu-open) > .qwenpaw-menu {
-        display: none !important;
-      }
-    }
-  }
-
   &.siderCollapsed {
-    padding: 0 8px;
+    padding: 0 6px;
 
     .agentSelectorContainer {
       display: flex;
@@ -172,8 +171,8 @@
 
     :global {
       /* Center icon in collapsed menu items */
-      .qwenpaw-menu-item,
-      .qwenpaw-menu-submenu .qwenpaw-menu-item {
+      .jotaduo-menu-item,
+      .jotaduo-menu-submenu .jotaduo-menu-item {
         padding-left: 0 !important;
         padding-right: 0 !important;
         display: flex !important;
@@ -183,103 +182,102 @@
       }
 
       /* Ensure icon container allows badge overflow */
-      .qwenpaw-menu-item-icon,
-      .qwenpaw-menu-item .anticon {
+      .jotaduo-menu-item-icon,
+      .jotaduo-menu-item .anticon {
         overflow: visible !important;
       }
 
       /* Hide label text in collapsed mode */
-      .qwenpaw-menu-title-content,
-      .qwenpaw-menu-item > span:not([role]):not(.qwenpaw-badge),
-      .qwenpaw-menu-item-only-child > span:not(.qwenpaw-badge) {
+      .jotaduo-menu-title-content,
+      .jotaduo-menu-item > span:not([role]):not(.jotaduo-badge),
+      .jotaduo-menu-item-only-child > span:not(.jotaduo-badge) {
         display: none !important;
       }
 
       /* Hide group labels */
-      .qwenpaw-menu-submenu-title {
+      .jotaduo-menu-submenu-title {
         display: none !important;
       }
     }
   }
 
   :global {
-    .qwenpaw-menu {
+    .jotaduo-menu {
       border-inline-end: 0 !important;
     }
 
     /* Group title (一级菜单分组) */
-    .qwenpaw-menu-submenu-title {
+    .jotaduo-menu-submenu-title {
       font-family: "PingFang SC", sans-serif !important;
       font-size: 12px !important;
       font-weight: 500 !important;
       line-height: 32px !important;
       letter-spacing: normal !important;
-      color: rgba(26, 23, 22, 0.25) !important;
+      color: var(--app-text-subtle) !important;
       padding-left: 8px !important;
 
       /* No hover effect for group titles */
       &:hover {
         background: transparent !important;
-        color: rgba(26, 23, 22, 0.25) !important;
+        color: var(--app-text-subtle) !important;
       }
     }
 
     /* Hide submenu arrow */
-    .qwenpaw-menu-submenu-arrow {
+    .jotaduo-menu-submenu-arrow {
       display: none !important;
     }
 
     /* Always expand submenus */
-    .qwenpaw-menu-submenu {
-      > .qwenpaw-menu {
+    .jotaduo-menu-submenu {
+      > .jotaduo-menu {
         display: block !important;
       }
     }
 
     /* Menu item padding - align all items */
-    .qwenpaw-menu-item {
+    .jotaduo-menu-item {
       padding-left: 8px !important;
     }
 
     /* Remove submenu indent - align with parent */
-    .qwenpaw-menu-submenu .qwenpaw-menu-item {
+    .jotaduo-menu-submenu .jotaduo-menu-item {
       padding-left: 8px !important;
     }
 
     /* Selected item */
-    .qwenpaw-menu-item-selected {
-      background: rgba(43, 18, 0, 0.08) !important;
-      color: inherit !important;
+    .jotaduo-menu-item-selected {
+      background: var(--app-primary-selected) !important;
+      color: var(--app-primary-text) !important;
       display: flex !important;
       align-items: center !important;
       justify-content: center !important;
 
-      .qwenpaw-menu-title-content {
+      .jotaduo-menu-title-content {
         display: flex !important;
         align-items: center !important;
       }
     }
 
     /* Selected submenu item - keep text color unchanged */
-    .qwenpaw-menu-submenu .qwenpaw-menu-item-selected {
+    .jotaduo-menu-submenu .jotaduo-menu-item-selected {
       color: inherit !important;
     }
   }
 }
 
 .siderDark {
-  background: #1a1a1a !important;
-  border-right-color: rgba(255, 255, 255, 0.08) !important;
+  background: var(--app-sidebar-bg) !important;
+  border-right-color: var(--app-border-subtle) !important;
 
   // Agent-scoped section (dark mode)
   .agentScopedSection {
-    background: rgba(255, 255, 255, 0.04);
-    border-color: rgba(255, 255, 255, 0.08);
+    background: transparent;
+    border-color: transparent;
   }
 
-  // Sticky container background (dark mode)
   .agentSelectorContainer {
-    background: #1e1e1e;
+    background: transparent;
   }
 
   // Chat button (dark mode)
@@ -297,14 +295,14 @@
     color: #ff7f16;
   }
 
-  :global {
-    .qwenpaw-menu {
-      background: #1a1a1a !important;
+    :global {
+    .jotaduo-menu {
+      background: var(--app-sidebar-bg) !important;
       border-inline-end: 0 !important;
     }
 
     /* Group title (sub-menu label) */
-    .qwenpaw-menu-submenu-title {
+    .jotaduo-menu-submenu-title {
       color: rgba(255, 255, 255, 0.45) !important;
 
       /* No hover effect for group titles in dark mode */
@@ -315,20 +313,20 @@
     }
 
     /* Regular menu item */
-    .qwenpaw-menu-item {
+    .jotaduo-menu-item {
       color: rgba(255, 255, 255, 0.75) !important;
     }
 
     /* Hover state - only for menu items, not group titles */
-    .qwenpaw-menu-item:hover {
+    .jotaduo-menu-item:hover {
       background: rgba(255, 255, 255, 0.1) !important;
       color: rgba(255, 255, 255, 0.95) !important;
     }
 
     /* Selected item */
-    .qwenpaw-menu-item-selected {
-      background: rgba(255, 127, 22, 0.5) !important;
-      color: #ff7f16 !important;
+    .jotaduo-menu-item-selected {
+      background: var(--app-primary-selected) !important;
+      color: var(--app-primary-text) !important;
     }
   }
 }
@@ -339,7 +337,7 @@
 }
 
 .logoImg {
-  height: 40px;
+  height: 16px;
   width: auto;
 }
 
@@ -352,33 +350,18 @@
 }
 
 .headerDivider {
-  width: 16px;
-  height: 0px;
-  transform: rotate(90deg);
+  width: 1px;
+  height: 24px;
   z-index: 4;
-  border-top: 1px solid rgba(234, 232, 231, 1);
-}
-
-.currentUserName {
-  max-width: 160px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: rgba(43, 18, 0, 0.06);
-  color: rgba(26, 23, 22, 0.72);
-  font-size: 13px;
-  line-height: 18px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  border-top: 0;
+  background: var(--app-border-subtle);
 }
 
 .versionBadge {
   font-size: 12px;
-  color: #1a171673;
+  color: var(--app-text-muted);
   font-weight: 600;
   line-height: 1;
-  position: relative;
-  top: 3px;
 }
 
 .versionBadgeClickable {
@@ -391,14 +374,13 @@
 
 .collapseBtn {
   margin: auto;
-  color: #ff7f16;
+  color: var(--app-primary-text);
 }
 
 // ─── Auth actions (account + logout) ──────────────────────────────────────────
 .authActions {
   padding: 12px 16px;
   border-top: 1px solid #f0f0f0;
-  flex-shrink: 0;
 }
 
 .authBtn {
@@ -416,9 +398,6 @@
 
 .authBtnCollapsed {
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  padding: 0;
 }
 
 .authBtn + .authBtn {
@@ -429,22 +408,22 @@
 .collapseToggleContainer {
   flex-shrink: 0;
   z-index: 10;
-  width: calc(100% + 32px);
-  margin: 0 -16px;
-  padding: 8px 16px;
+  width: calc(100% + 20px);
+  margin: auto -10px 0;
+  padding: 8px 10px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
 }
 
 .collapseToggle {
-  color: rgba(0, 0, 0, 0.45);
+  color: var(--app-text-subtle);
   border-radius: 8px;
   transition: all 0.2s;
 
   &:hover {
-    background: rgba(0, 0, 0, 0.06) !important;
-    color: #ff7f16 !important;
+    background: var(--app-surface-hover) !important;
+    color: var(--app-primary-text) !important;
   }
 }
 
@@ -475,18 +454,18 @@
   border: none;
   background: transparent;
   cursor: pointer;
-  color: rgba(0, 0, 0, 0.55);
+  color: var(--app-text-muted);
   transition: all 0.15s;
 
   &:hover {
-    background: rgba(0, 0, 0, 0.06);
-    color: rgba(0, 0, 0, 0.88);
+    background: var(--app-surface-hover);
+    color: var(--app-text-strong);
   }
 }
 
 .collapsedNavItemActive {
-  background: rgba(43, 18, 0, 0.08) !important;
-  color: rgba(0, 0, 0, 0.88) !important;
+  background: var(--app-primary-selected) !important;
+  color: var(--app-primary-text) !important;
 }
 
 @media (max-width: 768px) {
@@ -527,7 +506,7 @@
 
 // ─── Update Modal ─────────────────────────────────────────────────────────────
 .updateModal {
-  :global(.qwenpaw-modal-content) {
+  :global(.jotaduo-modal-content) {
     padding: 0 !important;
     border-radius: 12px !important;
     overflow: visible !important;
@@ -535,26 +514,26 @@
     border: none !important;
   }
 
-  :global(.qwenpaw-modal-body) {
+  :global(.jotaduo-modal-body) {
     padding: 0 !important;
   }
 
-  :global(.qwenpaw-modal-footer) {
+  :global(.jotaduo-modal-footer) {
     padding: 12px 24px;
     margin-top: 0;
   }
 
-  :global(.qwenpaw-modal-header) {
+  :global(.jotaduo-modal-header) {
     display: none !important;
   }
 
-  :global(.qwenpaw-modal-close) {
+  :global(.jotaduo-modal-close) {
     display: none !important;
   }
 }
 
 .updateModalBanner {
-  background: url("/public/qwenpawBack.png") no-repeat center top;
+  background: url("/public/jotaduoBack.png") no-repeat center top;
   background-size: contain;
   padding: 48px 28px 0px;
   display: flex;
@@ -681,12 +660,12 @@
 /* ─── Dark mode overrides ─────────────────────────────────────────────────── */
 :global(.dark-mode) {
   .header {
-    background: #1a1a1a !important;
-    border-bottom-color: rgba(255, 255, 255, 0.08) !important;
-    color: rgba(255, 255, 255, 0.85);
+    background: var(--app-surface) !important;
+    border-bottom-color: var(--app-border-subtle) !important;
+    color: var(--app-text);
 
     /* Text buttons (Docs / FAQ / GitHub / Changelog) */
-    :global(.qwenpaw-btn-text),
+    :global(.jotaduo-btn-text),
     :global(.ant-btn-text) {
       color: rgba(255, 255, 255, 0.75) !important;
 
@@ -712,8 +691,8 @@
   }
 
   .sider {
-    background: #1a1a1a !important;
-    border-right-color: rgba(255, 255, 255, 0.08) !important;
+    background: var(--app-sidebar-bg) !important;
+    border-right-color: var(--app-border-subtle) !important;
   }
 
   .siderTop {
@@ -721,11 +700,11 @@
   }
 
   .versionBadge {
-    color: #ff7f16;
+    color: var(--app-primary-text);
   }
 
   .collapseBtn {
-    color: #ff7f16;
+    color: var(--app-primary-text);
   }
 
   .authActions {
@@ -738,15 +717,6 @@
     &:hover {
       color: rgba(255, 255, 255, 0.9) !important;
       background: rgba(255, 255, 255, 0.06) !important;
-    }
-  }
-
-  .settingsMenu {
-    :global {
-      .qwenpaw-menu-submenu-title:hover {
-        background: rgba(255, 255, 255, 0.06) !important;
-        color: rgba(255, 255, 255, 0.78) !important;
-      }
     }
   }
 

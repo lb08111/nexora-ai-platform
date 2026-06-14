@@ -3,7 +3,7 @@ fn main() {
     // scripts have generated the PyInstaller sidecar. Keep release builds strict
     // while allowing local Rust checks to run in a clean checkout.
     if std::env::var("PROFILE").as_deref() != Ok("release") {
-        let _ = std::fs::create_dir_all("binaries/qwenpaw-backend");
+        let _ = std::fs::create_dir_all("binaries/jotaduo-backend");
     }
 
     tauri_build::build()

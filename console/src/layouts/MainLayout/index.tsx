@@ -6,12 +6,9 @@ import Sidebar from "../Sidebar";
 import Header from "../Header";
 import ConsolePollService from "../../components/ConsolePollService";
 import { ChunkErrorBoundary } from "../../components/ChunkErrorBoundary";
-import {
-  lazyImportWithRetry,
-  lazyWithRetry,
-} from "../../utils/lazyWithRetry";
+import { lazyImportWithRetry, lazyWithRetry } from "../../utils/lazyWithRetry";
 import { usePlugins } from "../../plugins/PluginContext";
-import { auditApi } from "../../nexora/api/audit";
+import { auditApi } from "../../jotaduo/api/audit";
 import { useCodingMode } from "../../stores/codingModeStore";
 import { useSyncCodingMode } from "../../stores/useSyncCodingMode";
 import styles from "../index.module.less";
@@ -47,20 +44,20 @@ const VoiceTranscriptionPage = lazyImportWithRetry(
 );
 const AgentsPage = lazyImportWithRetry("../../pages/Settings/Agents");
 const UserManagementPage = lazyWithRetry(
-  () => import("../../nexora/pages/UserManagement"),
-  "nexora/UserManagement/index",
+  () => import("../../jotaduo/pages/UserManagement"),
+  "jotaduo/UserManagement/index",
 );
 const OpsGovernancePage = lazyWithRetry(
-  () => import("../../nexora/pages/OpsGovernance"),
-  "nexora/OpsGovernance/index",
+  () => import("../../jotaduo/pages/OpsGovernance"),
+  "jotaduo/OpsGovernance/index",
 );
 const ApprovalCenterPage = lazyWithRetry(
-  () => import("../../nexora/pages/ApprovalCenter"),
-  "nexora/ApprovalCenter/index",
+  () => import("../../jotaduo/pages/ApprovalCenter"),
+  "jotaduo/ApprovalCenter/index",
 );
 const AuditLogsPage = lazyWithRetry(
-  () => import("../../nexora/pages/AuditLogs"),
-  "nexora/AuditLogs/index",
+  () => import("../../jotaduo/pages/AuditLogs"),
+  "jotaduo/AuditLogs/index",
 );
 const DebugPage = lazyImportWithRetry("../../pages/Settings/Debug");
 const BackupsPage = lazyImportWithRetry("../../pages/Settings/Backups");
@@ -125,6 +122,7 @@ export default function MainLayout() {
   const location = useLocation();
   const currentPath = location.pathname;
   const { pluginRoutes } = usePlugins();
+  const isCodingRoute = currentPath === "/coding";
 
   // Backend is the source of truth for Coding Mode state — refill the
   // in-memory store every time the selected agent changes.
@@ -148,13 +146,25 @@ export default function MainLayout() {
   }, [location.pathname]);
 
   return (
-    <Layout className={styles.mainLayout}>
-      <Header />
-      <Layout>
-        <Sidebar selectedKey={selectedKey} />
-        <Content className="page-container">
+    <Layout
+      className={`${styles.mainLayout} ${
+        isCodingRoute ? styles.codingShell : ""
+      }`}
+    >
+      {!isCodingRoute && <Header />}
+      <Layout className={isCodingRoute ? styles.codingShellInner : undefined}>
+        {!isCodingRoute && <Sidebar selectedKey={selectedKey} />}
+        <Content
+          className={`page-container ${
+            isCodingRoute ? styles.codingPageContainer : ""
+          }`}
+        >
           <ConsolePollService />
-          <div className="page-content">
+          <div
+            className={`page-content ${
+              isCodingRoute ? styles.codingPageContent : ""
+            }`}
+          >
             <ChunkErrorBoundary resetKey={currentPath}>
               <Suspense
                 fallback={

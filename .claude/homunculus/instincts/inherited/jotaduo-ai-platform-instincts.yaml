@@ -1,0 +1,337 @@
+# Instincts generated from https://github.com/devjotaduo/jotaduo-ai-platform
+# Generated: 2026-06-12T20:29:19.117Z
+# Version: 2.0
+# NOTE: This file supplements (does not replace) any existing curated instincts.
+# High-confidence manually curated instincts should be preserved alongside these.
+
+---
+id: jotaduo-ai-platform-commit-conventional
+trigger: "when writing a commit message"
+confidence: 0.85
+domain: git
+source: repo-analysis
+source_repo: https://github.com/devjotaduo/jotaduo-ai-platform
+---
+
+# Jotaduo Ai Platform Commit Conventional
+
+## Action
+
+Use conventional commit format with prefixes: feat
+
+## Evidence
+
+- 1 commits analyzed
+- Detected conventional commit pattern
+- Examples: feat: apply PR #3498 whatsapp-channel-v4 from upstream
+
+---
+id: jotaduo-ai-platform-commit-length
+trigger: "when writing a commit message"
+confidence: 0.6
+domain: git
+source: repo-analysis
+source_repo: https://github.com/devjotaduo/jotaduo-ai-platform
+---
+
+# Jotaduo Ai Platform Commit Length
+
+## Action
+
+Write moderate-length commit messages (~54 characters)
+
+## Evidence
+
+- Average commit message length: 54 chars
+- Based on 1 commits
+
+---
+id: jotaduo-ai-platform-naming-files
+trigger: "when creating a new file"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/devjotaduo/jotaduo-ai-platform
+---
+
+# Jotaduo Ai Platform Naming Files
+
+## Action
+
+Use snake_case naming convention
+
+## Evidence
+
+- Analyzed file naming patterns in repository
+- Dominant pattern: snake_case
+
+---
+id: jotaduo-ai-platform-import-relative
+trigger: "when importing modules"
+confidence: 0.75
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/devjotaduo/jotaduo-ai-platform
+---
+
+# Jotaduo Ai Platform Import Relative
+
+## Action
+
+Use relative imports for project files
+
+## Evidence
+
+- Import analysis shows relative import pattern
+- Example: import { x } from '../lib/x'
+
+---
+id: jotaduo-ai-platform-export-style
+trigger: "when exporting from a module"
+confidence: 0.7
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/devjotaduo/jotaduo-ai-platform
+---
+
+# Jotaduo Ai Platform Export Style
+
+## Action
+
+Prefer named exports
+
+## Evidence
+
+- Export pattern analysis
+- Dominant style: named
+
+---
+id: jotaduo-ai-platform-test-separate
+trigger: "when writing tests"
+confidence: 0.8
+domain: testing
+source: repo-analysis
+source_repo: https://github.com/devjotaduo/jotaduo-ai-platform
+---
+
+# Jotaduo Ai Platform Test Separate
+
+## Action
+
+Place tests in the tests/ or __tests__/ directory, mirroring src structure
+
+## Evidence
+
+- Separate test directory pattern detected
+- Tests live in dedicated test folders
+
+---
+id: jotaduo-ai-platform-instinct-file-naming
+trigger: "When creating a new Python file"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: devjotaduo/jotaduo-ai-platform
+---
+
+# Jotaduo Ai Platform Instinct File Naming
+
+## Action
+
+Name the file using snake_case
+
+## Evidence
+
+- Pattern in files: src/jotaduo/*.py
+
+---
+id: jotaduo-ai-platform-instinct-function-naming
+trigger: "When defining a new function"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: devjotaduo/jotaduo-ai-platform
+---
+
+# Jotaduo Ai Platform Instinct Function Naming
+
+## Action
+
+Use camelCase for the function name
+
+## Evidence
+
+- Pattern in src/jotaduo/*.py
+
+---
+id: jotaduo-ai-platform-instinct-class-naming
+trigger: "When defining a new class"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: devjotaduo/jotaduo-ai-platform
+---
+
+# Jotaduo Ai Platform Instinct Class Naming
+
+## Action
+
+Use PascalCase for the class name
+
+## Evidence
+
+- Pattern in src/jotaduo/*.py
+
+---
+id: jotaduo-ai-platform-instinct-constant-naming
+trigger: "When declaring a constant"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: devjotaduo/jotaduo-ai-platform
+---
+
+# Jotaduo Ai Platform Instinct Constant Naming
+
+## Action
+
+Use SCREAMING_SNAKE_CASE for the constant name
+
+## Evidence
+
+- Pattern in src/jotaduo/*.py
+
+---
+id: jotaduo-ai-platform-instinct-import-style
+trigger: "When importing modules within the package"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: devjotaduo/jotaduo-ai-platform
+---
+
+# Jotaduo Ai Platform Instinct Import Style
+
+## Action
+
+Use relative imports
+
+## Evidence
+
+- Pattern in src/jotaduo/*.py
+
+---
+id: jotaduo-ai-platform-instinct-export-style
+trigger: "When exporting functions or classes"
+confidence: 0.7
+domain: code-style
+source: repo-analysis
+source_repo: devjotaduo/jotaduo-ai-platform
+---
+
+# Jotaduo Ai Platform Instinct Export Style
+
+## Action
+
+Use named exports
+
+## Evidence
+
+- Pattern in src/jotaduo/*.py
+
+---
+id: jotaduo-ai-platform-instinct-test-location
+trigger: "When adding new tests"
+confidence: 0.9
+domain: testing
+source: repo-analysis
+source_repo: devjotaduo/jotaduo-ai-platform
+---
+
+# Jotaduo Ai Platform Instinct Test Location
+
+## Action
+
+Place test files in the separate 'tests' folder
+
+## Evidence
+
+- Pattern in folder structure: tests/
+
+---
+id: jotaduo-ai-platform-instinct-test-structure
+trigger: "When organizing test code"
+confidence: 0.7
+domain: testing
+source: repo-analysis
+source_repo: devjotaduo/jotaduo-ai-platform
+---
+
+# Jotaduo Ai Platform Instinct Test Structure
+
+## Action
+
+Mirror the source code structure within the 'tests' folder
+
+## Evidence
+
+- Pattern in folder structure: src/ and tests/
+
+---
+id: jotaduo-ai-platform-instinct-git-commit-prefix
+trigger: "When writing a commit message for a new feature"
+confidence: 0.9
+domain: git
+source: repo-analysis
+source_repo: devjotaduo/jotaduo-ai-platform
+---
+
+# Jotaduo Ai Platform Instinct Git Commit Prefix
+
+## Action
+
+Start the commit message with 'feat:'
+
+## Evidence
+
+- Seen in commit: 'feat: apply PR #3498 whatsapp-channel-v4 from upstream'
+
+---
+id: jotaduo-ai-platform-instinct-git-commit-format
+trigger: "When writing a commit message"
+confidence: 0.9
+domain: git
+source: repo-analysis
+source_repo: devjotaduo/jotaduo-ai-platform
+---
+
+# Jotaduo Ai Platform Instinct Git Commit Format
+
+## Action
+
+Follow the conventional commit format: <type>: <description>
+
+## Evidence
+
+- Pattern in commit messages
+- Seen in commit: 'feat: apply PR #3498 whatsapp-channel-v4 from upstream'
+
+---
+id: jotaduo-ai-platform-instinct-git-commit-length
+trigger: "When writing a commit message"
+confidence: 0.7
+domain: git
+source: repo-analysis
+source_repo: devjotaduo/jotaduo-ai-platform
+---
+
+# Jotaduo Ai Platform Instinct Git Commit Length
+
+## Action
+
+Keep the commit message around 54 characters on average
+
+## Evidence
+
+- Average commit length: 54
+

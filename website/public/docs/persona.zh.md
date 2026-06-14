@@ -1,15 +1,15 @@
 # 智能体的人设
 
-QwenPaw 通过一组 Markdown 文件定义智能体的"人设"，这些文件会被加载到系统提示词（System Prompt）中，决定智能体的行为风格、工作方式和个性特征。你可以通过编辑这些文件，让智能体成为符合你需求的专属助手——无论是严谨的工作助理、温暖的生活伙伴，还是技术专家。
+JotaDuo 通过一组 Markdown 文件定义智能体的"人设"，这些文件会被加载到系统提示词（System Prompt）中，决定智能体的行为风格、工作方式和个性特征。你可以通过编辑这些文件，让智能体成为符合你需求的专属助手——无论是严谨的工作助理、温暖的生活伙伴，还是技术专家。
 
 ---
 
 ## 人设文件
 
-QwenPaw 的人设由 Markdown 文件定义，默认位于智能体工作区目录下。工作区目录的位置取决于 `QWENPAW_WORKING_DIR` 环境变量（默认为 `~/.qwenpaw`），完整路径为：
+JotaDuo 的人设由 Markdown 文件定义，默认位于智能体工作区目录下。工作区目录的位置取决于 `JOTADUO_WORKING_DIR` 环境变量（默认为 `~/.jotaduo`），完整路径为：
 
 ```
-$QWENPAW_WORKING_DIR/workspaces/{agent_id}/
+$JOTADUO_WORKING_DIR/workspaces/{agent_id}/
 ```
 
 **人设文件是灵活可扩展的**。下面展示的是默认配置，你可以自由地添加新的 Markdown 文件或删除现有文件。只要在控制台的「Agent → Workspace」页面中启用它们，任何 Markdown 文件都能加载到系统提示词中。
@@ -61,7 +61,7 @@ MEMORY.md 用于存储经过提炼的长期记忆（重要决策、经验教训�
 
 #### **BOOTSTRAP.md** - 首次引导
 
-首次运行 `qwenpaw init` 时会自动创建 BOOTSTRAP.md，它引导用户和智能体进行初次"对话"，共同定义身份、偏好和风格。完成引导后，智能体会将设定写入 PROFILE.md 和 SOUL.md，然后删除 BOOTSTRAP.md。
+首次运行 `jotaduo init` 时会自动创建 BOOTSTRAP.md，它引导用户和智能体进行初次"对话"，共同定义身份、偏好和风格。完成引导后，智能体会将设定写入 PROFILE.md 和 SOUL.md，然后删除 BOOTSTRAP.md。
 
 **引导内容：**
 
@@ -105,7 +105,7 @@ MEMORY.md 用于存储经过提炼的长期记忆（重要决策、经验教训�
 
 ### 通过配置文件管理
 
-你也可以直接修改智能体配置文件（`~/.qwenpaw/workspaces/{agent_id}/agent.json`）中的 `system_prompt_files` 字段来管理人设文件的加载：
+你也可以直接修改智能体配置文件（`~/.jotaduo/workspaces/{agent_id}/agent.json`）中的 `system_prompt_files` 字段来管理人设文件的加载：
 
 ```json
 {
@@ -119,14 +119,14 @@ MEMORY.md 用于存储经过提炼的长期记忆（重要决策、经验教训�
 
 ### 首次初始化
 
-运行 `qwenpaw init` 时，系统会根据你选择的语言（`zh` / `en` / `ru`）自动创建模板文件：
+运行 `jotaduo init` 时，系统会根据你选择的语言（`zh` / `en` / `ru`）自动创建模板文件：
 
 - AGENTS.md
 - SOUL.md
 - PROFILE.md
 - BOOTSTRAP.md（首次引导文件）
 
-如果使用 `qwenpaw init --defaults`，则默认语言为 `zh`（中文）。
+如果使用 `jotaduo init --defaults`，则默认语言为 `zh`（中文）。
 
 ### 切换智能体语言
 
@@ -197,20 +197,20 @@ Your agent id is `{agent_id}`. This is your unique identifier in the multi-agent
 
 ## 内置 QA 智能体
 
-QwenPaw 在首次运行 `qwenpaw init` 时会自动创建一个名为 **"QA Agent"** 的内置智能体（ID：`QwenPaw_QA_Agent_0.2`）。
+JotaDuo 在首次运行 `jotaduo init` 时会自动创建一个名为 **"QA Agent"** 的内置智能体（ID：`JotaDuo_QA_Agent_0.2`）。
 
 ### QA 智能体的特点
 
-这是一个**专门用于回答 QwenPaw 相关问题**的智能体：
+这是一个**专门用于回答 JotaDuo 相关问题**的智能体：
 
 - **专属人设**：使用专门为问答优化的人设文件（与普通智能体不同）
-- **预装技能**：自动启用 `guidance` 和 `QA_source_index` 技能，可以查询 QwenPaw 官方文档和源码
+- **预装技能**：自动启用 `guidance` 和 `QA_source_index` 技能，可以查询 JotaDuo 官方文档和源码
 - **工具配置**：默认只启用核心工具（execute_shell_command、read_file、write_file、edit_file、view_image），其他内置工具默认禁用
-- **自动维护**：每次运行 `qwenpaw init` 时会自动确保该智能体存在
+- **自动维护**：每次运行 `jotaduo init` 时会自动确保该智能体存在
 
 ### 如何使用？
 
-您可以在控制台右上角的智能体切换器中选择 "QA Agent"，然后向它提问关于 QwenPaw 的任何问题。
+您可以在控制台右上角的智能体切换器中选择 "QA Agent"，然后向它提问关于 JotaDuo 的任何问题。
 
 **适合问什么：**
 
@@ -225,5 +225,5 @@ QwenPaw 在首次运行 `qwenpaw init` 时会自动创建一个名为 **"QA Agen
 ### 可以修改或删除吗？
 
 - **可以修改**：您可以像管理其他智能体一样，在"智能体 → 工作区"中编辑它的人设文件，或在"智能体 → 技能"中调整技能和工具
-- **可以删除**：在"设置 → 智能体管理"页面删除（删除后不影响其他智能体，下次 `qwenpaw init` 会重新创建）
-- **工作区位置**：`$QWENPAW_WORKING_DIR/workspaces/QwenPaw_QA_Agent_0.2/`（默认为 `~/.qwenpaw/workspaces/QwenPaw_QA_Agent_0.2/`）
+- **可以删除**：在"设置 → 智能体管理"页面删除（删除后不影响其他智能体，下次 `jotaduo init` 会重新创建）
+- **工作区位置**：`$JOTADUO_WORKING_DIR/workspaces/JotaDuo_QA_Agent_0.2/`（默认为 `~/.jotaduo/workspaces/JotaDuo_QA_Agent_0.2/`）

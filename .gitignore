@@ -1,3 +1,6 @@
+# Local issue tracking (not committed)
+.scratch/
+
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # AI agent / copilot local config
@@ -28,11 +31,12 @@ dist/
 .wheelshim/
 # Console frontend build (generated in Docker/CI, do not commit)
 console/.cursor/
-src/qwenpaw/console/dist/
-src/qwenpaw/console/
+console/.wiki/
+src/jotaduo/console/dist/
+src/jotaduo/console/
 
 # Docs bundled at build time (copied from website/public/docs/)
-src/qwenpaw/docs/
+src/jotaduo/docs/
 
 # frontend (website)
 website/node_modules/
@@ -98,20 +102,12 @@ providers.json
 logs/
 *.log
 
-# Local downloaded tools
-bin/cloudflared*
-
-# Local tunnel credentials/config
-.cloudflared/
-cloudflared.yml
-
 # vibe coding
 AGENTS.md
 .claude
 openspec
 CLAUDE.md
 *.tmp
-outputs/
 
 # Build cache
 .cache/  # Includes conda_unpack_wheels/ for Windows packaging workaround
@@ -129,11 +125,32 @@ src/.hypothesis/
 # Cursor IDE
 .cursor/
 
+# Codex IDE
+.codex/
+
 # Worktrees
 .worktrees/
+.jotaduo/worktrees/
 
 # Local File
 /localfile/
+local-docs/
 
-# Local duplicate drafts
-docs/*副本.md
+# E2E test artifacts
+e2e/reports/
+e2e/data/
+e2e/.pytest_cache/
+e2e/__pycache__/
+
+# Secrets — never commit
+.jotaduo.secret/
+
+# QA screenshots (root)
+console-*.png
+
+# Playwright MCP runtime artifacts
+.playwright-mcp/
+
+# knowledge-base related
+graphify-out/
+docs-site/

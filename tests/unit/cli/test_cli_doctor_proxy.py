@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from qwenpaw.cli import doctor_cmd
+from jotaduo.cli import doctor_cmd
 
 
 class _Response:

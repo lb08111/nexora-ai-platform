@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Function execution tracer for QwenPaw."""
+"""Function execution tracer for JotaDuo."""
 import json
 import time
 import traceback
@@ -8,7 +8,7 @@ from collections import defaultdict
 
 
 class ExecTracer:
-    """Trace function execution in qwenpaw package."""
+    """Trace function execution in jotaduo package."""
 
     def __init__(self, package_names=None):
         """Initialize tracer.
@@ -17,7 +17,7 @@ class ExecTracer:
             package_names: List of package prefixes to trace
         """
         if package_names is None:
-            package_names = ["qwenpaw"]
+            package_names = ["jotaduo"]
         self.package_names = package_names
         self.call_stack = []
         self.function_times = defaultdict(list)
@@ -196,7 +196,7 @@ class ExecTracer:
 
 
 def main():
-    """Run tracer on qwenpaw app import."""
+    """Run tracer on jotaduo app import."""
     import sys  # pylint: disable=reimported,redefined-outer-name
 
     if len(sys.argv) < 2:
@@ -205,12 +205,12 @@ def main():
 
     output_path = sys.argv[1]
 
-    tracer = ExecTracer(package_names=["qwenpaw"])
+    tracer = ExecTracer(package_names=["jotaduo"])
     sys.settrace(tracer.trace_calls)
 
     try:
-        # Import qwenpaw app to trigger startup
-        from qwenpaw.app._app import (  # pylint: disable=unused-import
+        # Import jotaduo app to trigger startup
+        from jotaduo.app._app import (  # pylint: disable=unused-import
             app,
         )  # noqa: F401
     finally:

@@ -33,6 +33,7 @@ const CHANNELS_WITH_ACCESS_CONTROL: ChannelKey[] = [
   "qq",
   "mqtt",
   "xiaoyi",
+  "yuanbao",
 ];
 
 // Doc EN URLs per channel (anchors on https://qwenpaw.agentscope.io/docs/channels)
@@ -55,6 +56,7 @@ const CHANNEL_DOC_EN_URLS: Partial<Record<ChannelKey, string>> = {
     "https://qwenpaw.agentscope.io/docs/channels/?lang=en#WeChat-Personal-iLink",
   xiaoyi:
     "https://developer.huawei.com/consumer/cn/doc/service/openclaw-0000002518410344",
+  yuanbao: "https://qwenpaw.agentscope.io/docs/channels/?lang=en#Yuanbao",
   onebot:
     "https://qwenpaw.agentscope.io/docs/channels/?lang=en#OneBot-v11-NapCat--QQ-full-protocol",
 };
@@ -76,6 +78,8 @@ const CHANNEL_DOC_ZH_URLS: Partial<Record<ChannelKey, string>> = {
   wechat: "https://qwenpaw.agentscope.io/docs/channels/?lang=zh#微信个人iLink",
   xiaoyi:
     "https://developer.huawei.com/consumer/cn/doc/service/openclaw-0000002518410344",
+  yuanbao:
+    "https://qwenpaw.agentscope.io/docs/channels/?lang=zh#腾讯元宝Yuanbao",
   onebot:
     "https://qwenpaw.agentscope.io/docs/channels/?lang=zh#OneBot-v11NapCat--QQ-完整协议",
 };
@@ -118,7 +122,7 @@ export function ChannelDrawer({
   const currentAgent = agents.find((a) => a.id === selectedAgent);
   const defaultMediaDir = currentAgent?.workspace_dir
     ? `${currentAgent.workspace_dir}/media`
-    : "~/.qwenpaw/media";
+    : "~/.jotaduo/media";
   const currentLang = i18n.language?.startsWith("zh") ? "zh" : "en";
   const label = activeKey ? getChannelLabel(activeKey, t) : activeLabel;
   const { message } = useAppMessage();
@@ -239,9 +243,9 @@ export function ChannelDrawer({
             <Form.Item
               name="device_name"
               label="Device Name"
-              tooltip="A stable device identity for the Matrix client. Defaults to 'qwenpaw-worker' if left empty."
+              tooltip="A stable device identity for the Matrix client. Defaults to 'jotaduo-worker' if left empty."
             >
-              <Input placeholder="qwenpaw-worker" />
+              <Input placeholder="jotaduo-worker" />
             </Form.Item>
             <Form.Item
               name="dm_disabled"
@@ -514,12 +518,55 @@ export function ChannelDrawer({
             <Form.Item name="media_dir" label={t("channels.wechatMediaDir")}>
               <Input placeholder={defaultMediaDir} />
             </Form.Item>
+            <Form.Item
+              name="share_session_in_group"
+              label={t("channels.shareSessionInGroup")}
+              valuePropName="checked"
+              tooltip={t("channels.shareSessionInGroupTooltip")}
+            >
+              <Switch />
+            </Form.Item>
           </>
         );
 
       case "qq":
         return (
           <>
+            <ConfigProvider prefixCls="ant">
+              <Alert
+                type="info"
+                showIcon
+                message={t("channels.qqSetupGuide")}
+                style={{ marginBottom: 16 }}
+              />
+            </ConfigProvider>
+            <QrcodeAuthBlock
+              label={t("channels.qqScanAuth")}
+              buttonText={t("channels.qqGetQrcode")}
+              imageAlt="QQ QR Code"
+              hintText={t("channels.qqScanHint")}
+              channel="qq"
+              successStatus="success"
+              successCredentialKey="app_id"
+              pollInterval={2000}
+              pollTimeout={300000}
+              maxPollCount={180}
+              onSuccess={(credentials) => {
+                form.setFieldsValue({
+                  app_id: credentials.app_id,
+                  client_secret: credentials.client_secret,
+                  user_openid: credentials.user_openid,
+                });
+                message.success(t("channels.qqAuthSuccess"));
+              }}
+              onError={(type) => {
+                if (type === "expired") {
+                  message.warning(t("channels.qqQrcodeExpired"));
+                } else {
+                  message.error(t("channels.qqQrcodeFailed"));
+                }
+              }}
+            />
             <Form.Item
               name="app_id"
               label="App ID"
@@ -533,6 +580,9 @@ export function ChannelDrawer({
               rules={[{ required: true }]}
             >
               <Input.Password />
+            </Form.Item>
+            <Form.Item name="user_openid" hidden>
+              <Input />
             </Form.Item>
             <Form.Item
               name="ack_message"
@@ -979,9 +1029,9 @@ export function ChannelDrawer({
             </Form.Item>
             <Form.Item
               name="share_session_in_group"
-              label={t("channels.onebotShareSessionInGroup")}
+              label={t("channels.shareSessionInGroup")}
               valuePropName="checked"
-              tooltip={t("channels.onebotShareSessionInGroupTooltip")}
+              tooltip={t("channels.shareSessionInGroupTooltip")}
             >
               <Switch />
             </Form.Item>
@@ -1078,7 +1128,7 @@ export function ChannelDrawer({
               label={t("channels.wechatBotTokenFile")}
               tooltip={t("channels.wechatBotTokenFileTooltip")}
             >
-              <Input placeholder="~/.qwenpaw/wechat_bot_token" />
+              <Input placeholder="~/.jotaduo/wechat_bot_token" />
             </Form.Item>
             <Form.Item name="media_dir" label={t("channels.wechatMediaDir")}>
               <Input placeholder={defaultMediaDir} />
@@ -1142,6 +1192,36 @@ export function ChannelDrawer({
           </>
         );
 
+      case "yuanbao":
+        return (
+          <>
+            <Form.Item
+              name="app_id"
+              label="App ID"
+              rules={[{ required: true, message: "Please input App ID" }]}
+            >
+              <Input placeholder="App ID from Yuanbao platform" />
+            </Form.Item>
+            <Form.Item
+              name="app_secret"
+              label="App Secret"
+              rules={[{ required: true, message: "Please input App Secret" }]}
+            >
+              <Input.Password placeholder="App Secret from Yuanbao platform" />
+            </Form.Item>
+            <Form.Item
+              name="api_domain"
+              label="API Domain"
+              tooltip="REST API domain for sign-token auth (default: bot.yuanbao.tencent.com)"
+            >
+              <Input placeholder="bot.yuanbao.tencent.com" />
+            </Form.Item>
+            <Form.Item name="media_dir" label={t("channels.wechatMediaDir")}>
+              <Input placeholder={defaultMediaDir} />
+            </Form.Item>
+          </>
+        );
+
       case "onebot":
         return (
           <>
@@ -1177,9 +1257,9 @@ export function ChannelDrawer({
             </Form.Item>
             <Form.Item
               name="share_session_in_group"
-              label={t("channels.onebotShareSessionInGroup")}
+              label={t("channels.shareSessionInGroup")}
               valuePropName="checked"
-              tooltip={t("channels.onebotShareSessionInGroupTooltip")}
+              tooltip={t("channels.shareSessionInGroupTooltip")}
             >
               <Switch />
             </Form.Item>
@@ -1243,11 +1323,11 @@ export function ChannelDrawer({
               const url =
                 CHANNEL_DOC_EN_URLS[activeKey]! ||
                 CHANNEL_DOC_ZH_URLS[activeKey]!;
-              const isQwenPawDoc = url.includes(
+              const isJotaDuoDoc = url.includes(
                 "qwenpaw.agentscope.io/docs/channels/",
               );
               const finalUrl =
-                isQwenPawDoc && currentLang === "zh"
+                isJotaDuoDoc && currentLang === "zh"
                   ? CHANNEL_DOC_ZH_URLS[activeKey]!
                   : CHANNEL_DOC_EN_URLS[activeKey]!;
               openExternalLink(finalUrl);
@@ -1291,7 +1371,7 @@ export function ChannelDrawer({
       title={drawerTitle}
       open={open}
       onClose={onClose}
-      destroyOnClose
+      destroyOnHidden
       footer={drawerFooter}
       key={activeKey} // Force remount when switching channels
     >

@@ -13,6 +13,7 @@ import enUS from "antd/locale/en_US";
 import jaJP from "antd/locale/ja_JP";
 import ruRU from "antd/locale/ru_RU";
 import idID from "antd/locale/id_ID";
+import ptBR from "antd/locale/pt_BR";
 import type { Locale } from "antd/es/locale";
 import { theme as antdTheme } from "antd";
 import dayjs from "dayjs";
@@ -21,6 +22,7 @@ import "dayjs/locale/zh-cn";
 import "dayjs/locale/ja";
 import "dayjs/locale/ru";
 import "dayjs/locale/id";
+import "dayjs/locale/pt-br";
 dayjs.extend(relativeTime);
 import MainLayout from "./layouts/MainLayout";
 import { ThemeProvider, useTheme } from "./contexts/ThemeContext";
@@ -32,7 +34,9 @@ import { lazyImportWithRetry } from "./utils/lazyWithRetry";
 const LoginPage = lazyImportWithRetry("./pages/Login/index");
 import { authApi } from "./api/modules/auth";
 import { languageApi } from "./api/modules/language";
+import { useUploadLimitStore } from "./stores/uploadLimitStore";
 import { getApiUrl, getApiToken, clearAuthToken } from "./api/config";
+import "./styles/theme.css";
 import "./styles/layout.css";
 import "./styles/form-override.css";
 
@@ -42,6 +46,8 @@ const antdLocaleMap: Record<string, Locale> = {
   ja: jaJP,
   ru: ruRU,
   id: idID,
+  pt: ptBR,
+  "pt-BR": ptBR,
 };
 
 const dayjsLocaleMap: Record<string, string> = {
@@ -50,6 +56,8 @@ const dayjsLocaleMap: Record<string, string> = {
   ja: "ja",
   ru: "ru",
   id: "id",
+  pt: "pt-br",
+  "pt-BR": "pt-br",
 };
 
 const GlobalStyle = createGlobalStyle`
@@ -132,19 +140,20 @@ function AppInner() {
   );
 
   useEffect(() => {
-    languageApi
-      .getLanguage()
-      .then(({ language }) => {
-        if (language && language !== i18n.language) {
-          i18n.changeLanguage(language);
-        }
-        if (language) {
-          localStorage.setItem("language", language);
-        }
-      })
-      .catch((err) =>
-        console.error("Failed to fetch language preference:", err),
-      );
+    if (!localStorage.getItem("language")) {
+      languageApi
+        .getLanguage()
+        .then(({ language }) => {
+          if (language && language !== i18n.language) {
+            i18n.changeLanguage(language);
+            localStorage.setItem("language", language);
+          }
+        })
+        .catch((err) =>
+          console.error("Failed to fetch language preference:", err),
+        );
+    }
+    useUploadLimitStore.getState().fetch();
   }, []);
 
   useEffect(() => {
@@ -173,8 +182,8 @@ function AppInner() {
       <GlobalStyle />
       <ConfigProvider
         {...selectedTheme}
-        prefix="qwenpaw"
-        prefixCls="qwenpaw"
+        prefix="jotaduo"
+        prefixCls="jotaduo"
         locale={antdLocale}
         theme={{
           ...(selectedTheme as any)?.theme,
@@ -182,7 +191,23 @@ function AppInner() {
             ? antdTheme.darkAlgorithm
             : antdTheme.defaultAlgorithm,
           token: {
-            colorPrimary: "#FF7F16",
+            colorPrimary: isDark ? "#4b8fce" : "#3c79b7",
+            colorBgLayout: isDark ? "#101214" : "#f4f7fb",
+            colorBgContainer: isDark ? "#151719" : "#ffffff",
+            colorBgElevated: isDark ? "#1a1d20" : "#ffffff",
+            colorBorder: isDark
+              ? "rgba(226, 232, 240, 0.16)"
+              : "rgba(15, 23, 42, 0.16)",
+            colorBorderSecondary: isDark
+              ? "rgba(226, 232, 240, 0.1)"
+              : "rgba(15, 23, 42, 0.1)",
+            colorText: isDark
+              ? "rgba(241, 245, 249, 0.84)"
+              : "rgba(15, 23, 42, 0.84)",
+            colorTextSecondary: isDark
+              ? "rgba(203, 213, 225, 0.62)"
+              : "rgba(71, 85, 105, 0.72)",
+            borderRadius: 8,
           },
         }}
       >

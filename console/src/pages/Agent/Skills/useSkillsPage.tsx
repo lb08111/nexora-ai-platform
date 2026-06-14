@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { useAgentStore } from "../../../stores/agentStore";
 import { useAppMessage } from "../../../hooks/useAppMessage";
 import api from "../../../api";
+import { useUploadLimitStore } from "../../../stores/uploadLimitStore";
 import { invalidateSkillCache } from "../../../api/modules/skill";
 import type { SecurityScanErrorResponse } from "../../../api/modules/security";
 import { parseErrorDetail } from "../../../utils/error";
@@ -34,8 +35,6 @@ export type DownloadConflict =
       source_language: string;
       current_language: string;
     };
-
-const MAX_UPLOAD_SIZE_MB = 100;
 
 // ─── Hook ───────────────────────────────────────────────────────────────────
 
@@ -177,10 +176,11 @@ export function useSkillsPage() {
       return;
     }
     const sizeMB = file.size / (1024 * 1024);
-    if (sizeMB > MAX_UPLOAD_SIZE_MB) {
+    const uploadLimit = useUploadLimitStore.getState().uploadMaxSizeMb;
+    if (uploadLimit !== null && sizeMB > uploadLimit) {
       message.warning(
         t("skills.fileSizeExceeded", {
-          limit: MAX_UPLOAD_SIZE_MB,
+          limit: uploadLimit,
           size: sizeMB.toFixed(1),
         }),
       );
@@ -189,7 +189,7 @@ export function useSkillsPage() {
     let renameMap: Record<string, string> | undefined;
     while (true) {
       const result = await uploadSkill(file, undefined, renameMap);
-      if (result.success || !("conflict" in result) || !result.conflict) break;
+      if (result.success || !result.conflict) break;
       const conflicts = Array.isArray(result.conflict.conflicts)
         ? result.conflict.conflicts
         : [];
@@ -224,7 +224,7 @@ export function useSkillsPage() {
     const result = await importFromHub(url, targetName);
     if (result.success) {
       closeImportModal();
-    } else if ("conflict" in result && result.conflict) {
+    } else if (result.conflict) {
       const detail = result.conflict;
       const suggested =
         detail?.suggested_name || detail?.conflicts?.[0]?.suggested_name;
@@ -369,16 +369,12 @@ export function useSkillsPage() {
         await refreshSkills();
         return;
       }
-      if ("pending" in result && result.pending) {
-        setDrawerOpen(false);
-        return;
-      }
-      if ("conflict" in result && result.conflict?.suggested_name) {
+      if (result.conflict?.suggested_name) {
         const renameMap = await showConflictRenameModal([
           {
             key: submitName,
             label: submitName,
-            suggested_name: result.conflict.suggested_name,
+            suggested_name: result.conflict!.suggested_name,
           },
         ]);
         if (renameMap) {

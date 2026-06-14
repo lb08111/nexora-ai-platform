@@ -28,7 +28,7 @@ const PlanIcon = () => (
   </svg>
 );
 
-const PINNED_STORAGE_KEY = "qwenpaw_history_drawer_pinned";
+const PINNED_STORAGE_KEY = "jotaduo_history_drawer_pinned";
 
 interface ChatActionGroupProps {
   planEnabled?: boolean;

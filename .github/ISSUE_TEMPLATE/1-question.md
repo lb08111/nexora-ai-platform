@@ -12,7 +12,7 @@ assignees: []
 
 ## Context
 
-[Relevant setup: QwenPaw version, channel, skill, or use case. This helps others answer.]
+[Relevant setup: JotaDuo version, channel, skill, or use case. This helps others answer.]
 
 ## Tried so far
 

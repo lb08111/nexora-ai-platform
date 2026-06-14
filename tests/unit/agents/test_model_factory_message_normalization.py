@@ -18,8 +18,8 @@ try:
 except ImportError:  # pragma: no cover - compatibility fallback
     GeminiChatFormatter = None
 
-from qwenpaw.agents import model_factory
-from qwenpaw.constant import MEDIA_UNSUPPORTED_PLACEHOLDER
+from jotaduo.agents import model_factory
+from jotaduo.constant import MEDIA_UNSUPPORTED_PLACEHOLDER
 
 
 def _media_messages() -> list[Msg]:
@@ -168,7 +168,7 @@ def test_multimodal_support_preserves_media(monkeypatch) -> None:
 def test_force_strip_media_flag_overrides_multimodal_support(
     monkeypatch,
 ) -> None:
-    """Test that _qwenpaw_force_strip_media flag forces media stripping."""
+    """Test that _jotaduo_force_strip_media flag forces media stripping."""
     monkeypatch.setattr(
         model_factory,
         "_supports_multimodal_for_current_model",
@@ -176,7 +176,7 @@ def test_force_strip_media_flag_overrides_multimodal_support(
     )
 
     original = _media_messages()
-    formatter_instance = SimpleNamespace(_qwenpaw_force_strip_media=True)
+    formatter_instance = SimpleNamespace(_jotaduo_force_strip_media=True)
 
     (
         normalized,
@@ -286,7 +286,7 @@ def test_original_messages_not_modified_by_formatter_prep() -> None:
     ) = model_factory._normalize_messages_for_formatter(
         [original],
         OpenAIChatFormatter,
-        SimpleNamespace(_qwenpaw_force_strip_media=False),
+        SimpleNamespace(_jotaduo_force_strip_media=False),
     )
 
     # Original message should be completely unchanged

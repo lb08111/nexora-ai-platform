@@ -8,7 +8,7 @@ from unittest.mock import patch
 
 import pytest
 
-from qwenpaw.security.secret_store import (
+from jotaduo.security.secret_store import (
     AUTH_SECRET_FIELDS,
     PROVIDER_SECRET_FIELDS,
     decrypt,
@@ -22,7 +22,7 @@ from qwenpaw.security.secret_store import (
 @pytest.fixture(autouse=True)
 def _isolate_master_key(tmp_path: Path, monkeypatch):
     """Provide a deterministic master key and isolated secret dir."""
-    import qwenpaw.security.secret_store as mod
+    import jotaduo.security.secret_store as mod
 
     # 32-byte hex key → 32-byte raw
     test_key = bytes.fromhex(
@@ -120,7 +120,7 @@ class TestDecryptFailureGraceful:
         assert result == bad
 
     def test_wrong_key_ciphertext_returns_raw(self, monkeypatch):
-        import qwenpaw.security.secret_store as mod
+        import jotaduo.security.secret_store as mod
 
         ct = encrypt("secret-value")
 
@@ -140,7 +140,7 @@ class TestDecryptFailureGraceful:
 
 class TestMasterKeyGeneration:
     def test_generates_key_when_missing(self, tmp_path: Path, monkeypatch):
-        import qwenpaw.security.secret_store as mod
+        import jotaduo.security.secret_store as mod
 
         monkeypatch.setattr(mod, "_cached_master_key", None)
         monkeypatch.setattr(mod, "_get_secret_dir", lambda: tmp_path)
@@ -157,7 +157,7 @@ class TestMasterKeyGeneration:
         assert (tmp_path / ".master_key").exists()
 
     def test_reads_from_file(self, tmp_path: Path, monkeypatch):
-        import qwenpaw.security.secret_store as mod
+        import jotaduo.security.secret_store as mod
 
         key_hex = "aa" * 32
         (tmp_path / ".master_key").write_text(key_hex)
@@ -173,3 +173,79 @@ class TestMasterKeyGeneration:
             key = mod._get_master_key()
 
         assert key == bytes.fromhex(key_hex)
+
+
+class TestKeyringAccountIsolation:
+    """The keychain account must isolate relocated (dev) installs from the
+    default install so they cannot overwrite each other's master key."""
+
+    @pytest.fixture(autouse=True)
+    def _clear_relocation_env(self, monkeypatch):
+        for var in (
+            "JOTADUO_KEYRING_ACCOUNT",
+            "COPAW_KEYRING_ACCOUNT",
+            "JOTADUO_WORKING_DIR",
+            "COPAW_WORKING_DIR",
+            "JOTADUO_SECRET_DIR",
+            "COPAW_SECRET_DIR",
+        ):
+            monkeypatch.delenv(var, raising=False)
+
+    def test_default_install_uses_legacy_account(self, monkeypatch):
+        import jotaduo.security.secret_store as mod
+
+        # No relocation env vars → historical account preserved verbatim so
+        # existing installs are untouched.
+        monkeypatch.setattr(
+            mod,
+            "_get_secret_dir",
+            lambda: Path("~/.jotaduo.secret").expanduser(),
+        )
+        assert mod._keyring_account() == "master_key"
+
+    def test_explicit_override_wins(self, monkeypatch):
+        import jotaduo.security.secret_store as mod
+
+        monkeypatch.setenv("JOTADUO_KEYRING_ACCOUNT", "dev-profile")
+        monkeypatch.setenv("JOTADUO_WORKING_DIR", "/tmp/whatever")
+        assert mod._keyring_account() == "dev-profile"
+
+    def test_relocated_install_is_namespaced(self, monkeypatch, tmp_path):
+        import jotaduo.security.secret_store as mod
+
+        monkeypatch.setenv("JOTADUO_WORKING_DIR", str(tmp_path / ".devdata"))
+        monkeypatch.setattr(
+            mod,
+            "_get_secret_dir",
+            lambda: tmp_path / ".devdata.secret",
+        )
+        account = mod._keyring_account()
+        assert account != "master_key"
+        assert account.startswith("master_key:")
+
+    def test_distinct_secret_dirs_get_distinct_accounts(
+        self,
+        monkeypatch,
+        tmp_path,
+    ):
+        import jotaduo.security.secret_store as mod
+
+        monkeypatch.setenv("JOTADUO_SECRET_DIR", "set-to-mark-relocated")
+
+        monkeypatch.setattr(mod, "_get_secret_dir", lambda: tmp_path / "a")
+        account_a = mod._keyring_account()
+        monkeypatch.setattr(mod, "_get_secret_dir", lambda: tmp_path / "b")
+        account_b = mod._keyring_account()
+
+        assert account_a != account_b
+
+    def test_account_is_stable_for_same_secret_dir(
+        self,
+        monkeypatch,
+        tmp_path,
+    ):
+        import jotaduo.security.secret_store as mod
+
+        monkeypatch.setenv("JOTADUO_SECRET_DIR", "set-to-mark-relocated")
+        monkeypatch.setattr(mod, "_get_secret_dir", lambda: tmp_path / "x")
+        assert mod._keyring_account() == mod._keyring_account()

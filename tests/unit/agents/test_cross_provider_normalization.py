@@ -24,7 +24,7 @@ try:
 except ImportError:  # pragma: no cover
     GeminiChatFormatter = None
 
-from qwenpaw.agents import model_factory
+from jotaduo.agents import model_factory
 
 
 def _gemini_session_history() -> list[Msg]:

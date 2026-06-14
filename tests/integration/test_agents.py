@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import pytest
 
-from qwenpaw.constant import BUILTIN_QA_AGENT_ID
+from jotaduo.constant import BUILTIN_QA_AGENT_ID
 
 _AGENT_PROFILE_TOP_LEVEL_KEYS = (
     "channels",

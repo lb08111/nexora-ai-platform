@@ -11,6 +11,7 @@
  */
 
 import { useCallback, useEffect, useState } from "react";
+import { Navigate, useLocation } from "react-router-dom";
 import { Group, Panel, Separator } from "react-resizable-panels";
 import { Badge, Tooltip } from "antd";
 import {
@@ -25,6 +26,10 @@ import FileTree from "./FileTree";
 import TabbedEditor from "./TabbedEditor";
 import GitPanel from "./GitPanel";
 import Chat from "../Chat";
+import {
+  buildSessionPath,
+  getSessionIdFromPath,
+} from "../../utils/sessionRoute";
 import { useCodingMode } from "../../stores/codingModeStore";
 import {
   useCurrentTabs,
@@ -38,11 +43,12 @@ import styles from "./index.module.less";
 type LeftPane = "files" | "git";
 
 export default function CodingPage() {
-  const { codingMode } = useCodingMode();
+  const { codingMode, initialized } = useCodingMode();
+  const location = useLocation();
 
   // ---- Panel visibility --------------------------------------------------
   const [leftOpen, setLeftOpen] = useState(true);
-  const [rightOpen, setRightOpen] = useState(true);
+  const [rightOpen, setRightOpen] = useState(false);
   const [leftPane, setLeftPane] = useState<LeftPane>("files");
 
   const toggleLeft = useCallback(
@@ -132,12 +138,9 @@ export default function CodingPage() {
     [selectedAgent, setTabContent],
   );
 
-  if (!codingMode) {
-    return (
-      <div className={styles.disabled}>
-        <p>Enable Coding Mode from the header to access the IDE layout.</p>
-      </div>
-    );
+  if (initialized && !codingMode) {
+    const currentSessionId = getSessionIdFromPath(location.pathname);
+    return <Navigate to={buildSessionPath("chat", currentSessionId)} replace />;
   }
 
   const dirtyCount = tabs.filter((t) => t.dirty).length;
@@ -183,7 +186,13 @@ export default function CodingPage() {
           {/* LEFT: Explorer / Git */}
           {leftOpen && (
             <>
-              <Panel id="left" defaultSize="15%" className={styles.leftPanel}>
+              <Panel
+                id="left"
+                defaultSize="22%"
+                minSize="16%"
+                maxSize="34%"
+                className={styles.leftPanel}
+              >
                 {leftPane === "files" && (
                   <FileTree onFileSelect={handleFileSelect} />
                 )}
@@ -203,6 +212,7 @@ export default function CodingPage() {
                 ? "70%"
                 : "100%"
             }
+            className={styles.centerPanel}
           >
             <TabbedEditor
               tabs={tabs}

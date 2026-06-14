@@ -2,8 +2,9 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: var(--layout-sider-background, #fafafa);
-  border-right: 1px solid var(--border-color, rgba(0, 0, 0, 0.08));
+  background: #191919;
+  border-right: 1px solid #303030;
+  color: #d4d4d4;
 }
 
 // ---- Project bar (above file tree header) --------------------------------
@@ -12,16 +13,18 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 12px 6px;
-  border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, 0.06));
-  background: var(--layout-sider-background, #fafafa);
+  height: 34px;
+  padding: 0 10px;
+  border-bottom: 1px solid #2d2d2d;
+  background: #191919;
   flex-shrink: 0;
 }
 
 .projectName {
+  font-family: var(--nx-font-mono, "DM Mono", Consolas, monospace);
   font-size: 12px;
   font-weight: 600;
-  color: var(--text-primary, rgba(0, 0, 0, 0.88));
+  color: #f0f0f0;
   flex: 1;
   min-width: 0;
   overflow: hidden;
@@ -33,13 +36,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   border: none;
   background: transparent;
   cursor: pointer;
   border-radius: 4px;
-  color: var(--text-tertiary, rgba(0, 0, 0, 0.3));
+  color: #858585;
   padding: 0;
   transition:
     background 0.12s,
@@ -47,8 +50,8 @@
   flex-shrink: 0;
 
   &:hover {
-    background: var(--item-hover-bg, rgba(0, 0, 0, 0.06));
-    color: var(--text-secondary, rgba(0, 0, 0, 0.55));
+    background: #252525;
+    color: #cccccc;
   }
 }
 
@@ -58,17 +61,18 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 12px 8px;
-  border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, 0.06));
+  height: 38px;
+  padding: 0 10px;
+  border-bottom: 1px solid #2d2d2d;
   flex-shrink: 0;
 }
 
 .treeTitle {
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--text-secondary, rgba(0, 0, 0, 0.45));
+  color: #9da3aa;
 }
 
 .refreshBtn {
@@ -81,15 +85,15 @@
   background: transparent;
   cursor: pointer;
   border-radius: 4px;
-  color: var(--text-secondary, rgba(0, 0, 0, 0.45));
+  color: #858585;
   padding: 0;
   transition:
     background 0.15s,
     color 0.15s;
 
   &:hover:not(:disabled) {
-    background: var(--item-hover-bg, rgba(0, 0, 0, 0.04));
-    color: var(--text-primary, rgba(0, 0, 0, 0.88));
+    background: #252525;
+    color: #cccccc;
   }
 
   &:disabled {
@@ -110,32 +114,33 @@
 .nodeList {
   flex: 1;
   overflow-y: auto;
-  padding: 4px 0;
+  padding: 7px 0;
 }
 
 .node {
   display: flex;
   align-items: center;
-  gap: 5px;
-  padding-top: 3px;
-  padding-bottom: 3px;
-  padding-right: 8px;
+  gap: 6px;
+  min-height: 24px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-right: 9px;
   cursor: pointer;
   border-radius: 4px;
-  margin: 1px 4px;
+  margin: 1px 5px;
   transition: background 0.12s;
   user-select: none;
 
   &:hover {
-    background: var(--item-hover-bg, rgba(0, 0, 0, 0.04));
+    background: #242424;
   }
 
   &.selected {
-    background: var(--primary-bg, rgba(22, 119, 255, 0.08));
-    color: var(--primary-color, #1677ff);
+    background: #24364a;
+    color: #dbeafe;
 
     .fileIcon {
-      color: var(--primary-color, #1677ff);
+      color: #9ecbff;
     }
   }
 }
@@ -144,20 +149,21 @@
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  color: var(--text-secondary, rgba(0, 0, 0, 0.45));
+  color: #8b8b8b;
 }
 
 .folderIcon {
-  color: var(--warning-color, #faad14) !important;
+  color: #eab308 !important;
 }
 
 .fileIcon {
-  color: var(--text-tertiary, rgba(0, 0, 0, 0.25));
+  color: #858585;
 }
 
 .nodeName {
+  font-family: var(--nx-font, "DM Sans", system-ui, sans-serif);
   font-size: 12.5px;
-  color: var(--text-primary, rgba(0, 0, 0, 0.88));
+  color: #d4d4d4;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -175,7 +181,7 @@
 // File/folder name color overrides
 .node_modified > .nodeName,
 .node_modified .nodeName {
-  color: #e8a84f !important; // orange
+  color: #d7ba7d !important;
 }
 
 .node_added > .nodeName,
@@ -187,7 +193,7 @@
 
 .node_deleted > .nodeName,
 .node_deleted .nodeName {
-  color: #f47e7e !important; // red
+  color: #f48771 !important;
   opacity: 0.7;
 }
 
@@ -207,7 +213,7 @@
 }
 
 .git_modified {
-  color: #e8a84f;
+  color: #d7ba7d;
 }
 .git_added {
   color: #73c991;

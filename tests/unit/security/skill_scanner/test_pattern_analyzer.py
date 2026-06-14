@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Tests for qwenpaw.security.skill_scanner.analyzers.pattern_analyzer.
+"""Tests for jotaduo.security.skill_scanner.analyzers.pattern_analyzer.
 
 Covers:
 - SecurityRule: init, pattern compilation, matches_file_type, scan_content
@@ -13,18 +13,18 @@ Covers:
 import pytest
 import yaml
 
-from qwenpaw.security.skill_scanner.analyzers.pattern_analyzer import (
+from jotaduo.security.skill_scanner.analyzers.pattern_analyzer import (
     PatternAnalyzer,
     RuleLoader,
     SecurityRule,
 )
-from qwenpaw.security.skill_scanner.models import (
+from jotaduo.security.skill_scanner.models import (
     Finding,
     Severity,
     SkillFile,
     ThreatCategory,
 )
-from qwenpaw.security.skill_scanner.scan_policy import (
+from jotaduo.security.skill_scanner.scan_policy import (
     CredentialPolicy,
     ScanPolicy,
 )

@@ -1,0 +1,31 @@
+{
+  "id": "ai-productions",
+  "name": "AI Productions — Vitrine dos Agentes",
+  "version": "1.0.0",
+  "type": "general",
+  "description": "Centraliza tudo o que os agentes de IA produzem (posts, peças de marketing, landing pages, documentos, e-mails, scripts, etc.). Cada produção entra com status 'pending_approval', dispara uma notificação para o time humano e só vira 'published' depois de confirmada. Ideal para times de marketing, conteúdo e operações que precisam revisar o output dos agentes antes de publicar. Após instalar: recarregue a página. Os endpoints ficam em /api/ai-productions/* e os agentes ganham as ferramentas register_production, request_approval e send_team_notification.",
+  "description_i18n": {
+    "pt-BR": "Centraliza todas as produções dos agentes de IA (posts, peças, landing pages, documentos, e-mails, scripts) com fluxo de aprovação humana e envio de notificações. Cada produção entra em 'pending_approval' e só vai para 'published' depois de confirmada por uma pessoa.",
+    "en-US": "Showcase + approval queue for everything AI agents produce (posts, marketing assets, landing pages, documents, emails, scripts). Each artifact lands as 'pending_approval', fires a notification, and goes to 'published' only after a human confirms."
+  },
+  "author": "Jotaduo",
+  "entry": {
+    "backend": "plugin.py"
+  },
+  "dependencies": [
+    "fastapi>=0.110",
+    "pydantic>=2.0"
+  ],
+  "min_version": "1.1.7",
+  "meta": {
+    "category": "ops-governance",
+    "features": [
+      "agent-productions-catalog",
+      "human-in-the-loop-approval",
+      "team-notifications",
+      "filter-by-team-type-status",
+      "http-api-router",
+      "agent-tools"
+    ]
+  }
+}

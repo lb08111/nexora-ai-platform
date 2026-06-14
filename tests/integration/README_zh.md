@@ -2,8 +2,8 @@
 
 [English](README.md)
 
-通过真实子进程对 QwenPaw FastAPI 应用做端到端的 HTTP 冒烟测试。每个测试
-文件拥有自己的 QwenPaw app 子进程,绑定随机端口,工作目录隔离 —— 不需要
+通过真实子进程对 JotaDuo FastAPI 应用做端到端的 HTTP 冒烟测试。每个测试
+文件拥有自己的 JotaDuo app 子进程,绑定随机端口,工作目录隔离 —— 不需要
 任何真实的 API key 或外部服务。
 
 ---
@@ -115,7 +115,7 @@ pytest tests/integration/test_agents.py::test_api_agents_list_create_get_delete 
 ## `app_server` 工作原理
 
 `tests/integration/conftest.py::app_server` 是 **module-scoped** fixture:
-每个测试文件得到自己的 QwenPaw app 子进程(随机端口),同一文件内的所有
+每个测试文件得到自己的 JotaDuo app 子进程(随机端口),同一文件内的所有
 用例共享该子进程。跨文件隔离通过重新拉起子进程 + 全新 tmp 目录实现。
 
 **用例必须在文件内使用唯一的资源 id**(例如
@@ -126,7 +126,7 @@ Fixture 行为:
 
 - 启动前清理 11 个敏感环境变量(`OPENAI_API_KEY`、`DASHSCOPE_API_KEY`、
   各 IM token 等)
-- 强制 `QWENPAW_AUTH_ENABLED=false` 与 `NO_PROXY=*`
+- 强制 `JOTADUO_AUTH_ENABLED=false` 与 `NO_PROXY=*`
 - 通过 `socket.bind(0)` 分配空闲端口
 - 轮询 `/api/version` 最长 60 秒作为就绪信号
 - 关停时使用 **SIGINT**(不是 SIGTERM),让 uvicorn 的 atexit 钩子能正常
@@ -142,13 +142,13 @@ Fixture 行为:
 **app 子进程**的覆盖率:
 
 ```bash
-QWENPAW_INTEGRATION_COVERAGE=1 pytest tests/integration/ --no-cov
+JOTADUO_INTEGRATION_COVERAGE=1 pytest tests/integration/ --no-cov
 ```
 
 执行流程:
 
 1. 在 `.integration_coverage/` 写入 coverage rcfile,使用 **绝对路径**
-   `source=…/src/qwenpaw`
+   `source=…/src/jotaduo`
 2. 每个子进程通过 `COVERAGE_PROCESS_START` 与 `COVERAGE_FILE` 注入
 3. 会话结束后合并并行数据文件,生成
    `htmlcov-integration/index.html`
@@ -203,5 +203,5 @@ QWENPAW_INTEGRATION_COVERAGE=1 pytest tests/integration/ --no-cov
 - **不调真实 LLM**:消息测试走 `console` 通道,不触发模型 provider。
 - **不打通真实通道 I/O**:只覆盖通道的配置层,IM webhook / long-poll
   路径不在范围内。
-- **覆盖率模式仅单 worker**:`QWENPAW_INTEGRATION_COVERAGE=1` 不能与
+- **覆盖率模式仅单 worker**:`JOTADUO_INTEGRATION_COVERAGE=1` 不能与
   `pytest-xdist` 并用。

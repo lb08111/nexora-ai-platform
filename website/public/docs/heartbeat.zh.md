@@ -1,6 +1,6 @@
 # 心跳
 
-「心跳」在 QwenPaw 里指的是：**按固定间隔，用你写好的一段「问题」去问 QwenPaw，并可选择把 QwenPaw 的回复发到你上次对话的频道**。适合做「定期自检、每日摘要、定时提醒」——不用你主动发消息，QwenPaw 到点就干活。
+「心跳」在 JotaDuo 里指的是：**按固定间隔，用你写好的一段「问题」去问 JotaDuo，并可选择把 JotaDuo 的回复发到你上次对话的频道**。适合做「定期自检、每日摘要、定时提醒」——不用你主动发消息，JotaDuo 到点就干活。
 
 多智能体模式下，**每个智能体**各自有一份 **HEARTBEAT.md** 和 **heartbeat** 配置（在该智能体的 workspace 目录里）。在 [控制台](./console) 里也可以打开或关闭心跳、改间隔等（**控制 → 心跳**）。
 
@@ -10,11 +10,11 @@
 
 ## 心跳是怎么工作的？
 
-1. 在当前智能体的 workspace 里有一个**心跳查询文件**（默认文件名为 **HEARTBEAT.md**，可用环境变量 `QWENPAW_HEARTBEAT_FILE` 改名）。里面写的是**每次心跳要问 QwenPaw 的内容**（一段或几段话都行，QwenPaw 会当成一条用户消息）。
-2. 当配置里 **`enabled` 为 true** 时，系统按你配置的 **every**（间隔字符串或五段 Cron）执行一次：读取该文件 → 用这段内容去问 QwenPaw → QwenPaw 回复。
+1. 在当前智能体的 workspace 里有一个**心跳查询文件**（默认文件名为 **HEARTBEAT.md**，可用环境变量 `JOTADUO_HEARTBEAT_FILE` 改名）。里面写的是**每次心跳要问 JotaDuo 的内容**（一段或几段话都行，JotaDuo 会当成一条用户消息）。
+2. 当配置里 **`enabled` 为 true** 时，系统按你配置的 **every**（间隔字符串或五段 Cron）执行一次：读取该文件 → 用这段内容去问 JotaDuo → JotaDuo 回复。
 3. **发不发到频道** 由配置里的 **target** 决定：
-   - **main**：只跑 QwenPaw，不把回复发到任何频道（适合只做「自检」、结果自己看日志或别处）。
-   - **last**：把 QwenPaw 的回复发到你**上次和 QwenPaw 对话的那个频道/会话**（例如上次你在钉钉和它聊，这次心跳的回复就发到钉钉）。
+   - **main**：只跑 JotaDuo，不把回复发到任何频道（适合只做「自检」、结果自己看日志或别处）。
+   - **last**：把 JotaDuo 的回复发到你**上次和 JotaDuo 对话的那个频道/会话**（例如上次你在钉钉和它聊，这次心跳的回复就发到钉钉）。
 
 还可以设置 **active hours**（活跃时段）：只在每天的某段时间内跑心跳（例如 08:00–22:00），其余时间不跑。
 
@@ -22,12 +22,12 @@
 
 ## 第一步：写 HEARTBEAT.md
 
-**路径（多智能体，常见情况）**：`<QWENPAW_WORKING_DIR>/workspaces/<agent_id>/HEARTBEAT.md`。
-`<QWENPAW_WORKING_DIR>` 默认是 `~/.qwenpaw`，也可用环境变量 `QWENPAW_WORKING_DIR` 覆盖；`<agent_id>` 与当前智能体一致（例如 `default`）。
+**路径（多智能体，常见情况）**：`<JOTADUO_WORKING_DIR>/workspaces/<agent_id>/HEARTBEAT.md`。
+`<JOTADUO_WORKING_DIR>` 默认是 `~/.jotaduo`，也可用环境变量 `JOTADUO_WORKING_DIR` 覆盖；`<agent_id>` 与当前智能体一致（例如 `default`）。
 
-文件名默认 `HEARTBEAT.md`，可通过 **`QWENPAW_HEARTBEAT_FILE`** 改成别的名字；路径始终是「该智能体 workspace 根目录 + 该文件名」。
+文件名默认 `HEARTBEAT.md`，可通过 **`JOTADUO_HEARTBEAT_FILE`** 改成别的名字；路径始终是「该智能体 workspace 根目录 + 该文件名」。
 
-内容就是「每次要问 QwenPaw 什么」，纯文本或 Markdown 都行，QwenPaw 会整体当作一条用户消息。
+内容就是「每次要问 JotaDuo 什么」，纯文本或 Markdown 都行，JotaDuo 会整体当作一条用户消息。
 
 示例（你可以按自己需求改）：
 
@@ -40,7 +40,7 @@
 - 若安静超过 8h，轻量 check-in
 ```
 
-初始化时如果执行过 `qwenpaw init`（没加 `--defaults`），会提示你是否编辑 HEARTBEAT.md；选是会用系统默认编辑器打开。你也可以之后随时用任何编辑器改这个文件，保存即可，下次心跳会用到新内容。
+初始化时如果执行过 `jotaduo init`（没加 `--defaults`），会提示你是否编辑 HEARTBEAT.md；选是会用系统默认编辑器打开。你也可以之后随时用任何编辑器改这个文件，保存即可，下次心跳会用到新内容。
 
 ---
 
@@ -62,7 +62,7 @@
 
 `every` 未写时的默认间隔以程序内置为准（当前默认约为 **6 小时**，仍以你环境里的版本为准）。
 
-示例（开启心跳，只跑 QwenPaw、不发到频道，每 30 分钟）——写在对应智能体的 **`agent.json`** 中：
+示例（开启心跳，只跑 JotaDuo、不发到频道，每 30 分钟）——写在对应智能体的 **`agent.json`** 中：
 
 ```json
 {
@@ -100,7 +100,7 @@
 | **投递** | 可选发到「上次频道」或不发 | 每个独立指定频道和用户       |
 | **适用** | 固定的一套自检/摘要        | 多条不同时间、不同内容的任务 |
 
-> 需要「每天 9 点发早安」「每 2 小时问待办并发到钉钉」这类多条任务？请使用 [定时任务](./cron)（或 [CLI](./cli) 的 `qwenpaw cron create`），而不是心跳。
+> 需要「每天 9 点发早安」「每 2 小时问待办并发到钉钉」这类多条任务？请使用 [定时任务](./cron)（或 [CLI](./cli) 的 `jotaduo cron create`），而不是心跳。
 
 ---
 

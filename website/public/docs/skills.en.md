@@ -6,9 +6,9 @@ imports, or files you add yourself.
 Two ways to manage skills:
 
 - **Console:** Use the [Console](./console) under **Workspace → Skills**.
-- **Working directory:** Edit skill files directly under `$QWENPAW_WORKING_DIR`
-  (default `~/.qwenpaw`), including `$QWENPAW_WORKING_DIR/skill_pool/` and each
-  workspace's `$QWENPAW_WORKING_DIR/workspaces/{agent_id}/skills/`.
+- **Working directory:** Edit skill files directly under `$JOTADUO_WORKING_DIR`
+  (default `~/.jotaduo`), including `$JOTADUO_WORKING_DIR/skill_pool/` and each
+  workspace's `$JOTADUO_WORKING_DIR/workspaces/{agent_id}/skills/`.
 
 > If you're new to channels, heartbeat, or cron, read [Introduction](./intro) first.
 
@@ -19,16 +19,16 @@ copies. The structure and creation paths are described below.
 
 ## Skill Structure
 
-QwenPaw skills are organized in two layers:
+JotaDuo skills are organized in two layers:
 
-- **Skill Pool:** Shared local repository at `$QWENPAW_WORKING_DIR/skill_pool/`
-  (default `~/.qwenpaw/skill_pool/`).
+- **Skill Pool:** Shared local repository at `$JOTADUO_WORKING_DIR/skill_pool/`
+  (default `~/.jotaduo/skill_pool/`).
 - **Workspace Skills:** The local runtime copy at
-  `$QWENPAW_WORKING_DIR/workspaces/{agent_id}/skills/`
-  (default `~/.qwenpaw/workspaces/{agent_id}/skills/`).
+  `$JOTADUO_WORKING_DIR/workspaces/{agent_id}/skills/`
+  (default `~/.jotaduo/workspaces/{agent_id}/skills/`).
 
 ```
-$QWENPAW_WORKING_DIR/                      # Default ~/.qwenpaw
+$JOTADUO_WORKING_DIR/                      # Default ~/.jotaduo
   skill_pool/                # Shared pool
     skill.json               # Pool manifest
     pdf/
@@ -66,7 +66,7 @@ Pool-side operations:
   customize a builtin, save it under a new name and keep the builtin slot
   untouched.
 - **Conflict handling:** If save, import, upload, or broadcast would land on a
-  name that already exists, QwenPaw returns a conflict instead of silently
+  name that already exists, JotaDuo returns a conflict instead of silently
   overwriting. The UI/API includes a suggested renamed target so you can retry
   with that name.
 
@@ -80,12 +80,12 @@ Adding skills to the pool:
    | **browser_cdp**               | Connect to or launch Chrome with CDP / remote-debugging enabled. Use only when the user explicitly wants CDP mode.              | Built-in                                                       |
    | **browser_visible**           | Launch a real, visible (headed) browser window for demos, debugging, or scenarios requiring human interaction.                  | Built-in                                                       |
    | **channel_message**           | Proactively send a one-way message to a session or channel after first locating the target session.                             | Built-in                                                       |
-   | **QA_source_index**           | Internal QwenPaw source/doc index skill for quickly mapping keywords to source paths and local docs.                            | Built-in                                                       |
-   | **cron**                      | Scheduled jobs. Create, list, pause, resume, or delete jobs via `qwenpaw cron` or Console **Control → Cron Jobs**.              | Built-in                                                       |
+   | **QA_source_index**           | Internal JotaDuo source/doc index skill for quickly mapping keywords to source paths and local docs.                            | Built-in                                                       |
+   | **cron**                      | Scheduled jobs. Create, list, pause, resume, or delete jobs via `jotaduo cron` or Console **Control → Cron Jobs**.              | Built-in                                                       |
    | **dingtalk_channel**          | Helps with DingTalk channel onboarding through a visible browser flow and required manual steps.                                | Built-in                                                       |
    | **docx**                      | Create, read, and edit Word documents (.docx), including TOC, headers/footers, tables, images, track changes, comments.         | https://github.com/anthropics/skills/tree/main/skills/docx     |
    | **file_reader**               | Read and summarize text-based files (.txt, .md, .json, .csv, .log, .py, etc.). PDF and Office are handled by dedicated skills.  | Built-in                                                       |
-   | **guidance**                  | Answer QwenPaw installation and configuration questions by consulting local docs first.                                         | Built-in                                                       |
+   | **guidance**                  | Answer JotaDuo installation and configuration questions by consulting local docs first.                                         | Built-in                                                       |
    | **himalaya**                  | Manage emails via CLI (IMAP/SMTP). Use `himalaya` to list, read, search, and organize emails from the terminal.                 | https://github.com/openclaw/openclaw/tree/main/skills/himalaya |
    | **multi_agent_collaboration** | Coordinate with another agent when the user explicitly asks for it or another agent's context is needed.                        | Built-in                                                       |
    | **news**                      | Fetch and summarize latest news from configured sites; categories include politics, finance, society, world, tech, sports, etc. | Built-in                                                       |
@@ -98,11 +98,11 @@ Adding skills to the pool:
    or refresh out-of-date ones from the packaged source.
 
    The **Cron** built-in provides scheduled job management. Use the
-   [CLI](./cli) (`qwenpaw cron`) or Console **Control → Cron Jobs**:
+   [CLI](./cli) (`jotaduo cron`) or Console **Control → Cron Jobs**:
 
-   - Create: `qwenpaw cron create --type agent --name "xxx" --cron "0 9 * * *" ...`
-   - List: `qwenpaw cron list`
-   - Check state: `qwenpaw cron state <job_id>`
+   - Create: `jotaduo cron create --type agent --name "xxx" --cron "0 9 * * *" ...`
+   - List: `jotaduo cron list`
+   - Check state: `jotaduo cron state <job_id>`
 
 2. **Create directly in the pool UI**.
    This creates a shared pool skill without first creating it in a workspace.
@@ -118,15 +118,63 @@ Adding skills to the pool:
    pool.
 
 6. **Manual filesystem changes**.
-   You can place folders directly under `$QWENPAW_WORKING_DIR/skill_pool/`, but this is not
+   You can place folders directly under `$JOTADUO_WORKING_DIR/skill_pool/`, but this is not
    recommended. Direct pool edits can be lost or overwritten more easily,
    especially for customized skills. Be careful and treat this as an advanced
    workflow.
 
+### External skill paths
+
+By default the skill pool has a single root: the primary pool at
+`$JOTADUO_WORKING_DIR/skill_pool/`. You can also register one or more **external skill
+roots** in the config so JotaDuo reads the skills they contain into the **same skill pool
+view**. This is useful for reusing skill collections already on your machine (a git repo,
+a shared team folder) without copying them into the primary pool.
+
+What external paths mean:
+
+- **One pool, multiple roots.** Skills under an external directory are not copied into the
+  primary pool; they are read in place and appear in the pool alongside the primary skills.
+  On-disk changes are reflected on the next load.
+- **Order is priority.** Scan order is the primary pool first, then each entry in
+  `skill_paths` in order. If two roots contain a skill with the same name, the **earlier one
+  wins**; the later duplicate is shadowed and skipped (a warning is logged).
+- **What you can do with external skills.** List, view, broadcast / download to a workspace,
+  edit in place (save / rename writes back to the external directory), and delete (which
+  **physically removes the files under the external directory**). In the Skill Pool UI, an
+  external skill's **installed-from** field shows its external path so you can recognize it.
+- **No metadata written to external dirs.** The pool's `skill.json` index lives only in the
+  primary pool and is rebuilt from disk and self-heals; external directories are left
+  untouched and never get a manifest written to them.
+- **Uploads / imports always land in the primary pool.** Sync from a workspace, import from
+  zip, and import from URL all write to the primary pool, never to an external path.
+
+#### How to configure
+
+Edit `$JOTADUO_WORKING_DIR/config.json` and add the top-level `skill_paths` field:
+
+```json
+{
+  "skill_paths": ["~/my-skills", "/opt/team/shared-skills"]
+}
+```
+
+Notes:
+
+- The array is ordered; the order decides the conflict priority described above.
+- Paths support `~` expansion to the home directory.
+- Missing or invalid paths are silently skipped.
+- After saving, external skills appear on the next skill pool load (a refresh, a restart,
+  or any endpoint that triggers it).
+
+`$JOTADUO_WORKING_DIR` defaults to `~/.jotaduo` and can be overridden with the
+`JOTADUO_WORKING_DIR` environment variable. See [Config](./config) for the full
+configuration reference.
+
 ### Workspace Skills
 
 Every workspace runs from its own local copies under
-`$QWENPAW_WORKING_DIR/workspaces/{agent_id}/skills/`. Those copies are what the agent
+`$JOTADUO_WORKING_DIR/workspaces/{agent_id}/skills/`. Those copies are what the agent
 actually loads at runtime.
 
 ---
@@ -181,15 +229,15 @@ CLI supports the same URL-based import flow:
 **Workspace targeting:** use `--agent-id` when targeting a single agent workspace; without it, `install` / `uninstall` act on the skill pool.
 
 ```bash
-qwenpaw skills install <skill_url>
-qwenpaw skills install <skill_url> --agent-id <agent_id>
+jotaduo skills install <skill_url>
+jotaduo skills install <skill_url> --agent-id <agent_id>
 ```
 
 CLI also supports uninstalling from the shared pool or one workspace:
 
 ```bash
-qwenpaw skills uninstall <skill_name>
-qwenpaw skills uninstall <skill_name> --agent-id <agent_id>
+jotaduo skills uninstall <skill_name>
+jotaduo skills uninstall <skill_name> --agent-id <agent_id>
 ```
 
 #### Steps
@@ -244,7 +292,7 @@ qwenpaw skills uninstall <skill_name> --agent-id <agent_id>
 ### 5. Create manually in the workspace
 
 You can also create a workspace skill directly by writing files under
-`$QWENPAW_WORKING_DIR/workspaces/{agent_id}/skills/`, including using QwenPaw itself to help
+`$JOTADUO_WORKING_DIR/workspaces/{agent_id}/skills/`, including using JotaDuo itself to help
 generate those files.
 
 This is flexible, but the write location and resulting skill quality are not
@@ -252,10 +300,10 @@ always fully controlled. You should supervise the creation process carefully,
 verify that files land in the right workspace path, and review the skill
 content before relying on it.
 
-Create a directory under `$QWENPAW_WORKING_DIR/workspaces/{agent_id}/skills/`, add a
+Create a directory under `$JOTADUO_WORKING_DIR/workspaces/{agent_id}/skills/`, add a
 `SKILL.md`, and make sure it includes YAML front matter with `name` and
 `description`. If the skill depends on external binaries or environment
-variables, declare them in `metadata.requires`; QwenPaw exposes them as
+variables, declare them in `metadata.requires`; JotaDuo exposes them as
 `require_bins` and `require_envs` metadata, but does not disable the skill
 automatically.
 
@@ -364,7 +412,7 @@ not need to appear on Discord.
 
 Each skill can have a `config` object stored in its manifest entry. This config
 is not just stored metadata. When a skill is effective for the current
-workspace and channel, QwenPaw injects that config into the runtime environment
+workspace and channel, JotaDuo injects that config into the runtime environment
 for that agent turn, then restores the environment after the turn completes.
 
 You can set config per skill in the Console (**Workspace → Skills** → click the
@@ -377,7 +425,7 @@ injected as environment variables. Keys not declared in `requires.env` are
 skipped (but still available via the full JSON variable). If a required key
 is missing from the config, a warning is logged.
 
-The full config is always available as `QWENPAW_SKILL_CONFIG_<SKILL_NAME>`
+The full config is always available as `JOTADUO_SKILL_CONFIG_<SKILL_NAME>`
 (JSON string), regardless of `requires.env`.
 
 Existing host environment variables are never overwritten.
@@ -412,7 +460,7 @@ The skill can read:
 - `BASE_URL` comes from config and matches `requires.env`.
 - `timeout` is not in `requires.env`, so it is only available via the full
   JSON below.
-- `QWENPAW_SKILL_CONFIG_MY_SKILL` always contains the full JSON config.
+- `JOTADUO_SKILL_CONFIG_MY_SKILL` always contains the full JSON config.
 
 Python example:
 
@@ -422,7 +470,7 @@ import os
 
 api_key = os.environ.get("MY_API_KEY", "")
 base_url = os.environ.get("BASE_URL", "")
-cfg = json.loads(os.environ.get("QWENPAW_SKILL_CONFIG_MY_SKILL", "{}"))
+cfg = json.loads(os.environ.get("JOTADUO_SKILL_CONFIG_MY_SKILL", "{}"))
 timeout = cfg.get("timeout", 30)
 ```
 
@@ -442,7 +490,7 @@ When a skill runs, the effective config follows this priority (highest wins):
    `config` is copied as the initial workspace config. Subsequent workspace
    edits take precedence.
 
-For `requires` metadata, the parser checks keys in order: `metadata.openclaw.requires` → `metadata.qwenpaw.requires` → `metadata.requires`. The first one found is used.
+For `requires` metadata, the parser checks keys in order: `metadata.openclaw.requires` → `metadata.jotaduo.requires` → `metadata.requires`. The first one found is used.
 
 ---
 

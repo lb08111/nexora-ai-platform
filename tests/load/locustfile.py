@@ -1,5 +1,6 @@
+# -*- coding: utf-8 -*-
 """
-Nexora AIops 平台 100 用户并发压力测试
+Jotaduo AIops 平台 100 用户并发压力测试
 模拟真实用户操作：登录 → 列表查询 → 聊天 → 审计 → 审批
 区分 admin / operator 角色权限，operator 只访问已授权智能体
 """
@@ -66,11 +67,19 @@ class AIOpsUser(HttpUser):
 
     @task(5)
     def list_agents(self):
-        self.client.get("/api/agents", headers=self.headers, name="/api/agents")
+        self.client.get(
+            "/api/agents",
+            headers=self.headers,
+            name="/api/agents",
+        )
 
     @task(5)
     def list_skills(self):
-        self.client.get("/api/skills", headers=self.headers, name="/api/skills")
+        self.client.get(
+            "/api/skills",
+            headers=self.headers,
+            name="/api/skills",
+        )
 
     @task(3)
     def list_chats(self):
@@ -112,10 +121,10 @@ class AIOpsUser(HttpUser):
         if not self.is_admin:
             return
         self.client.get(
-            "/api/nexora/audit/events",
+            "/api/jotaduo/audit/events",
             headers=self.headers,
             params={"limit": 20, "offset": 0},
-            name="/api/nexora/audit/events",
+            name="/api/jotaduo/audit/events",
         )
 
     @task(2)
@@ -123,10 +132,10 @@ class AIOpsUser(HttpUser):
         if not self.is_admin:
             return
         self.client.get(
-            "/api/nexora/approval-requests",
+            "/api/jotaduo/approval-requests",
             headers=self.headers,
             params={"limit": 10},
-            name="/api/nexora/approval-requests",
+            name="/api/jotaduo/approval-requests",
         )
 
     @task(2)
@@ -134,23 +143,27 @@ class AIOpsUser(HttpUser):
         if not self.is_admin:
             return
         self.client.get(
-            "/api/nexora/governance/policies",
+            "/api/jotaduo/governance/policies",
             headers=self.headers,
-            name="/api/nexora/governance/policies",
+            name="/api/jotaduo/governance/policies",
         )
 
     @task(2)
     def admin_list_users(self):
         if not self.is_admin:
             return
-        self.client.get("/api/auth/users", headers=self.headers, name="/api/auth/users")
+        self.client.get(
+            "/api/auth/users",
+            headers=self.headers,
+            name="/api/auth/users",
+        )
 
     @task(1)
     def admin_agent_grants(self):
         if not self.is_admin:
             return
         self.client.get(
-            f"/api/nexora/agent-grants/{random.choice(ALL_AGENTS)}",
+            f"/api/jotaduo/agent-grants/{random.choice(ALL_AGENTS)}",
             headers=self.headers,
-            name="/api/nexora/agent-grants/{id}",
+            name="/api/jotaduo/agent-grants/{id}",
         )

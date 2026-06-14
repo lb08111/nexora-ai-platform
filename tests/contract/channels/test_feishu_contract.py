@@ -19,7 +19,7 @@ import pytest
 from tests.contract.channels import ChannelContractTest
 
 if TYPE_CHECKING:
-    from qwenpaw.app.channels.base import BaseChannel
+    from jotaduo.app.channels.base import BaseChannel
 
 
 class TestFeishuChannelContract(ChannelContractTest):
@@ -32,7 +32,7 @@ class TestFeishuChannelContract(ChannelContractTest):
 
     def create_instance(self) -> "BaseChannel":
         """Provide a FeishuChannel instance for contract testing."""
-        from qwenpaw.app.channels.feishu.channel import FeishuChannel
+        from jotaduo.app.channels.feishu.channel import FeishuChannel
 
         process = AsyncMock()
 

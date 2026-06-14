@@ -2,7 +2,7 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: var(--body-background, #fff);
+  background: #1b1b1b;
   overflow: hidden;
 }
 
@@ -13,8 +13,9 @@
   overflow-x: auto;
   overflow-y: hidden;
   flex-shrink: 0;
-  background: var(--header-background, #fafafa);
-  border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, 0.08));
+  min-height: 34px;
+  background: #1b1b1b;
+  border-bottom: 1px solid #2d2d2d;
   scrollbar-width: none;
 
   &::-webkit-scrollbar {
@@ -26,13 +27,14 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  padding: 5px 10px 5px 12px;
+  height: 34px;
+  padding: 0 10px 0 12px;
   font-size: 12px;
   font-family: "SFMono-Regular", Consolas, monospace;
-  color: var(--text-secondary, rgba(0, 0, 0, 0.45));
+  color: #9a9a9a;
   white-space: nowrap;
   cursor: pointer;
-  border-right: 1px solid var(--border-color, rgba(0, 0, 0, 0.06));
+  border-right: 1px solid #2d2d2d;
   background: transparent;
   transition: background 0.12s;
   min-width: 0;
@@ -40,15 +42,15 @@
   max-width: 200px;
 
   &:hover {
-    background: var(--item-hover-bg, rgba(0, 0, 0, 0.04));
-    color: var(--text-primary, rgba(0, 0, 0, 0.88));
+    background: #242424;
+    color: #d4d4d4;
   }
 }
 
 .tabActive {
-  background: var(--body-background, #fff);
-  color: var(--text-primary, rgba(0, 0, 0, 0.88));
-  border-bottom: 2px solid var(--primary-color, #1677ff);
+  background: #1f1f1f;
+  color: #f0f0f0;
+  border-bottom: 2px solid #3c79b7;
 }
 
 .tabName {
@@ -62,17 +64,17 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--warning-color, #faad14);
+  background: #d7ba7d;
   flex-shrink: 0;
 }
 
 // Tab with pending diff — subtle teal left border
 .tabDiff {
-  border-left: 2px solid var(--info-color, #13c2c2) !important;
+  border-left: 2px solid #4ec9b0 !important;
 }
 
 .diffDot {
-  color: var(--info-color, #13c2c2);
+  color: #4ec9b0;
   flex-shrink: 0;
 }
 
@@ -86,7 +88,7 @@
   background: transparent;
   cursor: pointer;
   border-radius: 3px;
-  color: var(--text-tertiary, rgba(0, 0, 0, 0.25));
+  color: #858585;
   padding: 0;
   flex-shrink: 0;
   opacity: 0;
@@ -103,8 +105,8 @@
   }
 
   &:hover {
-    background: var(--item-hover-bg, rgba(0, 0, 0, 0.08));
-    color: var(--text-primary, rgba(0, 0, 0, 0.88));
+    background: #303030;
+    color: #d4d4d4;
     opacity: 1 !important;
   }
 }
@@ -115,14 +117,15 @@
   align-items: center;
   gap: 6px;
   padding: 4px 10px;
-  border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, 0.06));
+  border-bottom: 1px solid #2d2d2d;
+  background: #1b1b1b;
   flex-shrink: 0;
   min-height: 30px;
 }
 
 .fileName {
   font-size: 11px;
-  color: var(--text-tertiary, rgba(0, 0, 0, 0.35));
+  color: #7a7a7a;
   font-family: "SFMono-Regular", Consolas, monospace;
   flex: 1;
   overflow: hidden;
@@ -148,7 +151,7 @@
   align-items: center;
   gap: 4px;
   font-size: 11px;
-  color: var(--info-color, #13c2c2);
+  color: #4ec9b0;
   font-weight: 500;
 }
 
@@ -200,15 +203,15 @@
   background: transparent;
   cursor: pointer;
   border-radius: 4px;
-  color: var(--text-secondary, rgba(0, 0, 0, 0.45));
+  color: #969696;
   padding: 0;
   transition:
     background 0.12s,
     color 0.12s;
 
   &:hover:not(:disabled) {
-    background: var(--item-hover-bg, rgba(0, 0, 0, 0.06));
-    color: var(--text-primary, rgba(0, 0, 0, 0.88));
+    background: #252525;
+    color: #d4d4d4;
   }
 
   &:disabled {
@@ -219,14 +222,15 @@
 
 // Preview toggle — highlight when preview is active
 .previewActiveBtn {
-  color: var(--primary-color, #1677ff) !important;
-  background: var(--primary-bg, rgba(22, 119, 255, 0.1)) !important;
+  color: #7eb7ff !important;
+  background: #0e3762 !important;
 }
 
 // ---- Editor ----------------------------------------------------------------
 .editor {
   flex: 1;
   overflow: hidden;
+  background: #1b1b1b;
 }
 
 // ---- Diff editor wrap + per-hunk action overlays --------------------------
@@ -301,17 +305,21 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  background: var(--body-background, #fff);
+  gap: 11px;
+  background: #1b1b1b;
 }
 
 .emptyIcon {
-  color: var(--text-tertiary, rgba(0, 0, 0, 0.15));
+  width: 32px;
+  height: 32px;
+  color: #545454;
+  stroke-width: 1.55;
 }
 
 .emptyText {
   font-size: 13px;
-  color: var(--text-tertiary, rgba(0, 0, 0, 0.25));
+  font-weight: 500;
+  color: #777;
   margin: 0;
 }
 

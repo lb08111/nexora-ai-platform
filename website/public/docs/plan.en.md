@@ -33,7 +33,7 @@ The setting is saved to `plan.enabled` in that agent's `agent.json` workspace fi
 
 ### Edit `agent.json` directly
 
-In `$QWENPAW_WORKING_DIR/workspaces/<agent_id>/agent.json`:
+In `$JOTADUO_WORKING_DIR/workspaces/<agent_id>/agent.json`:
 
 ```json
 {

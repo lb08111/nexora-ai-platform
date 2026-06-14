@@ -12,7 +12,9 @@ import logging
 from agentscope.message import TextBlock
 from agentscope.tool import ToolResponse
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("jotaduo").getChild(
+    __name__.replace("plugin_cloudpaw.", ""),
+)
 
 
 async def a2a_discover(

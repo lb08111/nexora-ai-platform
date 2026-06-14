@@ -1,9 +1,9 @@
 <div align="center">
 
-# QwenPaw
+# JotaDuo
 
 [![GitHub 仓库](https://img.shields.io/badge/GitHub-仓库-black.svg?logo=github)](https://github.com/agentscope-ai/QwenPaw)
-[![PyPI](https://img.shields.io/pypi/v/qwenpaw?color=3775A9&label=PyPI&logo=pypi)](https://pypi.org/project/qwenpaw/)
+[![PyPI](https://img.shields.io/pypi/v/jotaduo?color=3775A9&label=PyPI&logo=pypi)](https://pypi.org/project/jotaduo/)
 [![文档](https://img.shields.io/badge/文档-在线-green.svg?logo=readthedocs&label=Docs)](https://qwenpaw.agentscope.io/)
 [![Python 版本](https://img.shields.io/badge/python-3.10%20~%20%3C3.14-blue.svg?logo=python&label=Python)](https://www.python.org/downloads/)
 [![最后提交](https://img.shields.io/github/last-commit/agentscope-ai/QwenPaw)](https://github.com/agentscope-ai/QwenPaw)
@@ -15,11 +15,12 @@
 [![Discord](https://img.shields.io/badge/Discord-Join_Us-blueviolet.svg?logo=discord)](https://discord.gg/eYMpfnkG8h)
 [![X](https://img.shields.io/badge/X-Follow_Us-black.svg?logo=x)](https://x.com/agentscope_ai)
 [![钉钉群](https://img.shields.io/badge/DingTalk-Join_Us-orange.svg)](https://qr.dingtalk.com/action/joingroup?code=v1,k1,OmDlBXpjW+I2vWjKDsjvI9dhcXjGZi3bQiojOq3dlDw=&_dt_no_comment=1&origin=11)
+[![AgentScope 体验平台](https://img.shields.io/badge/%E2%98%81_AgentScope_Platform-%F0%9F%90%BE_7%2F24_Online_%26_Free-FF6B2B.svg)](https://platform.agentscope.io/)
 
 [[文档](https://qwenpaw.agentscope.io/)] [[English](README.md)] [[日本語](README_ja.md)] [[Русский](README_ru.md)]
 
 <p align="center">
-  <img src="https://gw.alicdn.com/imgextra/i1/O1CN01sens5C1TuwioeGexL_!!6000000002443-55-tps-771-132.svg" alt="QwenPaw Logo" width="120">
+  <img src="https://gw.alicdn.com/imgextra/i1/O1CN01sens5C1TuwioeGexL_!!6000000002443-55-tps-771-132.svg" alt="JotaDuo Logo" width="120">
 </p>
 
 <p align="center"><b>懂你所需，伴你左右。</b></p>
@@ -32,18 +33,18 @@
 >
 > **由你掌控** — 记忆与个性化完全由你掌控，支持本地或云端部署。无第三方托管，无数据上传。
 >
-> **Skills 扩展** — 内置定时任务、PDF/Office 处理、新闻摘要等；自定义技能自动加载，无绑定。通过 Skills 决定 QwenPaw 能做什么。
+> **Skills 扩展** — 内置定时任务、PDF/Office 处理、新闻摘要等；自定义技能自动加载，无绑定。通过 Skills 决定 JotaDuo 能做什么。
 >
 > **多智能体协作** — 创建多个独立智能体，各司其职；启用协作技能，智能体间互相通信共同完成复杂任务。
 >
 > **多层安全防护** — 工具防护、文件访问控制、技能安全扫描，保障运行安全。
 >
-> **全域触达** — 钉钉、飞书、微信、Discord、Telegram 等频道，一个 QwenPaw 按需连接。
+> **全域触达** — 钉钉、飞书、微信、Discord、Telegram 等频道，一个 JotaDuo 按需连接。
 >
 > **记忆进化与主动交互** — 智能体从交互中学习、反思经验、主动服务，越用越聪明。
 >
 > <details>
-> <summary><b>你可以用 QwenPaw 做什么</b></summary>
+> <summary><b>你可以用 JotaDuo 做什么</b></summary>
 >
 > <br>
 >
@@ -60,31 +61,29 @@
 
 ## 新闻
 
-- [2026-05-27] **v1.1.9 — Coding 模式** | Agent 变身开发者。
+- [2026-06-11] **AgentScope 体验平台上线** — 支持免费部署 JotaDuo、插件分享与 Skill 市场。[立即体验 →](https://platform.agentscope.io/)
 
-  > **Coding 模式**将完整 IDE 布局（文件树 + 标签编辑器 + 内联 Diff + Git 面板）直接嵌入 QwenPaw。[查看文档 →](https://qwenpaw.agentscope.io/docs/coding-mode)
-
-  <p align="center">
-    <a href="https://qwenpaw.agentscope.io/docs/coding-mode">
-      <img src="https://img.alicdn.com/imgextra/i4/O1CN014tF5921HlXCevvsBH_!!6000000000798-2-tps-3340-1678.png" width="720" alt="Coding 模式 — 三面板 IDE 布局" />
-    </a>
-  </p>
+- [2026-06-10] **v1.1.11 — 免费模型 OAuth & 插件市场** | 零配置免费模型一键 OAuth 认证；插件市场集成 AgentScope 平台。
 
   | 亮点 | 更新内容 |
   |------|----------|
-  | **Coding 模式** | 三面板 Web IDE，支持 LSP 跳转定义、AST 结构搜索、内联 Diff 审查。[文档 →](https://qwenpaw.agentscope.io/docs/coding-mode) |
-  | **Tauri 桌面应用** | 原生 macOS & Windows 应用，无需配置 Python。[下载 →](https://github.com/agentscope-ai/QwenPaw/releases) |
-  | **统一访问控制** | 按渠道配置白名单/黑名单/待审批，Console 可视化管理。[文档 →](https://qwenpaw.agentscope.io/docs/channels) |
+  | **免费模型 OAuth** | 零配置免费模型，一键 OAuth 认证即可使用。 |
+  | **插件市场** | 新增插件市场标签页，集成 AgentScope 平台。 |
+  | **MCP 工具白名单** | 支持按 MCP 服务器配置工具白名单，含前端开关 UI。 |
 
-  另有：后台任务超时、定时任务隔离执行、插件管理器改版。[v1.1.9 发布说明 →](https://qwenpaw.agentscope.io/release-notes#v1.1.9)
+  另有：自进化技能创建、后端启动优化、飞书群会话共享、QQ 二维码授权。[v1.1.11 发布说明 →](https://qwenpaw.agentscope.io/release-notes#v1.1.11)
 
-- [2026-05-19] **v1.1.8** — 官方插件分发、QwenPaw Pet 桌面宠物、钉钉/飞书/Telegram 流式卡片。[v1.1.8 发布说明 →](https://qwenpaw.agentscope.io/release-notes#v1.1.8)
+- [2026-06-01] **v1.1.10** — 子 Agent 派生、打开目录、腾讯元宝渠道。[v1.1.10 发布说明 →](https://qwenpaw.agentscope.io/release-notes#v1.1.10)
+
+- [2026-05-27] **v1.1.9** — Coding 模式（三面板 Web IDE）、Tauri 桌面应用、统一访问控制。[v1.1.9 发布说明 →](https://qwenpaw.agentscope.io/release-notes#v1.1.9)
+
+- [2026-05-19] **v1.1.8** — 官方插件分发、JotaDuo Pet 桌面宠物、钉钉/飞书/Telegram 流式卡片。[v1.1.8 发布说明 →](https://qwenpaw.agentscope.io/release-notes#v1.1.8)
 
 - [2026-05-14] **v1.1.7** — 浏览器批量操作、OAuth 2.1 MCP、定时任务日历视图、多文件附件。[v1.1.7 发布说明 →](https://qwenpaw.agentscope.io/release-notes#v1.1.7)
 
 - [2026-05-09] **v1.1.6** — Whisper 语音输入、GPT Image 2 插件、火山引擎 Provider、Mermaid 图表。[v1.1.6 发布说明 →](https://qwenpaw.agentscope.io/release-notes#v1.1.6)
 
-- [2026-04-12] **CoPaw 正式更名 QwenPaw** — 融入 Qwen 开源生态，初心不变。[v1.0.0 发布说明 →](https://qwenpaw.agentscope.io/release-notes#v1.0.0)
+- [2026-04-12] **CoPaw 正式更名 JotaDuo** — 融入 Qwen 开源生态，初心不变。[v1.0.0 发布说明 →](https://qwenpaw.agentscope.io/release-notes#v1.0.0)
 
 ---
 
@@ -94,7 +93,7 @@
 >
 > - **🚀 我是新用户，想快速试用**：[快速开始](#快速开始) → 三条命令跑起来 → [配置模型](#api-key) → 在控制台对话
 > - **💬 我想在钉钉/飞书/微信里用**：完成快速开始 → [配置模型](#api-key) → [频道配置](https://qwenpaw.agentscope.io/docs/channels)
-> - **🐍 我不想装 Python**：[桌面应用](#桌面应用beta) 或 [脚本安装](#脚本安装) 或 [魔搭创空间](https://modelscope.cn/studios/fork?target=AgentScope/QwenPaw)
+> - **🐍 我不想装 Python**：[桌面应用](#桌面应用beta) 或 [脚本安装](#脚本安装) 或 [魔搭创空间](https://modelscope.cn/studios/fork?target=AgentScope/JotaDuo)
 > - **💻 我想用本地模型（无需 API Key）**：[本地模型](#本地模型)
 > - **🛠️ 我想贡献代码或开发新功能**：[从源码安装](#从源码安装) → [参与贡献](#参与贡献)
 
@@ -109,7 +108,7 @@
 - [路线图](#路线图)
 - [从源码安装](#从源码安装)
 - [参与贡献](#参与贡献)
-- [为什么叫 QwenPaw？](#为什么叫-qwenpaw)
+- [为什么叫 JotaDuo？](#为什么叫-jotaduo)
 - [由谁构建](#由谁构建)
 - [许可证](#许可证)
 
@@ -122,9 +121,9 @@
 如果你习惯自行管理 Python 环境：
 
 ```bash
-pip install qwenpaw
-qwenpaw init --defaults
-qwenpaw app
+pip install jotaduo
+jotaduo init --defaults
+jotaduo app
 ```
 
 然后在浏览器中打开控制台：**http://127.0.0.1:8088/** ，配置模型后即可开始对话。
@@ -136,7 +135,7 @@ qwenpaw app
 
 ### 方式二：脚本安装
 
-无需手动配置 Python，一行命令自动完成安装。脚本会自动下载 uv（Python 包管理器）、创建虚拟环境、安装 QwenPaw 及其依赖（含 Node.js 和前端资源）。注意：部分网络环境或企业权限管控下可能无法使用。
+无需手动配置 Python，一行命令自动完成安装。脚本会自动下载 uv（Python 包管理器）、创建虚拟环境、安装 JotaDuo 及其依赖（含 Node.js 和前端资源）。注意：部分网络环境或企业权限管控下可能无法使用。
 
 **macOS / Linux：**
 
@@ -165,9 +164,9 @@ irm https://qwenpaw.agentscope.io/install.ps1 | iex
 >
 >    脚本已完成文件安装，由于 **受限语言模式** ，脚本无法自动写入环境变量，此时只需手动配置：
 >    - **找到安装目录**：
->      - 检查 `uv` 是否可用：在 CMD 中输入 `uv --version` ，如果显示版本号，则**只需配置 QwenPaw 路径**；如果提示 `'uv' 不是内部或外部命令，也不是可运行的程序或批处理文件。`，则需同时配置两者。
+>      - 检查 `uv` 是否可用：在 CMD 中输入 `uv --version` ，如果显示版本号，则**只需配置 JotaDuo 路径**；如果提示 `'uv' 不是内部或外部命令，也不是可运行的程序或批处理文件。`，则需同时配置两者。
 >      - uv路径（任选其一，取决于安装位置，若`uv`不可用则填）：通常在`%USERPROFILE%\.local\bin`、`%USERPROFILE%\AppData\Local\uv`或 Python 安装目录下的 `Scripts` 文件夹
->      - QwenPaw路径：通常在 `%USERPROFILE%\.qwenpaw\bin` 。
+>      - JotaDuo路径：通常在 `%USERPROFILE%\.jotaduo\bin` 。
 >    - **手动添加到系统的 Path 环境变量**：
 >      - 按 `Win + R`，输入 `sysdm.cpl` 并回车，打开“系统属性”。
 >      - 点击 “高级” -> “环境变量”。
@@ -177,15 +176,15 @@ irm https://qwenpaw.agentscope.io/install.ps1 | iex
 >
 >   由于 **受限语言模式** ，脚本可能无法自动下载`uv`。
 >   - **手动安装uv**：参考 [GitHub Release](https://github.com/astral-sh/uv/releases)下载并将`uv.exe`放至`%USERPROFILE%\.local\bin`或`%USERPROFILE%\AppData\Local\uv`；或者确保已安装 Python ，然后运行`python -m pip install -U uv`
->   - **配置`uv`环境变量**：将`uv`所在目录和 `%USERPROFILE%\.qwenpaw\bin` 添加到系统的 `Path` 变量中。
->   - **重新运行**：打开新终端，再次执行安装脚本以完成 `QwenPaw` 安装。
->   - **配置`QwenPaw`环境变量**：将 `%USERPROFILE%\.qwenpaw\bin` 添加到系统的 `Path` 变量中。
+>   - **配置`uv`环境变量**：将`uv`所在目录和 `%USERPROFILE%\.jotaduo\bin` 添加到系统的 `Path` 变量中。
+>   - **重新运行**：打开新终端，再次执行安装脚本以完成 `JotaDuo` 安装。
+>   - **配置`JotaDuo`环境变量**：将 `%USERPROFILE%\.jotaduo\bin` 添加到系统的 `Path` 变量中。
 
 安装完成后，请打开新终端并运行：
 
 ```bash
-qwenpaw init --defaults   # 或：qwenpaw init（交互式）
-qwenpaw app
+jotaduo init --defaults   # 或：jotaduo init（交互式）
+jotaduo app
 ```
 
 <details>
@@ -204,8 +203,8 @@ curl -fsSL ... | bash -s -- --from-source
 curl -fsSL ... | bash
 
 # 卸载
-qwenpaw uninstall          # 保留配置和数据
-qwenpaw uninstall --purge  # 删除所有内容
+jotaduo uninstall          # 保留配置和数据
+jotaduo uninstall --purge  # 删除所有内容
 ```
 
 **Windows（PowerShell）：**
@@ -221,8 +220,8 @@ irm ... | iex; .\install.ps1 -Version 0.0.2
 irm ... | iex
 
 # 卸载
-qwenpaw uninstall          # 保留配置和数据
-qwenpaw uninstall --purge  # 删除所有内容
+jotaduo uninstall          # 保留配置和数据
+jotaduo uninstall --purge  # 删除所有内容
 ```
 
 > **注意**：如需安装本地模型支持（llama.cpp、Ollama、LM Studio），请参考 [本地模型](#本地模型) 章节。
@@ -238,37 +237,37 @@ qwenpaw uninstall --purge  # 删除所有内容
 ```bash
 docker pull agentscope/qwenpaw:latest
 docker run -p 127.0.0.1:8088:8088 \
-  -v qwenpaw-data:/app/working \
-  -v qwenpaw-secrets:/app/working.secret \
-  -v qwenpaw-backups:/app/working.backups \
+  -v jotaduo-data:/app/working \
+  -v jotaduo-secrets:/app/working.secret \
+  -v jotaduo-backups:/app/working.backups \
   agentscope/qwenpaw:latest
 ```
 
 国内用户也可选用阿里云容器镜像服务 (ACR)：`agentscope-registry.ap-southeast-1.cr.aliyuncs.com/agentscope/qwenpaw`（tag 相同）。
 
-然后在浏览器中打开控制台：**http://127.0.0.1:8088/** 。配置、记忆与 Skills 保存在 `qwenpaw-data` 卷中；模型配置与 API Key 保存在 `qwenpaw-secrets` 卷中；备份归档保存在 `qwenpaw-backups` 卷中。如需传入 API Key（如 `DASHSCOPE_API_KEY`），在 `docker run` 时添加 `-e VAR=value` 或 `--env-file .env`。
+然后在浏览器中打开控制台：**http://127.0.0.1:8088/** 。配置、记忆与 Skills 保存在 `jotaduo-data` 卷中；模型配置与 API Key 保存在 `jotaduo-secrets` 卷中；备份归档保存在 `jotaduo-backups` 卷中。如需传入 API Key（如 `DASHSCOPE_API_KEY`），在 `docker run` 时添加 `-e VAR=value` 或 `--env-file .env`。
 
 > **从容器内连接宿主机上的 Ollama 或其他模型服务**
 >
-> Docker 容器内的 `localhost` 指向容器自身，而非宿主机。如果 Ollama（或其他模型服务）运行在宿主机上，可通过以下方式让容器内的 QwenPaw 访问：
+> Docker 容器内的 `localhost` 指向容器自身，而非宿主机。如果 Ollama（或其他模型服务）运行在宿主机上，可通过以下方式让容器内的 JotaDuo 访问：
 >
 > **方式 A** — 显式绑定宿主机地址（全平台通用）：
 > ```bash
 > docker run -p 127.0.0.1:8088:8088 \
 >   --add-host=host.docker.internal:host-gateway \
->   -v qwenpaw-data:/app/working \
->   -v qwenpaw-secrets:/app/working.secret \
->   -v qwenpaw-backups:/app/working.backups \
+>   -v jotaduo-data:/app/working \
+>   -v jotaduo-secrets:/app/working.secret \
+>   -v jotaduo-backups:/app/working.backups \
 >   agentscope/qwenpaw:latest
 > ```
-> 然后在 QwenPaw **设置 → 模型** 中，将 Base URL 改为 `http://host.docker.internal:<端口>` — 例如 Ollama 填 `http://host.docker.internal:11434`，LM Studio 填 `http://host.docker.internal:1234/v1`。
+> 然后在 JotaDuo **设置 → 模型** 中，将 Base URL 改为 `http://host.docker.internal:<端口>` — 例如 Ollama 填 `http://host.docker.internal:11434`，LM Studio 填 `http://host.docker.internal:1234/v1`。
 >
 > **方式 B** — 使用宿主机网络（仅限 Linux）：
 > ```bash
 > docker run --network=host \
->   -v qwenpaw-data:/app/working \
->   -v qwenpaw-secrets:/app/working.secret \
->   -v qwenpaw-backups:/app/working.backups \
+>   -v jotaduo-data:/app/working \
+>   -v jotaduo-secrets:/app/working.secret \
+>   -v jotaduo-backups:/app/working.backups \
 >   agentscope/qwenpaw:latest
 > ```
 > 无需端口映射（`-p`），容器直接共享宿主机网络。注意这会将容器的所有端口暴露在宿主机上，可能与已占用的端口产生冲突。
@@ -279,13 +278,13 @@ docker run -p 127.0.0.1:8088:8088 \
 
 ### 方式四：部署到阿里云 ECS
 
-若希望将 QwenPaw 部署在阿里云上，可使用阿里云 ECS 一键部署：打开 [QwenPaw 阿里云 ECS 部署链接](https://computenest.console.aliyun.com/service/instance/create/cn-hangzhou?type=user&ServiceId=service-1ed84201799f40879884) 按页面提示操作即可。详细步骤见 [阿里云开发者社区：QwenPaw 3 分钟部署你的 AI 助理](https://developer.aliyun.com/article/1713682)。
+若希望将 JotaDuo 部署在阿里云上，可使用阿里云 ECS 一键部署：打开 [JotaDuo 阿里云 ECS 部署链接](https://computenest.console.aliyun.com/service/instance/create/cn-hangzhou?type=user&ServiceId=service-1ed84201799f40879884) 按页面提示操作即可。详细步骤见 [阿里云开发者社区：JotaDuo 3 分钟部署你的 AI 助理](https://developer.aliyun.com/article/1713682)。
 
 ---
 
 ### 方式五：使用魔搭创空间
 
-**不想本地安装？** 使用 [魔搭创空间](https://modelscope.cn/studios/fork?target=AgentScope/QwenPaw) 一键云端配置。请将创空间设为 **非公开**，否则他人可能操纵你的 QwenPaw。
+**不想本地安装？** 使用 [魔搭创空间](https://modelscope.cn/studios/fork?target=AgentScope/JotaDuo) 一键云端配置。请将创空间设为 **非公开**，否则他人可能操纵你的 JotaDuo。
 
 ---
 
@@ -296,13 +295,13 @@ docker run -p 127.0.0.1:8088:8088 \
 > - **性能可能存在缺陷**：启动速度、内存占用等方面可能需要进一步优化
 > - **功能持续完善中**：部分功能可能不稳定或缺失
 
-如果你不习惯使用命令行，可以下载并使用 QwenPaw 的桌面应用版本，无需手动配置 Python 环境或执行命令。
+如果你不习惯使用命令行，可以下载并使用 JotaDuo 的桌面应用版本，无需手动配置 Python 环境或执行命令。
 
 #### 下载
 
 从 [GitHub Releases](https://github.com/agentscope-ai/QwenPaw/releases) 下载桌面应用：
-- **Windows**: `QwenPaw-Setup-<version>.exe`
-- **macOS**: `QwenPaw-<version>-macOS.zip` (推荐 Apple Silicon)
+- **Windows**: `JotaDuo-Setup-<version>.exe`
+- **macOS**: `JotaDuo-<version>-macOS.zip` (推荐 Apple Silicon)
 
 #### 特点
 
@@ -317,13 +316,13 @@ docker run -p 127.0.0.1:8088:8088 \
 
 #### macOS：绕过系统安全限制
 
-当你从 Releases 下载 QwenPaw macOS 应用时，macOS 可能显示：*"Apple 无法验证 'QwenPaw' 不包含恶意软件"*。这是因为应用未经过公证。你仍然可以通过以下方式打开：
+当你从 Releases 下载 JotaDuo macOS 应用时，macOS 可能显示：*"Apple 无法验证 'JotaDuo' 不包含恶意软件"*。这是因为应用未经过公证。你仍然可以通过以下方式打开：
 
 - **右键打开（推荐）**
-  右键点击（或 Control + 点击）QwenPaw 应用 → **"打开"** → 在对话框中再次点击 **"打开"**。这会告诉 Gatekeeper 你信任该应用；之后可以像往常一样双击启动。
+  右键点击（或 Control + 点击）JotaDuo 应用 → **"打开"** → 在对话框中再次点击 **"打开"**。这会告诉 Gatekeeper 你信任该应用；之后可以像往常一样双击启动。
 
 - **在系统设置中允许**
-  如果仍被阻止，进入 **系统设置 → 隐私与安全性**，向下滚动找到类似 *"已阻止 'QwenPaw'，因为无法验证开发者"* 的提示，点击 **"仍要打开"** 或 **"允许"**。
+  如果仍被阻止，进入 **系统设置 → 隐私与安全性**，向下滚动找到类似 *"已阻止 'JotaDuo'，因为无法验证开发者"* 的提示，点击 **"仍要打开"** 或 **"允许"**。
 
 - **移除隔离属性（不推荐大多数用户）**
   在终端运行：
@@ -336,7 +335,7 @@ docker run -p 127.0.0.1:8088:8088 \
 
 ### 使用魔搭创空间
 
-**不想本地安装？** 使用 [魔搭创空间](https://modelscope.cn/studios/fork?target=AgentScope/QwenPaw) 一键云端配置。请将创空间设为 **非公开**，否则他人可能操纵你的 QwenPaw。
+**不想本地安装？** 使用 [魔搭创空间](https://modelscope.cn/studios/fork?target=AgentScope/JotaDuo) 一键云端配置。请将创空间设为 **非公开**，否则他人可能操纵你的 JotaDuo。
 
 ---
 
@@ -347,37 +346,37 @@ docker run -p 127.0.0.1:8088:8088 \
 ```bash
 docker pull agentscope/qwenpaw:latest
 docker run -p 127.0.0.1:8088:8088 \
-  -v qwenpaw-data:/app/working \
-  -v qwenpaw-secrets:/app/working.secret \
-  -v qwenpaw-backups:/app/working.backups \
+  -v jotaduo-data:/app/working \
+  -v jotaduo-secrets:/app/working.secret \
+  -v jotaduo-backups:/app/working.backups \
   agentscope/qwenpaw:latest
 ```
 
 国内用户也可选用阿里云容器镜像服务 (ACR)：`agentscope-registry.ap-southeast-1.cr.aliyuncs.com/agentscope/qwenpaw`（tag 相同）。
 
-然后在浏览器中打开控制台：**http://127.0.0.1:8088/** 。配置、记忆与 Skills 保存在 `qwenpaw-data` 卷中；模型配置与 API Key 保存在 `qwenpaw-secrets` 卷中；备份归档保存在 `qwenpaw-backups` 卷中。如需传入 API Key（如 `DASHSCOPE_API_KEY`），在 `docker run` 时添加 `-e VAR=value` 或 `--env-file .env`。
+然后在浏览器中打开控制台：**http://127.0.0.1:8088/** 。配置、记忆与 Skills 保存在 `jotaduo-data` 卷中；模型配置与 API Key 保存在 `jotaduo-secrets` 卷中；备份归档保存在 `jotaduo-backups` 卷中。如需传入 API Key（如 `DASHSCOPE_API_KEY`），在 `docker run` 时添加 `-e VAR=value` 或 `--env-file .env`。
 
 > **从容器内连接宿主机上的 Ollama 或其他模型服务**
 >
-> Docker 容器内的 `localhost` 指向容器自身，而非宿主机。如果 Ollama（或其他模型服务）运行在宿主机上，可通过以下方式让容器内的 QwenPaw 访问：
+> Docker 容器内的 `localhost` 指向容器自身，而非宿主机。如果 Ollama（或其他模型服务）运行在宿主机上，可通过以下方式让容器内的 JotaDuo 访问：
 >
 > **方式 A** — 显式绑定宿主机地址（全平台通用）：
 > ```bash
 > docker run -p 127.0.0.1:8088:8088 \
 >   --add-host=host.docker.internal:host-gateway \
->   -v qwenpaw-data:/app/working \
->   -v qwenpaw-secrets:/app/working.secret \
->   -v qwenpaw-backups:/app/working.backups \
+>   -v jotaduo-data:/app/working \
+>   -v jotaduo-secrets:/app/working.secret \
+>   -v jotaduo-backups:/app/working.backups \
 >   agentscope/qwenpaw:latest
 > ```
-> 然后在 QwenPaw **设置 → 模型** 中，将 Base URL 改为 `http://host.docker.internal:<端口>` — 例如 Ollama 填 `http://host.docker.internal:11434`，LM Studio 填 `http://host.docker.internal:1234/v1`。
+> 然后在 JotaDuo **设置 → 模型** 中，将 Base URL 改为 `http://host.docker.internal:<端口>` — 例如 Ollama 填 `http://host.docker.internal:11434`，LM Studio 填 `http://host.docker.internal:1234/v1`。
 >
 > **方式 B** — 使用宿主机网络（仅限 Linux）：
 > ```bash
 > docker run --network=host \
->   -v qwenpaw-data:/app/working \
->   -v qwenpaw-secrets:/app/working.secret \
->   -v qwenpaw-backups:/app/working.backups \
+>   -v jotaduo-data:/app/working \
+>   -v jotaduo-secrets:/app/working.secret \
+>   -v jotaduo-backups:/app/working.backups \
 >   agentscope/qwenpaw:latest
 > ```
 > 无需端口映射（`-p`），容器直接共享宿主机网络。注意这会将容器的所有端口暴露在宿主机上，可能与已占用的端口产生冲突。
@@ -390,18 +389,18 @@ docker run -p 127.0.0.1:8088:8088 \
 
 ### 部署到阿里云 ECS
 
-若希望将 QwenPaw 部署在阿里云上，可使用阿里云 ECS 一键部署：打开 [QwenPaw 阿里云 ECS 部署链接](https://computenest.console.aliyun.com/service/instance/create/cn-hangzhou?type=user&ServiceId=service-1ed84201799f40879884) 按页面提示操作即可。详细步骤见 [阿里云开发者社区：QwenPaw 3 分钟部署你的 AI 助理](https://developer.aliyun.com/article/1713682)。
+若希望将 JotaDuo 部署在阿里云上，可使用阿里云 ECS 一键部署：打开 [JotaDuo 阿里云 ECS 部署链接](https://computenest.console.aliyun.com/service/instance/create/cn-hangzhou?type=user&ServiceId=service-1ed84201799f40879884) 按页面提示操作即可。详细步骤见 [阿里云开发者社区：JotaDuo 3 分钟部署你的 AI 助理](https://developer.aliyun.com/article/1713682)。
 
 ---
 
 ## API Key
 
-若使用**云端大模型 API**（如通义千问、Gemini、OpenAI），在开始对话前必须配置 API Key。未配置有效 Key 前，QwenPaw 无法正常工作。详情请参考[官方文档](https://qwenpaw.agentscope.io/docs/models)。
+若使用**云端大模型 API**（如通义千问、Gemini、OpenAI），在开始对话前必须配置 API Key。未配置有效 Key 前，JotaDuo 无法正常工作。详情请参考[官方文档](https://qwenpaw.agentscope.io/docs/models)。
 
 **配置方式：**
 
-1. **控制台（推荐）** — 运行 `qwenpaw app` 后，打开 **http://127.0.0.1:8088/** → **设置** → **模型**。选择提供商、填写 **API Key**，并启用该提供商与模型。
-2. **`qwenpaw init`** — 运行 `qwenpaw init` 时，会引导你配置 LLM 提供商与 API Key。按提示选择提供商并填写 Key 即可。
+1. **控制台（推荐）** — 运行 `jotaduo app` 后，打开 **http://127.0.0.1:8088/** → **设置** → **模型**。选择提供商、填写 **API Key**，并启用该提供商与模型。
+2. **`jotaduo init`** — 运行 `jotaduo init` 时，会引导你配置 LLM 提供商与 API Key。按提示选择提供商并填写 Key 即可。
 3. **环境变量** — 使用 DashScope 时，可在终端或工作目录下的 `.env` 文件中设置 `DASHSCOPE_API_KEY`。
 
 其他工具所需密钥（如网页搜索的 `TAVILY_API_KEY`）可在控制台 **设置 → 环境变量** 中配置，详见 [配置](https://qwenpaw.agentscope.io/docs/config)。
@@ -412,7 +411,7 @@ docker run -p 127.0.0.1:8088:8088 \
 
 ## 本地模型
 
-QwenPaw 可在本机完全本地运行大模型，无需 API Key 或云端服务。详情请见[官方文档](https://qwenpaw.agentscope.io/docs/models)
+JotaDuo 可在本机完全本地运行大模型，无需 API Key 或云端服务。详情请见[官方文档](https://qwenpaw.agentscope.io/docs/models)
 
 | 后端          | 适用场景                          | 安装                                                                 |
 | ------------- | --------------------------------- | -------------------------------------------------------------------- |
@@ -427,7 +426,7 @@ QwenPaw 可在本机完全本地运行大模型，无需 API Key 或云端服务
 
 | 主题                                                      | 说明                                 |
 | --------------------------------------------------------- | ------------------------------------ |
-| [项目介绍](https://qwenpaw.agentscope.io/docs/intro)        | QwenPaw 是什么、怎么用                 |
+| [项目介绍](https://qwenpaw.agentscope.io/docs/intro)        | JotaDuo 是什么、怎么用                 |
 | [快速开始](https://qwenpaw.agentscope.io/docs/quickstart)   | 安装与运行（本地或魔搭创空间）       |
 | [控制台](https://qwenpaw.agentscope.io/docs/console)        | Web 界面：对话、配置与定时任务       |
 | [模型](https://qwenpaw.agentscope.io/docs/models)           | 配置云/本地/自定义提供商             |
@@ -452,13 +451,13 @@ QwenPaw 可在本机完全本地运行大模型，无需 API Key 或云端服务
 
 ## 安全特性
 
-QwenPaw 内置多层安全防护机制，保障你的数据与系统安全：
+JotaDuo 内置多层安全防护机制，保障你的数据与系统安全：
 
 - **工具防护** — 自动拦截危险 Shell 命令（如 `rm -rf /`、fork 炸弹、反向 shell 等）
 - **文件访问守卫** — 限制智能体访问敏感路径（如 `~/.ssh`、密钥文件、系统目录等）
 - **技能安全扫描** — 安装技能前自动扫描，检测提示词注入、命令注入、硬编码密钥、数据外泄等风险
 - **本地部署** — 所有数据与记忆存储在本地，无第三方上传（使用云端 LLM API 时，对话内容会发送到对应的 API 提供商）
-- **Web 登录认证** — 可选的控制台登录防护，默认关闭；设置 `QWENPAW_AUTH_ENABLED=true` 即可开启。详见 [Web 登录认证](https://qwenpaw.agentscope.io/docs/security#Web-登录认证)。
+- **Web 登录认证** — 可选的控制台登录防护，默认关闭；设置 `JOTADUO_AUTH_ENABLED=true` 即可开启。详见 [Web 登录认证](https://qwenpaw.agentscope.io/docs/security#Web-登录认证)。
 
 详见 [安全文档](https://qwenpaw.agentscope.io/docs/security)。
 
@@ -487,23 +486,22 @@ QwenPaw 内置多层安全防护机制，保障你的数据与系统安全：
 | **横向拓展**             | 更多频道、模型、技能、MCP 等 — **欢迎社区贡献**                                           | 征集中 |
 | **已有功能扩展与完善**   | 展示优化、下载提示、Windows 路径兼容等 — **欢迎社区贡献**                                 | 征集中 |
 | **客户端体验**           | 安装、更新、打包优化                                                                      | 进行中 |
-| **模型**                 | 端云模型智能切换                                                                          | 进行中 |
+| **模型**                 | 多模型切换                                                                                | 进行中 |
 |                          | OAuth                                                                                     | 计划中 |
 |                          | Response API                                                                              | 计划中 |
-| **主动性**               | 定时任务与心跳升级                                                                        | 进行中 |
-|                          | 主动式简报、定制推送                                                                      | 进行中 |
-|                          | 洞察系统：对话与交互挖掘需求                                                              | 计划中 |
 | **工作区**               | 结合 Sandbox 的文件权限管控                                                               | 进行中 |
 |                          | 子目录划分（配置、生产文件等）                                                            | 计划中 |
-| **Coding 能力**          | LSP、专用 Prompt、工作区版本控制、执行环境等配套 infra                                    | 计划中 |
+| **Coding 能力**          | LSP、专用 Prompt、工作区版本控制、执行环境等配套 infra                                    | 进行中 |
 |                          | 轻量原生接口                                                                              | 计划中 |
 |                          | 工具自进化                                                                                | 计划中 |
 |                          | 兼容 Claude Code 等既有 Agent                                                             | 计划中 |
 | **多智能体**             | 群聊                                                                                      | 计划中 |
-|                          | Subagent                                                                                  | 计划中 |
+|                          | Subagent 可视化                                                                           | 计划中 |
 |                          | HiClaw 企业级能力                                                                         | 计划中 |
-| **上下文管理**           | 上下文智能压缩                                                                            | 进行中 |
+| **上下文管理**           | 个人知识库                                                                                | 进行中 |
 |                          | 用户可选压缩（细粒度控制）                                                                | 计划中 |
+| **JotaDuo 应用**         | JotaDuo Creator                                                                           | 进行中 |
+|                          | JotaDuo Insight                                                                           | 进行中 |
 
 _状态说明：**进行中** — 正在积极开发；**计划中** — 已排队或设计中，也欢迎贡献；**征集中** — 我们强烈鼓励社区参与。_
 
@@ -513,30 +511,30 @@ _状态说明：**进行中** — 正在积极开发；**计划中** — 已排�
 
 ```bash
 git clone https://github.com/agentscope-ai/QwenPaw.git
-cd QwenPaw
+cd JotaDuo
 
 # 先构建前端控制台（Web 界面必需）
 cd console && npm ci && npm run build
 cd ..
 
 # 将控制台构建产物复制到包目录
-mkdir -p src/qwenpaw/console
-cp -R console/dist/. src/qwenpaw/console/
+mkdir -p src/jotaduo/console
+cp -R console/dist/. src/jotaduo/console/
 
 # 安装 Python 包
 pip install -e .
 ```
 
 - **开发**（测试、格式化）：`pip install -e ".[dev,full]"`
-- **然后**：运行 `qwenpaw init --defaults`，再运行 `qwenpaw app`。
+- **然后**：运行 `jotaduo init --defaults`，再运行 `jotaduo app`。
 
-> **版本更新提示：** 当执行 `git pull` 更新到大版本后，请重新构建前端、重新安装 Python 包（`pip install -e .`）、重启 `qwenpaw app`，并清除浏览器缓存（`Ctrl+Shift+R` 或 macOS 上 `Cmd+Shift+R`）。
+> **版本更新提示：** 当执行 `git pull` 更新到大版本后，请重新构建前端、重新安装 Python 包（`pip install -e .`）、重启 `jotaduo app`，并清除浏览器缓存（`Ctrl+Shift+R` 或 macOS 上 `Cmd+Shift+R`）。
 
 ---
 
 ## 参与贡献
 
-QwenPaw 在开放协作中持续演进，欢迎各种形式的参与！请参考上方 [路线图](#路线图)（尤其是标记为 **征集中** 的项）选择你感兴趣的方向，并阅读 [CONTRIBUTING](https://github.com/agentscope-ai/QwenPaw/blob/main/CONTRIBUTING_zh.md) 了解如何开始。我们特别欢迎：
+JotaDuo 在开放协作中持续演进，欢迎各种形式的参与！请参考上方 [路线图](#路线图)（尤其是标记为 **征集中** 的项）选择你感兴趣的方向，并阅读 [CONTRIBUTING](https://github.com/agentscope-ai/QwenPaw/blob/main/CONTRIBUTING_zh.md) 了解如何开始。我们特别欢迎：
 
 - **横向拓展** — 新频道、模型提供商、Skills、MCP。
 - **已有功能扩展与完善** — 展示与交互优化、下载提示、Windows 路径兼容等。
@@ -545,9 +543,9 @@ QwenPaw 在开放协作中持续演进，欢迎各种形式的参与！请参考
 
 ---
 
-## 为什么叫 QwenPaw？
+## 为什么叫 JotaDuo？
 
-QwenPaw 既是 Qwen Personal Agent Workstation（千问个人智能体工作台），也寓意 Qwen 的智识，Paw 的温度。我们希望它不是冰冷的工具，而是一只随时准备帮忙的智慧、温暖“小爪子”，是你数字生活中最默契的伙伴。
+JotaDuo 既是 Qwen Personal Agent Workstation（千问个人智能体工作台），也寓意 Qwen 的智识，Paw 的温度。我们希望它不是冰冷的工具，而是一只随时准备帮忙的智慧、温暖“小爪子”，是你数字生活中最默契的伙伴。
 
 ---
 
@@ -567,11 +565,11 @@ QwenPaw 既是 Qwen Personal Agent Workstation（千问个人智能体工作台�
 
 ## 遥测数据
 
-QwenPaw 在执行 `qwenpaw init` 时会收集**匿名**使用数据，帮助我们了解用户环境并优化产品。数据**每个版本收集一次** — 当你升级 QwenPaw 后，会重新收集以便我们了解版本分布。
+JotaDuo 在执行 `jotaduo init` 时会收集**匿名**使用数据，帮助我们了解用户环境并优化产品。数据**每个版本收集一次** — 当你升级 JotaDuo 后，会重新收集以便我们了解版本分布。
 
 **收集的信息：**
 
-- QwenPaw 版本（如 0.0.7）
+- JotaDuo 版本（如 0.0.7）
 - 安装方式（pip、Docker 或桌面应用）
 - 操作系统及版本（如 macOS 14.0、Ubuntu 22.04）
 - Python 版本（如 3.13）
@@ -580,19 +578,19 @@ QwenPaw 在执行 `qwenpaw init` 时会收集**匿名**使用数据，帮助我�
 
 **不收集：** 不涉及任何个人数据、文件、密钥、IP 地址或可识别信息。
 
-交互式运行 `qwenpaw init` 时，会询问你是否同意。使用 `--defaults` 模式则自动同意。提示每个版本仅出现一次，且不影响 QwenPaw 的任何功能。
+交互式运行 `jotaduo init` 时，会询问你是否同意。使用 `--defaults` 模式则自动同意。提示每个版本仅出现一次，且不影响 JotaDuo 的任何功能。
 
 ---
 
 ## 许可证
 
-QwenPaw 采用 [Apache License 2.0](LICENSE) 开源协议。
+JotaDuo 采用 [Apache License 2.0](LICENSE) 开源协议。
 
 ---
 
 ## 贡献者
 
-感谢所有为 QwenPaw 做出贡献的朋友们：
+感谢所有为 JotaDuo 做出贡献的朋友们：
 
 <a href="https://github.com/agentscope-ai/QwenPaw/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=agentscope-ai/QwenPaw" alt="贡献者" />
