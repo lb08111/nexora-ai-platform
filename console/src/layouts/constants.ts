@@ -2,7 +2,8 @@
 
 export const PYPI_URL = "https://pypi.org/pypi/jotaduo/json";
 
-export const GITHUB_URL = "https://github.com/devjotaduo/nexora-ai-platform" as const;
+export const GITHUB_URL =
+  "https://github.com/devjotaduo/nexora-ai-platform" as const;
 
 // ── Timing ────────────────────────────────────────────────────────────────
 
