@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { PluginDefinition } from '../Chat/types';
-import clsx from 'clsx';
+import React, { useState } from "react";
+import { PluginDefinition } from "../Chat/types";
+import clsx from "clsx";
 
 interface PluginWrapperProps {
   plugin: PluginDefinition;
@@ -20,10 +20,10 @@ export const PluginWrapper: React.FC<PluginWrapperProps> = ({
     if (!isActive) {
       setIsLoading(true);
       try {
-        await new Promise(resolve => setTimeout(resolve, 300));
+        await new Promise((resolve) => setTimeout(resolve, 300));
         onToggle(plugin.id);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load plugin');
+        setError(err instanceof Error ? err.message : "Failed to load plugin");
       } finally {
         setIsLoading(false);
       }
@@ -50,14 +50,14 @@ export const PluginWrapper: React.FC<PluginWrapperProps> = ({
           onClick={handleToggle}
           disabled={isLoading}
           className={clsx(
-            'px-4 py-2 rounded font-medium transition-colors',
+            "px-4 py-2 rounded font-medium transition-colors",
             isActive
-              ? 'bg-red-600 text-white hover:bg-red-700'
-              : 'bg-blue-600 text-white hover:bg-blue-700',
-            isLoading && 'opacity-50 cursor-not-allowed'
+              ? "bg-red-600 text-white hover:bg-red-700"
+              : "bg-blue-600 text-white hover:bg-blue-700",
+            isLoading && "opacity-50 cursor-not-allowed",
           )}
         >
-          {isLoading ? 'Loading...' : isActive ? 'Close' : 'Open'}
+          {isLoading ? "Loading..." : isActive ? "Close" : "Open"}
         </button>
       </div>
 

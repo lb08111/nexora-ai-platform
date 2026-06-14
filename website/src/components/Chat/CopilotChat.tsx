@@ -1,8 +1,8 @@
-import React, { useEffect, useRef } from 'react';
-import { useChat } from './ChatContext';
-import { ChatMessage } from './ChatMessage';
-import { ChatInput } from './ChatInput';
-import clsx from 'clsx';
+import React, { useEffect, useRef } from "react";
+import { useChat } from "./ChatContext";
+import { ChatMessage } from "./ChatMessage";
+import { ChatInput } from "./ChatInput";
+import clsx from "clsx";
 
 interface CopilotChatProps {
   title?: string;
@@ -11,7 +11,7 @@ interface CopilotChatProps {
 }
 
 export const CopilotChat: React.FC<CopilotChatProps> = ({
-  title = 'Chat',
+  title = "Chat",
   subtitle,
   disabled = false,
 }) => {
@@ -19,7 +19,7 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
@@ -45,7 +45,7 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({
           </div>
         )}
 
-        {messages.map(message => (
+        {messages.map((message) => (
           <ChatMessage key={message.id} message={message} />
         ))}
 
@@ -78,9 +78,9 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({
           <button
             onClick={clearMessages}
             className={clsx(
-              'text-sm px-3 py-1 rounded',
-              'hover:bg-gray-100 dark:hover:bg-gray-800',
-              'text-gray-600 dark:text-gray-400'
+              "text-sm px-3 py-1 rounded",
+              "hover:bg-gray-100 dark:hover:bg-gray-800",
+              "text-gray-600 dark:text-gray-400",
             )}
           >
             Clear
