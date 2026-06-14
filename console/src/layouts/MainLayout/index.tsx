@@ -125,6 +125,7 @@ export default function MainLayout() {
   const location = useLocation();
   const currentPath = location.pathname;
   const { pluginRoutes } = usePlugins();
+  const isCodingRoute = currentPath === "/coding";
 
   // Backend is the source of truth for Coding Mode state — refill the
   // in-memory store every time the selected agent changes.
@@ -148,13 +149,25 @@ export default function MainLayout() {
   }, [location.pathname]);
 
   return (
-    <Layout className={styles.mainLayout}>
-      <Header />
-      <Layout>
-        <Sidebar selectedKey={selectedKey} />
-        <Content className="page-container">
+    <Layout
+      className={`${styles.mainLayout} ${
+        isCodingRoute ? styles.codingShell : ""
+      }`}
+    >
+      {!isCodingRoute && <Header />}
+      <Layout className={isCodingRoute ? styles.codingShellInner : undefined}>
+        {!isCodingRoute && <Sidebar selectedKey={selectedKey} />}
+        <Content
+          className={`page-container ${
+            isCodingRoute ? styles.codingPageContainer : ""
+          }`}
+        >
           <ConsolePollService />
-          <div className="page-content">
+          <div
+            className={`page-content ${
+              isCodingRoute ? styles.codingPageContent : ""
+            }`}
+          >
             <ChunkErrorBoundary resetKey={currentPath}>
               <Suspense
                 fallback={

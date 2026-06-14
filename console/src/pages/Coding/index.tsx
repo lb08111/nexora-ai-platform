@@ -42,7 +42,7 @@ export default function CodingPage() {
 
   // ---- Panel visibility --------------------------------------------------
   const [leftOpen, setLeftOpen] = useState(true);
-  const [rightOpen, setRightOpen] = useState(true);
+  const [rightOpen, setRightOpen] = useState(false);
   const [leftPane, setLeftPane] = useState<LeftPane>("files");
 
   const toggleLeft = useCallback(
@@ -183,7 +183,13 @@ export default function CodingPage() {
           {/* LEFT: Explorer / Git */}
           {leftOpen && (
             <>
-              <Panel id="left" defaultSize="15%" className={styles.leftPanel}>
+              <Panel
+                id="left"
+                defaultSize="22%"
+                minSize="16%"
+                maxSize="34%"
+                className={styles.leftPanel}
+              >
                 {leftPane === "files" && (
                   <FileTree onFileSelect={handleFileSelect} />
                 )}
@@ -203,6 +209,7 @@ export default function CodingPage() {
                 ? "70%"
                 : "100%"
             }
+            className={styles.centerPanel}
           >
             <TabbedEditor
               tabs={tabs}

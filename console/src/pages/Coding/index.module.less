@@ -4,50 +4,52 @@
   width: 100%;
   display: flex;
   overflow: hidden;
-  background: var(--body-background, #fff);
+  background: #1b1b1b;
+  color: #d6d6d6;
 }
 
 // ---- Activity bar (narrow left strip, VS Code-style) ---------------------
 .activityBar {
-  width: 44px;
+  width: 36px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 8px 0;
-  gap: 4px;
-  background: var(--header-background, #f0f0f0);
-  border-right: 1px solid var(--border-color, rgba(0, 0, 0, 0.1));
+  padding: 10px 0;
+  gap: 6px;
+  background: #181818;
+  border-right: 1px solid #2b2b2b;
 }
 
 .actBtn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
+  width: 28px;
+  height: 28px;
   border: none;
   background: transparent;
   cursor: pointer;
   border-radius: 6px;
-  color: var(--text-secondary, rgba(0, 0, 0, 0.45));
+  color: #8b8f96;
   padding: 0;
   transition:
     background 0.12s,
     color 0.12s;
 
   &:hover {
-    background: var(--item-hover-bg, rgba(0, 0, 0, 0.07));
-    color: var(--text-primary, rgba(0, 0, 0, 0.88));
+    background: #252525;
+    color: #d7d7d7;
   }
 }
 
 .actBtnActive {
-  color: var(--primary-color, #1677ff);
-  background: var(--primary-color-bg, #e6f4ff);
+  color: #7eb7ff;
+  background: #0e3762;
+  box-shadow: inset 0 0 0 1px rgba(126, 183, 255, 0.28);
 
   &:hover {
-    background: var(--primary-color-bg-hover, #bae0ff) !important;
+    background: #123f70 !important;
   }
 }
 
@@ -61,6 +63,7 @@
   min-width: 0;
   position: relative;
   overflow: hidden;
+  background: #1b1b1b;
 }
 
 .group {
@@ -68,7 +71,7 @@
 }
 
 .sep {
-  width: 4px;
+  width: 3px;
   background: transparent;
   cursor: col-resize;
   flex-shrink: 0;
@@ -80,19 +83,25 @@
     position: absolute;
     inset: 0;
     margin: 0 1px;
-    background: var(--border-color, rgba(0, 0, 0, 0.08));
+    background: #2d2d2d;
     transition: background 0.15s;
   }
 
   &:hover::after,
   &[data-resize-handle-active]::after {
-    background: var(--primary-color, #1677ff);
+    background: #3c79b7;
   }
 }
 
 .leftPanel {
   overflow: hidden;
-  border-right: 1px solid var(--border-color, rgba(0, 0, 0, 0.07));
+  border-right: 1px solid #303030;
+  background: #191919;
+}
+
+.centerPanel {
+  min-width: 0;
+  background: #1b1b1b;
 }
 
 // ---- Right panel (Chat) --------------------------------------------------
@@ -100,17 +109,18 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border-left: 1px solid var(--border-color, rgba(0, 0, 0, 0.07));
+  border-left: 1px solid #303030;
+  background: #1b1b1b;
 }
 
 .chatHeader {
   display: flex;
   align-items: center;
   padding: 5px 10px;
-  border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, 0.07));
+  border-bottom: 1px solid #303030;
   flex-shrink: 0;
   height: 30px;
-  background: var(--header-background, #fafafa);
+  background: #191919;
 }
 
 .chatTitle {
@@ -118,7 +128,7 @@
   align-items: center;
   font-size: 12px;
   font-weight: 600;
-  color: var(--text-secondary, rgba(0, 0, 0, 0.55));
+  color: #a9a9a9;
   flex: 1;
 }
 
@@ -132,12 +142,12 @@
   background: transparent;
   cursor: pointer;
   border-radius: 3px;
-  color: var(--text-tertiary, rgba(0, 0, 0, 0.3));
+  color: #808080;
   padding: 0;
 
   &:hover {
-    background: var(--item-hover-bg, rgba(0, 0, 0, 0.06));
-    color: var(--text-primary, rgba(0, 0, 0, 0.88));
+    background: #252525;
+    color: #d7d7d7;
   }
 }
 
@@ -157,18 +167,18 @@
   justify-content: center;
   width: 32px;
   height: 32px;
-  border: 1px solid var(--border-color, rgba(0, 0, 0, 0.12));
-  background: var(--body-background, #fff);
+  border: 1px solid #343434;
+  background: #202020;
   cursor: pointer;
   border-radius: 6px;
-  color: var(--text-secondary, rgba(0, 0, 0, 0.55));
+  color: #a9a9a9;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 0;
   z-index: 10;
 
   &:hover {
-    color: var(--primary-color, #1677ff);
-    border-color: var(--primary-color, #1677ff);
+    color: #7eb7ff;
+    border-color: #3c79b7;
   }
 }
 
@@ -179,7 +189,7 @@
   align-items: center;
   justify-content: center;
   font-size: 14px;
-  color: var(--text-tertiary, rgba(0, 0, 0, 0.25));
+  color: #747474;
 }
 
 // ---- Dark mode -----------------------------------------------------------
