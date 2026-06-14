@@ -88,7 +88,7 @@ def ensure_builtin_agents() -> None:
         from jotaduo.constant import WORKING_DIR
     except ImportError:
         logger.error(
-            "Cannot import jotaduo.config; agent registration skipped"
+            "Cannot import jotaduo.config; agent registration skipped",
         )
         return
 
@@ -178,7 +178,8 @@ def _register_one_agent(
         logger.exception("Failed to save agent.json for %s", agent_id)
 
     register_extra_tools(
-        agent_id, spec.get("extra_tools", FISCAL_TOOL_CONFIGS)
+        agent_id,
+        spec.get("extra_tools", FISCAL_TOOL_CONFIGS),
     )
 
 
@@ -233,5 +234,7 @@ def uninstall_agents() -> None:
             logger.info("Removed Jotaduo Fiscal workspace: %s", workspace_dir)
         except Exception as exc:  # pylint: disable=broad-except
             logger.warning(
-                "Failed to delete workspace %s: %s", workspace_dir, exc
+                "Failed to delete workspace %s: %s",
+                workspace_dir,
+                exc,
             )

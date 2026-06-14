@@ -105,7 +105,9 @@ async def test_create_mcp_client_submits_approval_without_saving(
         return agent
 
     monkeypatch.setattr(
-        agent_context, "get_agent_for_request", fake_get_agent_for_request
+        agent_context,
+        "get_agent_for_request",
+        fake_get_agent_for_request,
     )
     monkeypatch.setattr(auth, "is_auth_enabled", lambda: True)
     monkeypatch.setattr(auth, "has_registered_users", lambda: True)
@@ -166,7 +168,9 @@ async def test_create_skill_submits_approval_without_writing(
         raise AssertionError("skill should wait for approval")
 
     monkeypatch.setattr(
-        agent_context, "get_agent_for_request", fake_get_agent_for_request
+        agent_context,
+        "get_agent_for_request",
+        fake_get_agent_for_request,
     )
     monkeypatch.setattr(auth, "is_auth_enabled", lambda: True)
     monkeypatch.setattr(auth, "has_registered_users", lambda: True)
@@ -234,7 +238,9 @@ async def test_pool_download_submits_approval_without_broadcasting(
         ],
     )
     monkeypatch.setattr(
-        SkillPoolService, "download_to_workspace", fail_download
+        SkillPoolService,
+        "download_to_workspace",
+        fail_download,
     )
 
     result = await skills.download_pool_skill_to_workspaces(

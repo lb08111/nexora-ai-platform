@@ -21,11 +21,17 @@ def upgrade() -> None:
         sa.Column("actor", sa.Text(), nullable=False),
         sa.Column("action", sa.Text(), nullable=False),
         sa.Column(
-            "resource_type", sa.Text(), nullable=False, server_default=""
+            "resource_type",
+            sa.Text(),
+            nullable=False,
+            server_default="",
         ),
         sa.Column("resource_id", sa.Text(), nullable=False, server_default=""),
         sa.Column(
-            "status", sa.Text(), nullable=False, server_default="success"
+            "status",
+            sa.Text(),
+            nullable=False,
+            server_default="success",
         ),
         sa.Column("ip", sa.Text(), nullable=False, server_default=""),
         sa.Column("user_agent", sa.Text(), nullable=False, server_default=""),
@@ -64,11 +70,17 @@ def upgrade() -> None:
         sa.Column("requester", sa.Text(), nullable=False, server_default=""),
         sa.Column("approver", sa.Text(), nullable=False, server_default=""),
         sa.Column(
-            "resource_type", sa.Text(), nullable=False, server_default=""
+            "resource_type",
+            sa.Text(),
+            nullable=False,
+            server_default="",
         ),
         sa.Column("resource_id", sa.Text(), nullable=False, server_default=""),
         sa.Column(
-            "resource_name", sa.Text(), nullable=False, server_default=""
+            "resource_name",
+            sa.Text(),
+            nullable=False,
+            server_default="",
         ),
         sa.Column("summary", sa.Text(), nullable=False, server_default=""),
         sa.Column("reason", sa.Text(), nullable=False, server_default=""),
@@ -108,7 +120,10 @@ def upgrade() -> None:
         sa.Column("id", sa.Text(), primary_key=True),
         sa.Column("agent_id", sa.Text(), nullable=False, unique=True),
         sa.Column(
-            "display_name", sa.Text(), nullable=False, server_default=""
+            "display_name",
+            sa.Text(),
+            nullable=False,
+            server_default="",
         ),
         sa.Column("description", sa.Text(), nullable=False, server_default=""),
         sa.Column(
@@ -155,11 +170,17 @@ def upgrade() -> None:
         sa.Column("source", sa.Text(), nullable=False),
         sa.Column("resource_id", sa.Text(), nullable=False),
         sa.Column(
-            "display_name", sa.Text(), nullable=False, server_default=""
+            "display_name",
+            sa.Text(),
+            nullable=False,
+            server_default="",
         ),
         sa.Column("description", sa.Text(), nullable=False, server_default=""),
         sa.Column(
-            "risk_level", sa.Text(), nullable=False, server_default="low"
+            "risk_level",
+            sa.Text(),
+            nullable=False,
+            server_default="low",
         ),
         sa.Column(
             "allowed_agents",
@@ -199,7 +220,9 @@ def upgrade() -> None:
         ),
     )
     op.create_index(
-        "idx_cj_resource_source", "jotaduo_resource_policies", ["source"]
+        "idx_cj_resource_source",
+        "jotaduo_resource_policies",
+        ["source"],
     )
     op.create_index(
         "idx_cj_resource_resource_id",
@@ -222,7 +245,10 @@ def upgrade() -> None:
         sa.Column("id", sa.Text(), primary_key=True),
         sa.Column("action", sa.Text(), nullable=False, unique=True),
         sa.Column(
-            "display_name", sa.Text(), nullable=False, server_default=""
+            "display_name",
+            sa.Text(),
+            nullable=False,
+            server_default="",
         ),
         sa.Column("description", sa.Text(), nullable=False, server_default=""),
         sa.Column(
@@ -258,7 +284,10 @@ def upgrade() -> None:
         sa.Column("password_hash", sa.Text(), nullable=False),
         sa.Column("password_salt", sa.Text(), nullable=False),
         sa.Column(
-            "status", sa.Text(), nullable=False, server_default="active"
+            "status",
+            sa.Text(),
+            nullable=False,
+            server_default="active",
         ),
         sa.Column("created_at", sa.BigInteger(), nullable=False),
         sa.Column("updated_at", sa.BigInteger(), nullable=False),
@@ -287,7 +316,9 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("username", "role_id"),
     )
     op.create_index(
-        "idx_cj_user_roles_role_id", "jotaduo_user_roles", ["role_id"]
+        "idx_cj_user_roles_role_id",
+        "jotaduo_user_roles",
+        ["role_id"],
     )
 
     op.create_table(
@@ -322,32 +353,40 @@ def downgrade() -> None:
     op.drop_table("jotaduo_approval_policies")
 
     op.drop_index(
-        "idx_cj_resource_risk_level", table_name="jotaduo_resource_policies"
+        "idx_cj_resource_risk_level",
+        table_name="jotaduo_resource_policies",
     )
     op.drop_index(
-        "idx_cj_resource_enabled", table_name="jotaduo_resource_policies"
+        "idx_cj_resource_enabled",
+        table_name="jotaduo_resource_policies",
     )
     op.drop_index(
-        "idx_cj_resource_resource_id", table_name="jotaduo_resource_policies"
+        "idx_cj_resource_resource_id",
+        table_name="jotaduo_resource_policies",
     )
     op.drop_index(
-        "idx_cj_resource_source", table_name="jotaduo_resource_policies"
+        "idx_cj_resource_source",
+        table_name="jotaduo_resource_policies",
     )
     op.drop_table("jotaduo_resource_policies")
 
     op.drop_index(
-        "idx_cj_agent_policies_enabled", table_name="jotaduo_agent_policies"
+        "idx_cj_agent_policies_enabled",
+        table_name="jotaduo_agent_policies",
     )
     op.drop_table("jotaduo_agent_policies")
 
     op.drop_index(
-        "idx_cj_approvals_created_at", table_name="jotaduo_approval_requests"
+        "idx_cj_approvals_created_at",
+        table_name="jotaduo_approval_requests",
     )
     op.drop_index(
-        "idx_cj_approvals_action", table_name="jotaduo_approval_requests"
+        "idx_cj_approvals_action",
+        table_name="jotaduo_approval_requests",
     )
     op.drop_index(
-        "idx_cj_approvals_status", table_name="jotaduo_approval_requests"
+        "idx_cj_approvals_status",
+        table_name="jotaduo_approval_requests",
     )
     op.drop_table("jotaduo_approval_requests")
 

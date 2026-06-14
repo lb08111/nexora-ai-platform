@@ -207,7 +207,7 @@ def save_auth_data(data: dict) -> None:
             )
             conn.execute(
                 text(
-                    "DELETE FROM jotaduo_role_permissions WHERE role_id = :role_id"
+                    "DELETE FROM jotaduo_role_permissions WHERE role_id = :role_id",
                 ),
                 {"role_id": role_id},
             )
@@ -258,7 +258,7 @@ def save_auth_data(data: dict) -> None:
             )
             conn.execute(
                 text(
-                    "DELETE FROM jotaduo_user_roles WHERE username = :username"
+                    "DELETE FROM jotaduo_user_roles WHERE username = :username",
                 ),
                 {"username": username},
             )
@@ -294,7 +294,7 @@ def delete_role(role_id: str) -> bool:
     with db.get_engine().begin() as conn:
         conn.execute(
             text(
-                "DELETE FROM jotaduo_role_permissions WHERE role_id = :role_id"
+                "DELETE FROM jotaduo_role_permissions WHERE role_id = :role_id",
             ),
             {"role_id": role_id},
         )

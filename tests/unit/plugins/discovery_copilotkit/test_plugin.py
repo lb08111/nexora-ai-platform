@@ -70,7 +70,8 @@ def _load_plugin_module():
 def test_plugin_exports_plugin_object():
     module = _load_plugin_module()
     assert hasattr(
-        module, "plugin"
+        module,
+        "plugin",
     ), "plugin.py must export `plugin` (per JotaDuo plugin contract)"
     assert hasattr(module.plugin, "register")
 

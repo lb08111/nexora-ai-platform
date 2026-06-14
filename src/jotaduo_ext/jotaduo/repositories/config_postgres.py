@@ -38,7 +38,7 @@ def load_global_config() -> Optional[dict]:
     with engine.connect() as conn:
         row = conn.execute(
             text(
-                "SELECT data, updated_at FROM jotaduo_global_config WHERE id = 1"
+                "SELECT data, updated_at FROM jotaduo_global_config WHERE id = 1",
             ),
         ).first()
     if row is None:
@@ -168,7 +168,7 @@ def list_agent_ids() -> list[str]:
     with engine.connect() as conn:
         rows = conn.execute(
             text(
-                "SELECT agent_id FROM jotaduo_agent_configs ORDER BY agent_id"
+                "SELECT agent_id FROM jotaduo_agent_configs ORDER BY agent_id",
             ),
         ).fetchall()
     return [r[0] for r in rows]

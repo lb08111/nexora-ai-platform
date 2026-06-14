@@ -53,7 +53,10 @@ def upgrade() -> None:
             sa.Column("agent_id", sa.Text(), nullable=False),
             sa.Column("username", sa.Text(), nullable=False),
             sa.Column(
-                "granted_by", sa.Text(), nullable=False, server_default=""
+                "granted_by",
+                sa.Text(),
+                nullable=False,
+                server_default="",
             ),
             sa.Column("granted_at", sa.BigInteger(), nullable=False),
             sa.PrimaryKeyConstraint("agent_id", "username"),
@@ -75,7 +78,10 @@ def upgrade() -> None:
             sa.Column("template_id", sa.Text(), primary_key=True),
             sa.Column("name", sa.Text(), nullable=False),
             sa.Column(
-                "description", sa.Text(), nullable=False, server_default=""
+                "description",
+                sa.Text(),
+                nullable=False,
+                server_default="",
             ),
             sa.Column(
                 "capabilities",
@@ -84,7 +90,10 @@ def upgrade() -> None:
                 server_default=sa.text("'{}'::jsonb"),
             ),
             sa.Column(
-                "created_by", sa.Text(), nullable=False, server_default=""
+                "created_by",
+                sa.Text(),
+                nullable=False,
+                server_default="",
             ),
             sa.Column("created_at", sa.BigInteger(), nullable=False),
             sa.Column("updated_at", sa.BigInteger(), nullable=False),
@@ -121,7 +130,9 @@ def upgrade() -> None:
             sa.Column("updated_at", sa.BigInteger(), nullable=False),
         )
     elif _column_exists(
-        conn, "jotaduo_capability_approval_config", "add_approval"
+        conn,
+        "jotaduo_capability_approval_config",
+        "add_approval",
     ):
         # Migrate old boolean columns to new policy strings
         op.add_column(
@@ -169,13 +180,18 @@ def upgrade() -> None:
         op.drop_column("jotaduo_capability_approval_config", "add_approval")
         op.drop_column("jotaduo_capability_approval_config", "remove_approval")
         op.drop_column(
-            "jotaduo_capability_approval_config", "auto_approve_remove"
+            "jotaduo_capability_approval_config",
+            "auto_approve_remove",
         )
 
 
 def downgrade() -> None:
     conn = op.get_bind()
-    if _column_exists(conn, "jotaduo_capability_approval_config", "add_policy"):
+    if _column_exists(
+        conn,
+        "jotaduo_capability_approval_config",
+        "add_policy",
+    ):
         op.add_column(
             "jotaduo_capability_approval_config",
             sa.Column("add_approval", sa.Boolean(), nullable=True),

@@ -9,7 +9,9 @@ from typing import Any, Optional
 
 try:
     from jotaduo.plugins import get_tool_config
-except Exception:  # pragma: no cover - available inside Jotaduo/JotaDuo runtime
+except (
+    Exception
+):  # pragma: no cover - available inside Jotaduo/JotaDuo runtime
 
     def get_tool_config(_tool_name: str) -> dict[str, Any]:
         return {}

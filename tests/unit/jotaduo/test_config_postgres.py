@@ -54,14 +54,15 @@ class TestConfigPostgresRepository:
         fake_conn.execute.return_value.first.return_value = None
         fake_engine = mock.MagicMock()
         fake_engine.connect.return_value.__enter__ = mock.Mock(
-            return_value=fake_conn
+            return_value=fake_conn,
         )
         fake_engine.connect.return_value.__exit__ = mock.Mock(
-            return_value=False
+            return_value=False,
         )
 
         with mock.patch(
-            "jotaduo_ext.jotaduo.db.get_engine", return_value=fake_engine
+            "jotaduo_ext.jotaduo.db.get_engine",
+            return_value=fake_engine,
         ):
             result = repo.load_global_config()
 
@@ -75,14 +76,15 @@ class TestConfigPostgresRepository:
         fake_conn.execute.return_value.first.return_value = (payload, 100)
         fake_engine = mock.MagicMock()
         fake_engine.connect.return_value.__enter__ = mock.Mock(
-            return_value=fake_conn
+            return_value=fake_conn,
         )
         fake_engine.connect.return_value.__exit__ = mock.Mock(
-            return_value=False
+            return_value=False,
         )
 
         with mock.patch(
-            "jotaduo_ext.jotaduo.db.get_engine", return_value=fake_engine
+            "jotaduo_ext.jotaduo.db.get_engine",
+            return_value=fake_engine,
         ):
             result = repo.load_global_config()
 
@@ -96,12 +98,13 @@ class TestConfigPostgresRepository:
         )
         fake_engine = mock.MagicMock()
         fake_engine.begin.return_value.__enter__ = mock.Mock(
-            return_value=fake_conn
+            return_value=fake_conn,
         )
         fake_engine.begin.return_value.__exit__ = mock.Mock(return_value=False)
 
         with mock.patch(
-            "jotaduo_ext.jotaduo.db.get_engine", return_value=fake_engine
+            "jotaduo_ext.jotaduo.db.get_engine",
+            return_value=fake_engine,
         ):
             repo.save_global_config({"test": True})
 
@@ -118,12 +121,13 @@ class TestConfigPostgresRepository:
         )  # existing row
         fake_engine = mock.MagicMock()
         fake_engine.begin.return_value.__enter__ = mock.Mock(
-            return_value=fake_conn
+            return_value=fake_conn,
         )
         fake_engine.begin.return_value.__exit__ = mock.Mock(return_value=False)
 
         with mock.patch(
-            "jotaduo_ext.jotaduo.db.get_engine", return_value=fake_engine
+            "jotaduo_ext.jotaduo.db.get_engine",
+            return_value=fake_engine,
         ):
             repo.save_global_config({"test": True})
 
@@ -140,14 +144,15 @@ class TestConfigPostgresRepository:
         fake_conn.execute.return_value.first.return_value = None
         fake_engine = mock.MagicMock()
         fake_engine.connect.return_value.__enter__ = mock.Mock(
-            return_value=fake_conn
+            return_value=fake_conn,
         )
         fake_engine.connect.return_value.__exit__ = mock.Mock(
-            return_value=False
+            return_value=False,
         )
 
         with mock.patch(
-            "jotaduo_ext.jotaduo.db.get_engine", return_value=fake_engine
+            "jotaduo_ext.jotaduo.db.get_engine",
+            return_value=fake_engine,
         ):
             result = repo.load_agent_config("test-agent")
 
@@ -159,12 +164,13 @@ class TestConfigPostgresRepository:
         fake_conn.execute.return_value.first.return_value = None
         fake_engine = mock.MagicMock()
         fake_engine.begin.return_value.__enter__ = mock.Mock(
-            return_value=fake_conn
+            return_value=fake_conn,
         )
         fake_engine.begin.return_value.__exit__ = mock.Mock(return_value=False)
 
         with mock.patch(
-            "jotaduo_ext.jotaduo.db.get_engine", return_value=fake_engine
+            "jotaduo_ext.jotaduo.db.get_engine",
+            return_value=fake_engine,
         ):
             repo.save_agent_config("test-agent", {"id": "test-agent"})
 
@@ -178,12 +184,13 @@ class TestConfigPostgresRepository:
         fake_conn = mock.MagicMock()
         fake_engine = mock.MagicMock()
         fake_engine.begin.return_value.__enter__ = mock.Mock(
-            return_value=fake_conn
+            return_value=fake_conn,
         )
         fake_engine.begin.return_value.__exit__ = mock.Mock(return_value=False)
 
         with mock.patch(
-            "jotaduo_ext.jotaduo.db.get_engine", return_value=fake_engine
+            "jotaduo_ext.jotaduo.db.get_engine",
+            return_value=fake_engine,
         ):
             repo.delete_agent_config("test-agent")
 
@@ -231,7 +238,8 @@ class TestGlobalConfigDualMode:
         assert cfg.user_timezone == "UTC"
 
     def test_load_config_falls_back_to_file_when_pg_unavailable(
-        self, tmp_path
+        self,
+        tmp_path,
     ):
         self._reset_cache()
         from jotaduo.config.config import Config
@@ -296,7 +304,7 @@ class TestGlobalConfigDualMode:
             from jotaduo.config.utils import load_config
 
             cfg1 = load_config()
-            cfg2 = load_config()
+            _ = load_config()
 
         assert cfg1.user_timezone == "US/Eastern"
         assert call_count == 1  # second call served from cache

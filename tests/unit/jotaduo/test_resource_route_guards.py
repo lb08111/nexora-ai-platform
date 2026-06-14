@@ -8,6 +8,7 @@ from types import SimpleNamespace
 import pytest
 from fastapi import HTTPException
 
+from jotaduo.agents.memory.proactive import proactive_responder as _pr
 from jotaduo.config.config import MCPConfig
 from jotaduo_ext.jotaduo import governance
 
@@ -15,8 +16,6 @@ from jotaduo_ext.jotaduo import governance
 # (`_agent_can_use_proactive_builtin_tool`,
 # `_agent_can_use_summary_tool`) that are not yet ported. Skip the
 # module until they exist; once they do, the tests auto-enable.
-from jotaduo.agents.memory.proactive import proactive_responder as _pr
-
 try:
     from jotaduo.agents.memory.remelight_memory import (
         ReMeLightMemoryManager as _ReMe,
