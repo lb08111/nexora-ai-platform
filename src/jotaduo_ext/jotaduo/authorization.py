@@ -46,7 +46,9 @@ def _get_roles(request: "Request") -> list[str]:
 
 
 def user_can_access_agent(
-    username: str, roles: list[str], agent_id: str
+    username: str,
+    roles: list[str],
+    agent_id: str,
 ) -> bool:
     """Check if a user can access a specific agent."""
     if not _is_auth_active():

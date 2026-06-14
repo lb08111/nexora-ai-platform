@@ -48,7 +48,18 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Check ACR credentials
+        id: acr_creds
+        run: |
+          if [ -n "${{ secrets.ALIYUN_ACR_USERNAME }}" ] && [ -n "${{ secrets.ALIYUN_ACR_PASSWORD }}" ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::ALIYUN_ACR_USERNAME/ALIYUN_ACR_PASSWORD not set; skipping Aliyun ACR login and push"
+          fi
+
       - name: Log in to Alibaba Cloud ACR
+        if: steps.acr_creds.outputs.available == 'true'
         uses: docker/login-action@v3
         with:
           registry: ${{ env.ACR_REGISTRY }}
@@ -63,8 +74,10 @@ jobs:
           DATE=$(date +%Y%m%d)
           TAGS="${GHCR_REGISTRY}/${GHCR_IMAGE}:${TAG}"
           TAGS="${TAGS},${GHCR_REGISTRY}/${GHCR_IMAGE}:${DATE}-${SHORT_SHA}"
-          TAGS="${TAGS},${ACR_REGISTRY}/${ACR_IMAGE}:${TAG}"
-          TAGS="${TAGS},${ACR_REGISTRY}/${ACR_IMAGE}:${DATE}-${SHORT_SHA}"
+          if [ "${{ steps.acr_creds.outputs.available }}" = "true" ]; then
+            TAGS="${TAGS},${ACR_REGISTRY}/${ACR_IMAGE}:${TAG}"
+            TAGS="${TAGS},${ACR_REGISTRY}/${ACR_IMAGE}:${DATE}-${SHORT_SHA}"
+          fi
           echo "tags=${TAGS}" >> $GITHUB_OUTPUT
 
       - name: Build and push

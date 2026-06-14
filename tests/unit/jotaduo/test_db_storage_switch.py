@@ -119,7 +119,8 @@ def test_governance_uses_postgres_repository_when_configured(
         governance_postgres,
         "upsert_resource_policy",
         lambda policy: resource_policies.setdefault(
-            policy["id"], dict(policy)
+            policy["id"],
+            dict(policy),
         ),
     )
     monkeypatch.setattr(
@@ -161,7 +162,8 @@ def test_governance_uses_postgres_repository_when_configured(
         governance_postgres,
         "upsert_approval_policy",
         lambda policy: approval_policies.setdefault(
-            policy["action"], dict(policy)
+            policy["action"],
+            dict(policy),
         ),
     )
 
@@ -227,7 +229,8 @@ def test_governance_db_migration_backfills_missing_agent_policies(
         governance_postgres,
         "upsert_resource_policy",
         lambda policy: resource_policies.__setitem__(
-            policy["id"], dict(policy)
+            policy["id"],
+            dict(policy),
         )
         or dict(policy),
     )
@@ -259,7 +262,7 @@ def test_governance_db_migration_backfills_missing_agent_policies(
         "resource_policies_migrated": 1,
     }
     assert resource_policies["skill:restart"]["allowed_agents"] == [
-        "ops-agent"
+        "ops-agent",
     ]
     assert agent_policies["agent:ops-agent"]["display_name"] == "Ops Agent"
 

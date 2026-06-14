@@ -40,10 +40,14 @@ def test_record_audit_event_appends_jsonl_and_lists_newest_first():
 
 def test_list_audit_events_filters_by_actor_action_and_status():
     audit.record_audit_event(
-        actor="alice", action="login.success", status="success"
+        actor="alice",
+        action="login.success",
+        status="success",
     )
     denied = audit.record_audit_event(
-        actor="alice", action="api.denied", status="denied"
+        actor="alice",
+        action="api.denied",
+        status="denied",
     )
     audit.record_audit_event(actor="bob", action="api.denied", status="denied")
 

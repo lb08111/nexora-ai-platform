@@ -786,7 +786,7 @@ def register_user(
             "status": "active",
             "created_at": ts,
             "updated_at": ts,
-        }
+        },
     ]
 
     # Ensure jwt_secret exists

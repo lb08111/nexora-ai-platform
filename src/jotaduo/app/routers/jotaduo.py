@@ -173,7 +173,8 @@ def _apply_mcp_create_approval(
     client_data = payload.get("client") or {}
     if not agent_id or not client_key or not isinstance(client_data, dict):
         raise HTTPException(
-            status_code=400, detail="Invalid MCP approval payload"
+            status_code=400,
+            detail="Invalid MCP approval payload",
         )
 
     agent_config = load_agent_config(agent_id)
@@ -215,7 +216,8 @@ def _apply_mcp_delete_approval(
     client_key = str(payload.get("client_key") or "")
     if not agent_id or not client_key:
         raise HTTPException(
-            status_code=400, detail="Invalid MCP delete approval payload"
+            status_code=400,
+            detail="Invalid MCP delete approval payload",
         )
 
     agent_config = load_agent_config(agent_id)
@@ -634,7 +636,8 @@ async def _apply_skill_delete_approval(
         skill_name = str(payload.get("skill_name") or "")
         if not agent_id or not skill_name:
             raise HTTPException(
-                status_code=400, detail="Invalid skill delete payload"
+                status_code=400,
+                detail="Invalid skill delete payload",
             )
         workspace_dir = _workspace_dir_for_agent(agent_id)
         service = SkillService(workspace_dir)
@@ -642,7 +645,8 @@ async def _apply_skill_delete_approval(
         deleted = service.delete_skill(skill_name)
         if not deleted:
             raise HTTPException(
-                status_code=409, detail="Skill could not be deleted"
+                status_code=409,
+                detail="Skill could not be deleted",
             )
         return {
             "operation": operation,
@@ -656,7 +660,8 @@ async def _apply_skill_delete_approval(
         skill_names = payload.get("skill_names") or []
         if not agent_id or not skill_names:
             raise HTTPException(
-                status_code=400, detail="Invalid batch skill delete payload"
+                status_code=400,
+                detail="Invalid batch skill delete payload",
             )
         workspace_dir = _workspace_dir_for_agent(agent_id)
         service = SkillService(workspace_dir)
@@ -665,7 +670,7 @@ async def _apply_skill_delete_approval(
             try:
                 service.disable_skill(name)
                 results[name] = service.delete_skill(name)
-            except Exception as exc:
+            except Exception:
                 results[name] = False
         return {
             "operation": operation,
@@ -677,12 +682,14 @@ async def _apply_skill_delete_approval(
         skill_name = str(payload.get("skill_name") or "")
         if not skill_name:
             raise HTTPException(
-                status_code=400, detail="Invalid pool skill delete payload"
+                status_code=400,
+                detail="Invalid pool skill delete payload",
             )
         deleted = SkillPoolService().delete_skill(skill_name)
         if not deleted:
             raise HTTPException(
-                status_code=409, detail="Pool skill could not be deleted"
+                status_code=409,
+                detail="Pool skill could not be deleted",
             )
         return {
             "operation": operation,
@@ -802,19 +809,22 @@ async def _apply_plugin_uninstall_approval(
     plugin_id = str(payload.get("plugin_id") or "")
     if not plugin_id:
         raise HTTPException(
-            status_code=400, detail="Invalid plugin uninstall payload"
+            status_code=400,
+            detail="Invalid plugin uninstall payload",
         )
 
     loader = getattr(request.app.state, "plugin_loader", None)
     if loader is None:
         raise HTTPException(
-            status_code=503, detail="Plugin loader is not ready"
+            status_code=503,
+            detail="Plugin loader is not ready",
         )
 
     record = loader.get_loaded_plugin(plugin_id)
     if record is None:
         raise HTTPException(
-            status_code=404, detail=f"Plugin '{plugin_id}' is not loaded"
+            status_code=404,
+            detail=f"Plugin '{plugin_id}' is not loaded",
         )
 
     from .plugins import (
@@ -868,7 +878,8 @@ async def save_governance_policy(req: GovernancePolicy, request: Request):
     _require_governance_manage(request)
     if not req.source.strip() or not req.resource_id.strip():
         raise HTTPException(
-            status_code=400, detail="source and resource_id are required"
+            status_code=400,
+            detail="source and resource_id are required",
         )
     return upsert_policy(req.dict())
 
@@ -935,11 +946,13 @@ async def approve_platform_approval_request(
     approval = get_approval_request(request_id)
     if approval is None:
         raise HTTPException(
-            status_code=404, detail="Approval request not found"
+            status_code=404,
+            detail="Approval request not found",
         )
     if approval["status"] != PENDING:
         raise HTTPException(
-            status_code=409, detail="Approval request is not pending"
+            status_code=409,
+            detail="Approval request is not pending",
         )
 
     role_ids = _current_role_ids(username, request)
@@ -976,7 +989,8 @@ async def approve_platform_approval_request(
     )
     if updated is None:
         raise HTTPException(
-            status_code=404, detail="Approval request not found"
+            status_code=404,
+            detail="Approval request not found",
         )
     record_audit_event(
         actor=username,
@@ -1003,11 +1017,13 @@ async def reject_platform_approval_request(
     approval = get_approval_request(request_id)
     if approval is None:
         raise HTTPException(
-            status_code=404, detail="Approval request not found"
+            status_code=404,
+            detail="Approval request not found",
         )
     if approval["status"] != PENDING:
         raise HTTPException(
-            status_code=409, detail="Approval request is not pending"
+            status_code=409,
+            detail="Approval request is not pending",
         )
 
     is_own_request = username == approval["requester"]
@@ -1030,7 +1046,8 @@ async def reject_platform_approval_request(
     )
     if updated is None:
         raise HTTPException(
-            status_code=404, detail="Approval request not found"
+            status_code=404,
+            detail="Approval request not found",
         )
     record_audit_event(
         actor=username,
@@ -1104,7 +1121,7 @@ async def audit_events_export(
             "ID do Recurso",
             "IP de Origem",
             "Detalhes",
-        ]
+        ],
     )
     for e in events:
         ts = e.get("timestamp", 0)
@@ -1127,7 +1144,7 @@ async def audit_events_export(
                 e.get("resource_id", ""),
                 e.get("ip", ""),
                 detail_str,
-            ]
+            ],
         )
 
     now_str = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -1384,17 +1401,18 @@ async def update_capability_approval_config(
             status_code=400,
             detail=f"remove_policy must be one of {sorted(VALID_REMOVE_POLICIES)}",
         )
+    updates = {
+        k: v
+        for k, v in {
+            "add_policy": req.add_policy,
+            "remove_policy": req.remove_policy,
+            "approver_roles": req.approver_roles,
+        }.items()
+        if v is not None
+    }
     result = capability_approval.partial_update_config(
         capability_type,
-        {
-            k: v
-            for k, v in {
-                "add_policy": req.add_policy,
-                "remove_policy": req.remove_policy,
-                "approver_roles": req.approver_roles,
-            }.items()
-            if v is not None
-        },
+        updates,
     )
     record_audit_event(
         actor=admin_user,
@@ -1460,7 +1478,7 @@ async def create_agent_template(
             "description": req.description,
             "capabilities": req.capabilities,
             "created_by": admin_user,
-        }
+        },
     )
     record_audit_event(
         actor=admin_user,

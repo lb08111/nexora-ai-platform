@@ -61,7 +61,7 @@ class TestUserCanAccessAgent:
 
     def test_auth_disabled_allows_all(self, tmp_path):
         with _patch_secret_dir(tmp_path), _patch_no_pg(), _patch_auth_active(
-            False
+            False,
         ):
             from jotaduo_ext.jotaduo.authorization import user_can_access_agent
 

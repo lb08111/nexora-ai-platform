@@ -36,7 +36,7 @@ class TestAgentTemplates:
                         "mcps": [],
                     },
                     "created_by": "admin",
-                }
+                },
             )
             assert t["name"] == "测试模板"
             assert t["template_id"]
@@ -48,12 +48,12 @@ class TestAgentTemplates:
         with _patch_secret_dir(tmp_path), _patch_no_pg():
             from jotaduo_ext.jotaduo import agent_templates as m
 
-            t = m.create_template(
+            m.create_template(
                 {
                     "template_id": "test-1",
                     "name": "测试",
                     "capabilities": {"tools": ["read_file"]},
-                }
+                },
             )
             fetched = m.get_template("test-1")
             assert fetched is not None
@@ -71,7 +71,7 @@ class TestAgentTemplates:
                     "template_id": "test-1",
                     "name": "原名称",
                     "capabilities": {"tools": []},
-                }
+                },
             )
             updated = m.update_template(
                 "test-1",
@@ -127,7 +127,7 @@ class TestAgentTemplates:
                     "template_id": "t1",
                     "name": "持久化测试",
                     "capabilities": {},
-                }
+                },
             )
             path = tmp_path / "jotaduo_agent_templates.json"
             assert path.exists()

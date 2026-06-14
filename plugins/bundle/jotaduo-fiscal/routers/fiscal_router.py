@@ -68,7 +68,8 @@ def _validate_signature(body: bytes, signature: str | None) -> None:
         return
     if not signature:
         raise HTTPException(
-            status_code=401, detail="Missing webhook signature"
+            status_code=401,
+            detail="Missing webhook signature",
         )
 
     candidates = {
@@ -76,11 +77,12 @@ def _validate_signature(body: bytes, signature: str | None) -> None:
         hmac.new(secret.encode("utf-8"), body, hashlib.sha256).hexdigest(),
     }
     candidates.add(
-        "sha256=" + next(iter(c for c in candidates if c != secret))
+        "sha256=" + next(iter(c for c in candidates if c != secret)),
     )
     if not any(
         hmac.compare_digest(signature, candidate) for candidate in candidates
     ):
         raise HTTPException(
-            status_code=401, detail="Invalid webhook signature"
+            status_code=401,
+            detail="Invalid webhook signature",
         )

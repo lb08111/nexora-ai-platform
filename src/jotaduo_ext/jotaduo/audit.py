@@ -155,8 +155,10 @@ def record_audit_event(
             with _exclusive_file_lock(fh):
                 fh.write(
                     json.dumps(
-                        event, ensure_ascii=False, separators=(",", ":")
-                    )
+                        event,
+                        ensure_ascii=False,
+                        separators=(",", ":"),
+                    ),
                 )
                 fh.write("\n")
                 fh.flush()

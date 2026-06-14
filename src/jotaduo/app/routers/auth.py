@@ -236,7 +236,9 @@ async def register(req: RegisterRequest, request: Request):
         request=request,
     )
     return LoginResponse(
-        token=token, username=req.username.strip(), roles=["admin"]
+        token=token,
+        username=req.username.strip(),
+        roles=["admin"],
     )
 
 
@@ -344,7 +346,8 @@ async def remove_user(username: str, request: Request):
     current = _require_user_admin(request)
     if username == current:
         raise HTTPException(
-            status_code=400, detail="Não é possível excluir a si mesmo"
+            status_code=400,
+            detail="Não é possível excluir a si mesmo",
         )
     if not delete_user(username):
         raise HTTPException(status_code=400, detail="Failed to delete user")

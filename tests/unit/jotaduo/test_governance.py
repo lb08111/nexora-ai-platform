@@ -54,7 +54,9 @@ def test_resource_access_uses_allowed_agents_not_allowed_roles():
     # Explicit allowed_agents restricts access
     assert governance.agent_can_use_resource("ops-agent", "mcp", "prod-shell")
     assert not governance.agent_can_use_resource(
-        "other-agent", "mcp", "prod-shell"
+        "other-agent",
+        "mcp",
+        "prod-shell",
     )
 
 

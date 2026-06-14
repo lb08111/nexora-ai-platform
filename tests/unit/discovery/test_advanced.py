@@ -61,7 +61,12 @@ def test_ready_to_emit_with_critical_below_threshold():
     """ready_to_emit é False quando alguma área crítica está abaixo do limiar."""
     state = DiscoveryState(session_id="s1")
     state.open_areas = [
-        OpenArea(id="segmento", topic="Qual é o segmento?", confidence=0.3, priority=5),
+        OpenArea(
+            id="segmento",
+            topic="Qual é o segmento?",
+            confidence=0.3,
+            priority=5,
+        ),
     ]
     # Crítica com confiança 0.3 < threshold 0.7 → False
     assert state.ready_to_emit(threshold=0.7) is False
@@ -114,7 +119,12 @@ async def test_state_json_persistence():
     state = DiscoveryState(session_id="s1")
     state.company.segment = "ecommerce"
     state.open_areas.append(
-        OpenArea(id="dores", topic="Quais são as dores?", confidence=0.3, priority=3),
+        OpenArea(
+            id="dores",
+            topic="Quais são as dores?",
+            confidence=0.3,
+            priority=3,
+        ),
     )
     state.integrations.append(
         Integration(kind="crm", name="Salesforce", confidence=0.8),
@@ -135,7 +145,7 @@ async def test_session_state_file_persistence(tmp_path: Path):
     state = DiscoveryState(session_id="s1")
     state.company.segment = "varejo"
 
-    session = InterviewSession(state, out_dir=tmp_path)
+    InterviewSession(state, out_dir=tmp_path)
 
     # Salvar manualmente (como faria o runner)
     state_file = tmp_path / "discovery_state.json"
@@ -155,29 +165,44 @@ async def test_session_state_file_persistence(tmp_path: Path):
 @pytest.mark.asyncio
 async def test_reflect_invalid_json_graceful(tmp_path: Path):
     """reflect deve tratar JSON inválido graciosamente."""
-    session = InterviewSession(DiscoveryState(session_id="s1"), out_dir=tmp_path)
+    session = InterviewSession(
+        DiscoveryState(session_id="s1"),
+        out_dir=tmp_path,
+    )
     result = await session.reflect("algo", "{ INVALID JSON ]")
-    text = "".join(b.get("text", "") for b in result.content if isinstance(b, dict))
+    text = "".join(
+        b.get("text", "") for b in result.content if isinstance(b, dict)
+    )
     assert "inválido" in text.lower() or "invalid" in text.lower()
 
 
 @pytest.mark.asyncio
 async def test_emit_blueprint_invalid_json_graceful(tmp_path: Path):
     """emit_blueprint deve tratar JSON inválido graciosamente."""
-    session = InterviewSession(DiscoveryState(session_id="s1"), out_dir=tmp_path)
+    session = InterviewSession(
+        DiscoveryState(session_id="s1"),
+        out_dir=tmp_path,
+    )
     result = await session.emit_blueprint("[ NOT VALID {")
-    text = "".join(b.get("text", "") for b in result.content if isinstance(b, dict))
+    text = "".join(
+        b.get("text", "") for b in result.content if isinstance(b, dict)
+    )
     assert "inválido" in text.lower() or "invalid" in text.lower()
 
 
 @pytest.mark.asyncio
 async def test_reflect_missing_required_fields(tmp_path: Path):
     """reflect deve validar schema ReflectUpdate."""
-    session = InterviewSession(DiscoveryState(session_id="s1"), out_dir=tmp_path)
+    session = InterviewSession(
+        DiscoveryState(session_id="s1"),
+        out_dir=tmp_path,
+    )
     # ReflectUpdate requer "learned"
     invalid_update = json.dumps({"close_area_ids": []})
     result = await session.reflect("test", invalid_update)
-    text = "".join(b.get("text", "") for b in result.content if isinstance(b, dict))
+    text = "".join(
+        b.get("text", "") for b in result.content if isinstance(b, dict)
+    )
     assert "inválido" in text.lower()
 
 
@@ -187,17 +212,27 @@ async def test_reflect_missing_required_fields(tmp_path: Path):
 @pytest.mark.asyncio
 async def test_reflect_no_duplicate_open_areas(tmp_path: Path):
     """reflect não deve criar duplicatas de open_areas."""
-    session = InterviewSession(DiscoveryState(session_id="s1"), out_dir=tmp_path)
+    session = InterviewSession(
+        DiscoveryState(session_id="s1"),
+        out_dir=tmp_path,
+    )
     session.state.open_areas.append(
         OpenArea(id="base", topic="Base", confidence=0.1, priority=3),
     )
 
-    updates = json.dumps({
-        "learned": "learning",
-        "new_areas": [
-            {"id": "base", "topic": "Base Updated", "confidence": 0.5, "priority": 3},
-        ],
-    })
+    updates = json.dumps(
+        {
+            "learned": "learning",
+            "new_areas": [
+                {
+                    "id": "base",
+                    "topic": "Base Updated",
+                    "confidence": 0.5,
+                    "priority": 3,
+                },
+            ],
+        },
+    )
 
     await session.reflect("learning", updates)
 
@@ -212,23 +247,29 @@ async def test_reflect_no_duplicate_open_areas(tmp_path: Path):
 @pytest.mark.asyncio
 async def test_reflect_no_duplicate_integrations(tmp_path: Path):
     """reflect não deve criar duplicatas de integrações."""
-    session = InterviewSession(DiscoveryState(session_id="s1"), out_dir=tmp_path)
+    session = InterviewSession(
+        DiscoveryState(session_id="s1"),
+        out_dir=tmp_path,
+    )
     session.state.integrations.append(
         Integration(kind="crm", name="HubSpot"),
     )
 
-    updates = json.dumps({
-        "learned": "integração confirmada",
-        "integrations": [
-            {"kind": "crm", "name": "HubSpot", "data_location": "cloud"},
-        ],
-    })
+    updates = json.dumps(
+        {
+            "learned": "integração confirmada",
+            "integrations": [
+                {"kind": "crm", "name": "HubSpot", "data_location": "cloud"},
+            ],
+        },
+    )
 
     await session.reflect("confirmado", updates)
 
     # Deve ter apenas 1 HubSpot
     hubspot_count = sum(
-        1 for i in session.state.integrations
+        1
+        for i in session.state.integrations
         if i.kind == "crm" and i.name == "HubSpot"
     )
     assert hubspot_count == 1
@@ -240,14 +281,19 @@ async def test_reflect_no_duplicate_integrations(tmp_path: Path):
 @pytest.mark.asyncio
 async def test_emit_blueprint_generates_markdown(tmp_path: Path):
     """emit_blueprint deve gerar arquivo .md bem formatado."""
-    session = InterviewSession(DiscoveryState(session_id="s1"), out_dir=tmp_path)
+    session = InterviewSession(
+        DiscoveryState(session_id="s1"),
+        out_dir=tmp_path,
+    )
     bp = {
         "company_profile": {
             "segment": "ecommerce",
             "size": "micro",
             "business_model": "venda online",
         },
-        "process_map": [{"name": "vendas", "description": "Processo de venda"}],
+        "process_map": [
+            {"name": "vendas", "description": "Processo de venda"},
+        ],
         "detected_integrations": [
             {
                 "kind": "planilha",
@@ -266,7 +312,9 @@ async def test_emit_blueprint_generates_markdown(tmp_path: Path):
                 "talks_to": [],
             },
         ],
-        "roadmap": [{"order": 1, "title": "VendedorBot", "rationale": "primeiro"}],
+        "roadmap": [
+            {"order": 1, "title": "VendedorBot", "rationale": "primeiro"},
+        ],
         "open_questions": ["volume de vendas/dia"],
     }
 

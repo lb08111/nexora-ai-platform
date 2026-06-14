@@ -220,7 +220,10 @@ def get_resource_policy(
         if isinstance(policy, dict):
             return _normalize_policy(policy)
         return default_resource_policy(
-            source, resource_id, display_name, description
+            source,
+            resource_id,
+            display_name,
+            description,
         )
 
     data = _load_data()
@@ -228,7 +231,10 @@ def get_resource_policy(
     if isinstance(policy, dict):
         return _normalize_policy(policy)
     return default_resource_policy(
-        source, resource_id, display_name, description
+        source,
+        resource_id,
+        display_name,
+        description,
     )
 
 
@@ -289,7 +295,10 @@ def ensure_resource_policy(
         raise ValueError("source and resource_id are required")
 
     current = get_resource_policy(
-        source, resource_id, display_name, description
+        source,
+        resource_id,
+        display_name,
+        description,
     )
     existing = (
         current if current.get("id") == policy_key(source, resource_id) else {}
@@ -444,7 +453,7 @@ def list_approval_policies() -> list[dict]:
     data = _load_data()
     stored = data.get("approval_policies", {})
     actions = list(
-        dict.fromkeys([*DEFAULT_APPROVAL_POLICIES.keys(), *stored.keys()])
+        dict.fromkeys([*DEFAULT_APPROVAL_POLICIES.keys(), *stored.keys()]),
     )
     return [
         _normalize_approval_policy(
@@ -632,7 +641,7 @@ def get_agent_policy(agent_id: str) -> dict:
         from jotaduo_ext.jotaduo.repositories import governance_postgres
 
         policy = governance_postgres.get_agent_policy(
-            agent_policy_key(agent_id)
+            agent_policy_key(agent_id),
         )
         if isinstance(policy, dict):
             return _normalize_agent_policy(policy)
