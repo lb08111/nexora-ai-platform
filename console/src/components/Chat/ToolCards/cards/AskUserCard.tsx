@@ -96,8 +96,8 @@ const AskUserCard: React.FC<AskUserCardProps> = ({ content, isStreaming }) => {
   const kind: AgentCommunicationKind = isKind(params.kind)
     ? params.kind
     : Array.isArray(params.choices)
-      ? "choices"
-      : "text";
+    ? "choices"
+    : "text";
 
   const status: AgentCommunicationStatus = (() => {
     if (content.status === "error") return "error";

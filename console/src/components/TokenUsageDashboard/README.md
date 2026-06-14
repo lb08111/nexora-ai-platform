@@ -59,7 +59,12 @@ You can drive the components with any data — just shape it into `UsageBucket`:
 ```tsx
 <CostBreakdownChart
   buckets={[
-    { key: "gpt-4o", promptTokens: 12_000, completionTokens: 3_200, callCount: 42 },
+    {
+      key: "gpt-4o",
+      promptTokens: 12_000,
+      completionTokens: 3_200,
+      callCount: 42,
+    },
     { key: "claude-3-5-sonnet", promptTokens: 7_400, completionTokens: 1_500 },
   ]}
 />
@@ -74,7 +79,7 @@ Cost is computed automatically using a built-in default pricing table
 <CostBreakdownChart
   buckets={byModel}
   prices={{
-    "my-private-model": { promptPer1M: 0.10, completionPer1M: 0.20 },
+    "my-private-model": { promptPer1M: 0.1, completionPer1M: 0.2 },
   }}
 />
 ```
@@ -85,27 +90,27 @@ Or pre-compute and pass `costUsd` on each bucket to skip the lookup entirely.
 
 ### `TokenUsageMeter`
 
-| Prop | Type | Description |
-| --- | --- | --- |
-| `promptTokens` | `number` | required |
-| `completionTokens` | `number` | required |
-| `costUsd` | `number?` | shows a $-value column |
-| `budgetTokens` | `number?` | enables the progress bar |
-| `sparkline` | `number[]?` | small inline trend chart |
-| `callCount` | `number?` | shown in legend |
-| `windowLabel` | `string?` | e.g. `"Last 24h"` |
-| `compact` | `boolean?` | tighter padding |
+| Prop               | Type        | Description              |
+| ------------------ | ----------- | ------------------------ |
+| `promptTokens`     | `number`    | required                 |
+| `completionTokens` | `number`    | required                 |
+| `costUsd`          | `number?`   | shows a $-value column   |
+| `budgetTokens`     | `number?`   | enables the progress bar |
+| `sparkline`        | `number[]?` | small inline trend chart |
+| `callCount`        | `number?`   | shown in legend          |
+| `windowLabel`      | `string?`   | e.g. `"Last 24h"`        |
+| `compact`          | `boolean?`  | tighter padding          |
 
 ### `CostBreakdownChart`
 
-| Prop | Type | Description |
-| --- | --- | --- |
-| `buckets` | `UsageBucket[]` | required |
-| `kind` | `"donut" \| "stackedBar"` | default `donut` |
-| `prices` | `ModelPriceMap?` | merged on top of `DEFAULT_PRICES` |
-| `topN` | `number?` | rest grouped as "Other". Default 8 |
-| `height` | `number \| string?` | default 260 |
-| `dimension` | `"model" \| "provider" \| "agent" \| "date" \| "custom"` | label hint only |
+| Prop        | Type                                                     | Description                        |
+| ----------- | -------------------------------------------------------- | ---------------------------------- |
+| `buckets`   | `UsageBucket[]`                                          | required                           |
+| `kind`      | `"donut" \| "stackedBar"`                                | default `donut`                    |
+| `prices`    | `ModelPriceMap?`                                         | merged on top of `DEFAULT_PRICES`  |
+| `topN`      | `number?`                                                | rest grouped as "Other". Default 8 |
+| `height`    | `number \| string?`                                      | default 260                        |
+| `dimension` | `"model" \| "provider" \| "agent" \| "date" \| "custom"` | label hint only                    |
 
 A built-in **Cost / Tokens** toggle lets the user switch metrics.
 

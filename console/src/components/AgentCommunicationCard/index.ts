@@ -1,7 +1,4 @@
-export {
-  AgentCommunicationCard,
-  default,
-} from "./AgentCommunicationCard";
+export { AgentCommunicationCard, default } from "./AgentCommunicationCard";
 export type {
   AgentCommunicationCardProps,
   AgentCommunicationChoice,

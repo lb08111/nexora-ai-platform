@@ -2,20 +2,20 @@ import type { ModelPriceMap, UsageBucket } from "./types";
 
 /** Best-effort default pricing in USD per 1M tokens (Nov 2024 list prices). */
 export const DEFAULT_PRICES: ModelPriceMap = {
-  "gpt-4o":         { promptPer1M: 2.50,  completionPer1M: 10.00 },
-  "gpt-4o-mini":    { promptPer1M: 0.15,  completionPer1M: 0.60 },
-  "gpt-4-turbo":    { promptPer1M: 10.00, completionPer1M: 30.00 },
-  "gpt-3.5-turbo":  { promptPer1M: 0.50,  completionPer1M: 1.50 },
-  "o1":             { promptPer1M: 15.00, completionPer1M: 60.00 },
-  "o1-mini":        { promptPer1M: 3.00,  completionPer1M: 12.00 },
-  "claude-3-5-sonnet": { promptPer1M: 3.00,  completionPer1M: 15.00 },
-  "claude-3-5-haiku":  { promptPer1M: 0.80,  completionPer1M: 4.00 },
-  "claude-3-opus":     { promptPer1M: 15.00, completionPer1M: 75.00 },
-  "gemini-1.5-pro":    { promptPer1M: 1.25,  completionPer1M: 5.00 },
-  "gemini-1.5-flash":  { promptPer1M: 0.075, completionPer1M: 0.30 },
-  "qwen-max":          { promptPer1M: 1.60,  completionPer1M: 6.40 },
-  "qwen-plus":         { promptPer1M: 0.40,  completionPer1M: 1.20 },
-  "qwen-turbo":        { promptPer1M: 0.30,  completionPer1M: 0.60 },
+  "gpt-4o": { promptPer1M: 2.5, completionPer1M: 10.0 },
+  "gpt-4o-mini": { promptPer1M: 0.15, completionPer1M: 0.6 },
+  "gpt-4-turbo": { promptPer1M: 10.0, completionPer1M: 30.0 },
+  "gpt-3.5-turbo": { promptPer1M: 0.5, completionPer1M: 1.5 },
+  o1: { promptPer1M: 15.0, completionPer1M: 60.0 },
+  "o1-mini": { promptPer1M: 3.0, completionPer1M: 12.0 },
+  "claude-3-5-sonnet": { promptPer1M: 3.0, completionPer1M: 15.0 },
+  "claude-3-5-haiku": { promptPer1M: 0.8, completionPer1M: 4.0 },
+  "claude-3-opus": { promptPer1M: 15.0, completionPer1M: 75.0 },
+  "gemini-1.5-pro": { promptPer1M: 1.25, completionPer1M: 5.0 },
+  "gemini-1.5-flash": { promptPer1M: 0.075, completionPer1M: 0.3 },
+  "qwen-max": { promptPer1M: 1.6, completionPer1M: 6.4 },
+  "qwen-plus": { promptPer1M: 0.4, completionPer1M: 1.2 },
+  "qwen-turbo": { promptPer1M: 0.3, completionPer1M: 0.6 },
 };
 
 export function lookupPrice(

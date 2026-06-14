@@ -1599,6 +1599,7 @@
     }
   },
   "chat": {
+    "headerTitle": "Nexora",
     "modelSelectTooltip": "モデルを選択",
     "newChatTooltip": "新しいチャット",
     "searchTooltip": "すべてのチャットを検索",

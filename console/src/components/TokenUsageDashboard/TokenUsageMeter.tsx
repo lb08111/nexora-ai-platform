@@ -77,16 +77,16 @@ const TokenUsageMeter: React.FC<TokenUsageMeterProps> = ({
     budgetPct == null
       ? ""
       : budgetPct >= 100
-        ? styles.budgetOver
-        : budgetPct >= 80
-          ? styles.budgetWarn
-          : styles.budgetOk;
+      ? styles.budgetOver
+      : budgetPct >= 80
+      ? styles.budgetWarn
+      : styles.budgetOk;
 
   return (
     <div
-      className={`${styles.meterRoot}${compact ? ` ${styles.meterCompact}` : ""}${
-        className ? ` ${className}` : ""
-      }`}
+      className={`${styles.meterRoot}${
+        compact ? ` ${styles.meterCompact}` : ""
+      }${className ? ` ${className}` : ""}`}
       style={style}
     >
       <div className={styles.meterHeader}>

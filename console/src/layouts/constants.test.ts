@@ -31,7 +31,7 @@ describe("URL constants", () => {
 
   it("GITHUB_URL points to JotaDuo repo", () => {
     expect(GITHUB_URL).toContain("github.com");
-    expect(GITHUB_URL).toContain("JotaDuo");
+    expect(GITHUB_URL).toContain("devjotaduo");
   });
 });
 

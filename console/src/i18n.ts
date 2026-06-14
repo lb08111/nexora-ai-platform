@@ -6,6 +6,7 @@ import zh from "./locales/zh.json";
 import ja from "./locales/ja.json";
 import ptBR from "./locales/pt-BR.json";
 import id from "./locales/id.json";
+
 const resources = {
   en: {
     translation: en,
@@ -22,6 +23,11 @@ const resources = {
   "pt-BR": {
     translation: ptBR,
   },
+  // "pt" alias lets i18next resolve the "pt-BR → pt → en" fallback chain
+  // without missing-translation gaps when the resolved language is "pt".
+  pt: {
+    translation: ptBR,
+  },
   id: {
     translation: id,
   },
@@ -29,10 +35,9 @@ const resources = {
 
 i18n.use(initReactI18next).init({
   resources,
-  lng: localStorage.getItem("language") || navigator.language || "en",
+  lng: localStorage.getItem("language") || "pt-BR",
   fallbackLng: "en",
   supportedLngs: Object.keys(resources),
-  nonExplicitSupportedLngs: true,
   interpolation: {
     escapeValue: false,
   },

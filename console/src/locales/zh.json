@@ -1786,6 +1786,7 @@
     }
   },
   "chat": {
+    "headerTitle": "Nexora",
     "modelSelectTooltip": "模型选择",
     "newChatTooltip": "新建聊天",
     "searchTooltip": "搜索所有聊天",

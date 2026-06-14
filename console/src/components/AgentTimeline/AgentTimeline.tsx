@@ -124,7 +124,9 @@ const AgentTimeline: React.FC<AgentTimelineProps> = ({
       return { start: t - 60_000, end: t };
     }
     const start =
-      viewStart != null ? viewStart : Math.min(...normalized.map((s) => s._start));
+      viewStart != null
+        ? viewStart
+        : Math.min(...normalized.map((s) => s._start));
     const end =
       viewEnd != null ? viewEnd : Math.max(...normalized.map((s) => s._end));
     const span = Math.max(end - start, 1000);
@@ -163,14 +165,11 @@ const AgentTimeline: React.FC<AgentTimelineProps> = ({
 
   // Build axis ticks (about 1 per 100px)
   const ticks = useMemo(() => {
-    const targetTickCount = Math.max(
-      4,
-      Math.floor(innerWidth / 120),
-    );
+    const targetTickCount = Math.max(4, Math.floor(innerWidth / 120));
     const rawStep = totalMs / targetTickCount;
     const niceSteps = [
-      100, 250, 500, 1000, 2000, 5000, 10_000, 30_000, 60_000, 300_000,
-      600_000, 1_800_000, 3_600_000,
+      100, 250, 500, 1000, 2000, 5000, 10_000, 30_000, 60_000, 300_000, 600_000,
+      1_800_000, 3_600_000,
     ];
     const step = niceSteps.find((s) => s >= rawStep) ?? rawStep;
     const out: { x: number; label: string; ms: number }[] = [];
@@ -229,11 +228,7 @@ const AgentTimeline: React.FC<AgentTimelineProps> = ({
           >
             <ZoomOut size={14} />
           </button>
-          <button
-            className={styles.iconBtn}
-            onClick={handleFit}
-            title="Fit"
-          >
+          <button className={styles.iconBtn} onClick={handleFit} title="Fit">
             <Maximize2 size={14} />
           </button>
           <button
@@ -342,9 +337,7 @@ const AgentTimeline: React.FC<AgentTimelineProps> = ({
                         key={s.id}
                         title={
                           <div className={styles.tooltipBody}>
-                            <div className={styles.tooltipTitle}>
-                              {s.label}
-                            </div>
+                            <div className={styles.tooltipTitle}>{s.label}</div>
                             <div>
                               {s.kind || "custom"}
                               {s.status ? ` · ${s.status}` : ""}
@@ -393,8 +386,7 @@ const AgentTimeline: React.FC<AgentTimelineProps> = ({
                 className={styles.nowLine}
                 style={{
                   left: xFor(now),
-                  height:
-                    HEADER_HEIGHT + agents.length * ROW_HEIGHT,
+                  height: HEADER_HEIGHT + agents.length * ROW_HEIGHT,
                 }}
               />
             )}
