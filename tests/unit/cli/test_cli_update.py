@@ -9,9 +9,9 @@ import httpx
 import pytest
 from click.testing import CliRunner
 
-from qwenpaw.__version__ import __version__
-from qwenpaw.cli.main import cli
-from qwenpaw.cli.update_cmd import (
+from jotaduo.__version__ import __version__
+from jotaduo.cli.main import cli
+from jotaduo.cli.update_cmd import (
     InstallInfo,
     RunningServiceInfo,
     _detect_running_service,
@@ -31,7 +31,7 @@ def _install_info(
     installer: str = "pip",
 ) -> InstallInfo:
     return InstallInfo(
-        package_dir="/tmp/site-packages/qwenpaw",
+        package_dir="/tmp/site-packages/jotaduo",
         python_executable="/tmp/venv/bin/python",
         environment_root="/tmp/venv",
         environment_kind="virtualenv",
@@ -68,10 +68,10 @@ def test_is_newer_version(
         (None, ("pypi", None)),
         (
             {
-                "url": "file:///Users/test/QwenPaw",
+                "url": "file:///Users/test/JotaDuo",
                 "dir_info": {"editable": True},
             },
-            ("editable", "file:///Users/test/QwenPaw"),
+            ("editable", "file:///Users/test/JotaDuo"),
         ),
         (
             {
@@ -81,12 +81,12 @@ def test_is_newer_version(
             ("vcs", "https://github.com/agentscope-ai/QwenPaw.git"),
         ),
         (
-            {"url": "file:///tmp/qwenpaw.whl"},
-            ("local", "file:///tmp/qwenpaw.whl"),
+            {"url": "file:///tmp/jotaduo.whl"},
+            ("local", "file:///tmp/jotaduo.whl"),
         ),
         (
-            {"url": "https://example.com/qwenpaw.whl"},
-            ("direct-url", "https://example.com/qwenpaw.whl"),
+            {"url": "https://example.com/jotaduo.whl"},
+            ("direct-url", "https://example.com/jotaduo.whl"),
         ),
     ],
 )
@@ -111,13 +111,13 @@ def test_detect_source_type(
             "uv\n",
             json.dumps(
                 {
-                    "url": "file:///Users/test/QwenPaw",
+                    "url": "file:///Users/test/JotaDuo",
                     "dir_info": {"editable": True},
                 },
             ),
             "uv",
             "editable",
-            "file:///Users/test/QwenPaw",
+            "file:///Users/test/JotaDuo",
         ),
     ],
 )
@@ -129,7 +129,7 @@ def test_detect_installation(
     expected_source_type: str,
     expected_source_url: str | None,
 ) -> None:
-    from qwenpaw.cli import update_cmd as update_cmd_module
+    from jotaduo.cli import update_cmd as update_cmd_module
 
     class _FakeDistribution:
         def read_text(self, name: str) -> str | None:
@@ -170,7 +170,7 @@ def test_detect_installation(
 
 
 def test_update_reports_up_to_date(monkeypatch) -> None:
-    from qwenpaw.cli import update_cmd as update_cmd_module
+    from jotaduo.cli import update_cmd as update_cmd_module
 
     install_info = _install_info()
 
@@ -194,7 +194,7 @@ def test_update_reports_up_to_date(monkeypatch) -> None:
     result = CliRunner().invoke(cli, ["update", "--yes"])
 
     assert result.exit_code == 0
-    assert "QwenPaw is already up to date." in result.output
+    assert "JotaDuo is already up to date." in result.output
 
 
 def test_probe_service_ignores_proxy_env(monkeypatch) -> None:
@@ -212,7 +212,7 @@ def test_probe_service_ignores_proxy_env(monkeypatch) -> None:
         captured.update(kwargs)
         return _Response()
 
-    monkeypatch.setattr("qwenpaw.cli.update_cmd.httpx.get", _fake_get)
+    monkeypatch.setattr("jotaduo.cli.update_cmd.httpx.get", _fake_get)
 
     result = _probe_service("http://127.0.0.1:8088")
 
@@ -226,7 +226,7 @@ def test_probe_service_returns_not_running_on_http_error(monkeypatch) -> None:
     def _fake_get(_url: str, **_kwargs):
         raise httpx.HTTPError("bad gateway")
 
-    monkeypatch.setattr("qwenpaw.cli.update_cmd.httpx.get", _fake_get)
+    monkeypatch.setattr("jotaduo.cli.update_cmd.httpx.get", _fake_get)
 
     result = _probe_service("http://127.0.0.1:8088")
 
@@ -234,7 +234,7 @@ def test_probe_service_returns_not_running_on_http_error(monkeypatch) -> None:
 
 
 def test_detect_running_service_handles_wildcard_host(monkeypatch) -> None:
-    from qwenpaw.cli import update_cmd as update_cmd_module
+    from jotaduo.cli import update_cmd as update_cmd_module
 
     monkeypatch.setattr(update_cmd_module, "read_last_api", lambda: None)
     monkeypatch.setattr(
@@ -260,7 +260,7 @@ def test_detect_running_service_handles_wildcard_host(monkeypatch) -> None:
 def test_detect_running_service_falls_back_to_process_ports(
     monkeypatch,
 ) -> None:
-    from qwenpaw.cli import update_cmd as update_cmd_module
+    from jotaduo.cli import update_cmd as update_cmd_module
 
     monkeypatch.setattr(update_cmd_module, "read_last_api", lambda: None)
     monkeypatch.setattr(
@@ -284,7 +284,7 @@ def test_detect_running_service_falls_back_to_process_ports(
 
 
 def test_update_blocks_running_service(monkeypatch) -> None:
-    from qwenpaw.cli import update_cmd as update_cmd_module
+    from jotaduo.cli import update_cmd as update_cmd_module
 
     install_info = _install_info()
 
@@ -317,15 +317,15 @@ def test_update_blocks_running_service(monkeypatch) -> None:
     result = CliRunner().invoke(cli, ["update", "--yes"])
 
     assert result.exit_code != 0
-    assert "Please stop it before running `qwenpaw update`" in result.output
+    assert "Please stop it before running `jotaduo update`" in result.output
     assert (
-        "without `--yes` to confirm a forced `qwenpaw shutdown`"
+        "without `--yes` to confirm a forced `jotaduo shutdown`"
         in result.output
     )
 
 
 def test_update_can_cancel_forced_shutdown(monkeypatch) -> None:
-    from qwenpaw.cli import update_cmd as update_cmd_module
+    from jotaduo.cli import update_cmd as update_cmd_module
 
     install_info = _install_info()
 
@@ -353,11 +353,11 @@ def test_update_can_cancel_forced_shutdown(monkeypatch) -> None:
 
     assert result.exit_code == 0
     assert (
-        "forcibly terminate the current QwenPaw backend/frontend "
+        "forcibly terminate the current JotaDuo backend/frontend "
         "processes" in result.output
     )
     assert (
-        "Run `qwenpaw shutdown` now and continue with the update?"
+        "Run `jotaduo shutdown` now and continue with the update?"
         in result.output
     )
     assert "Cancelled." in result.output
@@ -367,7 +367,7 @@ def test_update_can_force_shutdown_running_service(
     monkeypatch,
     tmp_path: Path,
 ) -> None:
-    from qwenpaw.cli import update_cmd as update_cmd_module
+    from jotaduo.cli import update_cmd as update_cmd_module
 
     install_info = _install_info()
     spawned: dict[str, object] = {}
@@ -413,7 +413,7 @@ def test_update_can_force_shutdown_running_service(
         assert command == [
             "/tmp/venv/bin/python",
             "-m",
-            "qwenpaw",
+            "jotaduo",
             "--port",
             "8088",
             "shutdown",
@@ -421,7 +421,7 @@ def test_update_can_force_shutdown_running_service(
 
         class _Result:
             returncode = 0
-            stdout = "Stopped QwenPaw processes: 1234\n"
+            stdout = "Stopped JotaDuo processes: 1234\n"
 
         return _Result()
 
@@ -440,14 +440,14 @@ def test_update_can_force_shutdown_running_service(
     result = CliRunner().invoke(cli, ["update"], input="y\ny\n")
 
     assert result.exit_code == 0
-    assert "Running `qwenpaw shutdown` before updating..." in result.output
-    assert "Stopped QwenPaw processes: 1234" in result.output
-    assert "Starting QwenPaw update..." in result.output
+    assert "Running `jotaduo shutdown` before updating..." in result.output
+    assert "Stopped JotaDuo processes: 1234" in result.output
+    assert "Starting JotaDuo update..." in result.output
     assert isinstance(spawned["path"], Path)
 
 
 def test_update_can_cancel_non_pypi_override(monkeypatch) -> None:
-    from qwenpaw.cli import update_cmd as update_cmd_module
+    from jotaduo.cli import update_cmd as update_cmd_module
 
     install_info = _install_info(source_type="editable")
 
@@ -480,7 +480,7 @@ def test_update_can_override_non_pypi_install_with_yes(
     monkeypatch,
     tmp_path: Path,
 ) -> None:
-    from qwenpaw.cli import update_cmd as update_cmd_module
+    from jotaduo.cli import update_cmd as update_cmd_module
 
     spawned: dict[str, object] = {}
     install_info = _install_info(source_type="editable")
@@ -531,12 +531,12 @@ def test_update_can_override_non_pypi_install_with_yes(
 
     assert result.exit_code == 0
     assert "Proceeding because `--yes` was provided." in result.output
-    assert "Starting QwenPaw update..." in result.output
+    assert "Starting JotaDuo update..." in result.output
     assert isinstance(spawned["path"], Path)
 
 
 def test_update_spawns_worker(monkeypatch, tmp_path: Path) -> None:
-    from qwenpaw.cli import update_cmd as update_cmd_module
+    from jotaduo.cli import update_cmd as update_cmd_module
 
     spawned: dict[str, object] = {}
     install_info = _install_info()
@@ -586,7 +586,7 @@ def test_update_spawns_worker(monkeypatch, tmp_path: Path) -> None:
     result = CliRunner().invoke(cli, ["update", "--yes"])
 
     assert result.exit_code == 0
-    assert "Starting QwenPaw update..." in result.output
+    assert "Starting JotaDuo update..." in result.output
     assert isinstance(spawned["path"], Path)
     plan = spawned["plan"]
     assert plan["latest_version"] == "9.9.9"  # type: ignore [index]
@@ -603,7 +603,7 @@ def test_update_spawns_worker(monkeypatch, tmp_path: Path) -> None:
 def test_update_prompts_when_version_is_not_comparable(
     monkeypatch,
 ) -> None:
-    from qwenpaw.cli import update_cmd as update_cmd_module
+    from jotaduo.cli import update_cmd as update_cmd_module
 
     install_info = _install_info()
 
@@ -635,7 +635,7 @@ def test_update_can_continue_when_version_is_not_comparable(
     monkeypatch,
     tmp_path: Path,
 ) -> None:
-    from qwenpaw.cli import update_cmd as update_cmd_module
+    from jotaduo.cli import update_cmd as update_cmd_module
 
     spawned: dict[str, object] = {}
     install_info = _install_info()
@@ -686,11 +686,11 @@ def test_update_can_continue_when_version_is_not_comparable(
 
     assert result.exit_code == 0
     assert isinstance(spawned["path"], Path)
-    assert "Starting QwenPaw update..." in result.output
+    assert "Starting JotaDuo update..." in result.output
 
 
 def test_update_returns_worker_exit_code(monkeypatch, tmp_path: Path) -> None:
-    from qwenpaw.cli import update_cmd as update_cmd_module
+    from jotaduo.cli import update_cmd as update_cmd_module
 
     install_info = _install_info()
 
@@ -720,14 +720,14 @@ def test_update_returns_worker_exit_code(monkeypatch, tmp_path: Path) -> None:
     result = CliRunner().invoke(cli, ["update", "--yes"])
 
     assert result.exit_code == 2
-    assert "Starting QwenPaw update..." in result.output
+    assert "Starting JotaDuo update..." in result.output
 
 
 def test_update_detaches_worker_on_windows(
     monkeypatch,
     tmp_path: Path,
 ) -> None:
-    from qwenpaw.cli import update_cmd as update_cmd_module
+    from jotaduo.cli import update_cmd as update_cmd_module
 
     install_info = _install_info()
     spawned: dict[str, object] = {}
@@ -768,7 +768,7 @@ def test_update_detaches_worker_on_windows(
     result = CliRunner().invoke(cli, ["update", "--yes"])
 
     assert result.exit_code == 0
-    assert "Starting QwenPaw update..." in result.output
+    assert "Starting JotaDuo update..." in result.output
     assert "continue after this command exits" in result.output
     assert isinstance(spawned["path"], Path)
     assert spawned["plan"]["launcher_pid"] is not None  # type: ignore[index]
@@ -795,7 +795,7 @@ def test_update_worker_waits_for_launcher_exit(
 
     waited: list[tuple[int | None, float]] = []
     monkeypatch.setattr(
-        "qwenpaw.cli.update_cmd._wait_for_process_exit",
+        "jotaduo.cli.update_cmd._wait_for_process_exit",
         lambda pid, timeout=15.0: waited.append((pid, timeout)),
     )
 
@@ -819,7 +819,7 @@ def test_run_update_worker_detached_spawns_without_capture(
         return object()
 
     monkeypatch.setattr(
-        "qwenpaw.cli.update_cmd._spawn_update_worker",
+        "jotaduo.cli.update_cmd._spawn_update_worker",
         _fake_spawn,
     )
 
@@ -874,11 +874,11 @@ def test_update_worker_foreground_streams_output_and_cleans_plan(
     captured = capsys.readouterr()
 
     assert return_code == 0
-    assert "[qwenpaw] Updating QwenPaw 1.0.0 -> 9.9.9..." in captured.out
-    assert "[qwenpaw] Using installer: integration-test" in captured.out
+    assert "[jotaduo] Updating JotaDuo 1.0.0 -> 9.9.9..." in captured.out
+    assert "[jotaduo] Using installer: integration-test" in captured.out
     assert "installer: preparing" in captured.out
     assert "installer: done" in captured.out
-    assert "[qwenpaw] Update completed successfully." in captured.out
+    assert "[jotaduo] Update completed successfully." in captured.out
     assert not plan_path.exists()
 
 
@@ -907,5 +907,5 @@ def test_update_worker_foreground_propagates_failure_exit_code(
 
     assert return_code == 7
     assert "installer: failing" in captured.out
-    assert "[qwenpaw] Update failed with exit code 7." in captured.out
+    assert "[jotaduo] Update failed with exit code 7." in captured.out
     assert not plan_path.exists()

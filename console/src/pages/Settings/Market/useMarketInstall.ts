@@ -1,9 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import api from "../../../api";
-import {
-  invalidateSkillCache,
-  isPendingApprovalResult,
-} from "../../../api/modules/skill";
+import { invalidateSkillCache } from "../../../api/modules/skill";
 import type { MarketResult } from "../../../api/modules/market";
 
 export type InstallTarget = "pool" | "workspace";
@@ -63,7 +60,7 @@ export function useMarketInstall(opts: UseMarketInstallOptions) {
   const installWorkspace = useCallback(
     async (item: InstallQueueItem, overrideName: string | undefined) => {
       const agentId = selectedAgentRef.current;
-      const taskOrApproval = await api.startHubSkillInstall(
+      const task = await api.startHubSkillInstall(
         {
           bundle_url: item.result.source_url,
           version: item.result.version || undefined,
@@ -72,16 +69,6 @@ export function useMarketInstall(opts: UseMarketInstallOptions) {
         },
         agentId,
       );
-      if (isPendingApprovalResult(taskOrApproval)) {
-        updateItem(item.id, {
-          status: "completed",
-          installedName: overrideName || item.result.name,
-          message: taskOrApproval.message,
-        });
-        opts.onSuccess?.({ ...item, status: "completed" });
-        return;
-      }
-      const task = taskOrApproval;
       currentTaskIdRef.current = task.task_id;
       currentInstallingItemIdRef.current = item.id;
       const startedAt = Date.now();
@@ -153,15 +140,6 @@ export function useMarketInstall(opts: UseMarketInstallOptions) {
             });
             if (cancelledRef.current.has(item.id)) {
               updateItem(item.id, { status: "cancelled", message: "" });
-              return;
-            }
-            if (isPendingApprovalResult(result)) {
-              updateItem(item.id, {
-                status: "completed",
-                installedName: overrideName || item.result.name,
-                message: result.message,
-              });
-              opts.onSuccess?.({ ...item, status: "completed" });
               return;
             }
             invalidateSkillCache({ pool: true });

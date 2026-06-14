@@ -4,7 +4,7 @@
 a2a_call pushes incremental events into start_stream() queue while it
 runs.  The /a2a/call/stream REST endpoint reads from read_stream_sse()
 and forwards them to the frontend as Server-Sent Events, enabling
-real-time display without relying on QwenPaw to forward intermediate
+real-time display without relying on JotaDuo to forward intermediate
 ToolResponse yields.
 
 Only one a2a_call runs at a time (the LLM is blocked until it returns),
@@ -18,7 +18,9 @@ import json
 import logging
 from collections.abc import AsyncIterator
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("jotaduo").getChild(
+    __name__.replace("plugin_cloudpaw.", ""),
+)
 
 _queue: asyncio.Queue | None = None
 

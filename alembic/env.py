@@ -1,4 +1,5 @@
-"""Alembic environment for Nexora database migrations."""
+# -*- coding: utf-8 -*-
+"""Alembic environment for Jotaduo database migrations."""
 from __future__ import annotations
 
 import os
@@ -16,9 +17,9 @@ target_metadata = None
 
 
 def _database_url() -> str:
-    database_url = os.environ.get("NEXORA_DB_URL", "").strip()
+    database_url = os.environ.get("JOTADUO_DB_URL", "").strip()
     if not database_url:
-        raise RuntimeError("NEXORA_DB_URL is required for Alembic migrations")
+        raise RuntimeError("JOTADUO_DB_URL is required for Alembic migrations")
     return database_url
 
 
@@ -42,7 +43,10 @@ def run_migrations_online() -> None:
         poolclass=pool.NullPool,
     )
     with connectable.connect() as connection:
-        context.configure(connection=connection, target_metadata=target_metadata)
+        context.configure(
+            connection=connection,
+            target_metadata=target_metadata,
+        )
         with context.begin_transaction():
             context.run_migrations()
 

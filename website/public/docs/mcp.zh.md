@@ -1,14 +1,14 @@
 # MCP 与内置工具
 
-QwenPaw 通过 **MCP（模型上下文协议）** 连接外部服务，并提供一组 **内置工具**，让智能体能够访问文件系统、执行命令、浏览网页等。
+JotaDuo 通过 **MCP（模型上下文协议）** 连接外部服务，并提供一组 **内置工具**，让智能体能够访问文件系统、执行命令、浏览网页等。
 
 ---
 
 ## 概念说明
 
-QwenPaw 为智能体提供两类工具：
+JotaDuo 为智能体提供两类工具：
 
-1. **内置工具**：开箱即用，由 QwenPaw 核心提供，如文件操作、命令执行、浏览器自动化等
+1. **内置工具**：开箱即用，由 JotaDuo 核心提供，如文件操作、命令执行、浏览器自动化等
 
    - 在"智能体 → 工具"页面管理
    - 可以单独启用/禁用
@@ -23,7 +23,7 @@ QwenPaw 为智能体提供两类工具：
 
 ## MCP
 
-**MCP（模型上下文协议，Model Context Protocol）** 允许 QwenPaw 连接到外部 MCP 服务器，扩展智能体访问文件系统、数据库、API 等外部资源的能力。
+**MCP（模型上下文协议，Model Context Protocol）** 允许 JotaDuo 连接到外部 MCP 服务器，扩展智能体访问文件系统、数据库、API 等外部资源的能力。
 
 ### 前置要求
 
@@ -52,7 +52,7 @@ node --version  # 检查版本
 
 ### 配置格式
 
-QwenPaw 支持三种 JSON 格式，选择其一即可：
+JotaDuo 支持三种 JSON 格式，选择其一即可：
 
 #### 格式 1：标准 mcpServers 格式（**推荐**）
 
@@ -210,7 +210,7 @@ MCP 支持三种传输协议，通常自动识别：
 
 ## 内置工具
 
-QwenPaw 提供了一组开箱即用的内置工具，智能体可以直接调用这些工具完成各种任务。
+JotaDuo 提供了一组开箱即用的内置工具，智能体可以直接调用这些工具完成各种任务。
 
 ---
 
@@ -301,7 +301,7 @@ QwenPaw 提供了一组开箱即用的内置工具，智能体可以直接调用
 - 在对话中直接提出需求，例如：
   - “请使用外部智能体 claude code 帮我分析一下工作目录的结构”
   - “请和外部智能体 claude code 对话，让它把自我介绍写入一个 md 文件中”
-- QwenPaw 会在合适的时候调用 `delegate_external_agent`，与外部智能体建立连续对话，并将中间进度和结果回传到当前会话中
+- JotaDuo 会在合适的时候调用 `delegate_external_agent`，与外部智能体建立连续对话，并将中间进度和结果回传到当前会话中
 - 建立连接后，可以继续通过 `delegate_external_agent` 与该外部智能体多轮对话
 - 当前每个 runner 在同一个聊天中只支持一个活动会话；如果要开启新对话，需先关闭当前会话
 
@@ -355,6 +355,17 @@ QwenPaw 提供了一组开箱即用的内置工具，智能体可以直接调用
 - 使用 `action` 参数指定操作类型
 - 默认为无头模式（headless），使用 `headed=True` 启动可见浏览器窗口
 - 支持多标签页（使用不同的 `page_id`）
+- `click` 支持两种定位方式：元素定位（`ref`/`selector`）和页面坐标定位（`page_x`、`page_y`，单位为页面 viewport 像素）。当两者同时提供时，优先级为 `ref > selector > page_x/page_y`，坐标参数仅在未提供 `ref/selector` 时生效
+  - 坐标点击底层使用 `page.mouse.click(...)`，支持 `button` 与 `double_click`，但不支持 `modifiers_json`
+  - **适用场景：** 面向 Canvas/WebGL 等无 DOM 子元素的界面。坐标可通过截图估算获取，也可通过 `action=evaluate` 编程计算以获得像素级精度。evaluate 推荐流程：(1) `action=evaluate` 获取 canvas 元素的 bounding rect，(2) 加上已知偏移量计算点击位置，(3) `action=click` 传入 `page_x`/`page_y`
+
+```json
+{
+  "action": "click",
+  "page_x": 420,
+  "page_y": 260
+}
+```
 
 **CDP 模式（高级功能）：**
 浏览器工具支持通过 Chrome DevTools Protocol (CDP) 连接到已运行的 Chrome 浏览器：

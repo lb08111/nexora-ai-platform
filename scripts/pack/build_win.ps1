@@ -7,7 +7,7 @@ Set-Location $RepoRoot
 Write-Host "[build_win] REPO_ROOT=$RepoRoot"
 $PackDir = $PSScriptRoot
 $Dist = if ($env:DIST) { $env:DIST } else { "dist" }
-$Archive = Join-Path $Dist "qwenpaw-env.zip"
+$Archive = Join-Path $Dist "jotaduo-env.zip"
 $Unpacked = Join-Path $Dist "win-unpacked"
 $NsiPath = Join-Path $PackDir "desktop.nsi"
 
@@ -25,7 +25,7 @@ New-Item -ItemType Directory -Force -Path $Dist | Out-Null
 
 Write-Host "== Building wheel (includes console frontend) =="
 # Skip wheel_build if dist already has a wheel for current version
-$VersionFile = Join-Path $RepoRoot "src\qwenpaw\__version__.py"
+$VersionFile = Join-Path $RepoRoot "src\jotaduo\__version__.py"
 $CurrentVersion = ""
 if (Test-Path $VersionFile) {
   $m = (Get-Content $VersionFile -Raw) -match '__version__\s*=\s*"([^"]+)"'
@@ -33,14 +33,14 @@ if (Test-Path $VersionFile) {
 }
 $RunWheelBuild = $true
 if ($CurrentVersion) {
-  $wheelGlob = Join-Path $Dist "qwenpaw-$CurrentVersion-*.whl"
+  $wheelGlob = Join-Path $Dist "jotaduo-$CurrentVersion-*.whl"
   $existingWheels = Get-ChildItem -Path $wheelGlob -ErrorAction SilentlyContinue
   if ($existingWheels.Count -gt 0) {
     Write-Host "dist/ already has wheel for version $CurrentVersion, skipping."
     $RunWheelBuild = $false
   } else {
     # Clean up old wheels to avoid confusion
-    $oldWheels = Get-ChildItem -Path (Join-Path $Dist "qwenpaw-*.whl") -ErrorAction SilentlyContinue
+    $oldWheels = Get-ChildItem -Path (Join-Path $Dist "jotaduo-*.whl") -ErrorAction SilentlyContinue
     if ($oldWheels.Count -gt 0) {
       Write-Host "Removing old wheel files: $($oldWheels | ForEach-Object { $_.Name })"
       $oldWheels | Remove-Item -Force
@@ -158,7 +158,7 @@ if (Test-Path $pythonExe) {
 }
 
 # Main launcher .bat (will be hidden by VBS)
-$LauncherBat = Join-Path $EnvRoot "QwenPaw Desktop.bat"
+$LauncherBat = Join-Path $EnvRoot "JotaDuo Desktop.bat"
 @"
 @echo off
 cd /d "%~dp0"
@@ -170,12 +170,12 @@ REM Preserve system PATH for accessing system commands
 REM Prepend packaged env to PATH so packaged Python takes precedence
 set "PATH=%~dp0;%~dp0Scripts;%PATH%"
 
-REM Log level: env var QWENPAW_LOG_LEVEL or default to "info"
-if not defined QWENPAW_LOG_LEVEL set "QWENPAW_LOG_LEVEL=info"
+REM Log level: env var JOTADUO_LOG_LEVEL or default to "info"
+if not defined JOTADUO_LOG_LEVEL set "JOTADUO_LOG_LEVEL=info"
 
 REM Set SSL certificate paths for packaged environment
 REM Use temp file to avoid for /f blocking issue in bat scripts
-set "CERT_TMP=%TEMP%\qwenpaw_cert_%RANDOM%.txt"
+set "CERT_TMP=%TEMP%\jotaduo_cert_%RANDOM%.txt"
 "%~dp0python.exe" -u -c "import certifi; print(certifi.where())" > "%CERT_TMP%" 2>nul
 set /p CERT_FILE=<"%CERT_TMP%"
 del "%CERT_TMP%" 2>nul
@@ -187,14 +187,14 @@ if defined CERT_FILE (
   )
 )
 
-if not exist "%USERPROFILE%\.qwenpaw\config.json" (
-  "%~dp0python.exe" -u -m qwenpaw init --defaults --accept-security
+if not exist "%USERPROFILE%\.jotaduo\config.json" (
+  "%~dp0python.exe" -u -m jotaduo init --defaults --accept-security
 )
-"%~dp0python.exe" -u -m qwenpaw desktop --log-level %QWENPAW_LOG_LEVEL%
+"%~dp0python.exe" -u -m jotaduo desktop --log-level %JOTADUO_LOG_LEVEL%
 "@ | Set-Content -Path $LauncherBat -Encoding ASCII
 
 # Debug launcher .bat (shows console)
-$DebugBat = Join-Path $EnvRoot "QwenPaw Desktop (Debug).bat"
+$DebugBat = Join-Path $EnvRoot "JotaDuo Desktop (Debug).bat"
 @"
 @echo off
 cd /d "%~dp0"
@@ -206,12 +206,12 @@ REM Preserve system PATH for accessing system commands
 REM Prepend packaged env to PATH so packaged Python takes precedence
 set "PATH=%~dp0;%~dp0Scripts;%PATH%"
 
-REM Debug mode: use debug log level by default (can override with QWENPAW_LOG_LEVEL)
-if not defined QWENPAW_LOG_LEVEL set "QWENPAW_LOG_LEVEL=debug"
+REM Debug mode: use debug log level by default (can override with JOTADUO_LOG_LEVEL)
+if not defined JOTADUO_LOG_LEVEL set "JOTADUO_LOG_LEVEL=debug"
 
 REM Set SSL certificate paths for packaged environment
 REM Use temp file to avoid for /f blocking issue in bat scripts
-set "CERT_TMP=%TEMP%\qwenpaw_cert_%RANDOM%.txt"
+set "CERT_TMP=%TEMP%\jotaduo_cert_%RANDOM%.txt"
 "%~dp0python.exe" -u -c "import certifi; print(certifi.where())" > "%CERT_TMP%" 2>nul
 set /p CERT_FILE=<"%CERT_TMP%"
 del "%CERT_TMP%" 2>nul
@@ -224,46 +224,46 @@ if defined CERT_FILE (
 )
 
 echo ====================================
-echo QwenPaw Desktop - Debug Mode
+echo JotaDuo Desktop - Debug Mode
 echo ====================================
 echo Working Directory: %cd%
 echo Python: "%~dp0python.exe"
 echo PATH: %PATH%
 echo PYTHONNOUSERSITE: %PYTHONNOUSERSITE%
-echo Log Level: %QWENPAW_LOG_LEVEL%
+echo Log Level: %JOTADUO_LOG_LEVEL%
 echo SSL_CERT_FILE: %SSL_CERT_FILE%
 echo REQUESTS_CA_BUNDLE: %REQUESTS_CA_BUNDLE%
 echo CURL_CA_BUNDLE: %CURL_CA_BUNDLE%
 echo.
-if not exist "%USERPROFILE%\.qwenpaw\config.json" (
+if not exist "%USERPROFILE%\.jotaduo\config.json" (
   echo [Init] Creating config...
-  "%~dp0python.exe" -u -m qwenpaw init --defaults --accept-security
+  "%~dp0python.exe" -u -m jotaduo init --defaults --accept-security
 )
-echo [Launch] Starting QwenPaw Desktop with log-level=%QWENPAW_LOG_LEVEL%...
+echo [Launch] Starting JotaDuo Desktop with log-level=%JOTADUO_LOG_LEVEL%...
 echo Press Ctrl+C to stop
 echo.
-"%~dp0python.exe" -u -m qwenpaw desktop --log-level %QWENPAW_LOG_LEVEL%
+"%~dp0python.exe" -u -m jotaduo desktop --log-level %JOTADUO_LOG_LEVEL%
 echo.
-echo [Exit] QwenPaw Desktop closed
+echo [Exit] JotaDuo Desktop closed
 pause
 "@ | Set-Content -Path $DebugBat -Encoding ASCII
 
 # VBScript launcher (no console window)
-$LauncherVbs = Join-Path $EnvRoot "QwenPaw Desktop.vbs"
+$LauncherVbs = Join-Path $EnvRoot "JotaDuo Desktop.vbs"
 @"
 Set WshShell = CreateObject("WScript.Shell")
-batPath = CreateObject("Scripting.FileSystemObject").GetParentFolderName(WScript.ScriptFullName) & "\QwenPaw Desktop.bat"
+batPath = CreateObject("Scripting.FileSystemObject").GetParentFolderName(WScript.ScriptFullName) & "\JotaDuo Desktop.bat"
 WshShell.Run Chr(34) & batPath & Chr(34), 0, False
 Set WshShell = Nothing
 "@ | Set-Content -Path $LauncherVbs -Encoding ASCII
 
-# Create qwenpaw.cmd wrapper in env root so "qwenpaw" resolves to this
-# instead of Scripts\qwenpaw.exe whose embedded Python path may be stale
+# Create jotaduo.cmd wrapper in env root so "jotaduo" resolves to this
+# instead of Scripts\jotaduo.exe whose embedded Python path may be stale
 # after conda-pack/unpack.
-$QwenpawCmd = Join-Path $EnvRoot "qwenpaw.cmd"
+$JotaduoCmd = Join-Path $EnvRoot "jotaduo.cmd"
 @"
-@"%~dp0python.exe" -u -m qwenpaw %*
-"@ | Set-Content -Path $QwenpawCmd -Encoding ASCII
+@"%~dp0python.exe" -u -m jotaduo %*
+"@ | Set-Content -Path $JotaduoCmd -Encoding ASCII
 
 # Copy icon.ico to env root so NSIS can find it
 $IconSrc = Join-Path $PackDir "assets\icon.ico"
@@ -286,7 +286,7 @@ $Version = $CurrentVersion
 if (-not $Version) {
   # Fallback: try to get version from packed env metadata
   try {
-    $Version = (& (Join-Path $EnvRoot "python.exe") -c "from importlib.metadata import version; print(version('qwenpaw'))" 2>&1) -replace '\s+$', ''
+    $Version = (& (Join-Path $EnvRoot "python.exe") -c "from importlib.metadata import version; print(version('jotaduo'))" 2>&1) -replace '\s+$', ''
     Write-Host "[build_win] Using version from packed env metadata: $Version"
   } catch {
     Write-Host "[build_win] version from packed env failed: $_"
@@ -294,13 +294,13 @@ if (-not $Version) {
 }
 if (-not $Version) { $Version = "0.0.0"; Write-Host "[build_win] WARN: Using fallback version 0.0.0" }
 Write-Host "[build_win] Version determined: $Version"
-Write-Host "[build_win] QWENPAW_VERSION=$Version OUTPUT_EXE will be under $Dist"
-$OutInstaller = Join-Path (Join-Path $RepoRoot $Dist) "QwenPaw-Setup-$Version.exe"
+Write-Host "[build_win] JOTADUO_VERSION=$Version OUTPUT_EXE will be under $Dist"
+$OutInstaller = Join-Path (Join-Path $RepoRoot $Dist) "JotaDuo-Setup-$Version.exe"
 # Pass absolute paths to NSIS (keep backslashes).
 $UnpackedFull = (Resolve-Path $EnvRoot).Path
 $OutputExeNsi = [System.IO.Path]::GetFullPath($OutInstaller)
 $nsiArgs = @(
-  "/DQWENPAW_VERSION=$Version",
+  "/DJOTADUO_VERSION=$Version",
   "/DOUTPUT_EXE=$OutputExeNsi",
   "/DUNPACKED=$UnpackedFull",
   $NsiPath

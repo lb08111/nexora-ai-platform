@@ -10,8 +10,8 @@ export function buildAuthHeaders(): Record<string, string> {
   try {
     // Read from sessionStorage first (per-tab agent), fall back to localStorage
     const agentStorage =
-      sessionStorage.getItem("qwenpaw-agent-storage") ||
-      localStorage.getItem("qwenpaw-agent-storage");
+      sessionStorage.getItem("jotaduo-agent-storage") ||
+      localStorage.getItem("jotaduo-agent-storage");
     if (agentStorage) {
       const parsed = JSON.parse(agentStorage);
       const selectedAgent = parsed?.state?.selectedAgent;

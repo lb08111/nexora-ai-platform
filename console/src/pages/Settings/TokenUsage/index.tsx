@@ -4,10 +4,7 @@ import { useTranslation } from "react-i18next";
 import dayjs, { type Dayjs } from "dayjs";
 import { useTheme } from "../../../contexts/ThemeContext";
 import api from "../../../api";
-import type {
-  TokenUsageRecord,
-  TokenUsageByUserRecord,
-} from "../../../api/types/tokenUsage";
+import type { TokenUsageRecord } from "../../../api/types/tokenUsage";
 import { useAppMessage } from "../../../hooks/useAppMessage";
 import { PageHeader } from "@/components/PageHeader";
 import {
@@ -30,9 +27,6 @@ function TokenUsagePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [records, setRecords] = useState<TokenUsageRecord[]>([]);
-  const [byUserRecords, setByUserRecords] = useState<
-    TokenUsageByUserRecord[]
-  >([]);
   const [startDate, setStartDate] = useState<Dayjs>(
     dayjs().subtract(30, "day"),
   );
@@ -41,22 +35,16 @@ function TokenUsagePage() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     setError(false);
-    const dateParams = {
-      start_date: startDate.format("YYYY-MM-DD"),
-      end_date: endDate.format("YYYY-MM-DD"),
-    };
     try {
-      const [detailsData, userData] = await Promise.all([
-        api.getTokenUsageDetails(dateParams),
-        api.getTokenUsageByUser(dateParams).catch(() => []),
-      ]);
+      const detailsData = await api.getTokenUsageDetails({
+        start_date: startDate.format("YYYY-MM-DD"),
+        end_date: endDate.format("YYYY-MM-DD"),
+      });
       setRecords(detailsData);
-      setByUserRecords(userData);
     } catch (err) {
       console.error("Failed to load token usage:", err);
       message.error(t("tokenUsage.loadFailed"));
       setRecords([]);
-      setByUserRecords([]);
       setError(true);
     } finally {
       setLoading(false);
@@ -174,11 +162,7 @@ function TokenUsagePage() {
         {byModelData.length === 0 && byDateData.length === 0 ? (
           <EmptyState message={t("tokenUsage.noData")} />
         ) : (
-          <DataTables
-            byModelData={byModelData}
-            byDateData={byDateData}
-            byUserData={byUserRecords}
-          />
+          <DataTables byModelData={byModelData} byDateData={byDateData} />
         )}
       </div>
     </div>

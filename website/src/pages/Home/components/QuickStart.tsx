@@ -19,6 +19,7 @@ import {
   GitHubIcon,
   ModelIcon,
   AliyunIcon,
+  AgentScopePlatformIcon,
 } from "@/components/Icon";
 import { sectionStyles } from "@/lib/utils";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -26,15 +27,16 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 type InstallMethod = "pip" | "script" | "docker" | "cloud" | "desktop";
 type ScriptPlatform = "mac" | "windows";
 type ScriptWindowsVariant = "cmd" | "ps";
-type CloudPlatform = "aliyun" | "modelscope";
+type CloudPlatform = "agentscope" | "aliyun" | "modelscope";
 
 type QuickStartProps = {
   docsBase: string;
 };
 
 const DOCKER_IMAGE = "agentscope/qwenpaw:latest";
+const AGENTSCOPE_PLATFORM_URL = "https://platform.agentscope.io/";
 const MODELSCOPE_URL =
-  "https://modelscope.cn/studios/fork?target=AgentScope/QwenPaw";
+  "https://modelscope.cn/studios/fork?target=AgentScope/JotaDuo";
 const ALIYUN_ECS_URL =
   "https://computenest.console.aliyun.com/service/instance/create/cn-hangzhou?type=user&ServiceId=service-1ed84201799f40879884";
 const ALIYUN_DOC_URL = "https://developer.aliyun.com/article/1713682";
@@ -69,34 +71,34 @@ function MethodTabIcon({ method }: { method: InstallMethod }) {
 }
 
 export const PIP_INSTALL_COMMANDS = [
-  "pip install qwenpaw",
-  "qwenpaw init --defaults",
-  "qwenpaw app",
+  "pip install jotaduo",
+  "jotaduo init --defaults",
+  "jotaduo app",
 ] as const;
 
 const COMMANDS = {
   pip: [...PIP_INSTALL_COMMANDS],
   scriptMac: [
     "curl -fsSL https://qwenpaw.agentscope.io/install.sh | bash",
-    "qwenpaw init --defaults",
-    "qwenpaw app",
+    "jotaduo init --defaults",
+    "jotaduo app",
   ],
   scriptWinCmd: [
     "curl -fsSL https://qwenpaw.agentscope.io/install.bat -o install.bat && install.bat",
-    "qwenpaw init --defaults",
-    "qwenpaw app",
+    "jotaduo init --defaults",
+    "jotaduo app",
   ],
   scriptWinPs: [
     "irm https://qwenpaw.agentscope.io/install.ps1 | iex",
-    "qwenpaw init --defaults",
-    "qwenpaw app",
+    "jotaduo init --defaults",
+    "jotaduo app",
   ],
   docker: [
     `docker pull ${DOCKER_IMAGE}`,
     `docker run -p 127.0.0.1:8088:8088 \\
-  -v qwenpaw-data:/app/working \\
-  -v qwenpaw-secrets:/app/working.secret \\
-  -v qwenpaw-backups:/app/working.backups \\
+  -v jotaduo-data:/app/working \\
+  -v jotaduo-secrets:/app/working.secret \\
+  -v jotaduo-backups:/app/working.backups \\
   ${DOCKER_IMAGE}`,
   ],
 } as const;
@@ -229,7 +231,8 @@ export function QuickStart({ docsBase }: QuickStartProps) {
   const [scriptPlatform, setScriptPlatform] = useState<ScriptPlatform>("mac");
   const [scriptWinVariant, setScriptWinVariant] =
     useState<ScriptWindowsVariant>("cmd");
-  const [cloudPlatform, setCloudPlatform] = useState<CloudPlatform>("aliyun");
+  const [cloudPlatform, setCloudPlatform] =
+    useState<CloudPlatform>("agentscope");
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const currentScriptCommands = useMemo(() => {
@@ -259,10 +262,10 @@ export function QuickStart({ docsBase }: QuickStartProps) {
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, margin: "-60px" }}
-        id="qwenpaw-quickstart"
+        id="jotaduo-quickstart"
       >
         <div
-          className="pointer-events-none absolute left-1/2 top-0 h-px w-screen -translate-x-1/2 animate-[qwenpaw-dash-move-right_1s_linear_infinite]"
+          className="pointer-events-none absolute left-1/2 top-0 h-px w-screen -translate-x-1/2 animate-[jotaduo-dash-move-right_1s_linear_infinite]"
           style={{
             background:
               "repeating-linear-gradient(to right, rgba(255,157,77,0.45) 0 8px, transparent 8px 16px)",
@@ -270,7 +273,7 @@ export function QuickStart({ docsBase }: QuickStartProps) {
           }}
         />
         <div
-          className="pointer-events-none absolute left-1/2 top-full h-px w-screen -translate-x-1/2 -translate-y-px animate-[qwenpaw-dash-move-left_1s_linear_infinite]"
+          className="pointer-events-none absolute left-1/2 top-full h-px w-screen -translate-x-1/2 -translate-y-px animate-[jotaduo-dash-move-left_1s_linear_infinite]"
           style={{
             background:
               "repeating-linear-gradient(to right, rgba(255,157,77,0.45) 0 8px, transparent 8px 16px)",
@@ -279,7 +282,7 @@ export function QuickStart({ docsBase }: QuickStartProps) {
         />
         <div className="relative mx-auto max-w-4xl">
           <div
-            className="pointer-events-none absolute bottom-0 left-4 top-0 w-px md:left-0 animate-[qwenpaw-dash-move-down_1s_linear_infinite]"
+            className="pointer-events-none absolute bottom-0 left-4 top-0 w-px md:left-0 animate-[jotaduo-dash-move-down_1s_linear_infinite]"
             style={{
               background:
                 "repeating-linear-gradient(to bottom, rgba(255,157,77,0.45) 0 8px, transparent 8px 16px)",
@@ -287,7 +290,7 @@ export function QuickStart({ docsBase }: QuickStartProps) {
             }}
           />
           <div
-            className="pointer-events-none absolute bottom-0 right-4 top-0 w-px md:right-0 animate-[qwenpaw-dash-move-up_1s_linear_infinite]"
+            className="pointer-events-none absolute bottom-0 right-4 top-0 w-px md:right-0 animate-[jotaduo-dash-move-up_1s_linear_infinite]"
             style={{
               background:
                 "repeating-linear-gradient(to bottom, rgba(255,157,77,0.45) 0 8px, transparent 8px 16px)",
@@ -311,7 +314,7 @@ export function QuickStart({ docsBase }: QuickStartProps) {
             </motion.div>
             <div className="relative isolate mx-auto max-w-4xl">
               <div
-                className="pointer-events-none absolute left-1/2 top-0 z-20 h-px w-screen -translate-x-1/2 animate-[qwenpaw-dash-move-left_1s_linear_infinite]"
+                className="pointer-events-none absolute left-1/2 top-0 z-20 h-px w-screen -translate-x-1/2 animate-[jotaduo-dash-move-left_1s_linear_infinite]"
                 style={{
                   background:
                     "repeating-linear-gradient(to right, rgba(255,157,77,0.45) 0 8px, transparent 8px 16px)",
@@ -491,28 +494,34 @@ export function QuickStart({ docsBase }: QuickStartProps) {
                           >
                             <div className="flex justify-center">
                               <div className="inline-flex h-11 items-center rounded-xl border border-[#ebe5df] bg-(--color-fill-tertiary) p-1 sm:h-11">
-                                {(["aliyun", "modelscope"] as const).map(
-                                  (platform) => (
-                                    <button
-                                      key={platform}
-                                      type="button"
-                                      onClick={() => setCloudPlatform(platform)}
-                                      className={`inline-flex h-9 items-center justify-center whitespace-nowrap rounded-lg px-4 text-sm font-semibold leading-none sm:h-10 sm:px-6 sm:text-[1.05rem] ${
-                                        cloudPlatform === platform
-                                          ? "bg-white text-(--color-text) shadow-[0_1px_2px_rgba(0,0,0,0.08)]"
-                                          : "text-(--color-text-secondary)"
-                                      }`}
-                                    >
-                                      {t(`quickstart.cloud.${platform}`)}
-                                    </button>
-                                  ),
-                                )}
+                                {(
+                                  [
+                                    "agentscope",
+                                    "aliyun",
+                                    "modelscope",
+                                  ] as const
+                                ).map((platform) => (
+                                  <button
+                                    key={platform}
+                                    type="button"
+                                    onClick={() => setCloudPlatform(platform)}
+                                    className={`inline-flex h-9 items-center justify-center whitespace-nowrap rounded-lg px-3 text-sm font-semibold leading-none sm:h-10 sm:px-5 sm:text-[1.05rem] ${
+                                      cloudPlatform === platform
+                                        ? "bg-white text-(--color-text) shadow-[0_1px_2px_rgba(0,0,0,0.08)]"
+                                        : "text-(--color-text-secondary)"
+                                    }`}
+                                  >
+                                    {t(`quickstart.cloud.${platform}`)}
+                                  </button>
+                                ))}
                               </div>
                             </div>
 
                             <a
                               href={
-                                cloudPlatform === "aliyun"
+                                cloudPlatform === "agentscope"
+                                  ? AGENTSCOPE_PLATFORM_URL
+                                  : cloudPlatform === "aliyun"
                                   ? ALIYUN_ECS_URL
                                   : MODELSCOPE_URL
                               }
@@ -520,7 +529,12 @@ export function QuickStart({ docsBase }: QuickStartProps) {
                               rel="noopener noreferrer"
                               className="inline-flex items-center justify-center gap-2 rounded-xl bg-(--color-secondary) px-4 py-3 text-sm font-medium text-(--color-text) hover:brightness-105 md:px-5 md:py-3.5 md:text-[1.08rem]"
                             >
-                              {cloudPlatform === "aliyun" ? (
+                              {cloudPlatform === "agentscope" ? (
+                                <>
+                                  <AgentScopePlatformIcon size={20} />
+                                  {t("quickstart.cloud.agentscopeGo")}
+                                </>
+                              ) : cloudPlatform === "aliyun" ? (
                                 <>
                                   <AliyunIcon size={20} />
                                   {t("quickstart.cloud.aliyunDeploy")}
@@ -607,7 +621,7 @@ export function QuickStart({ docsBase }: QuickStartProps) {
                 </motion.div>
               </div>
               <div
-                className="pointer-events-none absolute bottom-0 left-1/2 h-px w-screen -translate-x-1/2 animate-[qwenpaw-dash-move-right_1s_linear_infinite]"
+                className="pointer-events-none absolute bottom-0 left-1/2 h-px w-screen -translate-x-1/2 animate-[jotaduo-dash-move-right_1s_linear_infinite]"
                 style={{
                   background:
                     "repeating-linear-gradient(to right, rgba(255,157,77,0.45) 0 8px, transparent 8px 16px)",

@@ -33,7 +33,7 @@
 
 ### 直接编辑配置文件
 
-在 `$QWENPAW_WORKING_DIR/workspaces/<agent_id>/agent.json` 中设置：
+在 `$JOTADUO_WORKING_DIR/workspaces/<agent_id>/agent.json` 中设置：
 
 ```json
 {

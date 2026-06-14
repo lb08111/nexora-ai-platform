@@ -1,6 +1,6 @@
 # 插件系统
 
-QwenPaw 提供了插件系统，允许用户扩展 QwenPaw 的功能。
+JotaDuo 提供了插件系统，允许用户扩展 JotaDuo 的功能。
 
 ## 概述
 
@@ -10,9 +10,7 @@ QwenPaw 提供了插件系统，允许用户扩展 QwenPaw 的功能。
 - **Hook 插件**：在应用启动/关闭时执行自定义代码
 - **Command 插件**：注册自定义的 `/command` 魔法命令
 - **HTTP API 插件**：通过 FastAPI `APIRouter` 在 `/api` 下暴露自定义 REST 接口
-- **前端页面插件**：向侧边栏添加自定义页面
-- **对话工具渲染插件**：自定义对话工具调用结果的展示方式
-- **修改组件行为**：通过模块注册表修改前端已有组件行为
+- **前端扩展插件**：在浏览器中运行的 JS 插件，共享宿主的 React / Ant Design 运行时，通过声明式 `window.JotaDuo.*` API 扩展界面——注册侧边栏菜单、页面路由、UI 插槽、聊天定制等，无需修改宿主代码
 
 ## 插件管理
 
@@ -21,27 +19,27 @@ QwenPaw 提供了插件系统，允许用户扩展 QwenPaw 的功能。
 从本地目录安装：
 
 ```bash
-qwenpaw plugin install /path/to/plugin
+jotaduo plugin install /path/to/plugin
 ```
 
 从 URL 安装（支持 ZIP 文件）：
 
 ```bash
-qwenpaw plugin install https://example.com/plugin.zip
+jotaduo plugin install https://example.com/plugin.zip
 ```
 
 强制重新安装：
 
 ```bash
-qwenpaw plugin install /path/to/plugin --force
+jotaduo plugin install /path/to/plugin --force
 ```
 
-**注意**：插件操作只能在 QwenPaw 离线时执行。
+**注意**：插件操作只能在 JotaDuo 离线时执行。
 
 ### 列出已安装插件
 
 ```bash
-qwenpaw plugin list
+jotaduo plugin list
 ```
 
 输出示例：
@@ -53,19 +51,19 @@ Installed Plugins:
 my-provider (v1.0.0)
   Custom LLM provider integration
   Author: Developer Name
-  Path: /Users/user/.qwenpaw/plugins/my-provider
+  Path: /Users/user/.jotaduo/plugins/my-provider
 ```
 
 ### 查看插件详情
 
 ```bash
-qwenpaw plugin info <plugin-id>
+jotaduo plugin info <plugin-id>
 ```
 
 ### 卸载插件
 
 ```bash
-qwenpaw plugin uninstall <plugin-id>
+jotaduo plugin uninstall <plugin-id>
 ```
 
 ## 插件开发
@@ -115,7 +113,7 @@ my-plugin/
 | `entry.backend`  | `string`        | 否\* | 相对插件目录的 Python 入口文件路径，需在其中导出 `plugin`。                                                                                      |
 | `entry.frontend` | `string`        | 否\* | 已构建的前端 bundle 路径（如 `dist/index.js`）。                                                                                                 |
 | `dependencies`   | `string[]`      | 否   | Python 依赖列表，安装时通过 pip / uv 自动安装。                                                                                                  |
-| `min_version`    | `string`        | 否   | 需要的最低 QwenPaw 版本，缺省 `0.1.0`。                                                                                                          |
+| `min_version`    | `string`        | 否   | 需要的最低 JotaDuo 版本，缺省 `0.1.0`。                                                                                                          |
 | `meta`           | `object`        | 否   | 自由元数据。前端 UI 与 `type` 推断都会读取（如 `meta.tools[]`、`meta.hook_type`、`meta.provider_id`）。                                          |
 | `entry_point`    | `string`        | 否   | **遗留字段。** 等价于 `entry.backend`，仅为兼容老插件保留，新插件请使用 `entry.backend`。                                                        |
 
@@ -138,7 +136,7 @@ my-plugin/
 # -*- coding: utf-8 -*-
 """My Plugin Entry Point."""
 
-from qwenpaw.plugins.api import PluginApi
+from jotaduo.plugins.api import PluginApi
 import logging
 
 logger = logging.getLogger(__name__)
@@ -169,15 +167,53 @@ plugin = MyPlugin()
 
 ### 前端插件
 
-#### 基本结构
+前端插件是运行在浏览器端的 JavaScript 扩展。与后端插件通过 Python `PluginApi` 注册能力不同，前端插件通过全局 `window.JotaDuo.*` API 声明式地扩展 Console 界面。
 
-每个前端插件至少需要以下文件：
+**加载生命周期：**
+
+1. Console 启动，在 `window.JotaDuo` 上挂载 Host SDK（React、antd 等共享依赖）和注册 API（menu、route、slot、chat 等命名空间）
+2. Console 请求 `/frontend_plugin` 获取已启用的前端插件列表
+3. 逐一下载各插件的 JS bundle，通过 Blob URL 动态导入执行
+4. 插件代码执行，调用 `window.JotaDuo.*` 注册菜单、路由、聊天定制等 UI 扩展
+5. 注册立即生效——菜单出现在侧边栏、路由可导航、聊天区域呈现定制内容
+
+插件无需声明使用了哪些扩展点；系统通过 `pluginId` 自动追踪所有注册。卸载或禁用插件时，通过 `dispose()` 或 `chat.disposeAll(pluginId)` 清理全部注册。
+
+**设计特点：**
+
+| 特点              | 说明                                                                             |
+| ----------------- | -------------------------------------------------------------------------------- |
+| **共享运行时**    | React、ReactDOM、Ant Design 由宿主提供，插件无需打包，避免版本冲突和体积膨胀     |
+| **声明式注册**    | 三个核心动词：`set`（设置 / 合并属性）、`render`（替换渲染）、`add`（追加项目）  |
+| **pluginId 隔离** | 所有注册方法以 `pluginId` 为第一参数，系统据此追踪来源、检测冲突、支持按插件清理 |
+| **可撤销**        | 每个注册返回 `{ dispose() }` 对象，调用即撤销，支持热重载和插件卸载              |
+| **国际化**        | 文本字段支持 `Localized<T>` 类型——传入 `(locale) => string` 函数按语言返回不同值 |
+
+**扩展点一览：**
+
+| 命名空间                          | 能力                            | 典型用途                                        |
+| --------------------------------- | ------------------------------- | ----------------------------------------------- |
+| `host`                            | 共享依赖、React Hooks、认证请求 | 获取 React / antd、读取主题和语言、调用后端 API |
+| `menu`                            | 侧边栏菜单项                    | 添加导航入口                                    |
+| `route`                           | 页面路由                        | 注册新页面、包装已有页面                        |
+| `slot`                            | 通用 UI 插槽                    | 向 Header / Sidebar 等预设位置注入内容          |
+| `chat.welcome`                    | 欢迎界面                        | 自定义问候语、推荐提示词                        |
+| `chat.theme`                      | 聊天主题色                      | 更换主色调                                      |
+| `chat.leftHeader` / `rightHeader` | 聊天头部                        | 设置品牌 Logo、添加操作按钮                     |
+| `chat.sender`                     | 输入框                          | 自定义 placeholder、输入建议                    |
+| `chat.actions` / `requestActions` | 消息操作按钮                    | 在消息下方添加自定义操作                        |
+| `chat.request` / `response`       | 消息气泡                        | 在消息前后追加内容或完全替换渲染                |
+| `chat.toolRender`                 | 工具调用渲染                    | 自定义工具结果展示（如天气卡片）                |
+| `chat.card`                       | 自定义卡片                      | 注册新的卡片类型                                |
+| `audit`                           | 审计与调试                      | 查看所有扩展注册记录                            |
+
+#### 基本结构
 
 ```
 my-plugin/
 ├── plugin.json      # 插件清单（必需）
 ├── src/
-│   └── index.tsx    # 入口点（前端必需）
+│   └── index.tsx    # 入口点，调用 window.JotaDuo.* API
 ├── package.json     # 依赖声明
 ├── tsconfig.json    # TypeScript 配置
 └── vite.config.ts   # 构建配置
@@ -198,26 +234,19 @@ my-plugin/
 
 #### src/index.tsx
 
+插件入口文件在加载时执行，通过 `window.JotaDuo.*` API 注册扩展：
+
 ```tsx
-const { React, antd } = (window as any).QwenPaw.host;
+const { React, antd } = window.JotaDuo.host;
+const pluginId = "my-plugin";
 
-class MyPlugin {
-  readonly id = "my-plugin";
-
-  setup(): void {
-    // 注册侧边栏页面
-    // (window as any).QwenPaw.registerRoutes?.(this.id, [...]);
-    // 注册工具调用渲染器
-    // (window as any).QwenPaw.registerToolRender?.(this.id, {...});
-    // 访问并修改应用内部模块
-    // const mod = (window as any).QwenPaw?.modules?.['xxxx'];
-  }
-}
-
-new MyPlugin().setup();
+// 调用 window.JotaDuo.* API 注册菜单、路由、聊天定制等
+// 详见下方「前端扩展 API」
 ```
 
-#### package.json
+#### 构建工具链
+
+**package.json**：
 
 ```json
 {
@@ -232,7 +261,7 @@ new MyPlugin().setup();
 }
 ```
 
-#### tsconfig.json
+**tsconfig.json**：
 
 ```json
 {
@@ -247,7 +276,7 @@ new MyPlugin().setup();
 }
 ```
 
-#### vite.config.ts
+**vite.config.ts**：
 
 ```ts
 import { defineConfig } from "vite";
@@ -266,31 +295,323 @@ export default defineConfig({
 });
 ```
 
+`jsxRuntime: "classic"` 将 JSX 编译为 `React.createElement`，使用宿主提供的 `React`；`external` 避免打包 React，使用应用已加载的版本。
+
 #### 构建和安装
 
 ```bash
 npm install && npm run build
-cp -r . ~/.qwenpaw/plugins/my-plugin/
-qwenpaw app
+cp -r . ~/.jotaduo/plugins/my-plugin/
+jotaduo app
 ```
 
-**说明**：`window.QwenPaw.host` 提供以下共享库，插件无需自行打包：
+可将 `console/src/plugins/types/jotaduo.d.ts` 复制到插件项目中作为 `jotaduo-host.d.ts`，获得完整的类型提示。
 
-| 名称              | 类型                       | 说明               |
-| ----------------- | -------------------------- | ------------------ |
-| `React`           | `typeof React`             | React 运行时       |
-| `antd`            | `typeof antd`              | Ant Design 组件库  |
-| `getApiUrl(path)` | `(path: string) => string` | 构造完整 API URL   |
-| `getApiToken()`   | `() => string`             | 获取当前认证 Token |
+## 前端扩展 API
 
-**构建说明**：
+前端插件通过 `window.JotaDuo.*` API 扩展 Console 界面，无需修改宿主代码。所有注册方法第一个参数是 `pluginId`，每个注册返回 `{ dispose() }` 对象用于撤销。
 
-- `jsxRuntime: "classic"` — 将 JSX 编译为 `React.createElement`，使用宿主提供的 `React`，无需在插件中引入
-- `external: ["react", "react-dom"]` — 不打包 React，使用应用已加载的版本
+### Host SDK — `window.JotaDuo.host`
 
-**`window.QwenPaw.modules`**：应用启动时会将 `src/pages/` 下的所有模块自动注册到此对象，插件可通过模块键名访问并替换内部导出
+宿主共享依赖，插件无需打包这些库：
 
-> ⚠️ **注意**：`modules` 中的模块结构未作为公开 API 维护，可能随版本变化而调整，使用前请确认兼容性。
+```ts
+host.React                        // React 库
+host.ReactDOM                     // ReactDOM 库
+host.antd                         // Ant Design 组件库
+host.antdIcons                    // Ant Design 图标库
+host.apiBaseUrl                   // API 基础 URL
+host.getApiUrl(path: string)      // 拼接完整 API URL
+host.getApiToken(): string | null // 获取当前认证 Token
+```
+
+**React Hooks（在 React 组件内使用）：**
+
+```ts
+const theme = window.JotaDuo.host.useTheme(); // "light" | "dark"
+const locale = window.JotaDuo.host.useLocale(); // "zh" | "en"
+const agent = window.JotaDuo.host.useSelectedAgent(); // { id: string }
+const session = window.JotaDuo.host.useCurrentSession(); // { id: string } | null
+```
+
+**命令式获取（可在任意位置调用）：**
+
+```ts
+const agentId = window.JotaDuo.host.getSelectedAgentId();
+const sessionId = window.JotaDuo.host.getCurrentSessionId();
+```
+
+**认证代理请求（自动注入 Authorization 和 X-Agent-Id 请求头）：**
+
+```ts
+const resp = await window.JotaDuo.host.fetch("/api/v1/my-endpoint", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ query: "test" }),
+});
+const data = await resp.json();
+```
+
+### 侧边栏菜单 — `window.JotaDuo.menu`
+
+| 方法       | 签名                                     | 说明             |
+| ---------- | ---------------------------------------- | ---------------- |
+| `add`      | `(pluginId, item \| item[]): Disposable` | 添加菜单项       |
+| `replace`  | `(pluginId, targetId, item): Disposable` | 替换已有菜单项   |
+| `remove`   | `(targetId): void`                       | 移除菜单项       |
+| `snapshot` | `(location?): MenuItem[]`                | 获取当前菜单快照 |
+
+**MenuItem 参数：**
+
+```ts
+{
+  id: string;                    // 全局唯一，如 "my-plugin.foo"
+  label: string | (() => ReactNode);
+  icon?: ReactComponent | ReactNode;
+  route?: string;                // 点击时导航到的路由 id
+  parentId?: string;             // 挂在哪个分组下
+  location?: "primary.agentScoped" | "primary.settings" | "userMenu";
+  before?: string;               // 排在某个 id 之前
+  after?: string;                // 排在某个 id 之后
+  order?: number;                // 数值越小越靠前
+  visible?: () => boolean;       // 动态控制显隐
+  isGroup?: boolean;             // 作为分组标题
+  divider?: boolean;             // 渲染为水平分割线
+}
+```
+
+### 页面路由 — `window.JotaDuo.route`
+
+| 方法      | 签名                                          | 说明                     |
+| --------- | --------------------------------------------- | ------------------------ |
+| `add`     | `(pluginId, route \| route[]): Disposable`    | 注册新路由               |
+| `replace` | `(pluginId, targetId, component): Disposable` | 替换已有路由的组件       |
+| `wrap`    | `(pluginId, targetId, wrapper): Disposable`   | 包装已有路由（洋葱模式） |
+| `remove`  | `(targetId): void`                            | 移除路由                 |
+
+**Route 参数：**
+
+```ts
+{
+  id: string; // 全局唯一，如 "my-plugin.home"
+  path: string; // URL 路径，支持 react-router 模式
+  component: React.ComponentType; // 页面组件
+}
+```
+
+**wrap 示例（为已有页面加顶部 banner）：**
+
+```tsx
+window.JotaDuo.route.wrap("my-plugin", "core.chat", (Inner) => {
+  return () => (
+    <div>
+      <div style={{ background: "#fff3cd", padding: 8, textAlign: "center" }}>
+        Beta Feature
+      </div>
+      <Inner />
+    </div>
+  );
+});
+```
+
+### 通用 UI 插槽 — `window.JotaDuo.slot`
+
+| 方法       | 签名                                          | 说明                                          |
+| ---------- | --------------------------------------------- | --------------------------------------------- |
+| `fill`     | `(pluginId, name, render, opts?): Disposable` | 向插槽追加内容（可多个共存）                  |
+| `replace`  | `(pluginId, name, render, opts?): Disposable` | 替换插槽内容（最后注册的生效，屏蔽所有 fill） |
+| `snapshot` | `(): SlotInfo[]`                              | 获取所有已注册的插槽信息                      |
+
+**内置插槽：**
+
+| 插槽名              | 类型    | UI 位置                        |
+| ------------------- | ------- | ------------------------------ |
+| `header.logo`       | replace | 顶部导航栏最左侧               |
+| `header.left`       | fill    | 顶部导航栏左区（Logo 右边）    |
+| `header.right`      | fill    | 顶部导航栏右区（设置按钮左边） |
+| `sider.top`         | fill    | 侧边栏顶部（Agent 选择器下方） |
+| `sider.bottom`      | fill    | 侧边栏底部（菜单下方）         |
+| `content.statusBar` | fill    | 主内容区顶部                   |
+| `overlay.global`    | fill    | 全局覆盖层                     |
+
+**示例：**
+
+```tsx
+// 替换 Header Logo
+window.JotaDuo.slot.replace("my-plugin", "header.logo", (defaultLogo) => {
+  return <img src="https://example.com/logo.svg" style={{ height: 24 }} />;
+});
+```
+
+### 聊天欢迎界面 — `chat.welcome`
+
+```tsx
+window.JotaDuo.chat.welcome.set("my-plugin", {
+  greeting: (locale) => (locale.startsWith("zh") ? "你好！" : "Hello!"),
+  description: "I specialize in data analysis.",
+  avatar: "https://example.com/avatar.png",
+  nick: "My Bot",
+  prompts: [
+    { label: "分析数据", value: "请分析上传的数据集" },
+    { label: "生成图表", value: "根据数据创建柱状图" },
+  ],
+});
+
+// 或完全替换欢迎界面
+window.JotaDuo.chat.welcome.render("my-plugin", (props) => {
+  return <div>Custom Welcome</div>;
+});
+```
+
+### 聊天主题 — `chat.theme`
+
+```ts
+window.JotaDuo.chat.theme.set("my-plugin", {
+  colorPrimary: "#1890ff",
+});
+```
+
+### 聊天头部 — `chat.leftHeader` / `chat.rightHeader`
+
+```tsx
+// 设置左上角标题
+window.JotaDuo.chat.leftHeader.set("my-plugin", {
+  title: "My Brand",
+  logo: <img src="logo.svg" style={{ height: 20 }} />,
+});
+
+// 在右上角添加按钮
+window.JotaDuo.chat.rightHeader.add(
+  "my-plugin",
+  <button
+    onClick={() => alert("Plugin action!")}
+    style={{ border: "none", background: "none", cursor: "pointer" }}
+  >
+    My Button
+  </button>,
+  { id: "my-plugin.btn", order: 10 },
+);
+```
+
+### 输入框 — `chat.sender`
+
+```ts
+// 自定义 placeholder
+window.JotaDuo.chat.sender.set("my-plugin", {
+  placeholder: "Ask me anything...",
+  disclaimer: "Responses may not be accurate.",
+});
+
+// 添加输入建议
+window.JotaDuo.chat.sender.addSuggestion("my-plugin", {
+  id: "my-plugin.suggestions",
+  items: [
+    { label: "/analyze", value: "analyze" },
+    { label: "/visualize", value: "visualize" },
+  ],
+});
+```
+
+### 消息操作按钮 — `chat.actions` / `chat.requestActions`
+
+```tsx
+// AI 回复消息下方添加操作按钮
+window.JotaDuo.chat.actions.add("my-plugin", {
+  id: "my-plugin.star",
+  icon: <span>⭐</span>,
+  onClick: ({ data }) => console.log("Starred:", data),
+});
+
+// 用户消息下方添加操作按钮
+window.JotaDuo.chat.requestActions.add("my-plugin", {
+  id: "my-plugin.edit",
+  icon: <span>✏️</span>,
+  onClick: ({ data }) => console.log("Edit:", data),
+});
+```
+
+### 消息气泡自定义 — `chat.request` / `chat.response`
+
+```tsx
+// 在用户消息前方追加内容
+window.JotaDuo.chat.request.prepend("my-plugin", ({ data }) => {
+  return <div style={{ fontSize: 10, color: "#999" }}>User</div>;
+});
+
+// 在最新 AI 回复下方追加信息条
+window.JotaDuo.chat.response.append("my-plugin", ({ data, isLast }) => {
+  if (!isLast) return null;
+  return (
+    <div
+      style={{
+        background: "#e3f2fd",
+        padding: "4px 8px",
+        borderRadius: 4,
+        fontSize: 12,
+      }}
+    >
+      Powered by My Plugin
+    </div>
+  );
+});
+
+// 完全替换用户消息渲染（可调用 fallback() 保留默认渲染）
+window.JotaDuo.chat.request.render("my-plugin", ({ data, fallback }) => {
+  return (
+    <div style={{ border: "1px dashed #ccc", borderRadius: 8, padding: 4 }}>
+      {fallback()}
+    </div>
+  );
+});
+```
+
+### 工具调用渲染 — `chat.toolRender`
+
+```tsx
+// 注册自定义工具结果渲染组件（props 包含 result, sessionId, messageId）
+window.JotaDuo.chat.toolRender("my-plugin", "get_weather", ({ result }) => {
+  const data = typeof result === "string" ? JSON.parse(result) : result;
+  return (
+    <div style={{ padding: 12, border: "1px solid #e8e8e8", borderRadius: 8 }}>
+      {data.city}: {data.temperature}°C
+    </div>
+  );
+});
+```
+
+### 自定义卡片 — `chat.card`
+
+```ts
+window.JotaDuo.chat.card("my-plugin", "my-card", MyCardComponent);
+```
+
+### 审计与调试
+
+```ts
+// 查看扩展注册记录
+console.table(window.JotaDuo.audit.overrides());
+
+// 清理插件的所有 Chat 扩展注册
+window.JotaDuo.chat.disposeAll("my-plugin");
+```
+
+### 国际化支持
+
+所有支持 `Localized<T>` 类型的字段可传入函数，按语言返回不同值：
+
+```ts
+window.JotaDuo.chat.welcome.set("my-plugin", {
+  greeting: (locale) => (locale.startsWith("zh") ? "你好！" : "Hello!"),
+});
+```
+
+### 常见错误
+
+| 错误                              | 原因                                 | 解决                                        |
+| --------------------------------- | ------------------------------------ | ------------------------------------------- |
+| `e.item.render is not a function` | render/prepend/append 传了非函数     | 确保传入 React 组件或返回 ReactNode 的函数  |
+| `duplicate id`                    | 两次 `add` 使用了相同 id             | 使用全局唯一 id（推荐 `pluginId.xxx` 格式） |
+| Hook 在组件外调用                 | `useTheme()` 等在非 React 上下文使用 | 改用 `getSelectedAgentId()` 等命令式 API    |
 
 ## 使用示例
 
@@ -333,8 +654,8 @@ cd my-llm-provider
 # -*- coding: utf-8 -*-
 """My LLM Provider Implementation."""
 
-from qwenpaw.providers.openai_provider import OpenAIProvider
-from qwenpaw.providers.provider import ModelInfo
+from jotaduo.providers.openai_provider import OpenAIProvider
+from jotaduo.providers.provider import ModelInfo
 from typing import List
 
 
@@ -376,7 +697,7 @@ import importlib.util
 import logging
 import os
 
-from qwenpaw.plugins.api import PluginApi
+from jotaduo.plugins.api import PluginApi
 
 logger = logging.getLogger(__name__)
 
@@ -424,10 +745,10 @@ plugin = MyLLMProviderPlugin()
 
 ```bash
 # 安装插件
-qwenpaw plugin install my-llm-provider
+jotaduo plugin install my-llm-provider
 
-# 启动 QwenPaw
-qwenpaw app
+# 启动 JotaDuo
+jotaduo app
 
 # 在 Web UI 中配置 API Key
 # 然后就可以使用新的 Provider 了
@@ -435,7 +756,7 @@ qwenpaw app
 
 ### 示例 2：添加启动钩子
 
-假设你想在 QwenPaw 启动时初始化一个监控服务。
+假设你想在 JotaDuo 启动时初始化一个监控服务。
 
 #### 1. 创建插件
 
@@ -468,7 +789,7 @@ cd monitoring-hook
 # -*- coding: utf-8 -*-
 """Monitoring Hook Plugin Entry Point."""
 
-from qwenpaw.plugins.api import PluginApi
+from jotaduo.plugins.api import PluginApi
 import logging
 
 logger = logging.getLogger(__name__)
@@ -492,7 +813,7 @@ class MonitoringHookPlugin:
 
                 # 初始化你的监控服务
                 # from my_monitoring import init_monitoring
-                # init_monitoring(app_name="QwenPaw")
+                # init_monitoring(app_name="JotaDuo")
 
                 logger.info("✓ Monitoring initialized successfully")
 
@@ -519,8 +840,8 @@ plugin = MonitoringHookPlugin()
 #### 4. 安装
 
 ```bash
-qwenpaw plugin install monitoring-hook
-qwenpaw app
+jotaduo plugin install monitoring-hook
+jotaduo app
 ```
 
 ### 示例 3：添加自定义命令
@@ -590,7 +911,7 @@ class StatusQueryRewriter:
 
 import logging
 
-from qwenpaw.plugins.api import PluginApi
+from jotaduo.plugins.api import PluginApi
 
 logger = logging.getLogger(__name__)
 
@@ -617,7 +938,7 @@ class StatusCommandPlugin:
 
     def _patch_query_handler(self):
         """Patch AgentRunner.query_handler to rewrite /status queries."""
-        from qwenpaw.app.runner.runner import AgentRunner
+        from jotaduo.app.runner.runner import AgentRunner
         from .query_rewriter import StatusQueryRewriter
 
         original_query_handler = AgentRunner.query_handler
@@ -663,8 +984,8 @@ plugin = StatusCommandPlugin()
 #### 5. 安装和使用
 
 ```bash
-qwenpaw plugin install status-command
-qwenpaw app
+jotaduo plugin install status-command
+jotaduo app
 
 # 使用命令
 /status
@@ -672,15 +993,9 @@ qwenpaw app
 
 ### 示例 4：添加自定义前端页面
 
-向侧边栏添加一个欢迎页面。
+向侧边栏添加一个欢迎页面。构建工具链文件（`package.json`、`tsconfig.json`、`vite.config.ts`）参考上方「前端插件 > 构建工具链」。
 
-#### 1. 创建插件目录
-
-```bash
-mkdir welcome-plugin && cd welcome-plugin
-```
-
-#### 2. 创建 plugin.json
+**plugin.json**：
 
 ```json
 {
@@ -694,235 +1009,101 @@ mkdir welcome-plugin && cd welcome-plugin
 }
 ```
 
-#### 3. 创建 src/index.tsx
+**src/index.tsx**：
 
 ```tsx
-const { React, antd } = (window as any).QwenPaw.host;
+const { React, antd } = window.JotaDuo.host;
 const { Typography, Card } = antd;
-const { Title, Paragraph } = Typography;
+const pluginId = "welcome-plugin";
 
-function WelcomePage() {
+const WelcomePage = () => {
+  const theme = window.JotaDuo.host.useTheme();
   return (
-    <Card style={{ maxWidth: 480, margin: "40px auto" }}>
-      <Title level={2}>Welcome to QwenPaw 👋</Title>
-      <Paragraph>插件系统运行正常！</Paragraph>
+    <Card
+      style={{
+        maxWidth: 480,
+        margin: "40px auto",
+        background: theme === "dark" ? "#1f1f1f" : "#fff",
+      }}
+    >
+      <Typography.Title level={2}>Welcome to JotaDuo</Typography.Title>
+      <Typography.Paragraph>插件系统运行正常！</Typography.Paragraph>
     </Card>
   );
-}
+};
 
-class WelcomePlugin {
-  readonly id = "welcome-plugin";
+window.JotaDuo.menu.add(pluginId, {
+  id: "welcome-plugin.home",
+  label: "Welcome",
+  icon: "spark-home-line",
+  route: "welcome-plugin.home",
+});
 
-  setup(): void {
-    (window as any).QwenPaw.registerRoutes?.(this.id, [
-      {
-        path: "/plugin/welcome-plugin/home",
-        component: WelcomePage,
-        label: "Welcome",
-        icon: "👋",
-        priority: 5,
-      },
-    ]);
-  }
-}
-
-new WelcomePlugin().setup();
-```
-
-#### 4. 创建 package.json
-
-```json
-{
-  "name": "welcome-plugin",
-  "version": "1.0.0",
-  "scripts": { "build": "vite build" },
-  "devDependencies": {
-    "vite": "^5.0.0",
-    "typescript": "^5.0.0",
-    "@vitejs/plugin-react": "^4.0.0"
-  }
-}
-```
-
-#### 5. 创建 tsconfig.json
-
-```json
-{
-  "compilerOptions": {
-    "target": "ES2020",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "jsx": "react",
-    "strict": false,
-    "skipLibCheck": true
-  },
-  "include": ["src"]
-}
-```
-
-#### 6. 创建 vite.config.ts
-
-```ts
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-
-export default defineConfig({
-  plugins: [react({ jsxRuntime: "classic" })],
-  build: {
-    lib: {
-      entry: "src/index.tsx",
-      formats: ["es"],
-      fileName: () => "index.js",
-    },
-    rollupOptions: { external: ["react", "react-dom"] },
-  },
+window.JotaDuo.route.add(pluginId, {
+  id: "welcome-plugin.home",
+  path: "/welcome-plugin/home",
+  component: WelcomePage,
 });
 ```
 
-#### 7. 构建和安装
-
 ```bash
 npm install && npm run build
-cp -r . ~/.qwenpaw/plugins/welcome-plugin/
-qwenpaw app
+cp -r . ~/.jotaduo/plugins/welcome-plugin/
+jotaduo app
 ```
 
 ### 示例 5：自定义工具调用渲染
 
-自定义 Agent 工具调用结果的展示方式。
+自定义 Agent 工具调用结果的展示方式。项目结构同示例 4，仅 `src/index.tsx` 不同。
 
-#### 1. 创建插件目录
-
-```bash
-mkdir tool-render-plugin && cd tool-render-plugin
-```
-
-#### 2. 创建 plugin.json
-
-```json
-{
-  "id": "tool-render-plugin",
-  "name": "Tool Render Plugin",
-  "version": "1.0.0",
-  "type": "frontend",
-  "description": "Custom tool result renderer",
-  "author": "Your Name",
-  "entry": { "frontend": "dist/index.js" }
-}
-```
-
-#### 3. 创建 src/index.tsx
+**src/index.tsx**：
 
 ```tsx
-const { React, antd } = (window as any).QwenPaw.host;
-const { Card } = antd;
+const { React, antd } = window.JotaDuo.host;
+const { Card, Descriptions } = antd;
+const pluginId = "tool-render-plugin";
 
-function MyToolCard({ result }) {
+window.JotaDuo.chat.toolRender(pluginId, "get_weather", ({ result }) => {
+  const data = typeof result === "string" ? JSON.parse(result) : result;
   return (
-    <Card style={{ marginTop: 8 }}>
-      <pre>{JSON.stringify(result, null, 2)}</pre>
+    <Card title="天气信息" size="small" style={{ marginTop: 8, maxWidth: 400 }}>
+      <Descriptions column={1} size="small">
+        <Descriptions.Item label="城市">{data.city}</Descriptions.Item>
+        <Descriptions.Item label="温度">{data.temperature}°C</Descriptions.Item>
+        <Descriptions.Item label="天气">{data.weather}</Descriptions.Item>
+      </Descriptions>
     </Card>
   );
-}
-
-class ToolRenderPlugin {
-  readonly id = "tool-render-plugin";
-
-  setup(): void {
-    (window as any).QwenPaw.registerToolRender?.(this.id, {
-      my_tool_name: MyToolCard, // key = tool name returned by Agent
-    });
-  }
-}
-
-new ToolRenderPlugin().setup();
+});
 ```
 
-#### 4. 其他文件
+### 示例 6：自定义聊天欢迎界面
 
-复用示例 4 中的 `package.json`、`tsconfig.json`、`vite.config.ts`，将 `name` 改为 `tool-render-plugin`。
+定制对话页面的欢迎语、描述和推荐提示词。项目结构同示例 4，仅 `src/index.tsx` 不同。
 
-#### 5. 构建和安装
-
-```bash
-npm install && npm run build
-cp -r . ~/.qwenpaw/plugins/tool-render-plugin/
-qwenpaw app
-```
-
-### 示例 6：修改组件行为
-
-我们定制一个对话页面欢迎语
-
-#### 1. 创建插件目录
-
-```bash
-mkdir custom-greeting-plugin && cd custom-greeting-plugin
-```
-
-#### 2. 创建 plugin.json
-
-```json
-{
-  "id": "custom-greeting-plugin",
-  "name": "Custom Greeting",
-  "version": "1.0.0",
-  "type": "frontend",
-  "description": "Customize chat greeting",
-  "author": "Your Name",
-  "entry": { "frontend": "dist/index.js" }
-}
-```
-
-#### 3. 创建 src/index.tsx
+**src/index.tsx**：
 
 ```tsx
-class CustomGreetingPlugin {
-  readonly id = "custom-greeting-plugin";
+const pluginId = "custom-greeting-plugin";
 
-  setup(): void {
-    const mod = (window as any).QwenPaw?.modules?.[
-      "Chat/OptionsPanel/defaultConfig"
-    ];
-    if (!mod?.configProvider) {
-      console.warn("configProvider not found");
-      return;
-    }
-
-    // 替换聊天欢迎语
-    mod.configProvider.getGreeting = () => "你好！我是定制版 QwenPaw 👋";
-
-    // 替换聊天描述
-    mod.configProvider.getDescription = () => "这是一个定制化的聊天助手";
-
-    // 替换提示词列表
-    mod.configProvider.getPrompts = (t: any) => [
-      { value: "帮我分析这段代码" },
-      { value: "写一个单元测试" },
-      { value: "优化这段逻辑" },
-    ];
-  }
-}
-
-new CustomGreetingPlugin().setup();
-```
-
-#### 4. 其他文件
-
-复用示例 4 中的 `package.json`、`tsconfig.json`、`vite.config.ts`，将 `name` 改为 `custom-greeting-plugin`。
-
-#### 5. 构建和安装
-
-```bash
-npm install && npm run build
-cp -r . ~/.qwenpaw/plugins/custom-greeting-plugin/
-qwenpaw app
+window.JotaDuo.chat.welcome.set(pluginId, {
+  greeting: (locale) =>
+    locale.startsWith("zh")
+      ? "你好！我是定制版 JotaDuo"
+      : "Hello! I'm customized JotaDuo",
+  description: "这是一个定制化的聊天助手",
+  prompts: [
+    { label: "分析代码", value: "帮我分析这段代码" },
+    { label: "单元测试", value: "写一个单元测试" },
+    { label: "优化逻辑", value: "优化这段逻辑" },
+  ],
+});
 ```
 
 ### 示例 7：暴露 FastAPI 接口
 
 后端插件可以通过注册 `fastapi.APIRouter` 暴露自己的 HTTP 接口。路由会挂载在
-`/api` 加上你指定的前缀下，与 QwenPaw 核心 API 使用同一个 FastAPI 应用，因此
+`/api` 加上你指定的前缀下，与 JotaDuo 核心 API 使用同一个 FastAPI 应用，因此
 共享 CORS、鉴权等设置，并会出现在 `/openapi.json` 与 `/docs` 中。
 
 下面示例增加一个简单的 `/api/pets` 接口：列出宠物，并支持新增。
@@ -963,7 +1144,7 @@ from typing import List
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from qwenpaw.plugins.api import PluginApi
+from jotaduo.plugins.api import PluginApi
 
 logger = logging.getLogger(__name__)
 
@@ -1049,10 +1230,10 @@ plugin = PetApiPlugin()
 #### 4. 安装并试用
 
 ```bash
-qwenpaw plugin install pet-api-plugin
+jotaduo plugin install pet-api-plugin
 ```
 
-启动 QwenPaw 后，可在终端用 `curl` 测试（端口请按你本地实际为准，例如 `8088`）：
+启动 JotaDuo 后，可在终端用 `curl` 测试（端口请按你本地实际为准，例如 `8088`）：
 
 ```bash
 # 列出全部宠物
@@ -1170,18 +1351,18 @@ api.register_startup_hook("late", callback, priority=200)
 1. 检查插件是否已安装：
 
    ```bash
-   qwenpaw plugin list
+   jotaduo plugin list
    ```
 
-2. 查看 QwenPaw 日志：
+2. 查看 JotaDuo 日志：
 
    ```bash
-   tail -f ~/.qwenpaw/logs/qwenpaw.log | grep -i plugin
+   tail -f ~/.jotaduo/logs/jotaduo.log | grep -i plugin
    ```
 
 3. 验证插件清单格式：
    ```bash
-   qwenpaw plugin info <plugin-id>
+   jotaduo plugin info <plugin-id>
    ```
 
 ### 依赖安装失败
@@ -1195,7 +1376,7 @@ api.register_startup_hook("late", callback, priority=200)
 
 ### Provider 未显示
 
-1. 确认插件已安装并重启 QwenPaw
+1. 确认插件已安装并重启 JotaDuo
 2. 检查 Web UI 的模型管理页面
 3. 查看日志中的 provider 注册信息
 
@@ -1207,10 +1388,10 @@ api.register_startup_hook("late", callback, priority=200)
 
 ## 安全注意事项
 
-1. **只安装可信插件**：插件代码会在 QwenPaw 进程中执行
+1. **只安装可信插件**：插件代码会在 JotaDuo 进程中执行
 2. **检查依赖**：确保插件依赖来自可信源
 3. **审查代码**：安装前审查插件源代码
-4. **离线操作**：插件安装/卸载需要 QwenPaw 离线
+4. **离线操作**：插件安装/卸载需要 JotaDuo 离线
 
 ## PluginApi 参考
 
@@ -1271,12 +1452,12 @@ api.register_http_router(
 
 ### Monkey Patch
 
-对于需要修改 QwenPaw 行为的插件（如自定义命令），可以使用 monkey patch：
+对于需要修改 JotaDuo 行为的插件（如自定义命令），可以使用 monkey patch：
 
 ```python
 def _patch_query_handler(self):
     """Patch AgentRunner to intercept queries."""
-    from qwenpaw.app.runner.runner import AgentRunner
+    from jotaduo.app.runner.runner import AgentRunner
 
     original_handler = AgentRunner.query_handler
 
@@ -1316,12 +1497,12 @@ zip -r my-plugin-1.0.0.zip my-plugin/
 用户可以通过 URL 安装：
 
 ```bash
-qwenpaw plugin install https://example.com/my-plugin-1.0.0.zip
+jotaduo plugin install https://example.com/my-plugin-1.0.0.zip
 ```
 
 ## 常见问题
 
-### Q: 插件可以访问哪些 QwenPaw API？
+### Q: 插件可以访问哪些 JotaDuo API？
 
 A: 插件通过 `PluginApi` 访问核心功能，包括：
 
@@ -1330,7 +1511,7 @@ A: 插件通过 `PluginApi` 访问核心功能，包括：
 - HTTP 路由注册（`register_http_router`）
 - Runtime helpers（provider_manager 等）
 
-### Q: 插件可以修改 QwenPaw 的核心行为吗？
+### Q: 插件可以修改 JotaDuo 的核心行为吗？
 
 A: 可以，通过 monkey patch 或 hook 机制。但请谨慎使用，确保不会破坏核心功能。
 
@@ -1342,26 +1523,26 @@ A: 如果多个插件注册相同的 provider_id 或 command_name，后注册的
 
 ### GPT Image 2 工具插件
 
-一个为 QwenPaw agents 添加 OpenAI GPT Image 2 图片生成能力的工具插件。
+一个为 JotaDuo agents 添加 OpenAI GPT Image 2 图片生成能力的工具插件。
 
 **系统要求：**
 
-- QwenPaw 最低版本：`1.1.5`
+- JotaDuo 最低版本：`1.1.5`
 
 **安装方法：**
 
 ```bash
-# 克隆 QwenPaw 仓库（如果尚未克隆）
+# 克隆 JotaDuo 仓库（如果尚未克隆）
 git clone https://github.com/agentscope-ai/QwenPaw.git
-cd QwenPaw
+cd JotaDuo
 
 # 安装插件
-qwenpaw plugin install plugins/tool/gpt-image2
+jotaduo plugin install plugins/tool/gpt-image2
 ```
 
 **配置步骤：**
 
-1. 安装完成后，重启 QwenPaw
+1. 安装完成后，重启 JotaDuo
 2. 进入 Agent 设置 → 工具管理
 3. 找到 "generate_image_gpt" 工具
 4. 点击"配置"按钮，输入你的 OpenAI API Key

@@ -1,5 +1,5 @@
 /**
- * QwenPaw branding logo (logo.png). Favicon uses qwenpaw-symbol.svg.
+ * JotaDuo branding logo (logo.png). Favicon uses jotaduo-symbol.svg.
  */
 interface CatPawIconProps {
   size: number;

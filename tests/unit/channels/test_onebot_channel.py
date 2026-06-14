@@ -11,7 +11,7 @@ from agentscope_runtime.engine.schemas.agent_schemas import (
     TextContent,
 )
 
-from qwenpaw.app.channels.onebot.channel import OneBotChannel
+from jotaduo.app.channels.onebot.channel import OneBotChannel
 
 
 # ---------------------------------------------------------------------------
@@ -718,9 +718,103 @@ class TestLifecycle:
         assert ch._app is not None
         assert ch._runner is not None
         assert ch._site is not None
+        assert ch._watchdog_task is not None
+        assert not ch._watchdog_task.done()
         await ch.stop()
         assert ch._site is None
         assert ch._runner is None
+        assert ch._stopping is True
+
+
+# ===================================================================
+# Watchdog / reconnect
+# ===================================================================
+
+
+class TestWatchdog:
+    async def test_watchdog_restarts_when_site_is_none(self):
+        """Watchdog should restart the WS server if _site becomes None."""
+        ch = _make_channel(ws_port=0)
+        ch._watchdog_interval = 0.05  # speed up for test
+        await ch.start()
+        assert ch._site is not None
+
+        # Simulate server crash: clear server state without full stop
+        old_site = ch._site
+        await old_site.stop()
+        await ch._runner.cleanup()
+        ch._site = None
+        ch._runner = None
+        ch._app = None
+
+        # Wait for watchdog to detect and restart
+        await asyncio.sleep(0.2)
+
+        assert ch._site is not None, "watchdog should have restarted server"
+        assert ch._app is not None
+        assert ch._runner is not None
+
+        await ch.stop()
+
+    async def test_watchdog_restarts_when_port_unreachable(self):
+        """Watchdog should restart if _site exists but port is dead."""
+        ch = _make_channel(ws_port=0)
+        ch._watchdog_interval = 0.05
+        await ch.start()
+        assert ch._site is not None
+
+        # Simulate TCPSite still exists but underlying socket is dead:
+        # stop the site but keep the Python object reference
+        old_site = ch._site
+        await old_site.stop()
+        # _site is NOT None, but the port is no longer listening
+
+        # Wait for watchdog to detect via TCP probe and restart
+        await asyncio.sleep(0.3)
+
+        assert ch._site is not None
+        assert (
+            ch._site is not old_site
+        ), "watchdog should have created a new site"
+
+        await ch.stop()
+
+    async def test_watchdog_stops_on_channel_stop(self):
+        """Watchdog task should be cancelled when channel stops."""
+        ch = _make_channel(ws_port=0)
+        ch._watchdog_interval = 0.05
+        await ch.start()
+        watchdog = ch._watchdog_task
+        assert watchdog is not None
+
+        await ch.stop()
+        assert watchdog.done()
+
+    async def test_watchdog_no_restart_when_healthy(self):
+        """Watchdog should not touch a healthy server."""
+        ch = _make_channel(ws_port=0)
+        ch._watchdog_interval = 0.05
+        await ch.start()
+        original_site = ch._site
+
+        # Wait a couple of watchdog cycles
+        await asyncio.sleep(0.15)
+
+        # Site should remain the same object (not recreated)
+        assert ch._site is original_site
+        await ch.stop()
+
+    async def test_is_server_healthy_when_listening(self):
+        """_is_server_healthy returns True when port is accepting."""
+        ch = _make_channel(ws_port=0)
+        await ch._start_ws_server()
+        assert await ch._is_server_healthy() is True
+        await ch._stop_ws_server()
+
+    async def test_is_server_healthy_when_site_none(self):
+        """_is_server_healthy returns False when _site is None."""
+        ch = _make_channel(ws_port=0)
+        assert await ch._is_server_healthy() is False
 
 
 # ===================================================================
@@ -748,3 +842,81 @@ class TestPreviewText:
 
     def test_empty_parts(self):
         assert OneBotChannel._preview_text([]) == "<non-text>"
+
+
+# ===================================================================
+# Port bind retry during _start_ws_server
+# ===================================================================
+
+
+class TestPortBindGracefulDegradation:
+    """Tests for graceful degradation when port is in use."""
+
+    async def test_port_conflict_does_not_raise(self):
+        """_start_ws_server should not raise on OSError (port in use).
+
+        It should clean up and leave _site as None so the watchdog
+        can retry later.
+        """
+        ch = _make_channel(ws_port=0)
+
+        from unittest.mock import patch
+        from aiohttp.web import TCPSite
+
+        async def always_fail(self_site):
+            raise OSError(98, "address already in use")
+
+        with patch.object(TCPSite, "start", always_fail):
+            # Should NOT raise
+            await ch._start_ws_server()
+
+        # State should be cleaned up for watchdog recovery
+        assert ch._site is None
+        assert ch._runner is None
+        assert ch._app is None
+
+    async def test_watchdog_recovers_after_port_conflict(self):
+        """Watchdog should recover the server after initial port conflict."""
+        ch = _make_channel(ws_port=0)
+        ch._watchdog_interval = 0.05
+
+        from unittest.mock import patch
+        from aiohttp.web import TCPSite
+
+        fail_count = 1
+        original_tcp_start = TCPSite.start
+
+        async def mock_site_start(self_site):
+            nonlocal fail_count
+            if fail_count > 0:
+                fail_count -= 1
+                raise OSError(98, "address already in use")
+            return await original_tcp_start(self_site)
+
+        with patch.object(TCPSite, "start", mock_site_start):
+            await ch.start()
+            # Initial start failed, _site is None
+            assert ch._site is None
+
+        # Watchdog should recover (no patch, real start succeeds)
+        await asyncio.sleep(0.3)
+        assert ch._site is not None
+
+        await ch.stop()
+
+    async def test_non_oserror_still_raises(self):
+        """Non-OSError exceptions should propagate normally."""
+        ch = _make_channel(ws_port=0)
+
+        from unittest.mock import patch
+        from aiohttp.web import TCPSite
+
+        async def fail_with_runtime_error(self_site):
+            raise RuntimeError("unexpected error")
+
+        with patch.object(TCPSite, "start", fail_with_runtime_error):
+            try:
+                await ch._start_ws_server()
+                assert False, "Should have raised RuntimeError"
+            except RuntimeError:
+                pass

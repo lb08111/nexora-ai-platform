@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "ruflo": {
+      "command": "ruflo",
+      "args": [
+        "mcp",
+        "start",
+        "-t",
+        "stdio",
+        "--tools",
+        "all"
+      ],
+      "env": {
+        "OPENAI_API_KEY": "${OPENAI_API_KEY}",
+        "RUFLO_MCP_SERVER": "${RUFLO_MCP_SERVER}"
+      }
+    }
+  }
+}

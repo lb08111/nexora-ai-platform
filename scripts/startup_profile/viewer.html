@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🐾 QwenPaw 启动性能分析</title>
+    <title>🐾 JotaDuo 启动性能分析</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         * {
@@ -547,8 +547,8 @@
 <body>
     <div class="container">
         <header>
-            <h1 data-lang-zh="🐾 QwenPaw 启动性能分析" data-lang-en="🐾 QwenPaw Startup Performance">
-                🐾 QwenPaw 启动性能分析
+            <h1 data-lang-zh="🐾 JotaDuo 启动性能分析" data-lang-en="🐾 JotaDuo Startup Performance">
+                🐾 JotaDuo 启动性能分析
             </h1>
             <p class="subtitle" id="subtitle">Loading...</p>
             <button class="lang-toggle" onclick="toggleLanguage()">
@@ -568,13 +568,13 @@
 
         const translations = {
             zh: {
-                title: '🐾 QwenPaw 启动性能分析',
+                title: '🐾 JotaDuo 启动性能分析',
                 subtitle: '生成时间',
                 totalTime: '总启动时间',
-                qwenpawModules: 'QwenPaw 模块',
+                jotaduoModules: 'JotaDuo 模块',
                 thirdParty: '第三方库',
                 optimization: '优化潜力',
-                qwenpawTop: '📊 QwenPaw 模块耗时 Top 15',
+                jotaduoTop: '📊 JotaDuo 模块耗时 Top 15',
                 thirdPartyTop: '📦 第三方库耗时 Top 10',
                 functionsTop: '⚡ 函数执行时间 Top 20',
                 callTree: '🌳 函数调用树',
@@ -591,13 +591,13 @@
                 loading: '正在加载数据...'
             },
             en: {
-                title: '🐾 QwenPaw Startup Performance',
+                title: '🐾 JotaDuo Startup Performance',
                 subtitle: 'Generated at',
                 totalTime: 'Total Startup Time',
-                qwenpawModules: 'QwenPaw Modules',
+                jotaduoModules: 'JotaDuo Modules',
                 thirdParty: 'Third-party',
                 optimization: 'Optimization Potential',
-                qwenpawTop: '📊 QwenPaw Modules Top 15',
+                jotaduoTop: '📊 JotaDuo Modules Top 15',
                 thirdPartyTop: '📦 Third-party Libraries Top 10',
                 functionsTop: '⚡ Function Execution Time Top 20',
                 callTree: '🌳 Function Call Tree',
@@ -722,9 +722,9 @@
                 <div style="font-size: 12px; color: #6b7280; margin-top: 8px;">${importTime.toFixed(2)}s</div>
             </div>`;
             html += `<div class="summary-card">
-                <div class="summary-label">${t('qwenpawModules')}</div>
-                <div class="summary-value">${(summary.total_qwenpaw_ms || 0).toFixed(0)}ms</div>
-                <div style="font-size: 12px; color: #6b7280; margin-top: 8px;">${((summary.total_qwenpaw_ms || 0) / (summary.total_ms || 1) * 100).toFixed(1)}%</div>
+                <div class="summary-label">${t('jotaduoModules')}</div>
+                <div class="summary-value">${(summary.total_jotaduo_ms || 0).toFixed(0)}ms</div>
+                <div style="font-size: 12px; color: #6b7280; margin-top: 8px;">${((summary.total_jotaduo_ms || 0) / (summary.total_ms || 1) * 100).toFixed(1)}%</div>
             </div>`;
             html += `<div class="summary-card">
                 <div class="summary-label">${t('thirdParty')}</div>
@@ -733,17 +733,17 @@
             </div>`;
             html += '</div>';
 
-            // QwenPaw modules
-            const qwenpawImports = importAnalysis.qwenpaw_imports || [];
-            if (qwenpawImports.length > 0) {
+            // JotaDuo modules
+            const jotaduoImports = importAnalysis.jotaduo_imports || [];
+            if (jotaduoImports.length > 0) {
                 html += '<div class="section">';
-                html += `<h2>${t('qwenpawTop')}</h2>`;
-                html += '<div class="chart-container"><canvas id="qwenpawChart"></canvas></div>';
+                html += `<h2>${t('jotaduoTop')}</h2>`;
+                html += '<div class="chart-container"><canvas id="jotaduoChart"></canvas></div>';
                 html += '<table><thead><tr>';
                 html += `<th>${t('rank')}</th><th>${t('module')}</th><th>${t('time')}</th><th>${t('percentage')}</th>`;
                 html += '</tr></thead><tbody>';
 
-                qwenpawImports.slice(0, 15).forEach((imp, i) => {
+                jotaduoImports.slice(0, 15).forEach((imp, i) => {
                     const pct = (imp.cumulative_ms / summary.total_ms * 100).toFixed(1);
                     html += `<tr>
                         <td>${i + 1}</td>
@@ -821,15 +821,15 @@
             html += '</div>';
 
             // Function execution time
-            if (execAnalysis && execAnalysis.qwenpaw_functions) {
-                const functions = execAnalysis.qwenpaw_functions;
+            if (execAnalysis && execAnalysis.jotaduo_functions) {
+                const functions = execAnalysis.jotaduo_functions;
                 html += '<div class="section">';
                 html += `<h2>${t('functionsTop')}</h2>`;
 
                 // 添加说明
-                const noteZh = '<div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; color: #78350f;"><strong>📌 说明：</strong>函数耗时包含所有子函数的调用时间（累计时间）。例如，<code style="background: #fde68a; padding: 2px 6px; border-radius: 3px;">qwenpaw.app._app</code> 的耗时包含了它内部调用的所有子模块（如 <code style="background: #fde68a; padding: 2px 6px; border-radius: 3px;">qwenpaw.config</code>、<code style="background: #fde68a; padding: 2px 6px; border-radius: 3px;">qwenpaw.providers</code> 等）。这是正常的嵌套行为。</div>';
+                const noteZh = '<div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; color: #78350f;"><strong>📌 说明：</strong>函数耗时包含所有子函数的调用时间（累计时间）。例如，<code style="background: #fde68a; padding: 2px 6px; border-radius: 3px;">jotaduo.app._app</code> 的耗时包含了它内部调用的所有子模块（如 <code style="background: #fde68a; padding: 2px 6px; border-radius: 3px;">jotaduo.config</code>、<code style="background: #fde68a; padding: 2px 6px; border-radius: 3px;">jotaduo.providers</code> 等）。这是正常的嵌套行为。</div>';
 
-                const noteEn = '<div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; color: #78350f;"><strong>📌 Note:</strong> Function time includes all sub-function calls (cumulative time). For example, <code style="background: #fde68a; padding: 2px 6px; border-radius: 3px;">qwenpaw.app._app</code> duration includes all sub-modules it calls (like <code style="background: #fde68a; padding: 2px 6px; border-radius: 3px;">qwenpaw.config</code>, <code style="background: #fde68a; padding: 2px 6px; border-radius: 3px;">qwenpaw.providers</code>, etc.). This is normal nested behavior.</div>';
+                const noteEn = '<div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; color: #78350f;"><strong>📌 Note:</strong> Function time includes all sub-function calls (cumulative time). For example, <code style="background: #fde68a; padding: 2px 6px; border-radius: 3px;">jotaduo.app._app</code> duration includes all sub-modules it calls (like <code style="background: #fde68a; padding: 2px 6px; border-radius: 3px;">jotaduo.config</code>, <code style="background: #fde68a; padding: 2px 6px; border-radius: 3px;">jotaduo.providers</code>, etc.). This is normal nested behavior.</div>';
 
                 html += currentLang === 'zh' ? noteZh : noteEn;
 
@@ -1108,20 +1108,20 @@
 
         function drawCharts() {
             const importAnalysis = analysisData.import_analysis || {};
-            const qwenpawImports = importAnalysis.qwenpaw_imports || [];
+            const jotaduoImports = importAnalysis.jotaduo_imports || [];
             const thirdParty = importAnalysis.third_party_imports || [];
 
-            // QwenPaw chart
-            if (qwenpawImports.length > 0) {
-                const ctx = document.getElementById('qwenpawChart');
+            // JotaDuo chart
+            if (jotaduoImports.length > 0) {
+                const ctx = document.getElementById('jotaduoChart');
                 if (ctx) {
                     new Chart(ctx.getContext('2d'), {
                         type: 'bar',
                         data: {
-                            labels: qwenpawImports.slice(0, 15).map(i => i.package.split('.').pop()),
+                            labels: jotaduoImports.slice(0, 15).map(i => i.package.split('.').pop()),
                             datasets: [{
                                 label: t('time'),
-                                data: qwenpawImports.slice(0, 15).map(i => i.cumulative_ms),
+                                data: jotaduoImports.slice(0, 15).map(i => i.cumulative_ms),
                                 backgroundColor: 'rgba(102, 126, 234, 0.6)',
                                 borderColor: '#667eea',
                                 borderWidth: 2

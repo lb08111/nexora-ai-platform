@@ -1,0 +1,165 @@
+{
+  "id": "cnpj-br",
+  "name": "CNPJ Brasil — Consultas Cadastrais",
+  "version": "1.0.0",
+  "description": "Lightweight Brazilian cadastral lookup tools for CNPJ, CPF, CEP, state registration, Simples Nacional and lead enrichment using public sources.",
+  "description_i18n": {
+    "pt-BR": "Ferramentas leves para consultas cadastrais brasileiras: CNPJ, CPF, CEP, inscrição estadual, Simples Nacional e enriquecimento de leads usando fontes públicas.",
+    "en-US": "Lightweight Brazilian cadastral lookup tools for CNPJ, CPF, CEP, state registration, Simples Nacional and lead enrichment using public sources."
+  },
+  "author": "Jotaduo",
+  "entry": {
+    "backend": "cnpj_br.py"
+  },
+  "dependencies": ["httpx>=0.24.0", "pydantic>=2.0"],
+  "min_version": "1.1.6",
+  "meta": {
+    "tools": [
+      {
+        "name": "consultar_cnpj",
+        "description": "Consulta CNPJ na BrasilAPI e usa ReceitaWS como fallback, retornando dados cadastrais normalizados.",
+        "icon": "🏢",
+        "requires_config": false,
+        "config_fields": [
+          {
+            "name": "provider_fallback",
+            "label": "Fonte preferida",
+            "type": "select",
+            "required": false,
+            "default": "auto",
+            "options": ["brasilapi", "receitaws", "auto"],
+            "help": "auto consulta BrasilAPI primeiro e usa ReceitaWS como fallback."
+          },
+          {
+            "name": "timeout",
+            "label": "Timeout HTTP (segundos)",
+            "type": "number",
+            "required": false,
+            "default": 15,
+            "min": 5,
+            "max": 60,
+            "help": "Tempo máximo de espera por chamada HTTP."
+          },
+          {
+            "name": "cache_ttl_seconds",
+            "label": "TTL do cache (segundos)",
+            "type": "number",
+            "required": false,
+            "default": 3600,
+            "help": "Tempo de vida do cache em memória. Use 0 para desativar."
+          }
+        ]
+      },
+      {
+        "name": "consultar_cep",
+        "description": "Consulta CEP pela BrasilAPI e retorna endereço normalizado.",
+        "icon": "📮",
+        "requires_config": false,
+        "config_fields": [
+          {
+            "name": "timeout",
+            "label": "Timeout HTTP (segundos)",
+            "type": "number",
+            "required": false,
+            "default": 15,
+            "min": 5,
+            "max": 60,
+            "help": "Tempo máximo de espera por chamada HTTP."
+          },
+          {
+            "name": "cache_ttl_seconds",
+            "label": "TTL do cache (segundos)",
+            "type": "number",
+            "required": false,
+            "default": 3600,
+            "help": "Tempo de vida do cache em memória. Use 0 para desativar."
+          }
+        ]
+      },
+      {
+        "name": "consultar_cpf",
+        "description": "Valida CPF offline pelo dígito verificador e retorna o formato padronizado.",
+        "icon": "👤",
+        "requires_config": false
+      },
+      {
+        "name": "validar_inscricao_estadual",
+        "description": "Valida inscrição estadual offline por UF para os principais estados brasileiros.",
+        "icon": "🧾",
+        "requires_config": false
+      },
+      {
+        "name": "consultar_simples_nacional",
+        "description": "Consulta CNPJ e extrai situação no Simples Nacional e MEI com classificação amigável.",
+        "icon": "💼",
+        "requires_config": false,
+        "config_fields": [
+          {
+            "name": "provider_fallback",
+            "label": "Fonte preferida",
+            "type": "select",
+            "required": false,
+            "default": "auto",
+            "options": ["brasilapi", "receitaws", "auto"],
+            "help": "auto consulta BrasilAPI primeiro e usa ReceitaWS como fallback."
+          },
+          {
+            "name": "timeout",
+            "label": "Timeout HTTP (segundos)",
+            "type": "number",
+            "required": false,
+            "default": 15,
+            "min": 5,
+            "max": 60,
+            "help": "Tempo máximo de espera por chamada HTTP."
+          },
+          {
+            "name": "cache_ttl_seconds",
+            "label": "TTL do cache (segundos)",
+            "type": "number",
+            "required": false,
+            "default": 3600,
+            "help": "Tempo de vida do cache em memória. Use 0 para desativar."
+          }
+        ]
+      },
+      {
+        "name": "enriquecer_lead",
+        "description": "Consulta CNPJ e calcula score comercial simples com sinais cadastrais e dados informados.",
+        "icon": "✨",
+        "requires_config": false,
+        "config_fields": [
+          {
+            "name": "provider_fallback",
+            "label": "Fonte preferida",
+            "type": "select",
+            "required": false,
+            "default": "auto",
+            "options": ["brasilapi", "receitaws", "auto"],
+            "help": "auto consulta BrasilAPI primeiro e usa ReceitaWS como fallback."
+          },
+          {
+            "name": "timeout",
+            "label": "Timeout HTTP (segundos)",
+            "type": "number",
+            "required": false,
+            "default": 15,
+            "min": 5,
+            "max": 60,
+            "help": "Tempo máximo de espera por chamada HTTP."
+          },
+          {
+            "name": "cache_ttl_seconds",
+            "label": "TTL do cache (segundos)",
+            "type": "number",
+            "required": false,
+            "default": 3600,
+            "help": "Tempo de vida do cache em memória. Use 0 para desativar."
+          }
+        ]
+      }
+    ],
+    "api_key_hint": "BrasilAPI é pública e não requer chave; ReceitaWS é usado apenas como fallback público.",
+    "model_url": "https://brasilapi.com.br/docs"
+  }
+}

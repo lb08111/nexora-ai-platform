@@ -1,12 +1,12 @@
-# Nexora AIops 平台技术方案
+# Jotaduo AIops 平台技术方案
 
 > 更新时间：2026-05-26。本文档已根据当前二开进展更新，覆盖用户权限、智能体权限、审计日志、菜单结构与登录审计容错修复。
 
 ## 1. 项目定位
 
-Nexora AIops 平台基于开源项目 QwenPaw 二次开发，目标是建设一个面向智能运维场景的 AI Agent 调度与治理平台。
+Jotaduo AIops 平台基于开源项目 JotaDuo 二次开发，目标是建设一个面向智能运维场景的 AI Agent 调度与治理平台。
 
-平台不是重新建设一套 Agent 系统，而是在 QwenPaw 已有能力上补齐企业运维平台需要的登录认证、用户体系、权限体系、智能体授权、工具治理、审计日志和后续审批能力。
+平台不是重新建设一套 Agent 系统，而是在 JotaDuo 已有能力上补齐企业运维平台需要的登录认证、用户体系、权限体系、智能体授权、工具治理、审计日志和后续审批能力。
 
 核心目标：
 
@@ -15,16 +15,16 @@ Nexora AIops 平台基于开源项目 QwenPaw 二次开发，目标是建设一�
 - 通过 CLI、API、MCP、Skill 等方式接入现有运维工具。
 - 让传统运维工具能够被 AI Agent 安全调用。
 - 对用户登录、平台操作、智能体使用、工具调用等行为进行审计。
-- 尽量保持二开代码独立，降低后续同步 QwenPaw 上游更新的成本。
+- 尽量保持二开代码独立，降低后续同步 JotaDuo 上游更新的成本。
 
 ## 2. 建设原则
 
-本项目采用“上游核心 + Nexora扩展层”的建设方式。
+本项目采用“上游核心 + Jotaduo扩展层”的建设方式。
 
-- QwenPaw 原项目作为 Agent 和控制台底座，尽量复用原生能力。
-- 二开功能优先放入 `qwenpaw_ext/nexora` 和 `console/src/nexora`。
+- JotaDuo 原项目作为 Agent 和控制台底座，尽量复用原生能力。
+- 二开功能优先放入 `jotaduo_ext/jotaduo` 和 `console/src/jotaduo`。
 - 原项目文件只保留必要挂载点，例如路由注册、菜单注册、权限中间件接入。
-- 不重复建设 QwenPaw 已有的聊天、智能体、模型、Skill、MCP、工具、会话等基础能力。
+- 不重复建设 JotaDuo 已有的聊天、智能体、模型、Skill、MCP、工具、会话等基础能力。
 - 工具治理按“智能体可用资源”设计，不直接把工具授权给用户。
 - 菜单访问按“用户 -> 角色 -> 菜单/接口权限”设计。
 - 所有关键操作应具备权限控制和审计记录；审计失败不能阻断主流程。
@@ -32,14 +32,14 @@ Nexora AIops 平台基于开源项目 QwenPaw 二次开发，目标是建设一�
 ## 3. 当前项目结构
 
 ```text
-qwenpaw-src/
+jotaduo-src/
   console/
     src/
-      api/                         # QwenPaw 原生前端 API
-      pages/                       # QwenPaw 原生页面
+      api/                         # JotaDuo 原生前端 API
+      pages/                       # JotaDuo 原生页面
       layouts/                     # 菜单、布局、Header
       stores/                      # 智能体等前端状态
-      nexora/                    # Nexora AIops 前端扩展
+      jotaduo/                    # Jotaduo AIops 前端扩展
         api/
           audit.ts                 # 审计日志 API
           governance.ts            # 智能体权限 / 工具治理 API
@@ -49,24 +49,24 @@ qwenpaw-src/
           UserManagement/          # 用户权限页面
         utils/                     # 权限与资源过滤工具
     public/
-      logo.png                     # Nexora AIops logo
+      logo.png                     # Jotaduo AIops logo
       logo-icon.svg                # favicon
 
   src/
-    qwenpaw/                       # QwenPaw 原生后端代码
+    jotaduo/                       # JotaDuo 原生后端代码
       app/
         auth.py                    # 认证中间件、API 权限拦截挂载点
         routers/
           auth.py                  # 登录、用户、角色、权限接口
           agents.py                # 智能体接口，已接入授权过滤
-          nexora.py              # Nexora扩展路由挂载
+          jotaduo.py              # Jotaduo扩展路由挂载
           console.py               # 会话相关接口，已接入审计
         runner/
           api.py                   # Agent 执行链路，已接入审计
       console/                     # 前端构建产物，由后端托管
 
-    qwenpaw_ext/
-      nexora/
+    jotaduo_ext/
+      jotaduo/
         audit.py                   # 审计日志写入与查询
         governance.py              # 智能体与工具 / MCP / Skill 授权关系
         rbac.py                    # 用户、角色、权限与 API 权限策略
@@ -74,7 +74,7 @@ qwenpaw-src/
   docs/
     technical-solution.md          # 本技术方案
   CUSTOMIZATION.md                 # 二开范围、升级方式、托管说明
-  start-qwenpaw-zh.sh              # 中文化启动脚本
+  start-jotaduo-zh.sh              # 中文化启动脚本
 ```
 
 ## 4. 技术架构
@@ -83,10 +83,10 @@ qwenpaw-src/
 
 - 前端：React、TypeScript、Ant Design。
 - 后端：Python、FastAPI、Uvicorn。
-- Agent 底座：QwenPaw 原生 Agent Runtime。
-- 工具生态：QwenPaw 原生 Tool、MCP、Skill。
-- 二开扩展：Nexora RBAC、智能体权限、资源过滤、审计日志。
-- 本地数据：`~/.qwenpaw` 保存运行配置、工作区、Agent 数据；`~/.qwenpaw.secret` 保存用户认证和审计等敏感数据。
+- Agent 底座：JotaDuo 原生 Agent Runtime。
+- 工具生态：JotaDuo 原生 Tool、MCP、Skill。
+- 二开扩展：Jotaduo RBAC、智能体权限、资源过滤、审计日志。
+- 本地数据：`~/.jotaduo` 保存运行配置、工作区、Agent 数据；`~/.jotaduo.secret` 保存用户认证和审计等敏感数据。
 
 ### 4.1 系统架构图
 
@@ -99,7 +99,7 @@ flowchart TB
     Auth --> RBAC["用户角色权限<br/>rbac.py"]
     API --> Governance["智能体权限治理<br/>governance.py"]
     API --> Audit["审计日志<br/>audit.py"]
-    API --> AgentRuntime["QwenPaw Agent Runtime"]
+    API --> AgentRuntime["JotaDuo Agent Runtime"]
     AgentRuntime --> Agents["运维智能体 / 发布助手 / 故障分析助手"]
     Agents --> Tools["Tool"]
     Agents --> MCP["MCP"]
@@ -107,10 +107,10 @@ flowchart TB
     Tools --> OpsTools["现有运维工具<br/>监控 / 日志 / CMDB / CI/CD / K8s"]
     MCP --> OpsTools
     Skills --> OpsTools
-    RBAC --> SecretData[".qwenpaw.secret"]
+    RBAC --> SecretData[".jotaduo.secret"]
     Governance --> SecretData
     Audit --> SecretData
-    AgentRuntime --> Workspace[".qwenpaw/workspaces"]
+    AgentRuntime --> Workspace[".jotaduo/workspaces"]
 ```
 
 ## 5. 权限总体设计
@@ -205,7 +205,7 @@ flowchart LR
 
 ## 7. 前端设计
 
-已复用的 QwenPaw 原生能力：
+已复用的 JotaDuo 原生能力：
 
 - 聊天页
 - 智能体管理
@@ -220,10 +220,10 @@ flowchart LR
 - 智能体统计
 - 收件箱能力，已在菜单中命名为审批中心
 
-Nexora AIops 前端扩展：
+Jotaduo AIops 前端扩展：
 
 ```text
-console/src/nexora/
+console/src/jotaduo/
   api/
     audit.ts
     governance.ts
@@ -250,7 +250,7 @@ console/src/nexora/
 
 ## 8. 后端设计
 
-QwenPaw 原生后端承担：
+JotaDuo 原生后端承担：
 
 - Web 服务启动
 - 静态前端托管
@@ -260,10 +260,10 @@ QwenPaw 原生后端承担：
 - MCP、Tool、Skill 原生管理
 - 工作区管理
 
-Nexora扩展后端：
+Jotaduo扩展后端：
 
 ```text
-src/qwenpaw_ext/nexora/
+src/jotaduo_ext/jotaduo/
   rbac.py
   governance.py
   audit.py
@@ -285,7 +285,7 @@ sequenceDiagram
     participant MW as AuthMiddleware
     participant RBAC as RBAC
     participant GOV as 智能体权限
-    participant Core as QwenPaw 核心
+    participant Core as JotaDuo 核心
     participant AUD as 审计
 
     U->>FE: 发起页面操作
@@ -381,9 +381,9 @@ flowchart TD
 
 当前认证启用方式：
 
-- 启动脚本 `start-qwenpaw-zh.sh` 默认设置 `QWENPAW_AUTH_ENABLED=true`。
+- 启动脚本 `start-jotaduo-zh.sh` 默认设置 `JOTADUO_AUTH_ENABLED=true`。
 - 登录页标题已调整为 `The future starts now`。
-- 品牌 logo、favicon、页面标题已替换为Nexora AIops 风格。
+- 品牌 logo、favicon、页面标题已替换为Jotaduo AIops 风格。
 - 右上角展示当前登录用户名。
 - 退出登录入口放在页面右上角。
 
@@ -407,17 +407,17 @@ admin
 
 ```mermaid
 flowchart LR
-    Repo["本地代码<br/>qwenpaw-src"] --> Build["前端构建<br/>console/dist"]
-    Build --> Static["后端静态目录<br/>src/qwenpaw/console"]
-    Repo --> App["QwenPaw 服务<br/>127.0.0.1:8088"]
-    App --> Data[".qwenpaw / .qwenpaw.secret"]
+    Repo["本地代码<br/>jotaduo-src"] --> Build["前端构建<br/>console/dist"]
+    Build --> Static["后端静态目录<br/>src/jotaduo/console"]
+    Repo --> App["JotaDuo 服务<br/>127.0.0.1:8088"]
+    App --> Data[".jotaduo / .jotaduo.secret"]
     Browser["浏览器"] --> App
 ```
 
 本地启动：
 
 ```bash
-QWENPAW_PORT=8088 ./start-qwenpaw-zh.sh
+JOTADUO_PORT=8088 ./start-jotaduo-zh.sh
 ```
 
 外网访问部署：
@@ -427,7 +427,7 @@ flowchart TB
     User["互联网用户"] --> HTTPS["HTTPS 域名"]
     HTTPS --> Access["访问认证<br/>Cloudflare Access / SSO"]
     Access --> Tunnel["Cloudflare Tunnel / Nginx"]
-    Tunnel --> App["Nexora AIops 服务"]
+    Tunnel --> App["Jotaduo AIops 服务"]
     App --> LocalData["配置 / 用户 / Agent 数据"]
     App --> OpsNetwork["内网运维工具网络"]
 ```
@@ -446,8 +446,8 @@ flowchart TB
 
 当前建议保持两个远端：
 
-- `origin`：Nexora AIops 自有仓库。
-- `upstream`：QwenPaw 原开源仓库。
+- `origin`：Jotaduo AIops 自有仓库。
+- `upstream`：JotaDuo 原开源仓库。
 
 推荐分支：
 
@@ -546,11 +546,11 @@ git merge upstream/main
 
 ## 16. 总结
 
-Nexora AIops 平台当前已经从“QwenPaw 二开界面”进入“具备企业运维治理雏形的平台”阶段。
+Jotaduo AIops 平台当前已经从“JotaDuo 二开界面”进入“具备企业运维治理雏形的平台”阶段。
 
 当前架构的核心是：
 
-- QwenPaw 负责 Agent、聊天、工具、MCP、Skill 等基础能力。
-- Nexora扩展层负责用户权限、智能体授权、资源治理、审计日志和后续审批。
+- JotaDuo 负责 Agent、聊天、工具、MCP、Skill 等基础能力。
+- Jotaduo扩展层负责用户权限、智能体授权、资源治理、审计日志和后续审批。
 - 权限体系按两条线建设：用户权限控制平台访问，智能体权限控制工具使用。
 - 二开代码尽量独立，后续可以更平滑地合并上游更新。

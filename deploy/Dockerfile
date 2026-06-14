@@ -1,31 +1,36 @@
+# Base images — override with --build-arg for environments without ACR access.
+ARG NODE_IMAGE=agentscope-registry.ap-southeast-1.cr.aliyuncs.com/agentscope/node:slim
+ARG UV_IMAGE=agentscope-registry.ap-southeast-1.cr.aliyuncs.com/agentscope/uv:latest
+
 # -----------------------------------------------------------------------------
 # Stage 1: build console frontend (dist not committed in repo).
 # -----------------------------------------------------------------------------
-FROM agentscope-registry.ap-southeast-1.cr.aliyuncs.com/agentscope/node:slim AS console-builder
+FROM ${NODE_IMAGE} AS console-builder
 WORKDIR /app
-ENV NODE_OPTIONS=--max-old-space-size=4096
 COPY console /app/console
-RUN cd /app/console && npm install
-RUN cd /app/console && npm run build
+RUN cd /app/console && npm ci --include=dev && npm run build
+
+# Alias for uv binary so COPY --from can reference a build-arg image.
+FROM ${UV_IMAGE} AS uv-src
 
 # -----------------------------------------------------------------------------
 # Stage 2: runtime image with Python, Chromium, and app.
 # -----------------------------------------------------------------------------
-FROM agentscope-registry.ap-southeast-1.cr.aliyuncs.com/agentscope/node:slim
+FROM ${NODE_IMAGE}
 
 # ENV variables
 ENV NODE_ENV=production
 ENV WORKSPACE_DIR=/app
-ENV QWENPAW_WORKING_DIR=/app/working
-ENV QWENPAW_SECRET_DIR=/app/working.secret
-ENV QWENPAW_BACKUP_DIR=/app/working.backups
+ENV JOTADUO_WORKING_DIR=/app/working
+ENV JOTADUO_SECRET_DIR=/app/working.secret
+ENV JOTADUO_BACKUP_DIR=/app/working.backups
 
-# Channel filtering: use QWENPAW_DISABLED_CHANNELS (exclusion, recommended)
-# or QWENPAW_ENABLED_CHANNELS (whitelist). Override at runtime with -e.
-ARG QWENPAW_DISABLED_CHANNELS="imessage"
-ENV QWENPAW_DISABLED_CHANNELS=${QWENPAW_DISABLED_CHANNELS}
-ARG QWENPAW_ENABLED_CHANNELS=""
-ENV QWENPAW_ENABLED_CHANNELS=${QWENPAW_ENABLED_CHANNELS}
+# Channel filtering: use JOTADUO_DISABLED_CHANNELS (exclusion, recommended)
+# or JOTADUO_ENABLED_CHANNELS (whitelist). Override at runtime with -e.
+ARG JOTADUO_DISABLED_CHANNELS="imessage"
+ENV JOTADUO_DISABLED_CHANNELS=${JOTADUO_DISABLED_CHANNELS}
+ARG JOTADUO_ENABLED_CHANNELS=""
+ENV JOTADUO_ENABLED_CHANNELS=${JOTADUO_ENABLED_CHANNELS}
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -78,7 +83,7 @@ ENV PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium
 # Avoid Playwright downloading its own browser when executable_path is used.
 ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 # Indicate running in container (used e.g. for Chromium --no-sandbox).
-ENV QWENPAW_RUNNING_IN_CONTAINER=1
+ENV JOTADUO_RUNNING_IN_CONTAINER=1
 
 WORKDIR ${WORKSPACE_DIR}
 
@@ -87,23 +92,19 @@ ENV PATH="/app/venv/bin:$PATH"
 
 COPY pyproject.toml setup.py README.md ./
 COPY src ./src
-COPY scripts ./scripts
-COPY alembic.ini ./alembic.ini
-COPY alembic ./alembic
-COPY website/public/docs/ ./src/qwenpaw/docs/
+COPY website/public/docs/ ./src/jotaduo/docs/
 # Inject console dist from build stage (repo does not commit dist).
-COPY --from=console-builder /app/console/dist/ ./src/qwenpaw/console/
+COPY --from=console-builder /app/console/dist/ ./src/jotaduo/console/
 # Speed up Python package installation with uv.
-COPY --from=agentscope-registry.ap-southeast-1.cr.aliyuncs.com/agentscope/uv:latest /uv /bin/uv
+COPY --from=uv-src /uv /bin/uv
 RUN uv pip install --no-cache-dir . && rm -rf ./build
 
 
-# QwenPaw app port (default 8088). Override at runtime with -e QWENPAW_PORT=3000.
-ENV QWENPAW_PORT=8088
+# JotaDuo app port (default 8088). Override at runtime with -e JOTADUO_PORT=3000.
+ENV JOTADUO_PORT=8088
 
 COPY deploy/config/supervisord.conf.template /etc/supervisor/conf.d/supervisord.conf.template
-COPY deploy/entrypoint.sh /entrypoint.sh
-RUN chmod 755 /entrypoint.sh
+COPY --chmod=755 deploy/entrypoint.sh /entrypoint.sh
 
 EXPOSE 8088
 

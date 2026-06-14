@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """Initialize multi-tenant permission data — idempotent, safe to re-run.
 
 Actions:
@@ -17,23 +18,23 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 
-from qwenpaw.constant import SECRET_DIR
+from jotaduo.constant import SECRET_DIR
 
 
 def _governance_path() -> Path:
-    return Path(SECRET_DIR) / "nexora_governance.json"
+    return Path(SECRET_DIR) / "jotaduo_governance.json"
 
 
 def _grants_path() -> Path:
-    return Path(SECRET_DIR) / "nexora_agent_grants.json"
+    return Path(SECRET_DIR) / "jotaduo_agent_grants.json"
 
 
 def _approval_path() -> Path:
-    return Path(SECRET_DIR) / "nexora_capability_approval.json"
+    return Path(SECRET_DIR) / "jotaduo_capability_approval.json"
 
 
 def _templates_path() -> Path:
-    return Path(SECRET_DIR) / "nexora_agent_templates.json"
+    return Path(SECRET_DIR) / "jotaduo_agent_templates.json"
 
 
 def step1_clear_old_governance():
@@ -56,7 +57,10 @@ def step1_clear_old_governance():
             print(f"  [OK] {key}: already empty")
 
     if changed:
-        path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+        path.write_text(
+            json.dumps(data, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
         print(f"  [SAVED] {path}")
 
 
@@ -75,18 +79,26 @@ def step2_clear_grants():
 
 def step3_init_approval_config():
     """Initialize capability approval defaults via the module."""
-    from qwenpaw_ext.nexora.capability_approval import ensure_default_configs, list_configs
+    from jotaduo_ext.jotaduo.capability_approval import (
+        ensure_default_configs,
+        list_configs,
+    )
 
     ensure_default_configs()
     configs = list_configs()
     print(f"  [OK] {len(configs)} capability approval configs initialized:")
     for c in configs:
-        print(f"       {c['capability_type']:8s} add={c['add_approval']} rm={c['remove_approval']} auto={c['auto_approve_remove']}")
+        print(
+            f"       {c['capability_type']:8s} add={c['add_approval']} rm={c['remove_approval']} auto={c['auto_approve_remove']}",
+        )
 
 
 def step4_init_templates():
     """Initialize built-in templates via the module."""
-    from qwenpaw_ext.nexora.agent_templates import ensure_builtin_templates, list_templates
+    from jotaduo_ext.jotaduo.agent_templates import (
+        ensure_builtin_templates,
+        list_templates,
+    )
 
     ensure_builtin_templates()
     templates = list_templates()

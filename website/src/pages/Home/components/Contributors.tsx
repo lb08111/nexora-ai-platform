@@ -86,11 +86,11 @@ export function Contributors() {
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, amount: 0.2 }}
-        aria-labelledby="qwenpaw-contributors-heading"
+        aria-labelledby="jotaduo-contributors-heading"
       >
         <div className="mx-auto max-w-7xl text-center">
           <motion.h2
-            id="qwenpaw-contributors-heading"
+            id="jotaduo-contributors-heading"
             className="font-newsreader text-3xl font-semibold leading-[1.2] text-(--color-text) md:text-4xl"
             variants={itemVariants}
           >
@@ -193,7 +193,7 @@ export function Contributors() {
           </motion.div>
 
           <div
-            className="pointer-events-none relative left-1/2 mt-10 h-px w-screen -translate-x-1/2 animate-[qwenpaw-dash-move-right_1s_linear_infinite]"
+            className="pointer-events-none relative left-1/2 mt-10 h-px w-screen -translate-x-1/2 animate-[jotaduo-dash-move-right_1s_linear_infinite]"
             style={{
               background:
                 "repeating-linear-gradient(to right, rgba(255,157,77,0.45) 0 8px, transparent 8px 16px)",

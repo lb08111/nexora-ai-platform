@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import pytest
 
-from qwenpaw.utils.http import (
+from jotaduo.utils.http import (
     is_loopback_host,
     is_loopback_url,
     trust_env_for_url,

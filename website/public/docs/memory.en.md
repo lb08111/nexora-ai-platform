@@ -1,6 +1,6 @@
 # Long-term Memory
 
-**Long-term Memory** gives QwenPaw persistent memory across conversations: writes key information to Markdown files for
+**Long-term Memory** gives JotaDuo persistent memory across conversations: writes key information to Markdown files for
 long-term storage, with semantic search for recall at any time.
 
 > The long-term memory mechanism is inspired by [OpenClaw](https://github.com/openclaw/openclaw) and implemented via **ReMeLight** from [ReMe](https://github.com/agentscope-ai/ReMe) — a file-based memory backend where memories are plain Markdown files that can be read, edited, and migrated directly.
@@ -175,13 +175,13 @@ graph LR
 
 ## Backup & Restore
 
-Backup & Restore is QwenPaw's backup and recovery capability, enabling safe saving and restoration of the entire agent environment for scenarios like version upgrades, cross-device migration, or undoing mistakes. Access: Console → Settings → Backup.
+Backup & Restore is JotaDuo's backup and recovery capability, enabling safe saving and restoration of the entire agent environment for scenarios like version upgrades, cross-device migration, or undoing mistakes. Access: Console → Settings → Backup.
 
 ### Creating Backups
 
 **Backup Storage**
 
-All backups are saved as independent zip packages in `~/.qwenpaw/backups` (alongside the working directory `~/.qwenpaw`). Each backup contains `meta.json` metadata and packaged content files. The zip file is exported for easy migration. Note that backups do not include local model files; re-download is required for cross-device migration.
+All backups are saved as independent zip packages in `~/.jotaduo/backups` (alongside the working directory `~/.jotaduo`). Each backup contains `meta.json` metadata and packaged content files. The zip file is exported for easy migration. Note that backups do not include local model files; re-download is required for cross-device migration.
 
 **Backup Scope**
 
@@ -302,7 +302,7 @@ Configure the memory storage backend via the `MEMORY_STORE_BACKEND` environment 
 
 ## Other Memory Backends
 
-QwenPaw's memory system uses a pluggable backend architecture. In addition to the default ReMeLight (local file storage), you can switch to other backends via `memory_manager_backend`.
+JotaDuo's memory system uses a pluggable backend architecture. In addition to the default ReMeLight (local file storage), you can switch to other backends via `memory_manager_backend`.
 
 ### ADBPG (AnalyticDB for PostgreSQL)
 
@@ -321,7 +321,7 @@ Open the agent's "Running Config" tab in the Console, locate the "Memory Manager
 
 ![adbpg-backend](https://img.alicdn.com/imgextra/i3/O1CN01bH1Rj41wwQs3v04U6_!!6000000006372-2-tps-2954-1484.png)
 
-> ⚠️ Switching the backend does not support hot reload. After saving, restart QwenPaw for the change to take effect (the page also shows a yellow banner reminder).
+> ⚠️ Switching the backend does not support hot reload. After saving, restart JotaDuo for the change to take effect (the page also shows a yellow banner reminder).
 
 #### REST Mode (Recommended)
 
@@ -341,7 +341,7 @@ Switch to the "ADBPG Long-term Memory" tab, set "API Mode" to `REST API`, and fi
 
 #### SQL Mode
 
-Connect directly to the ADBPG database via psycopg2. Requires installing an extra dependency: `pip install qwenpaw[adbpg]`.
+Connect directly to the ADBPG database via psycopg2. Requires installing an extra dependency: `pip install jotaduo[adbpg]`.
 
 Switch to the "ADBPG Long-term Memory" tab, set "API Mode" to `SQL (Direct)`, and fill in the database connection info (host / port / user / password / dbname) along with LLM and Embedding parameters:
 

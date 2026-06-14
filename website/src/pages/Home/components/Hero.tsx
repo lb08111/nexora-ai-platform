@@ -58,7 +58,7 @@ export function Hero() {
   }, [showIdle, idlePlayedOnce]);
 
   const scrollToQuickStart = () => {
-    const section = document.getElementById("qwenpaw-quickstart");
+    const section = document.getElementById("jotaduo-quickstart");
     if (!section) return;
     section.scrollIntoView({ behavior: "smooth", block: "start" });
   };
@@ -73,7 +73,7 @@ export function Hero() {
     <>
       <motion.section
         className="relative text-center"
-        aria-labelledby="qwenpaw-hero-heading"
+        aria-labelledby="jotaduo-hero-heading"
         variants={container}
         initial="hidden"
         animate="visible"
@@ -97,7 +97,7 @@ export function Hero() {
             />
           </div>
           <h1
-            id="qwenpaw-hero-heading"
+            id="jotaduo-hero-heading"
             className="font-newsreader font-semibold leading-[1.1] tracking-[-0.02em] text-(--color-text) sm:leading-[1.08] text-[32px] md:text-[48px] md:leading-[1.06]"
           >
             <span className="font-newsreader font-medium whitespace-pre-wrap">
@@ -132,7 +132,7 @@ export function Hero() {
             </span>
           </h1>
           <p className="font-inter mx-auto mt-3 max-w-3xl px-2 text-[14px] font-medium leading-[1.55] text-(--color-text-tertiary) sm:mt-4 sm:px-0 sm:text-[15px] md:mt-5 md:text-[16px]">
-            {t("hero.sub")}
+            {t("hero.sub", { version: LATEST_RELEASE_VERSION })}
             <br />
             {t("hero.sub1")}
           </p>
@@ -175,7 +175,7 @@ export function Hero() {
             >
               <img
                 src="https://img.alicdn.com/imgextra/i1/O1CN01BLYCfm1Qyf5WcMDDf_!!6000000002045-2-tps-1924-1202.png"
-                alt="QwenPaw console preview"
+                alt="JotaDuo console preview"
                 className="block h-auto max-h-full w-full rounded-t-[8px] object-top shadow-[0px_6px_56px_0px_rgba(38,33,29,0.24)] md:h-full md:object-cover"
                 loading="lazy"
               />

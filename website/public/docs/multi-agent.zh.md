@@ -1,6 +1,6 @@
 # 多智能体
 
-QwenPaw 支持**多智能体**，允许您在同一个 QwenPaw 实例中运行多个独立的 AI 智能体。
+JotaDuo 支持**多智能体**，允许您在同一个 JotaDuo 实例中运行多个独立的 AI 智能体。
 
 > 本功能在 **v0.1.0** 中引入。
 
@@ -15,7 +15,7 @@ QwenPaw 支持**多智能体**，允许您在同一个 QwenPaw 实例中运行�
 
 ### 什么是多智能体？
 
-简单来说，**多智能体**就是让您可以在一个 QwenPaw 中运行多个"分身"，每个分身：
+简单来说，**多智能体**就是让您可以在一个 JotaDuo 中运行多个"分身"，每个分身：
 
 - 有自己的**性格和专长**（通过不同的人设文件配置）
 - 记住**各自的对话**（互不干扰）
@@ -40,7 +40,7 @@ QwenPaw 支持**多智能体**，允许您在同一个 QwenPaw 实例中运行�
 
 ### 场景二：按平台分离
 
-您可能在多个平台使用 QwenPaw：
+您可能在多个平台使用 JotaDuo：
 
 - **钉钉** - 工作相关对话
 - **Discord** - 社区讨论
@@ -65,7 +65,7 @@ QwenPaw 支持**多智能体**，允许您在同一个 QwenPaw 实例中运行�
 
 #### 1. 查看和切换智能体
 
-启动 QwenPaw 后，在控制台**左上角**可以看到**智能体切换器**：
+启动 JotaDuo 后，在控制台**左上角**可以看到**智能体切换器**：
 
 ```
 ┌───────────────────────────────────┐
@@ -203,7 +203,7 @@ QwenPaw 支持**多智能体**，允许您在同一个 QwenPaw 实例中运行�
 
 在控制台的"设置 → 智能体管理"页面点击删除按钮。
 
-**注意**：删除后工作区目录会保留（防止误删数据），如需彻底清理，请手动删除 `~/.qwenpaw/workspaces/{agent_id}` 目录。
+**注意**：删除后工作区目录会保留（防止误删数据），如需彻底清理，请手动删除 `~/.jotaduo/workspaces/{agent_id}` 目录。
 
 ### Q: 默认智能体可以删除吗？
 
@@ -228,7 +228,7 @@ QwenPaw 支持**多智能体**，允许您在同一个 QwenPaw 实例中运行�
 
 ## 从单智能体升级
 
-如果您之前使用 QwenPaw **v0.0.x**，升级到 **v0.1.0** 时会**自动迁移**：
+如果您之前使用 JotaDuo **v0.0.x**，升级到 **v0.1.0** 时会**自动迁移**：
 
 1. **首次启动时自动迁移**
 
@@ -237,14 +237,14 @@ QwenPaw 支持**多智能体**，允许您在同一个 QwenPaw 实例中运行�
 
 2. **验证迁移**
 
-   - 启动 QwenPaw 后，在控制台查看智能体列表
+   - 启动 JotaDuo 后，在控制台查看智能体列表
    - 应该能看到一个名为"默认智能体"的智能体
    - 您的旧对话和配置都应该还在
 
 3. **备份建议**
    升级前备份工作目录：
    ```bash
-   cp -r ~/.qwenpaw ~/.qwenpaw.backup
+   cp -r ~/.jotaduo ~/.jotaduo.backup
    ```
 
 ---
@@ -276,10 +276,10 @@ QwenPaw 支持**多智能体**，允许您在同一个 QwenPaw 实例中运行�
 
 ```bash
 # 为默认智能体启用
-qwenpaw skills config
+jotaduo skills config
 
 # 为特定智能体启用
-qwenpaw skills config --agent-id abc123
+jotaduo skills config --agent-id abc123
 
 # 在交互界面中：
 # - 使用 ↑/↓ 键找到 "multi_agent_collaboration"
@@ -427,7 +427,7 @@ qwenpaw skills config --agent-id abc123
 系统会根据智能体的配置（包括名称、描述、技能、人设文件等）**自动生成** `PROFILE.md` 文件，存放在工作区目录：
 
 ```
-~/.qwenpaw/workspaces/{agent_id}/PROFILE.md
+~/.jotaduo/workspaces/{agent_id}/PROFILE.md
 ```
 
 您可以在**工作区 → 文件**页面查看自动生成的 PROFILE.md。
@@ -437,13 +437,13 @@ qwenpaw skills config --agent-id abc123
 使用 CLI 查看所有智能体的信息：
 
 ```bash
-qwenpaw agents list
+jotaduo agents list
 
 # 输出示例：
 # Agent ID: code_reviewer
 # Name: 代码审查助手
 # Description: 专注于 Python/JavaScript 代码审查、重构和性能优化
-# Workspace: ~/.qwenpaw/workspaces/code_reviewer
+# Workspace: ~/.jotaduo/workspaces/code_reviewer
 # Profile: [自动生成的详细能力描述]
 ```
 
@@ -471,7 +471,7 @@ qwenpaw agents list
 #### 查询可用智能体
 
 ```bash
-qwenpaw agents list
+jotaduo agents list
 ```
 
 此命令会列出所有已配置的智能体，包括：
@@ -488,13 +488,13 @@ qwenpaw agents list
 Agent ID: code_reviewer
 Name: 代码审查助手
 Description: 专注于 Python/JavaScript 代码审查、重构和性能优化
-Workspace: ~/.qwenpaw/workspaces/code_reviewer
+Workspace: ~/.jotaduo/workspaces/code_reviewer
 Profile: [自动生成的详细能力描述，基于配置和人设文件]
 
 Agent ID: writer_bot
 Name: 写作助手
 Description: 负责文档撰写、内容润色和技术写作，擅长中英文双语
-Workspace: ~/.qwenpaw/workspaces/writer_bot
+Workspace: ~/.jotaduo/workspaces/writer_bot
 Profile: [自动生成的详细能力描述]
 ```
 
@@ -504,27 +504,27 @@ Profile: [自动生成的详细能力描述]
 
 ```bash
 # 发起新对话（实时模式，适合快速查询）
-qwenpaw agents chat \
+jotaduo agents chat \
   --from-agent <current_agent> \
   --to-agent <target_agent> \
   --text "请求内容"
 
 # 多轮对话（保持上下文）
-qwenpaw agents chat \
+jotaduo agents chat \
   --from-agent <current_agent> \
   --to-agent <target_agent> \
   --session-id "<session_id>" \
   --text "继续请求"
 
 # 复杂任务（后台模式，适合数据分析、报告生成等）
-qwenpaw agents chat --background \
+jotaduo agents chat --background \
   --from-agent <current_agent> \
   --to-agent <target_agent> \
   --text "复杂任务请求"
 # 返回 [TASK_ID: xxx] [SESSION: xxx]
 
 # 查询后台任务状态（查询时 --to-agent 为可选）
-qwenpaw agents chat --background \
+jotaduo agents chat --background \
   --task-id <task_id>
 # 状态流程：submitted → pending → running → finished
 # finished 时结果显示：completed（✅）或 failed（❌）
@@ -557,12 +557,12 @@ qwenpaw agents chat --background \
 
 ```bash
 # 查看特定智能体的配置
-qwenpaw channels list --agent-id abc123
-qwenpaw cron list --agent-id abc123
-qwenpaw skills list --agent-id abc123
+jotaduo channels list --agent-id abc123
+jotaduo cron list --agent-id abc123
+jotaduo skills list --agent-id abc123
 
 # 为特定智能体创建定时任务
-qwenpaw cron create \
+jotaduo cron create \
   --agent-id abc123 \
   --type agent \
   --name "检查待办" \
@@ -575,18 +575,18 @@ qwenpaw cron create \
 
 **支持 `--agent-id` 的命令**：
 
-- `qwenpaw channels` - 频道管理
-- `qwenpaw cron` - 定时任务
-- `qwenpaw daemon` - 运行状态
-- `qwenpaw chats` - 对话管理
-- `qwenpaw skills` - 技能管理
+- `jotaduo channels` - 频道管理
+- `jotaduo cron` - 定时任务
+- `jotaduo daemon` - 运行状态
+- `jotaduo chats` - 对话管理
+- `jotaduo skills` - 技能管理
 
 **不支持 `--agent-id` 的命令**（全局操作）：
 
-- `qwenpaw init` - 初始化
-- `qwenpaw providers` - 模型提供商
-- `qwenpaw models` - 模型配置
-- `qwenpaw env` - 环境变量
+- `jotaduo init` - 初始化
+- `jotaduo providers` - 模型提供商
+- `jotaduo models` - 模型配置
+- `jotaduo env` - 环境变量
 
 ### REST API
 
@@ -633,7 +633,7 @@ curl -X POST http://localhost:7860/api/cron/jobs \
 #### 旧结构（v0.0.x）
 
 ```
-~/.qwenpaw/
+~/.jotaduo/
 ├── config.json          # 包含所有配置
 ├── chats.json
 ├── jobs.json
@@ -644,7 +644,7 @@ curl -X POST http://localhost:7860/api/cron/jobs \
 #### 新结构（v0.1.0+）
 
 ```
-~/.qwenpaw/
+~/.jotaduo/
 ├── config.json          # 全局配置（providers, agents.profiles）
 └── workspaces/
     ├── default/         # 默认智能体工作区
@@ -688,11 +688,177 @@ curl -X POST http://localhost:7860/api/cron/jobs \
 
 ```bash
 # 备份特定智能体
-cp -r ~/.qwenpaw/workspaces/abc123 ~/backups/agent-abc123-$(date +%Y%m%d)
+cp -r ~/.jotaduo/workspaces/abc123 ~/backups/agent-abc123-$(date +%Y%m%d)
 
 # 备份所有智能体
-cp -r ~/.qwenpaw/workspaces ~/backups/workspaces-$(date +%Y%m%d)
+cp -r ~/.jotaduo/workspaces ~/backups/workspaces-$(date +%Y%m%d)
 ```
+
+---
+
+## 第三部分：子 Agent 派发（spawn_subagent）
+
+> 本功能在 **v1.1.10** 中引入。
+
+除了与**不同 workspace 的其他 Agent** 协作（`chat_with_agent`），JotaDuo 还支持在**当前项目内**派发临时子任务。
+
+### 三种协作模式对比
+
+| 模式                         | 工作区                    | 历史上下文         | 适用场景                         |
+| ---------------------------- | ------------------------- | ------------------ | -------------------------------- |
+| `chat_with_agent`            | 目标 Agent 独立 workspace | 无（只传 text）    | 调用专长 Agent（QA、代码审查等） |
+| `spawn_subagent(fork=False)` | 与当前 Agent 相同的项目   | 无（空白 session） | 干净独立子任务                   |
+| `spawn_subagent(fork=True)`  | 取决于环境（见下方）      | 继承完整对话历史   | 需要背景的侧任务，且可能改文件   |
+
+### 核心特性
+
+- **临时性（Ephemeral）**：子 Agent 不可恢复。每次调用创建一个新 session，完成后即丢弃。
+- **同一 Agent**：子 Agent 使用相同的 Agent 配置（persona、tools），只是在独立 session 中运行。
+- **无需额外配置**：`fork=True` 始终可用，无论是否开启 Coding Mode。
+
+### fork=True 在不同环境下的行为
+
+| 环境                                       | 行为                                                                                                |
+| ------------------------------------------ | --------------------------------------------------------------------------------------------------- |
+| 开启 Coding Mode + project_dir 是 git 仓库 | 在 `<project_dir>/.jotaduo/worktrees/` 下创建 **git worktree**，子 Agent 在隔离的 worktree 中工作   |
+| 未开启 Coding Mode + workspace 是 git 仓库 | 在 `<workspace_dir>/.jotaduo/worktrees/` 下创建 **git worktree**，子 Agent 在隔离的 worktree 中工作 |
+| 没有可用的 git 仓库                        | **原地 fork**：继承对话上下文，在与 parent 相同的目录中工作。无文件隔离                             |
+
+`fork=True` 的核心保证是**对话上下文继承**。Git worktree 隔离是项目为 git 仓库时的自动附加能力。
+
+### 何时使用 spawn_subagent？
+
+**使用 `spawn_subagent(fork=False)`（推荐，最常用）**：
+
+- 子任务需要读写**当前项目的文件**
+- 子任务相对独立，**不需要当前对话的背景**
+
+```
+"分析 src/core 下所有 API 端点并生成清单"
+"运行测试套件并汇总失败原因"
+"扫描整个代码库的安全漏洞"
+```
+
+**使用 `spawn_subagent(fork=True)`**：
+
+- 子任务**需要完整对话背景**（如基于刚才讨论的内容）
+- 子任务**会改动文件**，但不希望影响当前工作区（需要 git 仓库）
+- 子任务需要对话背景但**不改动文件**（任何环境都可用）
+
+```
+"基于我们刚才的讨论，为解析器模块补充单元测试"
+"试试另一个实现思路，做成独立分支方便比较"
+"把我们讨论的内容整理成一份规格文档"
+```
+
+**使用 `chat_with_agent`（跨 Agent）**：
+
+- 需要调用有特定专长的其他 Agent（QA Agent、代码审查 Agent 等）
+
+### 调用方式
+
+#### 前台同步（等待结果）
+
+```
+用户：分析 src/core 下的性能瓶颈
+
+Agent 内部执行：
+spawn_subagent(task="分析 src/core 下的性能瓶颈并给出报告")
+→ 返回: [SESSION: sub-ab12]
+         分析结果详情...
+```
+
+#### 后台异步（立即返回，稍后查询）
+
+```
+spawn_subagent(
+    task="扫描整个代码库安全漏洞",
+    background=True,
+)
+→ 返回: [TASK_ID: task-cd34]
+         [SESSION: sub-ef56]
+         任务已提交，用 check_agent_task(task_id="task-cd34") 查询进度
+```
+
+#### fork=True + git 仓库 — 继承历史，隔离 worktree
+
+```
+spawn_subagent(
+    task="基于我们刚才的讨论，为 parser 模块写单元测试",
+    fork=True,
+)
+→ [SESSION: sub-gh78]
+   测试代码已写入...
+   [FORK_BRANCH: fork/ab12ef34]
+   有文件改动，请手动合并分支。
+
+# 如果子任务完成后没有改动文件 → worktree 自动清理
+```
+
+#### fork=True + 非 git 仓库 — 原地继承上下文
+
+```
+spawn_subagent(
+    task="基于我们之前的讨论，起草 API 规格文档",
+    fork=True,
+)
+→ [SESSION: sub-ij90]
+   API 规格文档已起草...
+
+# 无 worktree 创建 — 子 Agent 继承上下文后原地工作
+```
+
+### .worktreeinclude — 自动复制配置文件
+
+当 git worktree 被创建时，被 `.gitignore` 忽略的文件（如 `.env`）不会被包含。
+
+在项目根目录创建 `.worktreeinclude` 文件，列出需要复制到 worktree 的文件：
+
+```
+# .worktreeinclude
+.env
+.env.local
+config/local.json
+```
+
+JotaDuo 在创建 worktree 时会自动将这些文件复制过去，确保子任务能正常运行。
+
+> 注意：`.worktreeinclude` 仅在 git worktree 被创建时生效。
+
+### 常见问题
+
+**Q：spawn_subagent 和 chat_with_agent 可以同时用吗？**
+
+可以。两者互不冲突：
+
+- `spawn_subagent` 在当前项目内执行文件操作类子任务（同 Agent，临时 session）
+- `chat_with_agent` 调用其他专长 Agent
+
+**Q：fork=True 需要开启 Coding Mode 吗？**
+
+不需要。`fork=True` 始终可用：
+
+- 有 git 仓库时（无论是 Coding Mode 的 project_dir 还是 workspace）：获得 worktree 隔离 + 上下文继承
+- 没有 git 仓库时：仅获得上下文继承（原地工作，无文件隔离）
+
+**Q：worktree 会自动清理吗？**
+
+- **有文件改动**：保留，返回 `[FORK_BRANCH]` 分支名。需手动合并后执行 `git worktree remove` 清理
+- **无文件改动**：自动清理
+- **无 git 仓库**：不创建 worktree，无需清理
+
+**Q：background=True 时的 worktree 怎么处理？**
+
+后台模式下不自动清理，需手动检查：
+
+```bash
+git worktree list
+git worktree remove .jotaduo/worktrees/<id>
+```
+
+**Q：可以恢复子 Agent 的 session 吗？**
+
+不可以。子 Agent 设计为临时性的。如需多轮交互，请使用 `chat_with_agent` 并指定 `session_id`。
 
 ---
 

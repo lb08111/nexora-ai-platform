@@ -1,6 +1,6 @@
 # Scheduled Tasks
 
-In QwenPaw, scheduled tasks (cron jobs) let the system run actions
+In JotaDuo, scheduled tasks (cron jobs) let the system run actions
 automatically at specific times, for example:
 
 - Remind you to stand up every 25 minutes during work hours.
@@ -63,7 +63,7 @@ recurring runs with run-count limits**.
            runs are not counted).
    - **Task type and content**:
      - **text**: send fixed text content.
-     - **agent**: send `content.text` to QwenPaw and deliver its response.
+     - **agent**: send `content.text` to JotaDuo and deliver its response.
    - **Delivery**: choose target channel (Console, DingTalk, etc.), user ID,
      and session ID. You can pick from existing sessions or enter custom
      values.
@@ -101,7 +101,7 @@ review upcoming plans. Click a task to open its edit page.
 
 ### Method 1: Create by chat
 
-You can also tell QwenPaw directly in your target channel:
+You can also tell JotaDuo directly in your target channel:
 
 > Help me create a scheduled task that reminds me to drink water every 5
 > minutes.
@@ -119,22 +119,22 @@ session, with `default` as user ID.
 
 ### Method 3: CLI
 
-See [CLI `qwenpaw cron` section](./cli#qwenpaw-cron). Common commands:
+See [CLI `jotaduo cron` section](./cli#jotaduo-cron). Common commands:
 
 ```bash
-qwenpaw cron list
-qwenpaw cron create ...
-qwenpaw cron state <job_id>
-qwenpaw cron run <job_id>
-qwenpaw cron pause <job_id>
-qwenpaw cron resume <job_id>
-qwenpaw cron delete <job_id>
+jotaduo cron list
+jotaduo cron create ...
+jotaduo cron state <job_id>
+jotaduo cron run <job_id>
+jotaduo cron pause <job_id>
+jotaduo cron resume <job_id>
+jotaduo cron delete <job_id>
 ```
 
 Example (send fixed text every day at 09:00):
 
 ```bash
-qwenpaw cron create \
+jotaduo cron create \
   --agent-id default \
   --type text \
   --schedule-type cron \
@@ -146,10 +146,10 @@ qwenpaw cron create \
   --text "Good morning. Remember to review today's todos."
 ```
 
-Example (ask QwenPaw every 2 hours and deliver the response):
+Example (ask JotaDuo every 2 hours and deliver the response):
 
 ```bash
-qwenpaw cron create \
+jotaduo cron create \
   --agent-id default \
   --type agent \
   --schedule-type cron \
@@ -164,7 +164,7 @@ qwenpaw cron create \
 Example (calendar task, one-time run only):
 
 ```bash
-qwenpaw cron create \
+jotaduo cron create \
   --agent-id default \
   --type text \
   --schedule-type scheduled \
@@ -180,7 +180,7 @@ qwenpaw cron create \
 Example (calendar task, every day for 14 runs):
 
 ```bash
-qwenpaw cron create \
+jotaduo cron create \
   --agent-id default \
   --type text \
   --schedule-type scheduled \
@@ -207,7 +207,7 @@ Parameter notes:
 
 ## Cron Expression Quick Reference
 
-QwenPaw uses five-field cron: **minute hour day month weekday** (no seconds).
+JotaDuo uses five-field cron: **minute hour day month weekday** (no seconds).
 
 | Expression     | Meaning                         |
 | -------------- | ------------------------------- |
@@ -224,7 +224,7 @@ QwenPaw uses five-field cron: **minute hour day month weekday** (no seconds).
 ## Related Pages
 
 - [Console](./console) — Manage scheduled tasks in the web UI
-- [CLI `qwenpaw cron` section](./cli#qwenpaw-cron) — command reference
+- [CLI `jotaduo cron` section](./cli#jotaduo-cron) — command reference
 - [Heartbeat](./heartbeat) — Fixed periodic self-check / digest
 - [FAQ](./faq#scheduled-task-troubleshooting) — Common troubleshooting
 - [Config & working dir](./config) — `jobs.json` and workspace details

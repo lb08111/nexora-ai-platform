@@ -10,7 +10,7 @@ labels like ``{"type": ...`` in the session drawer (regression for PR #3).
 """
 from __future__ import annotations
 
-from qwenpaw.app.routers.console import _extract_placeholder_name
+from jotaduo.app.routers.console import _extract_placeholder_name
 
 
 class _TextBlock:

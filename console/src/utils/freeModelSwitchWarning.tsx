@@ -2,7 +2,7 @@ import { Checkbox, Modal } from "@agentscope-ai/design";
 import type { TFunction } from "i18next";
 
 const FREE_MODEL_WARNING_DISABLED_KEY =
-  "qwenpaw_free_model_switch_warning_disabled";
+  "jotaduo_free_model_switch_warning_disabled";
 
 const PROVIDER_WEBSITE_SAMPLES: Record<string, string> = {
   openrouter: "https://openrouter.ai/collections/free-models",
@@ -63,12 +63,12 @@ export async function confirmFreeModelSwitch({
       content: (
         <div>
           <div>{t("models.freeModelWarningMessage")}</div>
-          <div className="qwenpaw-free-model-warning-link-row">
+          <div className="jotaduo-free-model-warning-link-row">
             <a href={providerWebsite} target="_blank" rel="noreferrer">
               {providerWebsite}
             </a>
           </div>
-          <div className="qwenpaw-free-model-warning-checkbox-row">
+          <div className="jotaduo-free-model-warning-checkbox-row">
             <Checkbox
               onChange={(event) => {
                 dontShowAgain = Boolean(event?.target?.checked);

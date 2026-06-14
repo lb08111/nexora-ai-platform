@@ -7,17 +7,17 @@ from pathlib import Path
 
 import pytest
 
-from qwenpaw.backup._utils.signing import (
+from jotaduo.backup._utils.signing import (
     resolve_signature_action,
     sign_trusted_backup,
 )
-from qwenpaw.backup._utils.constants import META_FILE, PREFIX_CONFIG
-from qwenpaw.backup._utils.signing import key as signing_key
-from qwenpaw.backup._utils.signing.digest import verify_signature
-from qwenpaw.backup._utils.signing.resign import (
+from jotaduo.backup._utils.constants import META_FILE, PREFIX_CONFIG
+from jotaduo.backup._utils.signing import key as signing_key
+from jotaduo.backup._utils.signing.digest import verify_signature
+from jotaduo.backup._utils.signing.resign import (
     replace_meta_with_local_signature,
 )
-from qwenpaw.backup.models import BackupMeta, BackupValidationError
+from jotaduo.backup.models import BackupMeta, BackupValidationError
 
 
 def _reset_key_cache(

@@ -11,7 +11,9 @@ import json
 import logging
 from pathlib import Path
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("jotaduo").getChild(
+    __name__.replace("plugin_cloudpaw.", ""),
+)
 
 _A2A_CONFIG_FILENAME = "a2a_config.json"
 
@@ -19,8 +21,8 @@ _A2A_CONFIG_FILENAME = "a2a_config.json"
 def _get_workspace_dir() -> Path | None:
     """Resolve workspace directory for the current agent via context."""
     try:
-        from qwenpaw.app.agent_context import get_current_agent_id
-        from qwenpaw.config.utils import load_config
+        from jotaduo.app.agent_context import get_current_agent_id
+        from jotaduo.config.utils import load_config
 
         agent_id = get_current_agent_id()
         config = load_config()

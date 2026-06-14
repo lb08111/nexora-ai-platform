@@ -29,7 +29,7 @@ def working_dir(tmp_path: Path) -> Path:
 @pytest.fixture
 def hook(working_dir):
     """Create a BootstrapHook with default (zh) language."""
-    from qwenpaw.agents.hooks.bootstrap import BootstrapHook
+    from jotaduo.agents.hooks.bootstrap import BootstrapHook
 
     return BootstrapHook(working_dir=working_dir)
 
@@ -51,19 +51,19 @@ class TestBootstrapHookInit:
     """P0: __init__ tests."""
 
     def test_stores_working_dir(self, working_dir):
-        from qwenpaw.agents.hooks.bootstrap import BootstrapHook
+        from jotaduo.agents.hooks.bootstrap import BootstrapHook
 
         hook = BootstrapHook(working_dir=working_dir)
         assert hook.working_dir == working_dir
 
     def test_default_language_is_zh(self, working_dir):
-        from qwenpaw.agents.hooks.bootstrap import BootstrapHook
+        from jotaduo.agents.hooks.bootstrap import BootstrapHook
 
         hook = BootstrapHook(working_dir=working_dir)
         assert hook.language == "zh"
 
     def test_custom_language_stored(self, working_dir):
-        from qwenpaw.agents.hooks.bootstrap import BootstrapHook
+        from jotaduo.agents.hooks.bootstrap import BootstrapHook
 
         hook = BootstrapHook(working_dir=working_dir, language="en")
         assert hook.language == "en"
@@ -106,7 +106,7 @@ class TestBootstrapHookCallEarlyExit:
         """Not first interaction → skip guidance."""
         (hook.working_dir / "BOOTSTRAP.md").write_text("# Bootstrap")
         with patch(
-            "qwenpaw.agents.hooks.bootstrap.is_first_user_interaction",
+            "jotaduo.agents.hooks.bootstrap.is_first_user_interaction",
             return_value=False,
         ):
             result = await hook(mock_agent, {})
@@ -138,13 +138,13 @@ class TestBootstrapHookCallHappyPath:
         )
 
         with patch(
-            "qwenpaw.agents.hooks.bootstrap.is_first_user_interaction",
+            "jotaduo.agents.hooks.bootstrap.is_first_user_interaction",
             return_value=True,
         ), patch(
-            "qwenpaw.agents.hooks.bootstrap.build_bootstrap_guidance",
+            "jotaduo.agents.hooks.bootstrap.build_bootstrap_guidance",
             return_value="guidance text",
         ) as mock_build, patch(
-            "qwenpaw.agents.hooks.bootstrap.prepend_to_message_content",
+            "jotaduo.agents.hooks.bootstrap.prepend_to_message_content",
         ) as mock_prepend:
             result = await hook(mock_agent, {})
 
@@ -164,13 +164,13 @@ class TestBootstrapHookCallHappyPath:
         )
 
         with patch(
-            "qwenpaw.agents.hooks.bootstrap.is_first_user_interaction",
+            "jotaduo.agents.hooks.bootstrap.is_first_user_interaction",
             return_value=True,
         ), patch(
-            "qwenpaw.agents.hooks.bootstrap.build_bootstrap_guidance",
+            "jotaduo.agents.hooks.bootstrap.build_bootstrap_guidance",
             return_value="guidance",
         ), patch(
-            "qwenpaw.agents.hooks.bootstrap.prepend_to_message_content",
+            "jotaduo.agents.hooks.bootstrap.prepend_to_message_content",
         ):
             await hook(mock_agent, {})
 
@@ -192,20 +192,20 @@ class TestBootstrapHookCallHappyPath:
         )
 
         with patch(
-            "qwenpaw.agents.hooks.bootstrap.is_first_user_interaction",
+            "jotaduo.agents.hooks.bootstrap.is_first_user_interaction",
             return_value=True,
         ), patch(
-            "qwenpaw.agents.hooks.bootstrap.build_bootstrap_guidance",
+            "jotaduo.agents.hooks.bootstrap.build_bootstrap_guidance",
             return_value="guidance",
         ), patch(
-            "qwenpaw.agents.hooks.bootstrap.prepend_to_message_content",
+            "jotaduo.agents.hooks.bootstrap.prepend_to_message_content",
         ) as mock_prepend:
             await hook(mock_agent, {})
 
         mock_prepend.assert_called_once_with(user_msg, "guidance")
 
     async def test_uses_hook_language_for_guidance(self, working_dir):
-        from qwenpaw.agents.hooks.bootstrap import BootstrapHook
+        from jotaduo.agents.hooks.bootstrap import BootstrapHook
 
         hook_en = BootstrapHook(working_dir=working_dir, language="en")
         (working_dir / "BOOTSTRAP.md").write_text("# Bootstrap")
@@ -215,13 +215,13 @@ class TestBootstrapHookCallHappyPath:
         agent.memory.get_memory = AsyncMock(return_value=[user_msg])
 
         with patch(
-            "qwenpaw.agents.hooks.bootstrap.is_first_user_interaction",
+            "jotaduo.agents.hooks.bootstrap.is_first_user_interaction",
             return_value=True,
         ), patch(
-            "qwenpaw.agents.hooks.bootstrap.build_bootstrap_guidance",
+            "jotaduo.agents.hooks.bootstrap.build_bootstrap_guidance",
             return_value="en guidance",
         ) as mock_build, patch(
-            "qwenpaw.agents.hooks.bootstrap.prepend_to_message_content",
+            "jotaduo.agents.hooks.bootstrap.prepend_to_message_content",
         ):
             await hook_en(agent, {})
 

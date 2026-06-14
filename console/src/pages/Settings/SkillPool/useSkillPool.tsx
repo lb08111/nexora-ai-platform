@@ -10,10 +10,7 @@ import { Modal, Form } from "@agentscope-ai/design";
 import { useAppMessage } from "../../../hooks/useAppMessage";
 import { useTranslation } from "react-i18next";
 import api from "../../../api";
-import {
-  invalidateSkillCache,
-  isPendingApprovalResult,
-} from "../../../api/modules/skill";
+import { invalidateSkillCache } from "../../../api/modules/skill";
 import type {
   BuiltinImportSpec,
   BuiltinUpdateNotice,
@@ -28,10 +25,10 @@ import {
   useConflictRenameModal,
 } from "../../Agent/Skills/components";
 import { useSkillFilter } from "../../Agent/Skills/useSkillFilter";
+import { useUploadLimitStore } from "../../../stores/uploadLimitStore";
 
 export type PoolMode = "broadcast" | "create" | "edit";
 
-const SKILL_POOL_ZIP_MAX_MB = 100;
 type BuiltinSkillLanguage = "en" | "zh";
 interface BuiltinImportSelection {
   skill_name: string;
@@ -62,7 +59,7 @@ type BroadcastConflict =
       current_language: string;
     };
 
-const BUILTIN_NOTICE_ACK_STORAGE_KEY = "qwenpaw.skill-pool.builtin-notice.ack";
+const BUILTIN_NOTICE_ACK_STORAGE_KEY = "jotaduo.skill-pool.builtin-notice.ack";
 
 function readBuiltinNoticeAcknowledgement(): string {
   if (typeof window === "undefined") return "";
@@ -494,7 +491,6 @@ export function useSkillPool() {
         );
         if (!confirmed) return;
       }
-      let pendingApprovalCount = 0;
       for (const skillName of broadcastSkillNames) {
         const overwriteTargetIds = new Set(
           conflicts
@@ -509,35 +505,25 @@ export function useSkillPool() {
         );
 
         if (cleanTargetIds.length > 0) {
-          const result = await api.downloadSkillPoolSkill({
+          await api.downloadSkillPoolSkill({
             skill_name: skillName,
             targets: cleanTargetIds.map((workspace_id) => ({
               workspace_id,
             })),
           });
-          if (isPendingApprovalResult(result)) {
-            pendingApprovalCount += 1;
-          }
         }
 
         if (overwriteTargetIds.size > 0) {
-          const result = await api.downloadSkillPoolSkill({
+          await api.downloadSkillPoolSkill({
             skill_name: skillName,
             targets: Array.from(overwriteTargetIds).map((workspace_id) => ({
               workspace_id,
             })),
             overwrite: true,
           });
-          if (isPendingApprovalResult(result)) {
-            pendingApprovalCount += 1;
-          }
         }
       }
-      message.success(
-        pendingApprovalCount > 0
-          ? t("skillPool.broadcastPendingApproval")
-          : t("skillPool.broadcastSuccess"),
-      );
+      message.success(t("skillPool.broadcastSuccess"));
       closeModal();
       invalidateSkillCache({ pool: true, workspaces: true });
       await loadData(true);
@@ -713,26 +699,11 @@ export function useSkillPool() {
                 content: skillContent,
                 config: parsedConfig,
               })
-              .then((created) => {
-                if (isPendingApprovalResult(created)) {
-                  return {
-                    success: true,
-                    mode: "approval" as const,
-                    name: skillName,
-                    message: created.message,
-                  };
-                }
-                return {
-                  success: true,
-                  mode: "edit" as const,
-                  name: created.name,
-                };
-              });
-      if (result.mode === "approval") {
-        message.info(result.message);
-        closeDrawer();
-        return;
-      }
+              .then((created) => ({
+                success: true,
+                mode: "edit" as const,
+                name: created.name,
+              }));
       const newTags = values.tags || [];
       const oldTags = (mode === "edit" ? activeSkill?.tags : []) || [];
       const tagsChanged = JSON.stringify(newTags) !== JSON.stringify(oldTags);
@@ -816,10 +787,13 @@ export function useSkillPool() {
   const handleDelete = async (skill: PoolSkillSpec) => {
     Modal.confirm({
       title: t("skillPool.deleteTitle", { name: skill.name }),
-      content:
-        skill.source === "builtin"
-          ? t("skillPool.deleteBuiltinConfirm")
-          : t("skillPool.deleteConfirm"),
+      content: skill.external
+        ? t("skillPool.deleteExternalConfirm", {
+            path: skill.external_path || skill.name,
+          })
+        : skill.source === "builtin"
+        ? t("skillPool.deleteBuiltinConfirm")
+        : t("skillPool.deleteConfirm"),
       okText: t("common.delete"),
       okType: "danger",
       onOk: async () => {
@@ -842,10 +816,11 @@ export function useSkillPool() {
     }
 
     const sizeMB = file.size / (1024 * 1024);
-    if (sizeMB > SKILL_POOL_ZIP_MAX_MB) {
+    const uploadLimit = useUploadLimitStore.getState().uploadMaxSizeMb;
+    if (uploadLimit !== null && sizeMB > uploadLimit) {
       message.warning(
         t("skills.fileSizeExceeded", {
-          limit: SKILL_POOL_ZIP_MAX_MB,
+          limit: uploadLimit,
           size: sizeMB.toFixed(1),
         }),
       );
@@ -858,10 +833,6 @@ export function useSkillPool() {
         const result = await api.uploadSkillPoolZip(file, {
           rename_map: renameMap,
         });
-        if (isPendingApprovalResult(result)) {
-          message.info(result.message);
-          return;
-        }
         if (result.count > 0) {
           message.success(
             t("skillPool.imported", { names: result.imported.join(", ") }),
@@ -918,11 +889,6 @@ export function useSkillPool() {
         bundle_url: url,
         target_name: targetName,
       });
-      if (isPendingApprovalResult(result)) {
-        message.info(result.message);
-        closeImportModal();
-        return;
-      }
       message.success(`${t("common.create")}: ${result.name}`);
       closeImportModal();
       invalidateSkillCache({ pool: true });
@@ -964,15 +930,25 @@ export function useSkillPool() {
   const handleBatchDeletePool = async () => {
     const names = Array.from(selectedPoolSkills);
     if (names.length === 0) return;
+    const hasExternal = skills.some(
+      (s) => selectedPoolSkills.has(s.name) && s.external,
+    );
     const confirmed = await new Promise<boolean>((resolve) => {
       Modal.confirm({
         title: t("skillPool.batchDeleteTitle", { count: names.length }),
         content: (
-          <ul style={{ margin: "8px 0", paddingLeft: 20 }}>
-            {names.map((n) => (
-              <li key={n}>{n}</li>
-            ))}
-          </ul>
+          <>
+            <ul style={{ margin: "8px 0", paddingLeft: 20 }}>
+              {names.map((n) => (
+                <li key={n}>{n}</li>
+              ))}
+            </ul>
+            {hasExternal && (
+              <div style={{ color: "var(--ant-color-error, #ff4d4f)" }}>
+                {t("skillPool.deleteExternalBatchWarning")}
+              </div>
+            )}
+          </>
         ),
         okText: t("common.delete"),
         okType: "danger",

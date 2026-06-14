@@ -1,6 +1,5 @@
 import { Layout, Space, Badge, Spin, Tooltip, Dropdown } from "antd";
 import type { MenuProps } from "antd";
-import LanguageSwitcher from "../components/LanguageSwitcher/index";
 import ThemeToggleButton from "../components/ThemeToggleButton";
 import CodingModeToggle from "../components/CodingModeToggle";
 import { useTranslation } from "react-i18next";
@@ -9,7 +8,7 @@ import styles from "./index.module.less";
 import api from "../api";
 import { clearAuthToken } from "../api/config";
 import { authApi } from "../api/modules/auth";
-import { usersApi } from "../nexora/api/users";
+import { usersApi } from "../jotaduo/api/users";
 import {
   GITHUB_URL,
   getDocsUrl,
@@ -159,8 +158,8 @@ export default function Header() {
     fetch(url, { cache: "no-cache" })
       .then((res) => (res.ok ? res.text() : Promise.reject()))
       .then((text) => {
-        const zhPattern = /###\s*QwenPaw如何更新[\s\S]*?(?=\n###|$)/;
-        const enPattern = /###\s*How to update QwenPaw[\s\S]*?(?=\n###|$)/;
+        const zhPattern = /###\s*JotaDuo如何更新[\s\S]*?(?=\n###|$)/;
+        const enPattern = /###\s*How to update JotaDuo[\s\S]*?(?=\n###|$)/;
         const match = text.match(faqLang === "zh" ? zhPattern : enPattern);
         setUpdateMarkdown(
           match && lang !== "ru"
@@ -194,8 +193,8 @@ export default function Header() {
       <AntHeader className={styles.header}>
         <div className={styles.logoWrapper}>
           <img
-            src="/logo.png"
-            alt="QwenPaw"
+            src="/jota-duo-icon.png"
+            alt="Jota Duo"
             className={styles.logoImg}
           />
           <div className={styles.logoDivider} />
@@ -269,8 +268,6 @@ export default function Header() {
           </Tooltip>
           <div className={styles.headerDivider} />
           <CodingModeToggle />
-          <div className={styles.headerDivider} />
-          <LanguageSwitcher />
           <ThemeToggleButton />
           {authEnabled && (
             <Button

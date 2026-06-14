@@ -10,8 +10,8 @@ import types
 import click
 import pytest
 
-from qwenpaw.tauri import entry
-from qwenpaw.tauri.env import DESKTOP_CORS_ORIGINS_ENV, DESKTOP_READY_PREFIX
+from jotaduo.tauri import entry
+from jotaduo.tauri.env import DESKTOP_CORS_ORIGINS_ENV, DESKTOP_READY_PREFIX
 
 
 def test_install_desktop_runtime_preserves_existing_cors_values(monkeypatch):
@@ -28,19 +28,19 @@ def test_install_desktop_runtime_preserves_existing_cors_values(monkeypatch):
     assert "http://127.0.0.1:5173" not in origins
 
 
-def test_ensure_qwenpaw_app_not_loaded_rejects_late_cors(monkeypatch):
-    monkeypatch.setitem(sys.modules, "qwenpaw.app._app", object())
+def test_ensure_jotaduo_app_not_loaded_rejects_late_cors(monkeypatch):
+    monkeypatch.setitem(sys.modules, "jotaduo.app._app", object())
 
     with pytest.raises(RuntimeError, match="desktop CORS origins"):
-        entry._ensure_qwenpaw_app_not_loaded()
+        entry._ensure_jotaduo_app_not_loaded()
 
 
-def test_sync_loaded_qwenpaw_constant_cors_origins(monkeypatch):
+def test_sync_loaded_jotaduo_constant_cors_origins(monkeypatch):
     constant_module = types.SimpleNamespace(CORS_ORIGINS="")
-    monkeypatch.setitem(sys.modules, "qwenpaw.constant", constant_module)
+    monkeypatch.setitem(sys.modules, "jotaduo.constant", constant_module)
     monkeypatch.setenv(DESKTOP_CORS_ORIGINS_ENV, "tauri://localhost")
 
-    entry._sync_loaded_qwenpaw_constant_cors_origins()
+    entry._sync_loaded_jotaduo_constant_cors_origins()
 
     assert constant_module.CORS_ORIGINS == "tauri://localhost"
 
