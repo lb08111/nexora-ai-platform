@@ -4,11 +4,11 @@ body {
   overflow: hidden;
   margin: 0;
   padding: 0;
-  background: #f9f8f4;
+  background: var(--app-bg);
 }
 
 .jotaduo-layout {
-  background: #f9f8f4;
+  background: var(--app-bg);
 }
 
 /* ─── Dark mode global token overrides ─────────────────────────────────────── */
@@ -17,25 +17,25 @@ html.dark-mode {
 }
 
 html.dark-mode body {
-  background: #141414;
-  color: rgba(255, 255, 255, 0.85);
+  background: var(--app-bg);
+  color: var(--app-text);
 }
 
 /* Ant Design layout background in dark mode */
 html.dark-mode .ant-layout,
 html.dark-mode .jotaduo-layout {
-  background: #141414 !important;
+  background: var(--app-bg) !important;
 }
 
 html.dark-mode .ant-layout-content,
 html.dark-mode .jotaduo-layout-content {
-  background: #141414 !important;
+  background: var(--app-bg) !important;
 }
 
 /* Page content area background */
 html.dark-mode .page-content {
-  background: #141414;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--app-bg);
+  border: 1px solid var(--app-border-subtle);
 }
 
 /* Card components — @agentscope-ai/design uses jotaduo prefix */
@@ -895,24 +895,24 @@ html.dark-mode
   min-height: 100vh;
   max-height: 100vh;
   overflow: hidden;
-  background: #f9f8f4;
+  background: var(--app-bg);
 }
 
 .ant-layout-content {
   overflow: hidden;
-  background: #f9f8f4;
+  background: var(--app-bg);
 }
 
 .jotaduo-bubble-list-wrapper {
-  background: #fff !important;
+  background: var(--app-surface) !important;
 }
 
 .jotaduo-chat-anywhere-input {
-  background: #fff !important;
+  background: var(--app-surface) !important;
 }
 
 .jotaduo-chat-anywhere-message-list-welcome {
-  background: #fff !important;
+  background: var(--app-surface) !important;
 }
 
 /* Chat bubble list max-width override */
@@ -924,12 +924,12 @@ html.dark-mode
 html.dark-mode .jotaduo-chat-anywhere,
 html.dark-mode .jotaduo-chat-anywhere-message-list,
 html.dark-mode .jotaduo-bubble-list-wrapper {
-  background: #141414 !important;
+  background: var(--app-bg) !important;
 }
 
 /* Chat welcome message in dark mode */
 html.dark-mode .jotaduo-chat-anywhere-welcome-default {
-  background: #141414 !important;
+  background: var(--app-bg) !important;
 }
 
 /* Chat input area in dark mode */
@@ -942,14 +942,14 @@ html.dark-mode .jotaduo-sender-content {
 /* Menu background in light mode */
 .jotaduo-menu,
 .ant-menu {
-  background: #f9f8f4 !important;
+  background: transparent !important;
 }
 
 /* Menu selected item in light mode */
 .jotaduo-menu-item-selected,
 .ant-menu-item-selected {
-  background: rgba(43, 18, 0, 0.08) !important;
-  color: inherit !important;
+  background: var(--app-primary-selected) !important;
+  color: var(--app-primary-text) !important;
 }
 
 /* Hide submenu arrow in light mode */
@@ -997,11 +997,11 @@ html.dark-mode .jotaduo-sender-content {
 .page-content {
   flex: 1 1 auto;
   overflow: auto;
-  background-color: #fff;
+  background-color: var(--app-surface);
   border-radius: 8px;
   /* 8px */
   box-sizing: border-box;
-  border: 1px solid #eae9e7;
+  border: 1px solid var(--app-border-subtle);
   /* #EAE9E7 */
 }
 
@@ -1088,9 +1088,18 @@ html.dark-mode .jotaduo-btn-primary.jotaduo-btn-disabled {
 /* Dark mode - default button */
 html.dark-mode .ant-btn-default,
 html.dark-mode .jotaduo-btn-default {
-  color: rgba(255, 235, 218, 0.88) !important;
-  background-color: #000000 !important;
-  border: 1px solid #3a312a !important;
+  color: var(--app-text) !important;
+  background-color: var(--app-surface-subtle) !important;
+  border: 1px solid var(--app-border-subtle) !important;
+}
+
+html.dark-mode .ant-btn-default:hover,
+html.dark-mode .jotaduo-btn-default:hover,
+html.dark-mode .ant-btn-default:focus-visible,
+html.dark-mode .jotaduo-btn-default:focus-visible {
+  color: var(--app-primary-text) !important;
+  background-color: var(--app-surface-hover) !important;
+  border-color: var(--app-primary-border) !important;
 }
 
 /* Dark mode - danger button */

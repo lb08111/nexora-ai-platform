@@ -1,0 +1,193 @@
+/* Nexora console visual tokens: compact IDE shell, dark-first compatible. */
+:root {
+  --app-bg: #f4f7fb;
+  --app-bg-elevated: #ffffff;
+  --app-sidebar-bg: #eef3f8;
+  --app-surface: #ffffff;
+  --app-surface-subtle: #f0f4f9;
+  --app-surface-hover: #e7eef8;
+  --app-border: rgba(15, 23, 42, 0.16);
+  --app-border-subtle: rgba(15, 23, 42, 0.1);
+  --app-text: rgba(15, 23, 42, 0.82);
+  --app-text-strong: #0f172a;
+  --app-text-muted: rgba(71, 85, 105, 0.78);
+  --app-text-subtle: rgba(100, 116, 139, 0.72);
+  --app-text-inverse: #ffffff;
+  --app-primary: #3c79b7;
+  --app-primary-hover: #4b8fce;
+  --app-primary-soft: rgba(60, 121, 183, 0.12);
+  --app-primary-selected: rgba(60, 121, 183, 0.18);
+  --app-primary-border: rgba(60, 121, 183, 0.28);
+  --app-primary-text: #2563a8;
+  --app-danger: #ef4444;
+  --app-danger-soft: rgba(239, 68, 68, 0.12);
+  --app-success: #22c55e;
+  --app-success-soft: rgba(34, 197, 94, 0.12);
+  --app-warning: #d08a18;
+  --app-focus: #3c79b7;
+  --app-focus-ring: 0 0 0 2px rgba(60, 121, 183, 0.28);
+  --app-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --app-shadow-md: 0 10px 28px rgba(15, 23, 42, 0.12);
+  --app-shadow-lg: 0 18px 48px rgba(15, 23, 42, 0.16);
+  --header-background: var(--app-surface);
+  --table-header-bg: var(--app-surface-subtle);
+  --nx-bg: var(--app-bg);
+  --nx-surface: var(--app-surface);
+  --nx-surface-2: var(--app-surface-subtle);
+  --nx-border: var(--app-border-subtle);
+  --nx-border-strong: var(--app-border);
+  --nx-text: var(--app-text-strong);
+  --nx-text-2: var(--app-text-muted);
+  --nx-text-3: var(--app-text-subtle);
+  --nx-accent: var(--app-primary);
+  --nx-accent-soft: var(--app-primary-soft);
+  --nx-accent-hover: var(--app-primary-hover);
+  --nx-radius: 8px;
+  --nx-radius-sm: 6px;
+  --nx-radius-lg: 10px;
+  --nx-font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --nx-font-mono: "SF Mono", Consolas, "Liberation Mono", monospace;
+  --nx-transition: all 0.16s ease;
+}
+
+html.dark-mode {
+  --app-bg: #101214;
+  --app-bg-elevated: #171a1e;
+  --app-sidebar-bg: #111315;
+  --app-surface: #151719;
+  --app-surface-subtle: #20242a;
+  --app-surface-hover: #26303a;
+  --app-border: rgba(226, 232, 240, 0.16);
+  --app-border-subtle: rgba(226, 232, 240, 0.09);
+  --app-text: rgba(241, 245, 249, 0.82);
+  --app-text-strong: #f8fafc;
+  --app-text-muted: rgba(203, 213, 225, 0.68);
+  --app-text-subtle: rgba(148, 163, 184, 0.62);
+  --app-primary: #4b8fce;
+  --app-primary-hover: #62a2dc;
+  --app-primary-soft: rgba(75, 143, 206, 0.14);
+  --app-primary-selected: rgba(75, 143, 206, 0.22);
+  --app-primary-border: rgba(75, 143, 206, 0.34);
+  --app-primary-text: #7eb7ff;
+  --app-danger: #f87171;
+  --app-danger-soft: rgba(248, 113, 113, 0.14);
+  --app-success: #4ade80;
+  --app-success-soft: rgba(74, 222, 128, 0.13);
+  --app-warning: #e3a13f;
+  --app-focus: #4b8fce;
+  --app-focus-ring: 0 0 0 2px rgba(75, 143, 206, 0.34);
+  --app-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.34);
+  --app-shadow-md: 0 16px 36px rgba(0, 0, 0, 0.4);
+  --app-shadow-lg: 0 24px 58px rgba(0, 0, 0, 0.46);
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  background: var(--app-bg);
+  color: var(--app-text);
+}
+
+.jotaduo-app,
+.jotaduo-layout,
+.ant-layout,
+.jotaduo-layout-content,
+.ant-layout-content {
+  background: var(--app-bg) !important;
+}
+
+.jotaduo-btn,
+.ant-btn {
+  border-radius: 6px;
+  box-shadow: none;
+}
+
+.jotaduo-btn-primary,
+.ant-btn-primary {
+  background: var(--app-primary) !important;
+  border-color: var(--app-primary) !important;
+  color: #f8fbff !important;
+}
+
+.jotaduo-btn-primary:hover,
+.jotaduo-btn-primary:focus-visible,
+.ant-btn-primary:hover,
+.ant-btn-primary:focus-visible {
+  background: var(--app-primary-hover) !important;
+  border-color: var(--app-primary-hover) !important;
+  color: #ffffff !important;
+}
+
+.jotaduo-btn-default,
+.ant-btn-default {
+  background: var(--app-surface-subtle) !important;
+  border-color: var(--app-border-subtle) !important;
+  color: var(--app-text) !important;
+}
+
+.jotaduo-btn-default:hover,
+.jotaduo-btn-default:focus-visible,
+.ant-btn-default:hover,
+.ant-btn-default:focus-visible {
+  background: var(--app-surface-hover) !important;
+  border-color: var(--app-primary-border) !important;
+  color: var(--app-primary-text) !important;
+}
+
+.jotaduo-btn-text,
+.ant-btn-text {
+  color: var(--app-text-muted) !important;
+}
+
+.jotaduo-btn-text:hover,
+.jotaduo-btn-text:focus-visible,
+.ant-btn-text:hover,
+.ant-btn-text:focus-visible {
+  background: var(--app-surface-hover) !important;
+  color: var(--app-text-strong) !important;
+}
+
+.jotaduo-btn:disabled,
+.jotaduo-btn-disabled,
+.ant-btn:disabled,
+.ant-btn-disabled {
+  background: var(--app-surface-subtle) !important;
+  border-color: var(--app-border-subtle) !important;
+  color: var(--app-text-subtle) !important;
+  opacity: 0.72;
+}
+
+.jotaduo-card,
+.ant-card,
+.jotaduo-modal-content,
+.ant-modal-content,
+.jotaduo-drawer-content,
+.ant-drawer-content {
+  background: var(--app-surface) !important;
+  border-color: var(--app-border-subtle) !important;
+  color: var(--app-text) !important;
+}
+
+.jotaduo-input,
+.ant-input,
+.jotaduo-input-affix-wrapper,
+.ant-input-affix-wrapper,
+.jotaduo-select-selector,
+.ant-select-selector,
+.jotaduo-picker,
+.ant-picker {
+  background: var(--app-bg-elevated) !important;
+  border-color: var(--app-border-subtle) !important;
+  color: var(--app-text) !important;
+}
+
+.jotaduo-input:focus,
+.ant-input:focus,
+.jotaduo-input-affix-wrapper-focused,
+.ant-input-affix-wrapper-focused,
+.jotaduo-select-focused .jotaduo-select-selector,
+.ant-select-focused .ant-select-selector {
+  border-color: var(--app-primary-border) !important;
+  box-shadow: var(--app-focus-ring) !important;
+}
