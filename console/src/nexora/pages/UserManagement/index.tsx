@@ -119,7 +119,9 @@ export default function UserManagementPage() {
       setPermissions(permissionList);
     } catch (error) {
       message.error(
-        error instanceof Error ? error.message : "Falha ao carregar permissões de usuário",
+        error instanceof Error
+          ? error.message
+          : "Falha ao carregar permissões de usuário",
       );
     } finally {
       setLoading(false);
@@ -229,7 +231,9 @@ export default function UserManagementPage() {
       message.success("Usuário excluído");
       await fetchAll();
     } catch (error) {
-      message.error(error instanceof Error ? error.message : "Falha ao excluir");
+      message.error(
+        error instanceof Error ? error.message : "Falha ao excluir",
+      );
     }
   };
 
@@ -239,7 +243,9 @@ export default function UserManagementPage() {
       message.success("Função excluída");
       await fetchAll();
     } catch (error) {
-      message.error(error instanceof Error ? error.message : "Falha ao excluir");
+      message.error(
+        error instanceof Error ? error.message : "Falha ao excluir",
+      );
     }
   };
 
@@ -305,7 +311,11 @@ export default function UserManagementPage() {
         <Space direction="vertical" size={2}>
           <Space>
             <Typography.Text strong>{value}</Typography.Text>
-            {record.builtin ? <Tag>Integrada</Tag> : <Tag color="blue">Personalizada</Tag>}
+            {record.builtin ? (
+              <Tag>Integrada</Tag>
+            ) : (
+              <Tag color="blue">Personalizada</Tag>
+            )}
           </Space>
           <Typography.Text type="secondary">{record.id}</Typography.Text>
         </Space>
@@ -447,11 +457,17 @@ export default function UserManagementPage() {
             label={editingUser ? "Redefinir senha" : "Senha"}
             name="password"
             rules={
-              editingUser ? [] : [{ required: true, message: "Digite a senha inicial" }]
+              editingUser
+                ? []
+                : [{ required: true, message: "Digite a senha inicial" }]
             }
           >
             <Input.Password
-              placeholder={editingUser ? "Deixe em branco para não alterar" : "Digite a senha inicial"}
+              placeholder={
+                editingUser
+                  ? "Deixe em branco para não alterar"
+                  : "Digite a senha inicial"
+              }
             />
           </Form.Item>
 

@@ -106,7 +106,10 @@ function DetailContent({ event }: { event: AuditEvent }) {
       { label: "Canal", value: String(d.channel || "-") },
       { label: "Usuário de destino", value: String(d.target_user || "-") },
       { label: "Tamanho da mensagem", value: String(d.message_length ?? "-") },
-      { label: "Conteúdo da mensagem", value: String(d.message_preview || "-") },
+      {
+        label: "Conteúdo da mensagem",
+        value: String(d.message_preview || "-"),
+      },
     ];
   } else if (action === "agent.tool.execute") {
     contextItems = [
@@ -117,10 +120,16 @@ function DetailContent({ event }: { event: AuditEvent }) {
       { label: "Motivo do disparo", value: String(d.reason || "-") },
     ];
     if (d.input_preview) {
-      contextItems.push({ label: "Parâmetros de entrada", value: String(d.input_preview) });
+      contextItems.push({
+        label: "Parâmetros de entrada",
+        value: String(d.input_preview),
+      });
     }
     if (d.result_preview) {
-      contextItems.push({ label: "Resultado da execução", value: String(d.result_preview) });
+      contextItems.push({
+        label: "Resultado da execução",
+        value: String(d.result_preview),
+      });
     }
     if (d.error) {
       contextItems.push({ label: "Mensagem de erro", value: String(d.error) });
@@ -132,10 +141,16 @@ function DetailContent({ event }: { event: AuditEvent }) {
       { label: "Permissão necessária", value: String(d.permission || "-") },
     ];
     if (d.status_code) {
-      contextItems.push({ label: "Código de status", value: String(d.status_code) });
+      contextItems.push({
+        label: "Código de status",
+        value: String(d.status_code),
+      });
     }
     if (d.query) {
-      contextItems.push({ label: "Parâmetros de consulta", value: String(d.query) });
+      contextItems.push({
+        label: "Parâmetros de consulta",
+        value: String(d.query),
+      });
     }
   } else if (action === "auth.login") {
     contextItems = [
@@ -182,10 +197,16 @@ function DetailContent({ event }: { event: AuditEvent }) {
     ];
   } else if (action.includes(".approved") || action.includes(".rejected")) {
     contextItems = [
-      { label: "ID da solicitação de aprovação", value: String(d.approval_request_id || "-") },
+      {
+        label: "ID da solicitação de aprovação",
+        value: String(d.approval_request_id || "-"),
+      },
     ];
     if (d.reason) {
-      contextItems.push({ label: "Motivo da rejeição", value: String(d.reason) });
+      contextItems.push({
+        label: "Motivo da rejeição",
+        value: String(d.reason),
+      });
     }
     if (d.result) {
       contextItems.push({
@@ -232,7 +253,12 @@ function DetailContent({ event }: { event: AuditEvent }) {
       </Descriptions>
 
       {contextItems.length > 0 && (
-        <Descriptions title="Detalhes da operação" column={1} bordered size="small">
+        <Descriptions
+          title="Detalhes da operação"
+          column={1}
+          bordered
+          size="small"
+        >
           {contextItems.map((item) => (
             <Descriptions.Item key={item.label} label={item.label}>
               {item.value.length > 200 ? (
@@ -279,7 +305,9 @@ export default function AuditLogsPage() {
       setEvents(data);
     } catch (error) {
       message.error(
-        error instanceof Error ? error.message : "Falha ao carregar os logs de auditoria",
+        error instanceof Error
+          ? error.message
+          : "Falha ao carregar os logs de auditoria",
       );
     } finally {
       setLoading(false);
@@ -314,9 +342,13 @@ export default function AuditLogsPage() {
       a.download = filename;
       a.click();
       URL.revokeObjectURL(a.href);
-      message.success(`Exportado: ${events.length > 0 ? "logs de auditoria" : "dados"}`);
+      message.success(
+        `Exportado: ${events.length > 0 ? "logs de auditoria" : "dados"}`,
+      );
     } catch (error) {
-      message.error(error instanceof Error ? error.message : "Falha na exportação");
+      message.error(
+        error instanceof Error ? error.message : "Falha na exportação",
+      );
     } finally {
       setExporting(false);
     }
@@ -465,8 +497,11 @@ export default function AuditLogsPage() {
         current="Logs de Auditoria"
         subRow={
           <Typography.Text type="secondary">
-            Registra logins de usuários, mensagens de chat, chamadas de ferramentas, operações na plataforma e bloqueios de permissão, facilitando a auditoria de segurança e o rastreamento de problemas.
-            {events.length > 0 && ` Exibindo ${events.length} registros no momento.`}
+            Registra logins de usuários, mensagens de chat, chamadas de
+            ferramentas, operações na plataforma e bloqueios de permissão,
+            facilitando a auditoria de segurança e o rastreamento de problemas.
+            {events.length > 0 &&
+              ` Exibindo ${events.length} registros no momento.`}
           </Typography.Text>
         }
         extra={
@@ -499,7 +534,11 @@ export default function AuditLogsPage() {
               onFinish={loadEvents}
             >
               <Form.Item name="actor" label="Usuário">
-                <Input allowClear placeholder="Nome de usuário" style={{ width: 120 }} />
+                <Input
+                  allowClear
+                  placeholder="Nome de usuário"
+                  style={{ width: 120 }}
+                />
               </Form.Item>
               <Form.Item name="action" label="Operação">
                 <Select

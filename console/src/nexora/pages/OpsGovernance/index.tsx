@@ -100,7 +100,9 @@ export default function OpsGovernancePage() {
       setApprovalConfigs(configList);
       setTemplates(templateList);
     } catch (error) {
-      message.error(error instanceof Error ? error.message : "Falha ao carregar");
+      message.error(
+        error instanceof Error ? error.message : "Falha ao carregar",
+      );
     } finally {
       setLoading(false);
     }
@@ -378,7 +380,9 @@ export default function OpsGovernancePage() {
             prev.filter((t) => t.template_id !== tpl.template_id),
           );
         } catch (error) {
-          message.error(error instanceof Error ? error.message : "Falha ao excluir");
+          message.error(
+            error instanceof Error ? error.message : "Falha ao excluir",
+          );
         }
       },
     });
@@ -529,7 +533,10 @@ export default function OpsGovernancePage() {
         current="Autorização de agentes"
         subRow={
           <Typography.Text type="secondary">
-            Após criar um agente, o administrador o autoriza para uso pelos usuários; configure o controle de aprovação de forma independente por tipo de capacidade; inicialize rapidamente as capacidades do agente por meio de modelos.
+            Após criar um agente, o administrador o autoriza para uso pelos
+            usuários; configure o controle de aprovação de forma independente
+            por tipo de capacidade; inicialize rapidamente as capacidades do
+            agente por meio de modelos.
           </Typography.Text>
         }
         extra={
@@ -659,7 +666,8 @@ export default function OpsGovernancePage() {
         destroyOnHidden
       >
         <Typography.Paragraph type="secondary" style={{ marginBottom: 12 }}>
-          Selecione à esquerda os usuários que terão acesso autorizado a este agente; à direita estão os usuários já autorizados.
+          Selecione à esquerda os usuários que terão acesso autorizado a este
+          agente; à direita estão os usuários já autorizados.
         </Typography.Paragraph>
         <Transfer
           dataSource={users.map((u) => ({
@@ -724,18 +732,30 @@ export default function OpsGovernancePage() {
             <Input placeholder="ex.: Pacote de operações personalizado" />
           </Form.Item>
           <Form.Item name="description" label="Descrição">
-            <Input.TextArea rows={2} placeholder="Descrição da finalidade do modelo" />
+            <Input.TextArea
+              rows={2}
+              placeholder="Descrição da finalidade do modelo"
+            />
           </Form.Item>
-          <Form.Item name="capabilities_tools" label="Ferramentas (separadas por vírgula)">
+          <Form.Item
+            name="capabilities_tools"
+            label="Ferramentas (separadas por vírgula)"
+          >
             <Input.TextArea
               rows={2}
               placeholder="read_file, write_file, execute_command"
             />
           </Form.Item>
-          <Form.Item name="capabilities_skills" label="Skill (separadas por vírgula)">
+          <Form.Item
+            name="capabilities_skills"
+            label="Skill (separadas por vírgula)"
+          >
             <Input.TextArea rows={2} placeholder="log_query, metric_check" />
           </Form.Item>
-          <Form.Item name="capabilities_mcps" label="MCP (separados por vírgula)">
+          <Form.Item
+            name="capabilities_mcps"
+            label="MCP (separados por vírgula)"
+          >
             <Input.TextArea rows={2} placeholder="prometheus, grafana" />
           </Form.Item>
         </Form>

@@ -224,7 +224,8 @@ export const CRON_TEMPLATES: CronTemplateDefinition[] = [
     "cronJobs.templates.petCareReminder.frequency",
     "0 20 15 * *",
     {
-      textContent: "Lembrete: hoje não esqueça de agendar o vermífugo/checagem de vacinas do seu pet ～",
+      textContent:
+        "Lembrete: hoje não esqueça de agendar o vermífugo/checagem de vacinas do seu pet ～",
     },
     ["personal", "reminder", "calendar"],
   ),
@@ -235,7 +236,8 @@ export const CRON_TEMPLATES: CronTemplateDefinition[] = [
     "cronJobs.templates.onceTextBirthdayReminder.frequency",
     {
       taskType: "text",
-      textContent: "xx faz aniversário em 1º de janeiro, não esqueça de enviar os parabéns ～",
+      textContent:
+        "xx faz aniversário em 1º de janeiro, não esqueça de enviar os parabéns ～",
       runAt: dayjs("2026-01-01T09:00:00"),
       repeatEnabled: false,
     },
@@ -278,7 +280,8 @@ export const CRON_TEMPLATES: CronTemplateDefinition[] = [
     "cronJobs.templates.repeatCountAgentDietPlan.frequency",
     {
       taskType: "agent",
-      agentPrompt: "Estou ganhando massa muscular ultimamente. Gere sugestões de alimentação para hoje.",
+      agentPrompt:
+        "Estou ganhando massa muscular ultimamente. Gere sugestões de alimentação para hoje.",
       runAt: dayjs("2026-01-01T08:00:00"),
       repeatEnabled: true,
       repeatEveryDays: 1,

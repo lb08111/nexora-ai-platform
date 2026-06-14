@@ -129,7 +129,9 @@ export default function ApprovalCenterPage() {
   const handleApprove = (record: ApprovalRequest) => {
     Modal.confirm({
       title: "Aprovar solicitação",
-      content: `Confirmar aprovação de "${record.summary || record.resource_name}"?`,
+      content: `Confirmar aprovação de "${
+        record.summary || record.resource_name
+      }"?`,
       okText: "Aprovar",
       cancelText: "Cancelar",
       onOk: async () => {
@@ -193,9 +195,7 @@ export default function ApprovalCenterPage() {
       );
       message.success("Configuração atualizada");
     } catch (error) {
-      message.error(
-        error instanceof Error ? error.message : "Falha ao salvar",
-      );
+      message.error(error instanceof Error ? error.message : "Falha ao salvar");
     } finally {
       setApprovalSaving(null);
     }
@@ -215,9 +215,7 @@ export default function ApprovalCenterPage() {
       );
       message.success("Configuração atualizada");
     } catch (error) {
-      message.error(
-        error instanceof Error ? error.message : "Falha ao salvar",
-      );
+      message.error(error instanceof Error ? error.message : "Falha ao salvar");
     } finally {
       setApprovalSaving(null);
     }
