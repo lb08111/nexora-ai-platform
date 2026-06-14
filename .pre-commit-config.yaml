@@ -142,6 +142,7 @@ repos:
           --disable=W0612,  # unused-variable
           --disable=C0301,  # line-too-long (flake8 already configured)
           --disable=F0002,  # astroid-error (pylint internal crash — upstream bug)
+          --disable=E0402,  # relative-beyond-top-level (hyphen plugin dirs not in package path)
         ]
   - repo: https://github.com/pre-commit/mirrors-prettier
     rev: 'v3.0.0'
