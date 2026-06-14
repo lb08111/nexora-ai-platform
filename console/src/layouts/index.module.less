@@ -6,11 +6,14 @@
 // ─── Header ───────────────────────────────────────────────────────────────────
 .header {
   height: 56px;
-  padding: 0 28px;
+  min-height: 56px;
+  padding: 0 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #f9f8f4;
+  background: var(--app-surface);
+  border-bottom: 1px solid var(--app-border-subtle);
+  color: var(--app-text);
 
   :global {
     .jotaduo-space-item {
@@ -32,10 +35,10 @@
 
 // ─── Sidebar ─────────────────────────────────────────────────────────────────
 .sider {
-  background: #f9f8f4 !important;
+  background: var(--app-sidebar-bg) !important;
   overflow: auto;
-  height: calc(100vh - 64px);
-  padding: 0 16px;
+  height: calc(100vh - 56px);
+  padding: 12px 10px 8px;
   display: flex;
   flex-direction: column;
 
@@ -62,10 +65,10 @@
 
   // Agent-scoped section: selector + Chat + Control + Workspace
   .agentScopedSection {
-    background: rgba(43, 18, 0, 0.02);
-    border-radius: 12px;
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    padding: 4px;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    padding: 0;
 
     :global {
       .jotaduo-menu {
@@ -73,15 +76,13 @@
       }
     }
   }
-  // AgentSelector + Chat container - sticky at top
+  // AgentSelector + Chat container - fixed visually by normal sidebar flow.
   .agentSelectorContainer {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    margin-bottom: 4px;
-    // Opaque background so scrolled content is hidden behind
-    background: #f9f7f3;
-    border-radius: 12px 12px 0 0;
+    position: static;
+    z-index: auto;
+    margin-bottom: 12px;
+    background: transparent;
+    border-radius: 0;
   }
 
   // Sticky Chat button — matches menu item appearance
@@ -95,19 +96,20 @@
     border: none;
     border-radius: 8px;
     background: transparent;
-    color: rgba(0, 0, 0, 0.88);
+    color: var(--app-text);
     font-size: 14px;
     cursor: pointer;
     transition: background 0.2s;
     padding-left: 12px;
 
     &:hover {
-      background: rgba(0, 0, 0, 0.06);
+      background: var(--app-surface-hover);
     }
   }
 
   .stickyChatButtonActive {
-    background: rgba(43, 18, 0, 0.08);
+    background: var(--app-primary-selected);
+    color: var(--app-primary-text);
   }
 
   // Menu takes remaining space
@@ -133,7 +135,7 @@
   }
 
   &.siderCollapsed {
-    padding: 0 8px;
+    padding: 0 6px;
 
     .agentSelectorContainer {
       display: flex;
@@ -191,13 +193,13 @@
       font-weight: 500 !important;
       line-height: 32px !important;
       letter-spacing: normal !important;
-      color: rgba(26, 23, 22, 0.25) !important;
+      color: var(--app-text-subtle) !important;
       padding-left: 8px !important;
 
       /* No hover effect for group titles */
       &:hover {
         background: transparent !important;
-        color: rgba(26, 23, 22, 0.25) !important;
+        color: var(--app-text-subtle) !important;
       }
     }
 
@@ -225,8 +227,8 @@
 
     /* Selected item */
     .jotaduo-menu-item-selected {
-      background: rgba(43, 18, 0, 0.08) !important;
-      color: inherit !important;
+      background: var(--app-primary-selected) !important;
+      color: var(--app-primary-text) !important;
       display: flex !important;
       align-items: center !important;
       justify-content: center !important;
@@ -245,18 +247,17 @@
 }
 
 .siderDark {
-  background: #1a1a1a !important;
-  border-right-color: rgba(255, 255, 255, 0.08) !important;
+  background: var(--app-sidebar-bg) !important;
+  border-right-color: var(--app-border-subtle) !important;
 
   // Agent-scoped section (dark mode)
   .agentScopedSection {
-    background: rgba(255, 255, 255, 0.04);
-    border-color: rgba(255, 255, 255, 0.08);
+    background: transparent;
+    border-color: transparent;
   }
 
-  // Sticky container background (dark mode)
   .agentSelectorContainer {
-    background: #1e1e1e;
+    background: transparent;
   }
 
   // Chat button (dark mode)
@@ -274,9 +275,9 @@
     color: #ff7f16;
   }
 
-  :global {
+    :global {
     .jotaduo-menu {
-      background: #1a1a1a !important;
+      background: var(--app-sidebar-bg) !important;
       border-inline-end: 0 !important;
     }
 
@@ -304,8 +305,8 @@
 
     /* Selected item */
     .jotaduo-menu-item-selected {
-      background: rgba(255, 127, 22, 0.5) !important;
-      color: #ff7f16 !important;
+      background: var(--app-primary-selected) !important;
+      color: var(--app-primary-text) !important;
     }
   }
 }
@@ -329,20 +330,18 @@
 }
 
 .headerDivider {
-  width: 16px;
-  height: 0px;
-  transform: rotate(90deg);
+  width: 1px;
+  height: 24px;
   z-index: 4;
-  border-top: 1px solid rgba(234, 232, 231, 1);
+  border-top: 0;
+  background: var(--app-border-subtle);
 }
 
 .versionBadge {
   font-size: 12px;
-  color: #1a171673;
+  color: var(--app-text-muted);
   font-weight: 600;
   line-height: 1;
-  position: relative;
-  top: 3px;
 }
 
 .versionBadgeClickable {
@@ -355,7 +354,7 @@
 
 .collapseBtn {
   margin: auto;
-  color: #ff7f16;
+  color: var(--app-primary-text);
 }
 
 // ─── Auth actions (account + logout) ──────────────────────────────────────────
@@ -389,22 +388,22 @@
 .collapseToggleContainer {
   flex-shrink: 0;
   z-index: 10;
-  width: calc(100% + 32px);
-  margin: 0 -16px;
-  padding: 8px 16px;
+  width: calc(100% + 20px);
+  margin: auto -10px 0;
+  padding: 8px 10px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
 }
 
 .collapseToggle {
-  color: rgba(0, 0, 0, 0.45);
+  color: var(--app-text-subtle);
   border-radius: 8px;
   transition: all 0.2s;
 
   &:hover {
-    background: rgba(0, 0, 0, 0.06) !important;
-    color: #ff7f16 !important;
+    background: var(--app-surface-hover) !important;
+    color: var(--app-primary-text) !important;
   }
 }
 
@@ -435,18 +434,18 @@
   border: none;
   background: transparent;
   cursor: pointer;
-  color: rgba(0, 0, 0, 0.55);
+  color: var(--app-text-muted);
   transition: all 0.15s;
 
   &:hover {
-    background: rgba(0, 0, 0, 0.06);
-    color: rgba(0, 0, 0, 0.88);
+    background: var(--app-surface-hover);
+    color: var(--app-text-strong);
   }
 }
 
 .collapsedNavItemActive {
-  background: rgba(43, 18, 0, 0.08) !important;
-  color: rgba(0, 0, 0, 0.88) !important;
+  background: var(--app-primary-selected) !important;
+  color: var(--app-primary-text) !important;
 }
 
 @media (max-width: 768px) {
@@ -641,9 +640,9 @@
 /* ─── Dark mode overrides ─────────────────────────────────────────────────── */
 :global(.dark-mode) {
   .header {
-    background: #1a1a1a !important;
-    border-bottom-color: rgba(255, 255, 255, 0.08) !important;
-    color: rgba(255, 255, 255, 0.85);
+    background: var(--app-surface) !important;
+    border-bottom-color: var(--app-border-subtle) !important;
+    color: var(--app-text);
 
     /* Text buttons (Docs / FAQ / GitHub / Changelog) */
     :global(.jotaduo-btn-text),
@@ -672,8 +671,8 @@
   }
 
   .sider {
-    background: #1a1a1a !important;
-    border-right-color: rgba(255, 255, 255, 0.08) !important;
+    background: var(--app-sidebar-bg) !important;
+    border-right-color: var(--app-border-subtle) !important;
   }
 
   .siderTop {
@@ -681,11 +680,11 @@
   }
 
   .versionBadge {
-    color: #ff7f16;
+    color: var(--app-primary-text);
   }
 
   .collapseBtn {
-    color: #ff7f16;
+    color: var(--app-primary-text);
   }
 
   .authActions {

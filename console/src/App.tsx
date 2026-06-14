@@ -36,6 +36,7 @@ import { authApi } from "./api/modules/auth";
 import { languageApi } from "./api/modules/language";
 import { useUploadLimitStore } from "./stores/uploadLimitStore";
 import { getApiUrl, getApiToken, clearAuthToken } from "./api/config";
+import "./styles/theme.css";
 import "./styles/layout.css";
 import "./styles/form-override.css";
 
@@ -190,7 +191,23 @@ function AppInner() {
             ? antdTheme.darkAlgorithm
             : antdTheme.defaultAlgorithm,
           token: {
-            colorPrimary: "#FF7F16",
+            colorPrimary: isDark ? "#4b8fce" : "#3c79b7",
+            colorBgLayout: isDark ? "#101214" : "#f4f7fb",
+            colorBgContainer: isDark ? "#151719" : "#ffffff",
+            colorBgElevated: isDark ? "#1a1d20" : "#ffffff",
+            colorBorder: isDark
+              ? "rgba(226, 232, 240, 0.16)"
+              : "rgba(15, 23, 42, 0.16)",
+            colorBorderSecondary: isDark
+              ? "rgba(226, 232, 240, 0.1)"
+              : "rgba(15, 23, 42, 0.1)",
+            colorText: isDark
+              ? "rgba(241, 245, 249, 0.84)"
+              : "rgba(15, 23, 42, 0.84)",
+            colorTextSecondary: isDark
+              ? "rgba(203, 213, 225, 0.62)"
+              : "rgba(71, 85, 105, 0.72)",
+            borderRadius: 8,
           },
         }}
       >
