@@ -27,7 +27,7 @@ for _mod in _MOCK_MODULES:
 # ---------------------------------------------------------------------------
 # Module-level shortcut for the patch target prefix
 # ---------------------------------------------------------------------------
-_MOD = "qwenpaw.agents.memory.reme_light_memory_manager"
+_MOD = "jotaduo.agents.memory.reme_light_memory_manager"
 
 
 # ---------------------------------------------------------------------------
@@ -100,7 +100,7 @@ def _build_manager(tmp_path, mock_reme, agent_config):
         patch(f"{_MOD}.set_current_workspace_dir"),
         patch(f"{_MOD}.set_current_recent_max_bytes"),
     ):
-        from qwenpaw.agents.memory.reme_light_memory_manager import (
+        from jotaduo.agents.memory.reme_light_memory_manager import (
             ReMeLightMemoryManager,
         )
 
@@ -188,7 +188,7 @@ class TestReMeLightMemoryManagerResolveRebuildOnStart:
     """P0: _resolve_rebuild_on_start logic (MEM-008/009)."""
 
     def test_no_sentinel_forces_rebuild_true(self, tmp_path):
-        from qwenpaw.agents.memory.reme_light_memory_manager import (
+        from jotaduo.agents.memory.reme_light_memory_manager import (
             ReMeLightMemoryManager,
         )
 
@@ -200,7 +200,7 @@ class TestReMeLightMemoryManagerResolveRebuildOnStart:
         assert result is True
 
     def test_no_sentinel_creates_sentinel_file(self, tmp_path):
-        from qwenpaw.agents.memory.reme_light_memory_manager import (
+        from jotaduo.agents.memory.reme_light_memory_manager import (
             ReMeLightMemoryManager,
         )
 
@@ -215,7 +215,7 @@ class TestReMeLightMemoryManagerResolveRebuildOnStart:
         self,
         tmp_path,
     ):
-        from qwenpaw.agents.memory.reme_light_memory_manager import (
+        from jotaduo.agents.memory.reme_light_memory_manager import (
             ReMeLightMemoryManager,
         )
 
@@ -228,7 +228,7 @@ class TestReMeLightMemoryManagerResolveRebuildOnStart:
         assert result is False
 
     def test_sentinel_present_uses_caller_value_true(self, tmp_path):
-        from qwenpaw.agents.memory.reme_light_memory_manager import (
+        from jotaduo.agents.memory.reme_light_memory_manager import (
             ReMeLightMemoryManager,
         )
 
@@ -242,7 +242,7 @@ class TestReMeLightMemoryManagerResolveRebuildOnStart:
 
     def test_old_sentinels_are_removed(self, tmp_path):
         """Stale sentinel from an old version should be deleted."""
-        from qwenpaw.agents.memory.reme_light_memory_manager import (
+        from jotaduo.agents.memory.reme_light_memory_manager import (
             ReMeLightMemoryManager,
         )
 
@@ -265,7 +265,7 @@ class TestReMeLightMemoryManagerCheckRemeVersion:
     """P0: _check_reme_version static method."""
 
     def test_returns_true_when_package_not_found(self):
-        from qwenpaw.agents.memory.reme_light_memory_manager import (
+        from jotaduo.agents.memory.reme_light_memory_manager import (
             ReMeLightMemoryManager,
         )
 
@@ -277,7 +277,7 @@ class TestReMeLightMemoryManagerCheckRemeVersion:
         assert result is True
 
     def test_returns_false_when_version_mismatches(self):
-        from qwenpaw.agents.memory.reme_light_memory_manager import (
+        from jotaduo.agents.memory.reme_light_memory_manager import (
             ReMeLightMemoryManager,
         )
 
@@ -289,7 +289,7 @@ class TestReMeLightMemoryManagerCheckRemeVersion:
         assert result is False
 
     def test_returns_true_when_version_matches(self):
-        from qwenpaw.agents.memory.reme_light_memory_manager import (
+        from jotaduo.agents.memory.reme_light_memory_manager import (
             ReMeLightMemoryManager,
             _EXPECTED_REME_VERSION,
         )

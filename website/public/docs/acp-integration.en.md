@@ -1,30 +1,30 @@
 # ACP Integration
 
-QwenPaw supports **ACP (Agent Client Protocol)** in two complementary ways:
+JotaDuo supports **ACP (Agent Client Protocol)** in two complementary ways:
 
-1. **QwenPaw using ACP as a Tool**: QwenPaw connects to external ACP runners and uses them as delegated collaborators
-2. **QwenPaw as an ACP Server**: external clients connect to QwenPaw over ACP
+1. **JotaDuo using ACP as a Tool**: JotaDuo connects to external ACP runners and uses them as delegated collaborators
+2. **JotaDuo as an ACP Server**: external clients connect to JotaDuo over ACP
 
 This page explains both modes and the scenarios each one fits best.
 
 ---
 
-## QwenPaw using ACP as a Tool
+## JotaDuo using ACP as a Tool
 
-In this mode, QwenPaw acts as an **ACP client / orchestrator**, connecting to **configured and enabled external ACP runners** and bringing them into the current session as delegated collaboration capabilities.
+In this mode, JotaDuo acts as an **ACP client / orchestrator**, connecting to **configured and enabled external ACP runners** and bringing them into the current session as delegated collaboration capabilities.
 
-The actual entry point for this mode is the built-in tool `delegate_external_agent`. It is intended for scenarios where QwenPaw needs to collaborate with other ACP-capable external agent runtimes, such as the built-in examples `opencode`, `qwen_code`, `claude_code`, and `codex`. For more ACP-compatible agents, see the official ACP agent list and integration guide: <https://agentclientprotocol.com/get-started/agents>. In other words, QwenPaw does not directly talk to arbitrary external agents. It talks to runners that have been registered in ACP configuration, and it starts, continues, responds to, and closes delegated collaboration sessions through them.
+The actual entry point for this mode is the built-in tool `delegate_external_agent`. It is intended for scenarios where JotaDuo needs to collaborate with other ACP-capable external agent runtimes, such as the built-in examples `opencode`, `qwen_code`, `claude_code`, and `codex`. For more ACP-compatible agents, see the official ACP agent list and integration guide: <https://agentclientprotocol.com/get-started/agents>. In other words, JotaDuo does not directly talk to arbitrary external agents. It talks to runners that have been registered in ACP configuration, and it starts, continues, responds to, and closes delegated collaboration sessions through them.
 
 ### What this mode does
 
-In this mode, QwenPaw uses the built-in `delegate_external_agent` tool to:
+In this mode, JotaDuo uses the built-in `delegate_external_agent` tool to:
 
 - start a session with an external ACP runner
 - send follow-up messages to that runner
 - respond to permission requests raised by that runner
 - close the delegated session when the work is complete
 
-Conceptually, this lets QwenPaw treat an external agent as a collaborative, tool-like capability while keeping QwenPaw as the primary orchestrator of the main conversation.
+Conceptually, this lets JotaDuo treat an external agent as a collaborative, tool-like capability while keeping JotaDuo as the primary orchestrator of the main conversation.
 
 ### How to configure external runners
 
@@ -32,7 +32,7 @@ Before using an external runner, make sure you have installed an ACP-compatible 
 
 ![qwen](https://gw.alicdn.com/imgextra/i1/O1CN017f6aVo1tWpstPL4GK_!!6000000005910-2-tps-1226-408.png)
 
-Once the command-line side is ready, you can configure a custom runner in QwenPaw or collaborate with one of the built-in runners directly.
+Once the command-line side is ready, you can configure a custom runner in JotaDuo or collaborate with one of the built-in runners directly.
 
 External runners must be configured and enabled on the **Workspace → ACP** page before they can be used by `delegate_external_agent`.
 
@@ -93,7 +93,7 @@ The built-in delegation flow supports these action types:
 
 ### Permission handling
 
-When an external ACP runner asks for permission, QwenPaw does **not** decide on the user's behalf.
+When an external ACP runner asks for permission, JotaDuo does **not** decide on the user's behalf.
 
 Instead, it:
 
@@ -101,46 +101,46 @@ Instead, it:
 - shows the permission details and available options
 - waits for the user to choose how to proceed
 
-This keeps delegated ACP execution aligned with the same user-controlled safety model used elsewhere in QwenPaw.
+This keeps delegated ACP execution aligned with the same user-controlled safety model used elsewhere in JotaDuo.
 
 ### When to use ACP as a Tool
 
 Use this mode when:
 
-- you want QwenPaw to collaborate with another agent runtime
+- you want JotaDuo to collaborate with another agent runtime
 - you have a specialized ACP-compatible external runner for a certain class of tasks
-- you want QwenPaw to remain the primary orchestrator while delegating part of the work outward
+- you want JotaDuo to remain the primary orchestrator while delegating part of the work outward
 
 ### ACP Tool vs MCP
 
 ACP as a Tool and MCP solve different problems:
 
-- **MCP** connects QwenPaw to external services and tool servers
-- **ACP as a Tool** connects QwenPaw to an external **agent** runtime
+- **MCP** connects JotaDuo to external services and tool servers
+- **ACP as a Tool** connects JotaDuo to an external **agent** runtime
 
 If you need APIs, databases, filesystems, or service integrations, use **MCP**.
 If you need agent-to-agent collaboration, use **ACP as a Tool**.
 
 ---
 
-## QwenPaw as an ACP Server
+## JotaDuo as an ACP Server
 
-In this mode, QwenPaw exposes itself as an [Agent Client Protocol (ACP)](https://github.com/agentclientprotocol/python-sdk) compliant agent service over stdio JSON-RPC. External clients, such as [Zed](https://zed.dev), [OpenCode](https://github.com/nicholasgasior/opencode), or any ACP-compatible editor, can connect to QwenPaw via the `qwenpaw acp` command and interact with it programmatically.
+In this mode, JotaDuo exposes itself as an [Agent Client Protocol (ACP)](https://github.com/agentclientprotocol/python-sdk) compliant agent service over stdio JSON-RPC. External clients, such as [Zed](https://zed.dev), [OpenCode](https://github.com/nicholasgasior/opencode), or any ACP-compatible editor, can connect to JotaDuo via the `jotaduo acp` command and interact with it programmatically.
 
 ### Quick Start
 
 ```bash
-# Start QwenPaw as an ACP agent
-qwenpaw acp
+# Start JotaDuo as an ACP agent
+jotaduo acp
 
 # Use a specific agent profile
-qwenpaw acp --agent mybot
+jotaduo acp --agent mybot
 
 # Use a custom workspace directory
-qwenpaw acp --workspace /path/to/workspace
+jotaduo acp --workspace /path/to/workspace
 
 # Enable debug logging to stderr
-qwenpaw acp --debug
+jotaduo acp --debug
 ```
 
 The process communicates over stdin/stdout using the ACP JSON-RPC protocol. stderr is used for logging.
@@ -199,29 +199,29 @@ When a new session is created, the agent returns config options that the client 
 The ACP agent resolves its configuration in the following order:
 
 1. **CLI arguments**: `--agent` and `--workspace` take highest priority
-2. **WORKING_DIR config**: read `agents.active_agent` from `config.json` inside `WORKING_DIR` (default `~/.qwenpaw`, or `~/.copaw` for legacy installations; overridable via the `QWENPAW_WORKING_DIR` environment variable)
+2. **WORKING_DIR config**: read `agents.active_agent` from `config.json` inside `WORKING_DIR` (default `~/.jotaduo`, or `~/.copaw` for legacy installations; overridable via the `JOTADUO_WORKING_DIR` environment variable)
 3. **Defaults**: fall back to agent ID `"default"` and workspace directory `WORKING_DIR/workspaces/default/`
 
 ---
 
 ## ACP Server vs ACP Tool
 
-| Aspect               | QwenPaw as an ACP Server                      | QwenPaw using ACP as a Tool                            |
+| Aspect               | JotaDuo as an ACP Server                      | JotaDuo using ACP as a Tool                            |
 | -------------------- | --------------------------------------------- | ------------------------------------------------------ |
-| QwenPaw's role       | Server / target agent                         | Client / orchestrator                                  |
-| Connection direction | External client connects to QwenPaw           | QwenPaw connects to an external runner                 |
-| Main purpose         | Let editors or external clients drive QwenPaw | Let QwenPaw delegate work to another agent             |
-| Typical entry point  | `qwenpaw acp`                                 | Delegation tool + ACP runner configuration             |
+| JotaDuo's role       | Server / target agent                         | Client / orchestrator                                  |
+| Connection direction | External client connects to JotaDuo           | JotaDuo connects to an external runner                 |
+| Main purpose         | Let editors or external clients drive JotaDuo | Let JotaDuo delegate work to another agent             |
+| Typical entry point  | `jotaduo acp`                                 | Delegation tool + ACP runner configuration             |
 | Best for             | Editor integration, programmatic control      | Multi-agent collaboration, external specialist runners |
 
 ---
 
 ## Summary
 
-ACP in QwenPaw is not just one feature. It supports both directions:
+ACP in JotaDuo is not just one feature. It supports both directions:
 
-- **Expose QwenPaw outward** as an ACP server
-- **Reach outward from QwenPaw** to external ACP agents as delegated tools
+- **Expose JotaDuo outward** as an ACP server
+- **Reach outward from JotaDuo** to external ACP agents as delegated tools
 
-If you are integrating QwenPaw into another client, start with **ACP Server**.
-If you want QwenPaw to coordinate with another agent runtime, use **ACP as a Tool**.
+If you are integrating JotaDuo into another client, start with **ACP Server**.
+If you want JotaDuo to coordinate with another agent runtime, use **ACP as a Tool**.

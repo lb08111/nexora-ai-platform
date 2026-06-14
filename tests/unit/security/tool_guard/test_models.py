@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-"""Tests for qwenpaw.security.tool_guard.models."""
+"""Tests for jotaduo.security.tool_guard.models."""
 # pylint: disable=redefined-outer-name
 from __future__ import annotations
 
 from datetime import timezone
 
-from qwenpaw.security.tool_guard.models import (
+from jotaduo.security.tool_guard.models import (
     GuardFinding,
     GuardSeverity,
     GuardThreatCategory,

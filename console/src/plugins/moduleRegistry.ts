@@ -5,7 +5,7 @@
  *
  * How it works:
  * 1. Host app calls moduleRegistry.register() at startup to register all @patchable modules
- * 2. Plugins access and modify module exports via window.QwenPaw.modules
+ * 2. Plugins access and modify module exports via window.JotaDuo.modules
  * 3. Host code accesses modules via moduleRegistry.get/call to ensure using plugin-modified versions
  */
 
@@ -106,7 +106,7 @@ class ModuleRegistryImpl implements ModuleRegistry {
   }
 
   /**
-   * Get all modules (for window.QwenPaw.modules)
+   * Get all modules (for window.JotaDuo.modules)
    */
   getAllModules(): Record<string, Record<string, unknown>> {
     const result: Record<string, Record<string, unknown>> = {};
@@ -119,15 +119,15 @@ class ModuleRegistryImpl implements ModuleRegistry {
 
 export const moduleRegistry = new ModuleRegistryImpl();
 
-// Expose to window.QwenPaw.modules (for plugin use)
+// Expose to window.JotaDuo.modules (for plugin use)
 // Set during initialization
 if (typeof window !== "undefined") {
-  if (!window.QwenPaw) {
-    (window as any).QwenPaw = {};
+  if (!window.JotaDuo) {
+    (window as any).JotaDuo = {};
   }
 
   // Use Proxy for dynamic access, ensuring plugins always get latest module state
-  Object.defineProperty(window.QwenPaw, "modules", {
+  Object.defineProperty(window.JotaDuo, "modules", {
     get() {
       return (moduleRegistry as any).getAllModules();
     },

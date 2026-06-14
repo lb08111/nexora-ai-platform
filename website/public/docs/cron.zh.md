@@ -1,6 +1,6 @@
 # 定时任务
 
-在 QwenPaw 里，「定时任务（cron job）」用于让系统在指定时间自动执行动作，比如：
+在 JotaDuo 里，「定时任务（cron job）」用于让系统在指定时间自动执行动作，比如：
 
 - 工作时段每 25 分钟提醒起身喝水或远眺，减少疲劳。
 - 工作日 9:30 自动整理当日热门科技资讯并推送简报。
@@ -51,7 +51,7 @@
          - 选择 **限定次数**，并给定 **执行次数**， 则该日程任务在执行达到该次数后，不会再执行（不包括手动执行）。
    - **任务类型及内容**
      - 选择 **text**：发送**消息内容**中的固定文本
-     - 选择**agent**：填写**请求内容**，会定时向QwenPaw转发content.text中的请求文本
+     - 选择**agent**：填写**请求内容**，会定时向JotaDuo转发content.text中的请求文本
    - **投递** —— 选择目标频道（如 Console、dingtalk）、目标用户ID、目标会话ID。支持直接下拉选择，选项与会话页面中存储的会话内容对应的 Channel - userID - SessionID 相匹配，同时也支持自定义输入。
    - **共用会话** —— 开启时，与目标用户共用会话。关闭时，循环任务将在独立的会话中运行，适用于不需要会话记忆历史的独立任务。
    - **高级选项** —— 按需调整最大并发数、超时时间和宽限时间。
@@ -83,7 +83,7 @@
 
 ### 方式一：对话创建
 
-创建定时任务最简单的方式是直接与 QwenPaw 对话，让QwenPaw帮忙创建：
+创建定时任务最简单的方式是直接与 JotaDuo 对话，让JotaDuo帮忙创建：
 
 > 未来七天内，每天早上八点为我查询当天天气。
 
@@ -97,22 +97,22 @@
 
 ### 方式三：CLI
 
-详见 CLI的 [qwenpaw cron](./cli#qwenpaw-cron) 章节。常用命令：
+详见 CLI的 [jotaduo cron](./cli#jotaduo-cron) 章节。常用命令：
 
 ```bash
-qwenpaw cron list
-qwenpaw cron create ...
-qwenpaw cron state <job_id>
-qwenpaw cron run <job_id>
-qwenpaw cron pause <job_id>
-qwenpaw cron resume <job_id>
-qwenpaw cron delete <job_id>
+jotaduo cron list
+jotaduo cron create ...
+jotaduo cron state <job_id>
+jotaduo cron run <job_id>
+jotaduo cron pause <job_id>
+jotaduo cron resume <job_id>
+jotaduo cron delete <job_id>
 ```
 
 示例（每天 9 点发固定文本）：
 
 ```bash
-qwenpaw cron create \
+jotaduo cron create \
   --agent-id default \
   --type text \
   --schedule-type cron \
@@ -124,10 +124,10 @@ qwenpaw cron create \
   --text "早上好，记得查看今天待办。"
 ```
 
-示例（每 2 小时向 QwenPaw 询问并投递回复）：
+示例（每 2 小时向 JotaDuo 询问并投递回复）：
 
 ```bash
-qwenpaw cron create \
+jotaduo cron create \
   --agent-id default \
   --type agent \
   --schedule-type cron \
@@ -142,7 +142,7 @@ qwenpaw cron create \
 示例（日程一次性：只执行一次）：
 
 ```bash
-qwenpaw cron create \
+jotaduo cron create \
   --agent-id default \
   --type text \
   --schedule-type scheduled \
@@ -158,7 +158,7 @@ qwenpaw cron create \
 示例（日程重复：未来两周每天 9 点，共 14 次）：
 
 ```bash
-qwenpaw cron create \
+jotaduo cron create \
   --agent-id default \
   --type text \
   --schedule-type scheduled \
@@ -185,7 +185,7 @@ qwenpaw cron create \
 
 ## Cron 表达式速查
 
-QwenPaw 使用五段式 Cron：**分 时 日 月 周**（无秒）。
+JotaDuo 使用五段式 Cron：**分 时 日 月 周**（无秒）。
 
 | 表达式         | 含义                   |
 | -------------- | ---------------------- |
@@ -202,7 +202,7 @@ QwenPaw 使用五段式 Cron：**分 时 日 月 周**（无秒）。
 ## 相关页面
 
 - [控制台](./console) — 在 Web 界面管理定时任务
-- [CLI](./cli#qwenpaw-cron) — `qwenpaw cron` 命令详解
+- [CLI](./cli#jotaduo-cron) — `jotaduo cron` 命令详解
 - [心跳](./heartbeat) — 固定周期自检/摘要
 - [FAQ](./faq#定时任务错误排查) — 常见问题排查
 - [配置与工作目录](./config) — `jobs.json` 与工作目录说明

@@ -1,9 +1,9 @@
-# Build QwenPaw Desktop:
+# Build JotaDuo Desktop:
 # - Legacy desktop: Windows (conda-pack + NSIS), macOS (conda-pack -> .app)
 # - Tauri desktop: Windows/macOS app bundles with PyInstaller backend sidecar
 # Runs on release publish and manual dispatch.
 
-name: QwenPaw Desktop Build
+name: JotaDuo Desktop Build
 
 on:
   release:
@@ -32,7 +32,7 @@ jobs:
         id: version
         shell: pwsh
         run: |
-          $content = Get-Content src/qwenpaw/__version__.py -Raw
+          $content = Get-Content src/jotaduo/__version__.py -Raw
           if ($content -match '__version__\s*=\s*"([^"]+)"') {
             $v = $Matches[1]
           } else {
@@ -54,7 +54,7 @@ jobs:
         with:
           auto-update-conda: true
           python-version: "3.10"
-          activate-environment: "qwenpaw-build"
+          activate-environment: "jotaduo-build"
           condarc-file: .github/condarc
           conda-remove-defaults: false
 
@@ -71,7 +71,7 @@ jobs:
 
       - name: Build Windows installer
         shell: pwsh
-        run: conda run -n qwenpaw-build pwsh -File ./scripts/pack/build_win.ps1
+        run: conda run -n jotaduo-build pwsh -File ./scripts/pack/build_win.ps1
 
       - name: List dist (on failure)
         if: failure()
@@ -87,8 +87,8 @@ jobs:
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
-          name: QwenPaw-Desktop-Windows-${{ steps.version.outputs.version }}
-          path: dist/QwenPaw-Setup-*.exe
+          name: JotaDuo-Desktop-Windows-${{ steps.version.outputs.version }}
+          path: dist/JotaDuo-Setup-*.exe
 
   build-macos:
     runs-on: macos-14
@@ -100,7 +100,7 @@ jobs:
 
       - name: Get version
         id: version
-        run: echo "version=$(sed -n 's/^__version__[[:space:]]*=[[:space:]]*"\([^"]*\)".*/\1/p' src/qwenpaw/__version__.py)" >> $GITHUB_OUTPUT
+        run: echo "version=$(sed -n 's/^__version__[[:space:]]*=[[:space:]]*"\([^"]*\)".*/\1/p' src/jotaduo/__version__.py)" >> $GITHUB_OUTPUT
 
       - name: Set up Node
         uses: actions/setup-node@v4
@@ -114,7 +114,7 @@ jobs:
         with:
           auto-update-conda: true
           python-version: "3.10"
-          activate-environment: "qwenpaw-build"
+          activate-environment: "jotaduo-build"
           condarc-file: .github/condarc
           conda-remove-defaults: false
 
@@ -126,13 +126,13 @@ jobs:
           NODE_OPTIONS: "--max-old-space-size=8192"
         run: |
           chmod +x scripts/pack/build_macos.sh
-          conda run -n qwenpaw-build bash -c 'CREATE_ZIP=1 ./scripts/pack/build_macos.sh'
+          conda run -n jotaduo-build bash -c 'CREATE_ZIP=1 ./scripts/pack/build_macos.sh'
 
       - name: Upload macOS artifact
         uses: actions/upload-artifact@v4
         with:
-          name: QwenPaw-Desktop-macOS-${{ steps.version.outputs.version }}
-          path: dist/QwenPaw-*.zip
+          name: JotaDuo-Desktop-macOS-${{ steps.version.outputs.version }}
+          path: dist/JotaDuo-*.zip
 
   build-tauri-windows:
     runs-on: windows-latest
@@ -146,7 +146,7 @@ jobs:
         id: version
         shell: pwsh
         run: |
-          $content = Get-Content src/qwenpaw/__version__.py -Raw
+          $content = Get-Content src/jotaduo/__version__.py -Raw
           if ($content -match '__version__\s*=\s*"([^"]+)"') {
             $v = $Matches[1]
           } else {
@@ -161,13 +161,23 @@ jobs:
         with:
           python-version: "3.10"
 
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: "npm"
+          cache-dependency-path: console/package-lock.json
 
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: console/src-tauri
 
       - name: Install NSIS
         uses: negrutiu/nsis-install@v2
@@ -191,15 +201,15 @@ jobs:
           if (-not $installer) {
             throw "No Tauri Windows installer found"
           }
-          $target = "dist/QwenPaw-Tauri-${{ steps.version.outputs.version }}-Windows-setup.exe"
+          $target = "dist/JotaDuo-Tauri-${{ steps.version.outputs.version }}-Windows-setup.exe"
           Copy-Item -Force $installer.FullName $target
           Write-Host "Staged Tauri Windows installer: $target"
 
       - name: Upload Tauri Windows artifact
         uses: actions/upload-artifact@v4
         with:
-          name: QwenPaw-Desktop-Tauri-Windows-${{ steps.version.outputs.version }}
-          path: dist/QwenPaw-Tauri-*-Windows-setup.exe
+          name: JotaDuo-Desktop-Tauri-Windows-${{ steps.version.outputs.version }}
+          path: dist/JotaDuo-Tauri-*-Windows-setup.exe
 
   build-tauri-macos:
     runs-on: macos-14
@@ -211,7 +221,7 @@ jobs:
 
       - name: Get version
         id: version
-        run: echo "version=$(sed -n 's/^__version__[[:space:]]*=[[:space:]]*"\([^"]*\)".*/\1/p' src/qwenpaw/__version__.py)" >> $GITHUB_OUTPUT
+        run: echo "version=$(sed -n 's/^__version__[[:space:]]*=[[:space:]]*"\([^"]*\)".*/\1/p' src/jotaduo/__version__.py)" >> $GITHUB_OUTPUT
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -227,9 +237,16 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: "npm"
+          cache-dependency-path: console/package-lock.json
 
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: console/src-tauri
 
       - name: Clean dist directory
         run: rm -rf dist && mkdir -p dist
@@ -244,8 +261,8 @@ jobs:
       - name: Upload Tauri macOS artifact
         uses: actions/upload-artifact@v4
         with:
-          name: QwenPaw-Desktop-Tauri-macOS-${{ steps.version.outputs.version }}
-          path: dist/QwenPaw-Tauri-*-macOS.zip
+          name: JotaDuo-Desktop-Tauri-macOS-${{ steps.version.outputs.version }}
+          path: dist/JotaDuo-Tauri-*-macOS.zip
 
   upload-release:
     needs: [build-windows, build-macos, build-tauri-windows, build-tauri-macos]
@@ -259,19 +276,19 @@ jobs:
 
       - name: Move artifacts to root for upload
         run: |
-          mv QwenPaw-Desktop-Windows-*/QwenPaw-Setup-*.exe . 2>/dev/null || true
-          mv QwenPaw-Desktop-macOS-*/QwenPaw-*.zip . 2>/dev/null || true
-          mv QwenPaw-Desktop-Tauri-Windows-*/QwenPaw-Tauri-*-Windows-setup.exe . 2>/dev/null || true
-          mv QwenPaw-Desktop-Tauri-macOS-*/QwenPaw-Tauri-*-macOS.zip . 2>/dev/null || true
+          mv JotaDuo-Desktop-Windows-*/JotaDuo-Setup-*.exe . 2>/dev/null || true
+          mv JotaDuo-Desktop-macOS-*/JotaDuo-*.zip . 2>/dev/null || true
+          mv JotaDuo-Desktop-Tauri-Windows-*/JotaDuo-Tauri-*-Windows-setup.exe . 2>/dev/null || true
+          mv JotaDuo-Desktop-Tauri-macOS-*/JotaDuo-Tauri-*-macOS.zip . 2>/dev/null || true
 
       - name: Upload to Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            QwenPaw-Setup-*.exe
-            QwenPaw-[0-9]*-macOS.zip
-            QwenPaw-Tauri-*-Windows-setup.exe
-            QwenPaw-Tauri-*-macOS.zip
+            JotaDuo-Setup-*.exe
+            JotaDuo-[0-9]*-macOS.zip
+            JotaDuo-Tauri-*-Windows-setup.exe
+            JotaDuo-Tauri-*-macOS.zip
           fail-on-unmatched-files: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -292,7 +309,7 @@ jobs:
 
       - name: Get version
         id: version
-        run: echo "version=$(sed -n 's/^__version__[[:space:]]*=[[:space:]]*"\([^"]*\)".*/\1/p' src/qwenpaw/__version__.py)" >> $GITHUB_OUTPUT
+        run: echo "version=$(sed -n 's/^__version__[[:space:]]*=[[:space:]]*"\([^"]*\)".*/\1/p' src/jotaduo/__version__.py)" >> $GITHUB_OUTPUT
 
       - name: Download all artifacts
         uses: actions/download-artifact@v4
@@ -313,10 +330,10 @@ jobs:
             -L CH
 
       - name: Process and upload Windows artifacts
-        if: hashFiles('QwenPaw-Desktop-Windows-*/*.exe') != ''
+        if: hashFiles('JotaDuo-Desktop-Windows-*/*.exe') != ''
         run: |
           VERSION="${{ steps.version.outputs.version }}"
-          WIN_EXE=$(find QwenPaw-Desktop-Windows-* -name "QwenPaw-Setup-*.exe" | head -1)
+          WIN_EXE=$(find JotaDuo-Desktop-Windows-* -name "JotaDuo-Setup-*.exe" | head -1)
 
           if [ -z "$WIN_EXE" ]; then
             echo "No Windows exe found, skipping"
@@ -335,35 +352,35 @@ jobs:
 
           # Upload file (versioned)
           ossutil cp "$WIN_EXE" \
-            "oss://qwenpaw-download/files/apps/desktop/win/QwenPaw-Setup-${VERSION}.exe" \
+            "oss://qwenpaw-download/files/apps/desktop/win/JotaDuo-Setup-${VERSION}.exe" \
             --acl public-read \
             --force
 
           # Upload file (latest)
           ossutil cp "$WIN_EXE" \
-            "oss://qwenpaw-download/files/apps/desktop/win/QwenPaw-Setup-latest.exe" \
+            "oss://qwenpaw-download/files/apps/desktop/win/JotaDuo-Setup-latest.exe" \
             --acl public-read \
             --force
 
           # Upload metadata (versioned)
           ossutil cp win-metadata.json \
-            "oss://qwenpaw-download/metadata/apps/desktop/win/QwenPaw-Setup-${VERSION}.exe.json" \
+            "oss://qwenpaw-download/metadata/apps/desktop/win/JotaDuo-Setup-${VERSION}.exe.json" \
             --acl public-read \
             --force
 
           # Upload metadata (latest)
           ossutil cp win-metadata.json \
-            "oss://qwenpaw-download/metadata/apps/desktop/win/QwenPaw-Setup-latest.exe.json" \
+            "oss://qwenpaw-download/metadata/apps/desktop/win/JotaDuo-Setup-latest.exe.json" \
             --acl public-read \
             --force
 
           echo "✓ Windows artifacts uploaded"
 
       - name: Process and upload macOS artifacts
-        if: hashFiles('QwenPaw-Desktop-macOS-*/*.zip') != ''
+        if: hashFiles('JotaDuo-Desktop-macOS-*/*.zip') != ''
         run: |
           VERSION="${{ steps.version.outputs.version }}"
-          MAC_ZIP=$(find QwenPaw-Desktop-macOS-* -name "QwenPaw-*.zip" | head -1)
+          MAC_ZIP=$(find JotaDuo-Desktop-macOS-* -name "JotaDuo-*.zip" | head -1)
 
           if [ -z "$MAC_ZIP" ]; then
             echo "No macOS zip found, skipping"
@@ -382,32 +399,32 @@ jobs:
 
           # Upload file (versioned)
           ossutil cp "$MAC_ZIP" \
-            "oss://qwenpaw-download/files/apps/desktop/mac/QwenPaw-${VERSION}-macOS.zip" \
+            "oss://qwenpaw-download/files/apps/desktop/mac/JotaDuo-${VERSION}-macOS.zip" \
             --acl public-read \
             --force
 
           # Upload file (latest)
           ossutil cp "$MAC_ZIP" \
-            "oss://qwenpaw-download/files/apps/desktop/mac/QwenPaw-latest-macOS.zip" \
+            "oss://qwenpaw-download/files/apps/desktop/mac/JotaDuo-latest-macOS.zip" \
             --acl public-read \
             --force
 
           # Upload metadata (versioned)
           ossutil cp mac-metadata.json \
-            "oss://qwenpaw-download/metadata/apps/desktop/mac/QwenPaw-${VERSION}-macOS.zip.json" \
+            "oss://qwenpaw-download/metadata/apps/desktop/mac/JotaDuo-${VERSION}-macOS.zip.json" \
             --acl public-read \
             --force
 
           # Upload metadata (latest)
           ossutil cp mac-metadata.json \
-            "oss://qwenpaw-download/metadata/apps/desktop/mac/QwenPaw-latest-macOS.zip.json" \
+            "oss://qwenpaw-download/metadata/apps/desktop/mac/JotaDuo-latest-macOS.zip.json" \
             --acl public-read \
             --force
 
           echo "✓ macOS artifacts uploaded"
 
       - name: Process and upload Tauri artifacts
-        if: hashFiles('QwenPaw-Desktop-Tauri-*/*') != ''
+        if: hashFiles('JotaDuo-Desktop-Tauri-*/*') != ''
         run: |
           VERSION="${{ steps.version.outputs.version }}"
 
@@ -453,19 +470,19 @@ jobs:
           }
 
           upload_tauri_artifact \
-            "QwenPaw-Desktop-Tauri-Windows-*" \
-            "QwenPaw-Tauri-*-Windows-setup.exe" \
+            "JotaDuo-Desktop-Tauri-Windows-*" \
+            "JotaDuo-Tauri-*-Windows-setup.exe" \
             "win-tauri" \
-            "QwenPaw-Tauri-${VERSION}-Windows-setup.exe" \
-            "QwenPaw-Tauri-latest-Windows-setup.exe" \
+            "JotaDuo-Tauri-${VERSION}-Windows-setup.exe" \
+            "JotaDuo-Tauri-latest-Windows-setup.exe" \
             "win-tauri-metadata.json"
 
           upload_tauri_artifact \
-            "QwenPaw-Desktop-Tauri-macOS-*" \
-            "QwenPaw-Tauri-*-macOS.zip" \
+            "JotaDuo-Desktop-Tauri-macOS-*" \
+            "JotaDuo-Tauri-*-macOS.zip" \
             "mac-tauri" \
-            "QwenPaw-Tauri-${VERSION}-macOS.zip" \
-            "QwenPaw-Tauri-latest-macOS.zip" \
+            "JotaDuo-Tauri-${VERSION}-macOS.zip" \
+            "JotaDuo-Tauri-latest-macOS.zip" \
             "mac-tauri-metadata.json"
 
       - name: Update desktop index
@@ -486,7 +503,7 @@ jobs:
           # Merge Windows metadata if exists
           if [ -f "win-metadata.json" ]; then
             python scripts/pack/generate_oss_metadata.py \
-              --file "$(find QwenPaw-Desktop-Windows-* -name 'QwenPaw-Setup-*.exe' | head -1)" \
+              --file "$(find JotaDuo-Desktop-Windows-* -name 'JotaDuo-Setup-*.exe' | head -1)" \
               --product desktop \
               --platform win \
               --version "$VERSION" \
@@ -498,7 +515,7 @@ jobs:
           # Merge macOS metadata if exists
           if [ -f "mac-metadata.json" ]; then
             python scripts/pack/generate_oss_metadata.py \
-              --file "$(find QwenPaw-Desktop-macOS-* -name 'QwenPaw-*.zip' | head -1)" \
+              --file "$(find JotaDuo-Desktop-macOS-* -name 'JotaDuo-*.zip' | head -1)" \
               --product desktop \
               --platform mac \
               --version "$VERSION" \
@@ -527,13 +544,13 @@ jobs:
 
           merge_tauri_metadata \
             "win-tauri-metadata.json" \
-            "QwenPaw-Desktop-Tauri-Windows-*" \
-            "QwenPaw-Tauri-*-Windows-setup.exe" \
+            "JotaDuo-Desktop-Tauri-Windows-*" \
+            "JotaDuo-Tauri-*-Windows-setup.exe" \
             "win-tauri"
           merge_tauri_metadata \
             "mac-tauri-metadata.json" \
-            "QwenPaw-Desktop-Tauri-macOS-*" \
-            "QwenPaw-Tauri-*-macOS.zip" \
+            "JotaDuo-Desktop-Tauri-macOS-*" \
+            "JotaDuo-Tauri-*-macOS.zip" \
             "mac-tauri"
 
           # Upload updated desktop/index.json

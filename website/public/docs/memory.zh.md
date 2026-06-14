@@ -1,6 +1,6 @@
 # 长期记忆
 
-**长期记忆** 让 QwenPaw 拥有跨对话的持久记忆能力：通过文件工具将关键信息写入 Markdown 文件长期保存，并配合语义检索随时召回。
+**长期记忆** 让 JotaDuo 拥有跨对话的持久记忆能力：通过文件工具将关键信息写入 Markdown 文件长期保存，并配合语义检索随时召回。
 
 > 长期记忆机制设计受 [OpenClaw](https://github.com/openclaw/openclaw)
 > 启发，由 [ReMe](https://github.com/agentscope-ai/ReMe) 的 **ReMeLight** 实现——以文件系统为存储后端，记忆即 Markdown
@@ -255,7 +255,7 @@ Embedding 配置用于向量语义搜索，位于 `running.reme_light_memory_con
 
 ## 其他 Memory Backend
 
-QwenPaw 的记忆系统采用可插拔的 Backend 架构。除了默认的 ReMeLight（本地文件存储）外，还支持通过 `memory_manager_backend` 切换到其他后端。
+JotaDuo 的记忆系统采用可插拔的 Backend 架构。除了默认的 ReMeLight（本地文件存储）外，还支持通过 `memory_manager_backend` 切换到其他后端。
 
 ### ADBPG（AnalyticDB for PostgreSQL）
 
@@ -274,7 +274,7 @@ QwenPaw 的记忆系统采用可插拔的 Backend 架构。除了默认的 ReMeL
 
 ![adbpg-backend](https://img.alicdn.com/imgextra/i3/O1CN01bH1Rj41wwQs3v04U6_!!6000000006372-2-tps-2954-1484.png)
 
-> ⚠️ 切换后端不支持热更新，保存后需要重启 QwenPaw 才能生效（页面也会以黄色横幅提醒）。
+> ⚠️ 切换后端不支持热更新，保存后需要重启 JotaDuo 才能生效（页面也会以黄色横幅提醒）。
 
 #### REST 模式（推荐）
 
@@ -294,7 +294,7 @@ QwenPaw 的记忆系统采用可插拔的 Backend 架构。除了默认的 ReMeL
 
 #### SQL 模式
 
-通过 psycopg2 直连 ADBPG 数据库，需额外安装依赖：`pip install qwenpaw[adbpg]`。
+通过 psycopg2 直连 ADBPG 数据库，需额外安装依赖：`pip install jotaduo[adbpg]`。
 
 切换到「ADBPG 长期记忆」Tab，将「API 模式」设为 `SQL (Direct)`，并填写数据库连接信息（主机地址 / 端口 / 用户名 / 密码 / 数据库名）以及 LLM、Embedding 相关参数：
 

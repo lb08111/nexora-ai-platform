@@ -59,10 +59,12 @@ export default function LoginPage() {
         }
       }
     } catch (err) {
-      const rawMessage = err instanceof Error ? err.message : "";
       message.error(
-        rawMessage ||
-          (isRegister ? t("login.registerFailed") : t("login.failed")),
+        isRegister
+          ? err instanceof Error
+            ? err.message
+            : t("login.registerFailed")
+          : t("login.failed"),
       );
     } finally {
       setLoading(false);
@@ -94,13 +96,13 @@ export default function LoginPage() {
       >
         <div style={{ textAlign: "center", marginBottom: 32 }}>
           <img
-            src="/logo.png"
-            alt="Nexora"
-            style={{ height: 180, marginBottom: 16 }}
+            src={isDark ? "/logo-dark.svg" : "/logo-light.svg"}
+            alt="JotaDuo"
+            style={{ height: 48, marginBottom: 12 }}
           />
-          <p style={{ margin: 0, fontWeight: 400, fontSize: 13, color: isDark ? "rgba(255,255,255,0.5)" : "#999", letterSpacing: 1 }}>
+          <h2 style={{ margin: 0, fontWeight: 600, fontSize: 20 }}>
             {isRegister ? t("login.registerTitle") : t("login.title")}
-          </p>
+          </h2>
           {!hasUsers && (
             <p
               style={{

@@ -1,0 +1,72 @@
+[
+  {
+    "key": "ecommerce",
+    "label": "E-commerce / Loja virtual",
+    "cnae": "47.xx",
+    "keywords": ["loja virtual", "e-commerce", "ecommerce", "venda online", "loja online", "marketplace"],
+    "typical_areas": ["atendimento", "vendas", "logística/entrega", "pós-venda", "marketing"],
+    "typical_processes": ["responder dúvidas", "rastrear pedido", "recuperar carrinho", "trocas/devoluções"],
+    "common_pains": ["atendimento lento", "abandono de carrinho", "dúvidas repetitivas sobre entrega"],
+    "common_integrations": ["whatsapp", "plataforma de e-commerce", "planilha/erp", "gateway de pagamento"]
+  },
+  {
+    "key": "varejo",
+    "label": "Varejo / Loja física",
+    "cnae": "47.xx",
+    "keywords": ["loja física", "varejo", "comércio", "loja de", "mercado"],
+    "typical_areas": ["atendimento", "vendas", "estoque", "caixa"],
+    "typical_processes": ["tirar dúvidas", "consultar estoque", "agendar retirada"],
+    "common_pains": ["fila no atendimento", "perda de venda por falta de info"],
+    "common_integrations": ["whatsapp", "pdv", "planilha"]
+  },
+  {
+    "key": "servicos",
+    "label": "Serviços / Prestador",
+    "cnae": "card. 7-9",
+    "keywords": ["presto serviço", "serviços", "consultoria", "agência", "assistência"],
+    "typical_areas": ["atendimento", "agendamento", "orçamento", "pós-atendimento"],
+    "typical_processes": ["qualificar lead", "enviar orçamento", "agendar"],
+    "common_pains": ["lead frio", "demora no orçamento"],
+    "common_integrations": ["whatsapp", "crm", "agenda/calendar"]
+  },
+  {
+    "key": "alimentacao",
+    "label": "Alimentação / Restaurante / Delivery",
+    "cnae": "56.xx",
+    "keywords": ["restaurante", "delivery", "lanchonete", "pizzaria", "comida", "food"],
+    "typical_areas": ["atendimento", "pedidos", "entrega", "fidelização"],
+    "typical_processes": ["receber pedido", "informar cardápio", "status da entrega"],
+    "common_pains": ["pedido por whatsapp manual", "erro no pedido"],
+    "common_integrations": ["whatsapp", "ifood/cardápio", "planilha"]
+  },
+  {
+    "key": "saude",
+    "label": "Saúde / Clínica / Consultório",
+    "cnae": "86.xx",
+    "keywords": ["clínica", "consultório", "dentista", "médico", "saúde", "estética avançada"],
+    "typical_areas": ["agendamento", "atendimento", "confirmação de consulta", "pós-consulta"],
+    "typical_processes": ["agendar consulta", "confirmar/lembrar", "reagendar"],
+    "common_pains": ["faltas (no-show)", "agenda manual"],
+    "common_integrations": ["whatsapp", "agenda", "prontuário/erp"]
+  },
+  {
+    "key": "educacao",
+    "label": "Educação / Cursos / Escola",
+    "cnae": "85.xx",
+    "keywords": ["curso", "escola", "ensino", "educação", "treinamento", "aulas"],
+    "typical_areas": ["captação", "matrícula", "atendimento ao aluno", "secretaria"],
+    "typical_processes": ["tirar dúvidas do curso", "matricular", "suporte ao aluno"],
+    "common_pains": ["dúvidas repetitivas", "evasão"],
+    "common_integrations": ["whatsapp", "crm", "plataforma/lms"]
+  },
+  {
+    "key": "beleza",
+    "label": "Beleza / Estética / Salão",
+    "cnae": "96.02",
+    "keywords": ["salão", "barbearia", "estética", "beleza", "manicure", "cabeleireiro"],
+    "typical_areas": ["agendamento", "atendimento", "confirmação", "fidelização"],
+    "typical_processes": ["agendar horário", "confirmar/lembrar", "remarcar"],
+    "common_pains": ["faltas", "agenda no caderno", "horários ociosos"],
+    "common_integrations": ["whatsapp", "agenda online"]
+  }
+]

@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
-from qwenpaw.agents.tools import agent_management
-from qwenpaw.cli import http as cli_http
+from jotaduo.agents.tools import agent_management
+from jotaduo.cli import http as cli_http
 
 
-# CLI API clients hit the local QwenPaw service, so loopback URLs skip proxies.
+# CLI API clients hit the local JotaDuo service, so loopback URLs skip proxies.
 def test_cli_http_client_bypasses_env_for_loopback(monkeypatch) -> None:
     captured: dict[str, object] = {}
 

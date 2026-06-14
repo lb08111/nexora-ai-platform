@@ -133,7 +133,7 @@ describe("authApi.updateProfile", () => {
   });
 
   it("reads token from localStorage and injects Authorization header", async () => {
-    localStorage.setItem("qwenpaw_auth_token", "my-token");
+    localStorage.setItem("jotaduo_auth_token", "my-token");
     mockFetch(200, { token: "t", username: "alice" });
     await authApi.updateProfile("oldpass");
     const headers = (fetch as any).mock.calls[0][1].headers;

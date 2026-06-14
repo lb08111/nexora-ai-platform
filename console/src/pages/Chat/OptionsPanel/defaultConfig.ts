@@ -7,7 +7,7 @@ const defaultConfig = {
     prefix: "qwenpaw",
     leftHeader: {
       logo: "",
-      title: "Work with QwenPaw",
+      title: "Nexora",
     },
   },
   sender: {
@@ -16,16 +16,16 @@ const defaultConfig = {
     disclaimer: "Works for you, grows with you",
   },
   welcome: {
-    greeting: "Hello, how can I help you today?",
+    greeting: "What should we build today?",
     description:
-      "I am a helpful assistant that can help you with your questions.",
+      "I can plan tasks, run skills, and execute multi-step missions — just describe what you need.",
     avatar: "/online.svg",
     prompts: [
       {
-        value: "Let's start a new journey!",
+        value: "Plan a task for me",
       },
       {
-        value: "Can you tell me what skills you have?",
+        value: "What can you do?",
       },
     ],
   },
@@ -51,6 +51,13 @@ class ChatConfigProvider {
   getConfig(t: TFunction) {
     return {
       ...defaultConfig,
+      theme: {
+        ...defaultConfig.theme,
+        leftHeader: {
+          ...defaultConfig.theme.leftHeader,
+          title: t("chat.headerTitle"),
+        },
+      },
       sender: {
         ...defaultConfig.sender,
         disclaimer: t("chat.disclaimer"),

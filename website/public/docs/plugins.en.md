@@ -1,6 +1,6 @@
 # Plugin System
 
-QwenPaw provides a plugin system that allows users to extend QwenPaw's functionality.
+JotaDuo provides a plugin system that allows users to extend JotaDuo's functionality.
 
 ## Overview
 
@@ -10,9 +10,7 @@ The plugin system supports the following extension capabilities:
 - **Hook Plugins**: Execute custom code during application startup/shutdown
 - **Command Plugins**: Register custom `/command` magic commands
 - **HTTP API Plugins**: Expose custom REST endpoints under `/api` via a FastAPI `APIRouter`
-- **Frontend Page Plugins**: Add custom pages to the sidebar
-- **Tool Renderer Plugins**: Customize how Agent tool-call results are displayed
-- **Behavior Extension Plugins**: Replace methods in frontend internal modules via the module registry
+- **Frontend Extension Plugins**: Browser-side JS plugins that share the host's React / Ant Design runtime and declaratively extend the UI via `window.JotaDuo.*` API — register sidebar menus, page routes, UI slots, chat customizations, and more without modifying host code
 
 ## Plugin Management
 
@@ -21,27 +19,27 @@ The plugin system supports the following extension capabilities:
 Install from local directory:
 
 ```bash
-qwenpaw plugin install /path/to/plugin
+jotaduo plugin install /path/to/plugin
 ```
 
 Install from URL (supports ZIP files):
 
 ```bash
-qwenpaw plugin install https://example.com/plugin.zip
+jotaduo plugin install https://example.com/plugin.zip
 ```
 
 Force reinstall:
 
 ```bash
-qwenpaw plugin install /path/to/plugin --force
+jotaduo plugin install /path/to/plugin --force
 ```
 
-**Note**: Plugin operations can only be performed when QwenPaw is offline.
+**Note**: Plugin operations can only be performed when JotaDuo is offline.
 
 ### List Installed Plugins
 
 ```bash
-qwenpaw plugin list
+jotaduo plugin list
 ```
 
 Example output:
@@ -53,19 +51,19 @@ Installed Plugins:
 my-provider (v1.0.0)
   Custom LLM provider integration
   Author: Developer Name
-  Path: /Users/user/.qwenpaw/plugins/my-provider
+  Path: /Users/user/.jotaduo/plugins/my-provider
 ```
 
 ### View Plugin Details
 
 ```bash
-qwenpaw plugin info <plugin-id>
+jotaduo plugin info <plugin-id>
 ```
 
 ### Uninstall Plugin
 
 ```bash
-qwenpaw plugin uninstall <plugin-id>
+jotaduo plugin uninstall <plugin-id>
 ```
 
 ## Plugin Development
@@ -115,7 +113,7 @@ my-plugin/
 | `entry.backend`  | `string`           | no\*     | Path (relative to plugin dir) of the Python entry file that exports `plugin`.                                                                                              |
 | `entry.frontend` | `string`           | no\*     | Path of the built frontend bundle (e.g. `dist/index.js`).                                                                                                                  |
 | `dependencies`   | `string[]`         | no       | Python package requirements installed via pip/uv at install time.                                                                                                          |
-| `min_version`    | `string`           | no       | Minimum QwenPaw version required. Defaults to `0.1.0`.                                                                                                                     |
+| `min_version`    | `string`           | no       | Minimum JotaDuo version required. Defaults to `0.1.0`.                                                                                                                     |
 | `meta`           | `object`           | no       | Free-form plugin metadata. Used by the UI and by `type` inference (e.g. `meta.tools[]`, `meta.hook_type`, `meta.provider_id`).                                             |
 | `entry_point`    | `string`           | no       | **Legacy.** Equivalent to `entry.backend`. Still accepted for backwards compatibility with older plugins; new plugins should use `entry.backend`.                          |
 
@@ -138,7 +136,7 @@ my-plugin/
 # -*- coding: utf-8 -*-
 """My Plugin Entry Point."""
 
-from qwenpaw.plugins.api import PluginApi
+from jotaduo.plugins.api import PluginApi
 import logging
 
 logger = logging.getLogger(__name__)
@@ -169,15 +167,53 @@ plugin = MyPlugin()
 
 ### Frontend Plugins
 
-#### Basic Structure
+Frontend plugins are JavaScript extensions that run in the browser. Unlike backend plugins that register capabilities via the Python `PluginApi`, frontend plugins declaratively extend the Console UI through the global `window.JotaDuo.*` API.
 
-Each frontend plugin requires at minimum:
+**Loading lifecycle:**
+
+1. Console starts up and mounts the Host SDK (React, antd, and other shared dependencies) and registration APIs (menu, route, slot, chat, and other namespaces) on `window.JotaDuo`
+2. Console fetches the enabled frontend plugin list from `/frontend_plugin`
+3. Downloads each plugin's JS bundle and executes it via Blob URL dynamic import
+4. Plugin code runs and calls `window.JotaDuo.*` to register menus, routes, chat customizations, and other UI extensions
+5. Registrations take effect immediately — menus appear in the sidebar, routes become navigable, chat areas show customized content
+
+Plugins don't need to declare which extension points they use; the system automatically tracks all registrations via `pluginId`. When a plugin is uninstalled or disabled, all registrations are cleaned up via `dispose()` or `chat.disposeAll(pluginId)`.
+
+**Design characteristics:**
+
+| Feature                      | Description                                                                                                                                              |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Shared runtime**           | React, ReactDOM, and Ant Design are provided by the host — plugins don't bundle them, avoiding version conflicts and bloat                               |
+| **Declarative registration** | Three core verbs: `set` (set / merge properties), `render` (replace rendering), `add` (append items)                                                     |
+| **pluginId isolation**       | Every registration method takes `pluginId` as the first argument — the system uses it to track origins, detect conflicts, and support per-plugin cleanup |
+| **Revocable**                | Every registration returns a `{ dispose() }` object — call it to undo the registration, enabling hot-reload and clean uninstall                          |
+| **Internationalization**     | Text fields support the `Localized<T>` type — pass a `(locale) => string` function to return different values per language                               |
+
+**Extension points at a glance:**
+
+| Namespace                         | Capability                                            | Typical use                                                     |
+| --------------------------------- | ----------------------------------------------------- | --------------------------------------------------------------- |
+| `host`                            | Shared dependencies, React Hooks, authenticated fetch | Access React / antd, read theme and locale, call backend APIs   |
+| `menu`                            | Sidebar menu items                                    | Add navigation entries                                          |
+| `route`                           | Page routes                                           | Register new pages, wrap existing pages                         |
+| `slot`                            | General UI slots                                      | Inject content into Header / Sidebar and other preset positions |
+| `chat.welcome`                    | Welcome screen                                        | Customize greeting, suggested prompts                           |
+| `chat.theme`                      | Chat theme color                                      | Change the primary color                                        |
+| `chat.leftHeader` / `rightHeader` | Chat header                                           | Set brand logo, add action buttons                              |
+| `chat.sender`                     | Input box                                             | Custom placeholder, input suggestions                           |
+| `chat.actions` / `requestActions` | Message action buttons                                | Add custom actions below messages                               |
+| `chat.request` / `response`       | Message bubbles                                       | Prepend/append content or fully replace rendering               |
+| `chat.toolRender`                 | Tool-call rendering                                   | Custom tool result display (e.g. weather card)                  |
+| `chat.card`                       | Custom cards                                          | Register new card types                                         |
+| `audit`                           | Audit & debugging                                     | View all extension registration records                         |
+
+#### Basic Structure
 
 ```
 my-plugin/
 ├── plugin.json      # Plugin manifest (required)
 ├── src/
-│   └── index.tsx    # Entry point (required)
+│   └── index.tsx    # Entry point, calls window.JotaDuo.* APIs
 ├── package.json     # Dependencies
 ├── tsconfig.json    # TypeScript config
 └── vite.config.ts   # Build config
@@ -198,26 +234,19 @@ my-plugin/
 
 #### src/index.tsx
 
+The plugin entry file executes on load and registers extensions via `window.JotaDuo.*` API:
+
 ```tsx
-const { React, antd } = (window as any).QwenPaw.host;
+const { React, antd } = window.JotaDuo.host;
+const pluginId = "my-plugin";
 
-class MyPlugin {
-  readonly id = "my-plugin";
-
-  setup(): void {
-    // Register sidebar pages
-    // (window as any).QwenPaw.registerRoutes?.(this.id, [...]);
-    // Register tool-call renderers
-    // (window as any).QwenPaw.registerToolRender?.(this.id, {...});
-    // Access and modify application internal modules
-    // const mod = (window as any).QwenPaw?.modules?.['xxxx'];
-  }
-}
-
-new MyPlugin().setup();
+// Call window.JotaDuo.* APIs to register menus, routes, chat customizations, etc.
+// See "Frontend Extension API" below for details
 ```
 
-#### package.json
+#### Build Toolchain
+
+**package.json**:
 
 ```json
 {
@@ -232,7 +261,7 @@ new MyPlugin().setup();
 }
 ```
 
-#### tsconfig.json
+**tsconfig.json**:
 
 ```json
 {
@@ -247,7 +276,7 @@ new MyPlugin().setup();
 }
 ```
 
-#### vite.config.ts
+**vite.config.ts**:
 
 ```ts
 import { defineConfig } from "vite";
@@ -266,31 +295,323 @@ export default defineConfig({
 });
 ```
 
+`jsxRuntime: "classic"` compiles JSX to `React.createElement`, using the host-provided `React`; `external` avoids bundling React, using the version already loaded by the application.
+
 #### Build and Install
 
 ```bash
 npm install && npm run build
-cp -r . ~/.qwenpaw/plugins/my-plugin/
-qwenpaw app
+cp -r . ~/.jotaduo/plugins/my-plugin/
+jotaduo app
 ```
 
-**Notes**: `window.QwenPaw.host` provides the following shared libraries — plugins do not need to bundle them:
+You can copy `console/src/plugins/types/jotaduo.d.ts` into your plugin project as `jotaduo-host.d.ts` for full type hints.
 
-| Name              | Type                       | Description                  |
-| ----------------- | -------------------------- | ---------------------------- |
-| `React`           | `typeof React`             | React runtime                |
-| `antd`            | `typeof antd`              | Ant Design component library |
-| `getApiUrl(path)` | `(path: string) => string` | Build a full API URL         |
-| `getApiToken()`   | `() => string`             | Get the current auth token   |
+## Frontend Extension API
 
-**Build notes**:
+Frontend plugins extend the Console UI through the `window.JotaDuo.*` API without modifying host code. All registration methods take `pluginId` as the first argument, and every registration returns a `{ dispose() }` object for revocation.
 
-- `jsxRuntime: "classic"` — Compiles JSX to `React.createElement`, using the host-provided `React`; no import needed in the plugin
-- `external: ["react", "react-dom"]` — Don't bundle React; use the version already loaded by the application
+### Host SDK — `window.JotaDuo.host`
 
-**`window.QwenPaw.modules`**: At startup, the application auto-registers all modules under `src/pages/` into this object. Plugins can access and replace internal exports by module.
+Shared dependencies — plugins do not need to bundle these libraries:
 
-> ⚠️ **Warning**: The module structure inside `modules` is not maintained as a public API and may change across versions. Always verify compatibility before use.
+```ts
+host.React                        // React library
+host.ReactDOM                     // ReactDOM library
+host.antd                         // Ant Design component library
+host.antdIcons                    // Ant Design icons library
+host.apiBaseUrl                   // API base URL
+host.getApiUrl(path: string)      // Build full API URL
+host.getApiToken(): string | null // Get current auth token
+```
+
+**React Hooks (use inside React components):**
+
+```ts
+const theme = window.JotaDuo.host.useTheme(); // "light" | "dark"
+const locale = window.JotaDuo.host.useLocale(); // "zh" | "en"
+const agent = window.JotaDuo.host.useSelectedAgent(); // { id: string }
+const session = window.JotaDuo.host.useCurrentSession(); // { id: string } | null
+```
+
+**Imperative getters (can be called anywhere):**
+
+```ts
+const agentId = window.JotaDuo.host.getSelectedAgentId();
+const sessionId = window.JotaDuo.host.getCurrentSessionId();
+```
+
+**Authenticated fetch (automatically injects Authorization and X-Agent-Id headers):**
+
+```ts
+const resp = await window.JotaDuo.host.fetch("/api/v1/my-endpoint", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ query: "test" }),
+});
+const data = await resp.json();
+```
+
+### Sidebar Menu — `window.JotaDuo.menu`
+
+| Method     | Signature                                | Description                          |
+| ---------- | ---------------------------------------- | ------------------------------------ |
+| `add`      | `(pluginId, item \| item[]): Disposable` | Add menu items                       |
+| `replace`  | `(pluginId, targetId, item): Disposable` | Replace an existing menu item        |
+| `remove`   | `(targetId): void`                       | Remove a menu item                   |
+| `snapshot` | `(location?): MenuItem[]`                | Get a snapshot of current menu items |
+
+**MenuItem Parameters:**
+
+```ts
+{
+  id: string;                    // Globally unique, e.g. "my-plugin.foo"
+  label: string | (() => ReactNode);
+  icon?: ReactComponent | ReactNode;
+  route?: string;                // Route id to navigate to on click
+  parentId?: string;             // Parent group to attach to
+  location?: "primary.agentScoped" | "primary.settings" | "userMenu";
+  before?: string;               // Position before a specific id
+  after?: string;                // Position after a specific id
+  order?: number;                // Lower values appear first
+  visible?: () => boolean;       // Dynamic visibility control
+  isGroup?: boolean;             // Render as group header
+  divider?: boolean;             // Render as horizontal divider
+}
+```
+
+### Page Routes — `window.JotaDuo.route`
+
+| Method    | Signature                                     | Description                            |
+| --------- | --------------------------------------------- | -------------------------------------- |
+| `add`     | `(pluginId, route \| route[]): Disposable`    | Register new routes                    |
+| `replace` | `(pluginId, targetId, component): Disposable` | Replace an existing route's component  |
+| `wrap`    | `(pluginId, targetId, wrapper): Disposable`   | Wrap an existing route (onion pattern) |
+| `remove`  | `(targetId): void`                            | Remove a route                         |
+
+**Route parameters:**
+
+```ts
+{
+  id: string; // Globally unique, e.g. "my-plugin.home"
+  path: string; // URL path, supports react-router patterns
+  component: React.ComponentType; // Page component
+}
+```
+
+**Wrap example (add a top banner to an existing page):**
+
+```tsx
+window.JotaDuo.route.wrap("my-plugin", "core.chat", (Inner) => {
+  return () => (
+    <div>
+      <div style={{ background: "#fff3cd", padding: 8, textAlign: "center" }}>
+        Beta Feature
+      </div>
+      <Inner />
+    </div>
+  );
+});
+```
+
+### General UI Slots — `window.JotaDuo.slot`
+
+| Method     | Signature                                     | Description                                             |
+| ---------- | --------------------------------------------- | ------------------------------------------------------- |
+| `fill`     | `(pluginId, name, render, opts?): Disposable` | Append content to a slot (multiple can coexist)         |
+| `replace`  | `(pluginId, name, render, opts?): Disposable` | Replace slot content (latest wins, overrides all fills) |
+| `snapshot` | `(): SlotInfo[]`                              | Get all registered slot information                     |
+
+**Built-in Slots:**
+
+| Slot Name           | Type    | UI Location                               |
+| ------------------- | ------- | ----------------------------------------- |
+| `header.logo`       | replace | Top navbar, leftmost                      |
+| `header.left`       | fill    | Top navbar, left area (right of logo)     |
+| `header.right`      | fill    | Top navbar, right area (left of settings) |
+| `sider.top`         | fill    | Sidebar top (below agent selector)        |
+| `sider.bottom`      | fill    | Sidebar bottom (below menu)               |
+| `content.statusBar` | fill    | Main content area top                     |
+| `overlay.global`    | fill    | Global overlay                            |
+
+**Example:**
+
+```tsx
+// Replace Header Logo
+window.JotaDuo.slot.replace("my-plugin", "header.logo", (defaultLogo) => {
+  return <img src="https://example.com/logo.svg" style={{ height: 24 }} />;
+});
+```
+
+### Chat Welcome Screen — `chat.welcome`
+
+```tsx
+window.JotaDuo.chat.welcome.set("my-plugin", {
+  greeting: (locale) => (locale.startsWith("zh") ? "Hello!" : "Hello!"),
+  description: "I specialize in data analysis.",
+  avatar: "https://example.com/avatar.png",
+  nick: "My Bot",
+  prompts: [
+    { label: "Analyze data", value: "Please analyze the uploaded dataset" },
+    { label: "Create chart", value: "Create a bar chart from the data" },
+  ],
+});
+
+// Or fully replace the welcome screen
+window.JotaDuo.chat.welcome.render("my-plugin", (props) => {
+  return <div>Custom Welcome</div>;
+});
+```
+
+### Chat Theme — `chat.theme`
+
+```ts
+window.JotaDuo.chat.theme.set("my-plugin", {
+  colorPrimary: "#1890ff",
+});
+```
+
+### Chat Header — `chat.leftHeader` / `chat.rightHeader`
+
+```tsx
+// Set the left header title
+window.JotaDuo.chat.leftHeader.set("my-plugin", {
+  title: "My Brand",
+  logo: <img src="logo.svg" style={{ height: 20 }} />,
+});
+
+// Add a button to the right header
+window.JotaDuo.chat.rightHeader.add(
+  "my-plugin",
+  <button
+    onClick={() => alert("Plugin action!")}
+    style={{ border: "none", background: "none", cursor: "pointer" }}
+  >
+    My Button
+  </button>,
+  { id: "my-plugin.btn", order: 10 },
+);
+```
+
+### Input Box — `chat.sender`
+
+```ts
+// Custom placeholder
+window.JotaDuo.chat.sender.set("my-plugin", {
+  placeholder: "Ask me anything...",
+  disclaimer: "Responses may not be accurate.",
+});
+
+// Add input suggestions
+window.JotaDuo.chat.sender.addSuggestion("my-plugin", {
+  id: "my-plugin.suggestions",
+  items: [
+    { label: "/analyze", value: "analyze" },
+    { label: "/visualize", value: "visualize" },
+  ],
+});
+```
+
+### Message Action Buttons — `chat.actions` / `chat.requestActions`
+
+```tsx
+// Add action button below AI responses
+window.JotaDuo.chat.actions.add("my-plugin", {
+  id: "my-plugin.star",
+  icon: <span>⭐</span>,
+  onClick: ({ data }) => console.log("Starred:", data),
+});
+
+// Add action button below user messages
+window.JotaDuo.chat.requestActions.add("my-plugin", {
+  id: "my-plugin.edit",
+  icon: <span>✏️</span>,
+  onClick: ({ data }) => console.log("Edit:", data),
+});
+```
+
+### Message Bubble Customization — `chat.request` / `chat.response`
+
+```tsx
+// Prepend content before user messages
+window.JotaDuo.chat.request.prepend("my-plugin", ({ data }) => {
+  return <div style={{ fontSize: 10, color: "#999" }}>User</div>;
+});
+
+// Append an info bar below the latest AI response
+window.JotaDuo.chat.response.append("my-plugin", ({ data, isLast }) => {
+  if (!isLast) return null;
+  return (
+    <div
+      style={{
+        background: "#e3f2fd",
+        padding: "4px 8px",
+        borderRadius: 4,
+        fontSize: 12,
+      }}
+    >
+      Powered by My Plugin
+    </div>
+  );
+});
+
+// Fully replace user message rendering (call fallback() to keep defaults)
+window.JotaDuo.chat.request.render("my-plugin", ({ data, fallback }) => {
+  return (
+    <div style={{ border: "1px dashed #ccc", borderRadius: 8, padding: 4 }}>
+      {fallback()}
+    </div>
+  );
+});
+```
+
+### Tool-Call Rendering — `chat.toolRender`
+
+```tsx
+// Register a custom tool result renderer (props include result, sessionId, messageId)
+window.JotaDuo.chat.toolRender("my-plugin", "get_weather", ({ result }) => {
+  const data = typeof result === "string" ? JSON.parse(result) : result;
+  return (
+    <div style={{ padding: 12, border: "1px solid #e8e8e8", borderRadius: 8 }}>
+      {data.city}: {data.temperature}°C
+    </div>
+  );
+});
+```
+
+### Custom Cards — `chat.card`
+
+```ts
+window.JotaDuo.chat.card("my-plugin", "my-card", MyCardComponent);
+```
+
+### Audit & Debugging
+
+```ts
+// View extension registration records
+console.table(window.JotaDuo.audit.overrides());
+
+// Remove all Chat extension registrations for a plugin
+window.JotaDuo.chat.disposeAll("my-plugin");
+```
+
+### Internationalization
+
+All fields that support the `Localized<T>` type accept a function that returns different values per locale:
+
+```ts
+window.JotaDuo.chat.welcome.set("my-plugin", {
+  greeting: (locale) => (locale.startsWith("zh") ? "Hello!" : "Hello!"),
+});
+```
+
+### Common Errors
+
+| Error                             | Cause                                         | Solution                                                            |
+| --------------------------------- | --------------------------------------------- | ------------------------------------------------------------------- |
+| `e.item.render is not a function` | render/prepend/append received a non-function | Ensure you pass a React component or a function returning ReactNode |
+| `duplicate id`                    | Two `add` calls used the same id              | Use globally unique ids (recommended format: `pluginId.xxx`)        |
+| Hook called outside component     | `useTheme()` etc. used outside React context  | Use imperative APIs like `getSelectedAgentId()` instead             |
 
 ## Usage Examples
 
@@ -333,8 +654,8 @@ cd my-llm-provider
 # -*- coding: utf-8 -*-
 """My LLM Provider Implementation."""
 
-from qwenpaw.providers.openai_provider import OpenAIProvider
-from qwenpaw.providers.provider import ModelInfo
+from jotaduo.providers.openai_provider import OpenAIProvider
+from jotaduo.providers.provider import ModelInfo
 from typing import List
 
 
@@ -376,7 +697,7 @@ import importlib.util
 import logging
 import os
 
-from qwenpaw.plugins.api import PluginApi
+from jotaduo.plugins.api import PluginApi
 
 logger = logging.getLogger(__name__)
 
@@ -424,15 +745,15 @@ plugin = MyLLMProviderPlugin()
 
 ```bash
 # Install plugin
-qwenpaw plugin install my-llm-provider
+jotaduo plugin install my-llm-provider
 
-# Start QwenPaw
-qwenpaw app
+# Start JotaDuo
+jotaduo app
 ```
 
 ### Example 2: Add Startup Hook
 
-Let's say you want to initialize a monitoring service when QwenPaw starts.
+Let's say you want to initialize a monitoring service when JotaDuo starts.
 
 #### 1. Create Plugin
 
@@ -465,7 +786,7 @@ cd monitoring-hook
 # -*- coding: utf-8 -*-
 """Monitoring Hook Plugin Entry Point."""
 
-from qwenpaw.plugins.api import PluginApi
+from jotaduo.plugins.api import PluginApi
 import logging
 
 logger = logging.getLogger(__name__)
@@ -489,7 +810,7 @@ class MonitoringHookPlugin:
 
                 # Initialize your monitoring service
                 # from my_monitoring import init_monitoring
-                # init_monitoring(app_name="QwenPaw")
+                # init_monitoring(app_name="JotaDuo")
 
                 logger.info("✓ Monitoring initialized successfully")
 
@@ -516,8 +837,8 @@ plugin = MonitoringHookPlugin()
 #### 4. Install
 
 ```bash
-qwenpaw plugin install monitoring-hook
-qwenpaw app
+jotaduo plugin install monitoring-hook
+jotaduo app
 ```
 
 ### Example 3: Add Custom Command
@@ -587,7 +908,7 @@ Please present this information in a clear format."""
 
 import logging
 
-from qwenpaw.plugins.api import PluginApi
+from jotaduo.plugins.api import PluginApi
 
 logger = logging.getLogger(__name__)
 
@@ -614,7 +935,7 @@ class StatusCommandPlugin:
 
     def _patch_query_handler(self):
         """Patch AgentRunner.query_handler to rewrite /status queries."""
-        from qwenpaw.app.runner.runner import AgentRunner
+        from jotaduo.app.runner.runner import AgentRunner
         from .query_rewriter import StatusQueryRewriter
 
         original_query_handler = AgentRunner.query_handler
@@ -660,8 +981,8 @@ plugin = StatusCommandPlugin()
 #### 5. Install and Use
 
 ```bash
-qwenpaw plugin install status-command
-qwenpaw app
+jotaduo plugin install status-command
+jotaduo app
 
 # Use the command
 /status
@@ -669,15 +990,9 @@ qwenpaw app
 
 ### Example 4: Add a Custom Frontend Page
 
-Add a welcome page to the sidebar.
+Add a welcome page to the sidebar. Build toolchain files (`package.json`, `tsconfig.json`, `vite.config.ts`) follow the "Frontend Plugins > Build Toolchain" section above.
 
-#### 1. Create plugin directory
-
-```bash
-mkdir welcome-plugin && cd welcome-plugin
-```
-
-#### 2. Create plugin.json
+**plugin.json**:
 
 ```json
 {
@@ -691,255 +1006,108 @@ mkdir welcome-plugin && cd welcome-plugin
 }
 ```
 
-#### 3. Create src/index.tsx
+**src/index.tsx**:
 
 ```tsx
-const { React, antd } = (window as any).QwenPaw.host;
+const { React, antd } = window.JotaDuo.host;
 const { Typography, Card } = antd;
-const { Title, Paragraph } = Typography;
+const pluginId = "welcome-plugin";
 
-function WelcomePage() {
+const WelcomePage = () => {
+  const theme = window.JotaDuo.host.useTheme();
   return (
-    <Card style={{ maxWidth: 480, margin: "40px auto" }}>
-      <Title level={2}>Welcome to QwenPaw 👋</Title>
-      <Paragraph>Plugin system is working!</Paragraph>
+    <Card
+      style={{
+        maxWidth: 480,
+        margin: "40px auto",
+        background: theme === "dark" ? "#1f1f1f" : "#fff",
+      }}
+    >
+      <Typography.Title level={2}>Welcome to JotaDuo</Typography.Title>
+      <Typography.Paragraph>Plugin system is working!</Typography.Paragraph>
     </Card>
   );
-}
+};
 
-class WelcomePlugin {
-  readonly id = "welcome-plugin";
+window.JotaDuo.menu.add(pluginId, {
+  id: "welcome-plugin.home",
+  label: "Welcome",
+  icon: "spark-home-line",
+  route: "welcome-plugin.home",
+});
 
-  setup(): void {
-    (window as any).QwenPaw.registerRoutes?.(this.id, [
-      {
-        path: "/plugin/welcome-plugin/home",
-        component: WelcomePage,
-        label: "Welcome",
-        icon: "👋",
-        priority: 5,
-      },
-    ]);
-  }
-}
-
-new WelcomePlugin().setup();
-```
-
-#### 4. Create package.json
-
-```json
-{
-  "name": "welcome-plugin",
-  "version": "1.0.0",
-  "scripts": { "build": "vite build" },
-  "devDependencies": {
-    "vite": "^5.0.0",
-    "typescript": "^5.0.0",
-    "@vitejs/plugin-react": "^4.0.0"
-  }
-}
-```
-
-#### 5. Create tsconfig.json
-
-```json
-{
-  "compilerOptions": {
-    "target": "ES2020",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "jsx": "react",
-    "strict": false,
-    "skipLibCheck": true
-  },
-  "include": ["src"]
-}
-```
-
-#### 6. Create vite.config.ts
-
-```ts
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-
-export default defineConfig({
-  plugins: [react({ jsxRuntime: "classic" })],
-  build: {
-    lib: {
-      entry: "src/index.tsx",
-      formats: ["es"],
-      fileName: () => "index.js",
-    },
-    rollupOptions: { external: ["react", "react-dom"] },
-  },
+window.JotaDuo.route.add(pluginId, {
+  id: "welcome-plugin.home",
+  path: "/welcome-plugin/home",
+  component: WelcomePage,
 });
 ```
 
-#### 7. Build and install
-
 ```bash
 npm install && npm run build
-cp -r . ~/.qwenpaw/plugins/welcome-plugin/
-qwenpaw app
+cp -r . ~/.jotaduo/plugins/welcome-plugin/
+jotaduo app
 ```
 
 ### Example 5: Custom Tool-Call Renderer
 
-Customize how Agent tool-call results are displayed.
+Customize how Agent tool-call results are displayed. Project structure follows Example 4, only `src/index.tsx` differs.
 
-#### 1. Create plugin directory
-
-```bash
-mkdir tool-render-plugin && cd tool-render-plugin
-```
-
-#### 2. Create plugin.json
-
-```json
-{
-  "id": "tool-render-plugin",
-  "name": "Tool Render Plugin",
-  "version": "1.0.0",
-  "type": "frontend",
-  "description": "Custom tool result renderer",
-  "author": "Your Name",
-  "entry": { "frontend": "dist/index.js" }
-}
-```
-
-#### 3. Create src/index.tsx
+**src/index.tsx**:
 
 ```tsx
-const { React, antd } = (window as any).QwenPaw.host;
+const { React, antd } = window.JotaDuo.host;
 const { Card, Descriptions } = antd;
+const pluginId = "tool-render-plugin";
 
-function WeatherToolCard({ result }) {
-  try {
-    const data = typeof result === "string" ? JSON.parse(result) : result;
-    return (
-      <Card
-        title="Weather Information"
-        size="small"
-        style={{ marginTop: 8, maxWidth: 400 }}
-      >
-        <Descriptions column={1} size="small">
-          <Descriptions.Item label="City">{data.city}</Descriptions.Item>
-          <Descriptions.Item label="Temperature">
-            {data.temperature}°C
-          </Descriptions.Item>
-          <Descriptions.Item label="Weather">{data.weather}</Descriptions.Item>
-          <Descriptions.Item label="Humidity">
-            {data.humidity}%
-          </Descriptions.Item>
-        </Descriptions>
-      </Card>
-    );
-  } catch (e) {
-    return <pre>{JSON.stringify(result, null, 2)}</pre>;
-  }
-}
-
-class ToolRenderPlugin {
-  readonly id = "tool-render-plugin";
-
-  setup(): void {
-    (window as any).QwenPaw.registerToolRender?.(this.id, {
-      get_weather: WeatherToolCard, // Tool name must match Agent's return
-    });
-  }
-}
-
-new ToolRenderPlugin().setup();
+window.JotaDuo.chat.toolRender(pluginId, "get_weather", ({ result }) => {
+  const data = typeof result === "string" ? JSON.parse(result) : result;
+  return (
+    <Card
+      title="Weather Info"
+      size="small"
+      style={{ marginTop: 8, maxWidth: 400 }}
+    >
+      <Descriptions column={1} size="small">
+        <Descriptions.Item label="City">{data.city}</Descriptions.Item>
+        <Descriptions.Item label="Temperature">
+          {data.temperature}°C
+        </Descriptions.Item>
+        <Descriptions.Item label="Weather">{data.weather}</Descriptions.Item>
+      </Descriptions>
+    </Card>
+  );
+});
 ```
 
-#### 4. Reuse other files
+### Example 6: Customize Chat Welcome
 
-Reuse `package.json`, `tsconfig.json`, `vite.config.ts` from Example 4, changing `name` to `tool-render-plugin`.
+Customize the chat page greeting, description, and suggested prompts. Project structure follows Example 4, only `src/index.tsx` differs.
 
-#### 5. Build and install
-
-```bash
-npm install && npm run build
-cp -r . ~/.qwenpaw/plugins/tool-render-plugin/
-qwenpaw app
-```
-
-### Example 6: Modify Component Behavior
-
-Customize the chat page greeting.
-
-#### 1. Create plugin directory
-
-```bash
-mkdir custom-greeting-plugin && cd custom-greeting-plugin
-```
-
-#### 2. Create plugin.json
-
-```json
-{
-  "id": "custom-greeting-plugin",
-  "name": "Custom Greeting",
-  "version": "1.0.0",
-  "type": "frontend",
-  "description": "Customize chat greeting",
-  "author": "Your Name",
-  "entry": { "frontend": "dist/index.js" }
-}
-```
-
-#### 3. Create src/index.tsx
+**src/index.tsx**:
 
 ```tsx
-class CustomGreetingPlugin {
-  readonly id = "custom-greeting-plugin";
+const pluginId = "custom-greeting-plugin";
 
-  setup(): void {
-    const mod = (window as any).QwenPaw?.modules?.[
-      "Chat/OptionsPanel/defaultConfig"
-    ];
-    if (!mod?.configProvider) {
-      console.warn("configProvider not found");
-      return;
-    }
-
-    // Replace chat greeting
-    mod.configProvider.getGreeting = () => "Hello! I'm customized QwenPaw 👋";
-
-    // Replace chat description
-    mod.configProvider.getDescription = () =>
-      "This is a customized chat assistant";
-
-    // Replace prompt list
-    mod.configProvider.getPrompts = (t: any) => [
-      { value: "Help me analyze this code" },
-      { value: "Write a unit test" },
-      { value: "Optimize this logic" },
-    ];
-  }
-}
-
-new CustomGreetingPlugin().setup();
-```
-
-#### 4. Reuse other files
-
-Reuse `package.json`, `tsconfig.json`, `vite.config.ts` from Example 4, changing `name` to `custom-greeting-plugin`.
-
-#### 5. Build and install
-
-```bash
-npm install && npm run build
-cp -r . ~/.qwenpaw/plugins/custom-greeting-plugin/
-qwenpaw app
+window.JotaDuo.chat.welcome.set(pluginId, {
+  greeting: (locale) =>
+    locale.startsWith("zh")
+      ? "Hello! I'm customized JotaDuo"
+      : "Hello! I'm customized JotaDuo",
+  description: "This is a customized chat assistant",
+  prompts: [
+    { label: "Analyze code", value: "Help me analyze this code" },
+    { label: "Unit test", value: "Write a unit test" },
+    { label: "Optimize", value: "Optimize this logic" },
+  ],
+});
 ```
 
 ### Example 7: Expose a FastAPI Endpoint
 
 Backend plugins can expose their own HTTP endpoints by registering a
 `fastapi.APIRouter`. The router is mounted under `/api` + your prefix
-and is served by the same FastAPI app as QwenPaw's core API, so it
+and is served by the same FastAPI app as JotaDuo's core API, so it
 shares CORS settings, the auth layer, and is included in
 `/openapi.json` / `/docs`.
 
@@ -982,7 +1150,7 @@ from typing import List
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from qwenpaw.plugins.api import PluginApi
+from jotaduo.plugins.api import PluginApi
 
 logger = logging.getLogger(__name__)
 
@@ -1068,10 +1236,10 @@ plugin = PetApiPlugin()
 #### 4. Install and try it out
 
 ```bash
-qwenpaw plugin install pet-api-plugin
+jotaduo plugin install pet-api-plugin
 ```
 
-Once QwenPaw is running:
+Once JotaDuo is running:
 
 ```bash
 # List pets
@@ -1194,18 +1362,18 @@ api.register_startup_hook("late", callback, priority=200)
 1. Check if plugin is installed:
 
    ```bash
-   qwenpaw plugin list
+   jotaduo plugin list
    ```
 
-2. View QwenPaw logs:
+2. View JotaDuo logs:
 
    ```bash
-   tail -f ~/.qwenpaw/logs/qwenpaw.log | grep -i plugin
+   tail -f ~/.jotaduo/logs/jotaduo.log | grep -i plugin
    ```
 
 3. Verify plugin manifest format:
    ```bash
-   qwenpaw plugin info <plugin-id>
+   jotaduo plugin info <plugin-id>
    ```
 
 ### Dependency Installation Failed
@@ -1219,7 +1387,7 @@ api.register_startup_hook("late", callback, priority=200)
 
 ### Provider Not Showing
 
-1. Confirm plugin is installed and restart QwenPaw
+1. Confirm plugin is installed and restart JotaDuo
 2. Check the model management page in Web UI
 3. Review provider registration info in logs
 
@@ -1231,10 +1399,10 @@ api.register_startup_hook("late", callback, priority=200)
 
 ## Security Considerations
 
-1. **Only install trusted plugins**: Plugin code executes in the QwenPaw process
+1. **Only install trusted plugins**: Plugin code executes in the JotaDuo process
 2. **Check dependencies**: Ensure plugin dependencies come from trusted sources
 3. **Review code**: Review plugin source code before installation
-4. **Offline operations**: Plugin install/uninstall requires QwenPaw to be offline
+4. **Offline operations**: Plugin install/uninstall requires JotaDuo to be offline
 
 ## PluginApi Reference
 
@@ -1296,12 +1464,12 @@ walkthrough.
 
 ### Monkey Patching
 
-For plugins that need to modify QwenPaw behavior (like custom commands), you can use monkey patching:
+For plugins that need to modify JotaDuo behavior (like custom commands), you can use monkey patching:
 
 ```python
 def _patch_query_handler(self):
     """Patch AgentRunner to intercept queries."""
-    from qwenpaw.app.runner.runner import AgentRunner
+    from jotaduo.app.runner.runner import AgentRunner
 
     original_handler = AgentRunner.query_handler
 
@@ -1341,12 +1509,12 @@ zip -r my-plugin-1.0.0.zip my-plugin/
 Users can install via URL:
 
 ```bash
-qwenpaw plugin install https://example.com/my-plugin-1.0.0.zip
+jotaduo plugin install https://example.com/my-plugin-1.0.0.zip
 ```
 
 ## FAQ
 
-### Q: What QwenPaw APIs can plugins access?
+### Q: What JotaDuo APIs can plugins access?
 
 A: Plugins access core functionality through `PluginApi`, including:
 
@@ -1354,7 +1522,7 @@ A: Plugins access core functionality through `PluginApi`, including:
 - Hook registration
 - Runtime helpers (provider_manager, etc.)
 
-### Q: Can plugins modify QwenPaw's core behavior?
+### Q: Can plugins modify JotaDuo's core behavior?
 
 A: Yes, through monkey patching or hook mechanisms. But use with caution to avoid breaking core functionality.
 
@@ -1366,26 +1534,26 @@ A: If multiple plugins register the same provider_id or command_name, the later 
 
 ### GPT Image 2 Tool Plugin
 
-A tool plugin that adds OpenAI's GPT Image 2 image generation capability to QwenPaw agents.
+A tool plugin that adds OpenAI's GPT Image 2 image generation capability to JotaDuo agents.
 
 **Requirements:**
 
-- Minimum QwenPaw version: `1.1.5`
+- Minimum JotaDuo version: `1.1.5`
 
 **Installation:**
 
 ```bash
-# Clone the QwenPaw repository (if not already cloned)
+# Clone the JotaDuo repository (if not already cloned)
 git clone https://github.com/agentscope-ai/QwenPaw.git
-cd QwenPaw
+cd JotaDuo
 
 # Install the plugin
-qwenpaw plugin install plugins/tool/gpt-image2
+jotaduo plugin install plugins/tool/gpt-image2
 ```
 
 **Configuration:**
 
-1. After installation, restart QwenPaw
+1. After installation, restart JotaDuo
 2. Go to Agent Settings → Tools
 3. Find "generate_image_gpt" tool
 4. Click "Configure" and enter your OpenAI API Key

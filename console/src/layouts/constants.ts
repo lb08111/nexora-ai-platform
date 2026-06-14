@@ -1,8 +1,9 @@
 // ── URLs ──────────────────────────────────────────────────────────────────
 
-export const PYPI_URL = "https://pypi.org/pypi/qwenpaw/json";
+export const PYPI_URL = "https://pypi.org/pypi/jotaduo/json";
 
-export const GITHUB_URL = "https://github.com/agentscope-ai/QwenPaw" as const;
+export const GITHUB_URL =
+  "https://github.com/devjotaduo/nexora-ai-platform" as const;
 
 // ── Timing ────────────────────────────────────────────────────────────────
 
@@ -10,10 +11,7 @@ export const ONE_HOUR_MS = 60 * 60 * 1000;
 
 // ── Navigation ────────────────────────────────────────────────────────────
 
-export const DEFAULT_OPEN_KEYS = [
-  "chat-group",
-  "agent-group",
-];
+export const DEFAULT_OPEN_KEYS = ["chat-group", "agent-group"];
 
 export const KEY_TO_PATH: Record<string, string> = {
   chat: "/chat",
@@ -145,26 +143,26 @@ export const compareVersions = (a: string, b: string): number => {
 // ── Update markdown ───────────────────────────────────────────────────────
 // TODO
 export const UPDATE_MD: Record<string, string> = {
-  zh: `### QwenPaw如何更新
+  zh: `### JotaDuo如何更新
 
-要更新 QwenPaw 到最新版本，可根据你的安装方式选择对应方法：
+要更新 JotaDuo 到最新版本，可根据你的安装方式选择对应方法：
 
 1. 如果你使用的是一键安装脚本，直接重新运行安装命令即可自动升级。
 
 2. 如果你是通过 pip 安装，在终端中执行以下命令升级：
 
 \`\`\`
-qwenpaw update
+jotaduo update
 \`\`\`
 
 3. 如果你是从源码安装，进入项目目录并拉取最新代码后重新安装：
 
 \`\`\`
-cd QwenPaw
+cd JotaDuo
 git pull origin main
 cd console && npm ci && npm run build
-cd .. && mkdir -p src/qwenpaw/console
-cp -R console/dist/. src/qwenpaw/console/
+cd .. && mkdir -p src/jotaduo/console
+cp -R console/dist/. src/jotaduo/console/
 pip install -e .
 \`\`\`
 
@@ -172,31 +170,31 @@ pip install -e .
 
 \`\`\`
 docker pull agentscope/qwenpaw:latest
-docker run -p 127.0.0.1:8088:8088 -v qwenpaw-data:/app/working -v qwenpaw-secrets:/app/working.secret -v qwenpaw-backups:/app/working.backups agentscope/qwenpaw:latest
+docker run -p 127.0.0.1:8088:8088 -v jotaduo-data:/app/working -v jotaduo-secrets:/app/working.secret -v jotaduo-backups:/app/working.backups agentscope/qwenpaw:latest
 \`\`\`
 
-升级后重启服务 qwenpaw app。`,
+升级后重启服务 jotaduo app。`,
 
-  ru: `### Как обновить QwenPaw
+  ru: `### Как обновить JotaDuo
 
-Чтобы обновить QwenPaw, выберите способ в зависимости от типа установки:
+Чтобы обновить JotaDuo, выберите способ в зависимости от типа установки:
 
 1. Если вы устанавливали через однострочный скрипт, повторно запустите установщик для обновления.
 
 2. Если устанавливали через pip, выполните:
 
 \`\`\`
-qwenpaw update
+jotaduo update
 \`\`\`
 
 3. Если устанавливали из исходников, получите последние изменения и переустановите:
 
 \`\`\`
-cd QwenPaw
+cd JotaDuo
 git pull origin main
 cd console && npm ci && npm run build
-cd .. && mkdir -p src/qwenpaw/console
-cp -R console/dist/. src/qwenpaw/console/
+cd .. && mkdir -p src/jotaduo/console
+cp -R console/dist/. src/jotaduo/console/
 pip install -e .
 \`\`\`
 
@@ -204,31 +202,31 @@ pip install -e .
 
 \`\`\`
 docker pull agentscope/qwenpaw:latest
-docker run -p 127.0.0.1:8088:8088 -v qwenpaw-data:/app/working -v qwenpaw-secrets:/app/working.secret -v qwenpaw-backups:/app/working.backups agentscope/qwenpaw:latest
+docker run -p 127.0.0.1:8088:8088 -v jotaduo-data:/app/working -v jotaduo-secrets:/app/working.secret -v jotaduo-backups:/app/working.backups agentscope/qwenpaw:latest
 \`\`\`
 
-After upgrading, restart the service with \`qwenpaw app\`.`,
+After upgrading, restart the service with \`jotaduo app\`.`,
 
-  en: `### How to update QwenPaw
+  en: `### How to update JotaDuo
 
-To update QwenPaw, use the method matching your installation type:
+To update JotaDuo, use the method matching your installation type:
 
 1. If installed via one-line script, re-run the installer to upgrade.
 
 2. If installed via pip, run:
 
 \`\`\`
-qwenpaw update
+jotaduo update
 \`\`\`
 
 3. If installed from source, pull the latest code and reinstall:
 
 \`\`\`
-cd QwenPaw
+cd JotaDuo
 git pull origin main
 cd console && npm ci && npm run build
-cd .. && mkdir -p src/qwenpaw/console
-cp -R console/dist/. src/qwenpaw/console/
+cd .. && mkdir -p src/jotaduo/console
+cp -R console/dist/. src/jotaduo/console/
 pip install -e .
 \`\`\`
 
@@ -236,8 +234,8 @@ pip install -e .
 
 \`\`\`
 docker pull agentscope/qwenpaw:latest
-docker run -p 127.0.0.1:8088:8088 -v qwenpaw-data:/app/working -v qwenpaw-secrets:/app/working.secret -v qwenpaw-backups:/app/working.backups agentscope/qwenpaw:latest
+docker run -p 127.0.0.1:8088:8088 -v jotaduo-data:/app/working -v jotaduo-secrets:/app/working.secret -v jotaduo-backups:/app/working.backups agentscope/qwenpaw:latest
 \`\`\`
 
-After upgrading, restart the service with \`qwenpaw app\`.`,
+After upgrading, restart the service with \`jotaduo app\`.`,
 };

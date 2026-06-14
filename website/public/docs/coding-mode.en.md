@@ -1,8 +1,8 @@
 # Coding Mode (Beta)
 
-> **Beta Feature**: Coding Mode is QwenPaw's IDE-style workbench for code-centric tasks. It upgrades the Agent from "chat assistant" to "a collaborator that reads and edits your code directly". Still under active iteration — please share feedback on [GitHub](https://github.com/agentscope-ai/QwenPaw/issues).
+> **Beta Feature**: Coding Mode is JotaDuo's IDE-style workbench for code-centric tasks. It upgrades the Agent from "chat assistant" to "a collaborator that reads and edits your code directly". Still under active iteration — please share feedback on [GitHub](https://github.com/agentscope-ai/QwenPaw/issues).
 
-QwenPaw's regular Chat mode is great for Q&A and one-off tasks. But once you want the Agent to **work continuously inside a specific project** — reading source, editing files, running tests, checking git — a chat window is not enough. Coding Mode gives you a lightweight IDE view that combines project files, an editor, diff previews and the chat panel in one layout, plus two code-aware tools tuned for software understanding: `lsp` (precise jump-to-definition / find-references) and `ast_search` (structural syntactic queries).
+JotaDuo's regular Chat mode is great for Q&A and one-off tasks. But once you want the Agent to **work continuously inside a specific project** — reading source, editing files, running tests, checking git — a chat window is not enough. Coding Mode gives you a lightweight IDE view that combines project files, an editor, diff previews and the chat panel in one layout, plus two code-aware tools tuned for software understanding: `lsp` (precise jump-to-definition / find-references) and `ast_search` (structural syntactic queries).
 
 ---
 
@@ -24,13 +24,18 @@ QwenPaw's regular Chat mode is great for Q&A and one-off tasks. But once you wan
 
 In the chat header, find the `Code` / `Chat` toggle button and click `Code` to enter.
 
-### 2. Stage a Project Copy
+### 2. Choose a Project
 
-The first time you enter Coding Mode, a project picker opens. You can **clone a remote repo**, **copy a local folder**, **upload a zip**, or **create a blank project** — whichever you choose, the result lands as a **copy** under `coding_projects/<name>/` inside QwenPaw's workspace. Your original directory is never modified. That copy is what we call the "project directory" throughout the rest of this guide.
+The first time you enter Coding Mode, a project picker opens. There are two approaches:
+
+- **Open an existing directory** — browse and select a local directory via the file browser. The Agent works directly in that directory without copying anything. Best when you want the Agent to operate on your existing project in place.
+- **Import as a copy** — **clone a remote repo**, **copy a local folder**, **upload a zip**, or **create a blank project**. The result lands as a **copy** under `coding_projects/<name>/` inside JotaDuo's workspace. Your original directory is never modified.
+
+Either way, the selected directory becomes the "project directory" referenced throughout the rest of this guide.
 
 ![Project selection modal](https://img.alicdn.com/imgextra/i3/O1CN01ofmycu235UOvIHxKZ_!!6000000007204-2-tps-3346-1670.png)
 
-> **Why not edit in place?** Working on a copy keeps the Agent away from your active working tree (IDE open, uncommitted changes, CI running, etc.). The copy still includes `.git`, so you can commit / push to the original remote as usual.
+> **Open vs Import?** If your project has an IDE open, uncommitted changes, or CI running, consider importing as a copy to keep the Agent away from your active working tree. The copy still includes `.git`, so you can commit / push as usual. If you want the Agent to work directly on the original directory (e.g. quick edits or code review), choose "Open Directory".
 
 ### 3. Start Working
 
@@ -46,7 +51,7 @@ After the IDE view loads, you get three panels: file tree on the left, tabbed ed
 
 ## What Coding Mode Does Behind the Scenes
 
-In regular mode the Agent only sees a "workspace" with no notion of a specific project. When you turn Coding Mode on, QwenPaw automatically:
+In regular mode the Agent only sees a "workspace" with no notion of a specific project. When you turn Coding Mode on, JotaDuo automatically:
 
 ### 1. Injects a Coding-Specific System Prompt
 
@@ -69,7 +74,7 @@ Both tools are **read-only** — they never modify files. The Agent prefers them
 ### 3. Separates "Project Directory" from "Workspace Directory"
 
 - **Project directory**: the repo you picked — the Agent's main workshop
-- **Workspace directory**: QwenPaw's internal folder for configs, session history, memory, etc. — the Agent **should not touch this by default**
+- **Workspace directory**: JotaDuo's internal folder for configs, session history, memory, etc. — the Agent **should not touch this by default**
 
 The Coding Mode system prompt repeatedly reinforces this distinction so the Agent doesn't `ls` or write files in places it shouldn't.
 

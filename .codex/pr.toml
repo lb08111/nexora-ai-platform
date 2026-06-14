@@ -1,0 +1,65 @@
+#:schema https://developers.openai.com/codex/config-schema.json
+# Codex configuration for Pull Request workflows
+# Extends base config with PR-specific optimizations
+
+# Override base settings for PR context
+approval_policy = "on-request"
+sandbox_mode = "read-only"
+web_search = "off"
+
+# MCP Servers - optimized for PR review
+[mcp_servers.github]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-github"]
+
+[mcp_servers.context7]
+command = "npx"
+args = ["-y", "@upstash/context7-mcp@latest"]
+
+[mcp_servers.memory]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-memory"]
+
+[mcp_servers.playwright]
+command = "npx"
+args = ["-y", "@playwright/mcp@latest", "--extension"]
+
+[mcp_servers.sequential-thinking]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+
+[mcp_servers.ruflo]
+command = "ruflo"
+args = [
+    "mcp",
+    "start",
+    "-t",
+    "stdio",
+    "--tools",
+    "all",
+]
+env_vars = [
+    "OPENAI_API_KEY",
+    "RUFLO_MCP_SERVER",
+]
+
+# Feature flags for PR workflow
+[features]
+multi_agent = true
+
+# Agent configuration for PR review
+[agents]
+max_threads = 4
+max_depth = 2
+
+[agents.reviewer]
+description = "PR reviewer focused on correctness, security, regressions, and test coverage."
+config_file = "agents/pr-reviewer.toml"
+
+[agents.explorer]
+description = "Parallel evidence gathering across PR files and test impact analysis."
+config_file = "agents/explorer.toml"
+
+[agents.docs_researcher]
+description = "API contract and dependency verification for PR changes."
+config_file = "agents/docs-researcher.toml"

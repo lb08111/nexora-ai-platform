@@ -1,61 +1,61 @@
 volumes:
-  nexora-data:
-    name: nexora-data
-  nexora-secrets:
-    name: nexora-secrets
-  nexora-backups:
-    name: nexora-backups
-  nexora-postgres:
-    name: nexora-postgres
+  jotaduo-data:
+    name: jotaduo-data
+  jotaduo-secrets:
+    name: jotaduo-secrets
+  jotaduo-backups:
+    name: jotaduo-backups
+  jotaduo-postgres:
+    name: jotaduo-postgres
 
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: nexora-postgres
+    container_name: jotaduo-postgres
     restart: unless-stopped
-    cpus: "${NEXORA_POSTGRES_CPUS:-1.0}"
-    mem_limit: "${NEXORA_POSTGRES_MEMORY_LIMIT:-1g}"
+    cpus: "${JOTADUO_POSTGRES_CPUS:-1.0}"
+    mem_limit: "${JOTADUO_POSTGRES_MEMORY_LIMIT:-1g}"
     environment:
-      POSTGRES_DB: "${NEXORA_POSTGRES_DB:-nexora}"
-      POSTGRES_USER: "${NEXORA_POSTGRES_USER:-nexora}"
-      POSTGRES_PASSWORD: "${NEXORA_POSTGRES_PASSWORD:-nexora_dev_password}"
+      POSTGRES_DB: "${JOTADUO_POSTGRES_DB:-jotaduo}"
+      POSTGRES_USER: "${JOTADUO_POSTGRES_USER:-jotaduo}"
+      POSTGRES_PASSWORD: "${JOTADUO_POSTGRES_PASSWORD:-jotaduo_dev_password}"
     volumes:
-      - nexora-postgres:/var/lib/postgresql/data
+      - jotaduo-postgres:/var/lib/postgresql/data
     healthcheck:
       test:
         [
           "CMD-SHELL",
-          "pg_isready -U ${NEXORA_POSTGRES_USER:-nexora} -d ${NEXORA_POSTGRES_DB:-nexora}",
+          "pg_isready -U ${JOTADUO_POSTGRES_USER:-jotaduo} -d ${JOTADUO_POSTGRES_DB:-jotaduo}",
         ]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  nexora:
+  jotaduo:
     build:
       context: .
       dockerfile: deploy/Dockerfile
-    image: nexora-platform:latest
-    container_name: nexora-platform
+    image: jotaduo-platform:latest
+    container_name: jotaduo-platform
     restart: unless-stopped
-    cpus: "${NEXORA_APP_CPUS:-2.0}"
-    mem_limit: "${NEXORA_APP_MEMORY_LIMIT:-4g}"
+    cpus: "${JOTADUO_APP_CPUS:-2.0}"
+    mem_limit: "${JOTADUO_APP_MEMORY_LIMIT:-4g}"
     ports:
       - "127.0.0.1:8088:8088"
     environment:
-      QWENPAW_AUTH_ENABLED: "true"
-      QWENPAW_PORT: "8088"
-      QWENPAW_WORKING_DIR: "/app/working"
-      QWENPAW_SECRET_DIR: "/app/working.secret"
-      QWENPAW_BACKUP_DIR: "/app/working.backups"
-      QWENPAW_OPENAPI_DOCS: "false"
-      NEXORA_MAX_ACTIVE_AGENTS: "${NEXORA_MAX_ACTIVE_AGENTS:-20}"
-      NEXORA_AGENT_IDLE_TTL_SECONDS: "${NEXORA_AGENT_IDLE_TTL_SECONDS:-3600}"
-      NEXORA_DB_URL: "postgresql+psycopg2://${NEXORA_POSTGRES_USER:-nexora}:${NEXORA_POSTGRES_PASSWORD:-nexora_dev_password}@postgres:5432/${NEXORA_POSTGRES_DB:-nexora}"
+      JOTADUO_AUTH_ENABLED: "true"
+      JOTADUO_PORT: "8088"
+      JOTADUO_WORKING_DIR: "/app/working"
+      JOTADUO_SECRET_DIR: "/app/working.secret"
+      JOTADUO_BACKUP_DIR: "/app/working.backups"
+      JOTADUO_OPENAPI_DOCS: "false"
+      JOTADUO_MAX_ACTIVE_AGENTS: "${JOTADUO_MAX_ACTIVE_AGENTS:-20}"
+      JOTADUO_AGENT_IDLE_TTL_SECONDS: "${JOTADUO_AGENT_IDLE_TTL_SECONDS:-3600}"
+      JOTADUO_DB_URL: "postgresql+psycopg2://${JOTADUO_POSTGRES_USER:-jotaduo}:${JOTADUO_POSTGRES_PASSWORD:-jotaduo_dev_password}@postgres:5432/${JOTADUO_POSTGRES_DB:-jotaduo}"
     volumes:
-      - nexora-data:/app/working
-      - nexora-secrets:/app/working.secret
-      - nexora-backups:/app/working.backups
+      - jotaduo-data:/app/working
+      - jotaduo-secrets:/app/working.secret
+      - jotaduo-backups:/app/working.backups
     depends_on:
       postgres:
         condition: service_healthy

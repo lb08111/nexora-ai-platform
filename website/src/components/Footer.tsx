@@ -2,7 +2,7 @@ import { useState, type ReactNode, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { QwenpawMascot } from "@/components/QwenpawMascot";
+import { JotaduoMascot } from "@/components/JotaduoMascot";
 import {
   GitHubIcon,
   XIcon,
@@ -152,12 +152,12 @@ export function Footer() {
         <div className="flex flex-col gap-10 lg:flex-row lg:items-start lg:justify-between lg:gap-16">
           <section className="min-w-0 max-w-xl">
             <Link to="/" className="inline-flex items-center mb-4">
-              <QwenpawMascot size={100} />
+              <JotaduoMascot size={100} />
             </Link>
             <p className="mb-2 text-[15px] leading-7 text-(--text)">
-              {t("whyQwenpaw.heroLine")}
+              {t("whyJotaduo.heroLine")}
               <br />
-              {t("whyQwenpaw.secondPrefix")}
+              {t("whyJotaduo.secondPrefix")}
             </p>
             <div className="mt-5 flex items-center gap-4 text-[#f2a25b]">
               {socialLinks.map((link) => (

@@ -11,7 +11,7 @@
   align-items: center;
   position: relative;
   padding: 20px;
-  border-bottom: 1px solid #eae9e7;
+  border-bottom: 1px solid var(--app-border-subtle);
   margin-bottom: 0;
 }
 
@@ -28,17 +28,17 @@
 }
 
 .breadcrumbParent {
-  color: #999;
+  color: var(--app-text-subtle);
   font-weight: 400;
 }
 
 .breadcrumbSeparator {
-  color: #ccc;
+  color: var(--app-border);
   margin: 0 4px;
 }
 
 .breadcrumbCurrent {
-  color: #333;
+  color: var(--app-text-strong);
   font-weight: 600;
   font-size: 20px;
 }
@@ -47,8 +47,8 @@
   flex-shrink: 0;
 
   :global {
-    .qwenpaw-switch-inner-unchecked {
-      color: #000000 !important;
+    .jotaduo-switch-inner-unchecked {
+      color: var(--app-text-strong) !important;
     }
   }
 }
@@ -70,26 +70,28 @@
   border-radius: 7px;
   border: none;
   font-size: 13px;
-  color: #999;
+  color: var(--app-text-muted);
   background: transparent;
   cursor: pointer;
-  transition: all 0.18s ease;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease;
 
   &:hover {
-    color: #666;
-    background: rgba(0, 0, 0, 0.04);
+    color: var(--app-text-strong);
+    background: var(--app-surface-hover);
   }
 }
 
 .disabledTab {
-  color: #ff7f16 !important;
-  background: #fff !important;
+  color: var(--app-primary-text) !important;
+  background: var(--app-surface) !important;
   cursor: not-allowed;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--app-shadow-sm);
 
   &:hover {
-    color: #ff7f16 !important;
-    background: #fff !important;
+    color: var(--app-primary-text) !important;
+    background: var(--app-surface) !important;
   }
 }
 
@@ -101,14 +103,14 @@
 
 .description {
   margin: 0;
-  color: #999;
+  color: var(--app-text-muted);
   font-size: 14px;
 }
 
 .loading {
   text-align: center;
   padding: 60px;
-  color: #999;
+  color: var(--app-text-muted);
 }
 
 .toolsGrid {
@@ -123,31 +125,40 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  border-radius: var(--border-radius, 8px);
-  background: var(--color-bg-base, #ffffff);
-  border: 1px solid var(--color-border-secondary, #eae8e7);
+  border-radius: 8px;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border-subtle);
   box-sizing: border-box;
-  transition: all 0.2s ease-in-out;
+  box-shadow: var(--app-shadow-sm);
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease,
+    background 0.18s ease;
 
-  :global(.qwenpaw-card-body) {
+  :global(.jotaduo-card-body) {
     padding: 0 !important;
   }
 
   &.enabledCard {
     .statusDot {
-      background-color: rgba(20, 184, 166, 1);
+      background-color: var(--app-success);
     }
 
     .statusText {
-      color: rgba(20, 184, 166, 1);
+      color: var(--app-success);
     }
   }
 
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-
   &:hover {
-    border-color: var(--color-border, #d9d9d9);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border-color: var(--app-primary-border);
+    box-shadow: var(--app-shadow-md);
+    transform: translateY(-1px);
+  }
+
+  &:focus-within {
+    border-color: var(--app-primary-border);
+    box-shadow: var(--app-focus-ring);
   }
 }
 
@@ -161,7 +172,7 @@
   margin: 0;
   font-size: 14px;
   font-weight: 500;
-  color: rgba(20, 20, 19, 0.88);
+  color: var(--app-text-strong);
   line-height: 24px;
   display: flex;
   align-items: center;
@@ -177,7 +188,7 @@
   border-radius: 4px;
   font-size: 11px;
   font-weight: 600;
-  color: #fff;
+  color: var(--app-text-inverse);
   flex-shrink: 0;
   line-height: 1;
 }
@@ -195,21 +206,21 @@
   height: 6px;
   border-radius: 50%;
   flex-shrink: 0;
-  background-color: #d9d9d9;
+  background-color: var(--app-border);
 }
 
 .statusText {
-  font-family: Lato;
+  font-family: inherit;
   font-size: 12px;
   font-weight: normal;
   line-height: 19px;
   letter-spacing: normal;
-  color: rgba(20, 20, 19, 0.45);
+  color: var(--app-text-subtle);
 }
 
 .toolDescription {
   margin: 6px 0 16px 0;
-  color: #666;
+  color: var(--app-text-muted);
   font-size: 13px;
   line-height: 1.6;
   min-height: 40px;
@@ -225,12 +236,12 @@
   font-size: 12px;
 
   .configured {
-    color: rgba(20, 184, 166, 1);
+    color: var(--app-success);
     font-weight: 500;
   }
 
   .notConfigured {
-    color: #ff7f16;
+    color: var(--app-warning);
     font-weight: 500;
   }
 }
@@ -242,7 +253,7 @@
   gap: 12px;
   padding-top: 12px;
   margin-top: auto;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--app-border-subtle);
 }
 
 .toggleButton {
@@ -250,19 +261,30 @@
   padding: 8px 16px;
   border-radius: 7px;
   font-size: 13px;
-  color: #666;
-  background: transparent;
-  border: 1px solid #d9d9d9;
+  color: var(--app-text-muted);
+  background: var(--app-surface-subtle);
+  border: 1px solid var(--app-border-subtle);
   cursor: pointer;
-  transition: all 0.18s ease;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease;
 
   &:hover:not(:disabled) {
-    color: #333;
-    border-color: #bfbfbf;
+    color: var(--app-primary-text);
+    background: var(--app-surface-hover);
+    border-color: var(--app-primary-border);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--app-focus-ring);
   }
 
   &:disabled {
-    color: #d9d9d9;
+    color: var(--app-text-subtle);
+    background: var(--app-surface-subtle);
+    border-color: var(--app-border-subtle);
     cursor: not-allowed;
   }
 }
@@ -270,121 +292,123 @@
 /* ─── Dark mode ─────────────────────────────────────────────────────────────── */
 :global(.dark-mode) {
   .pageHeader {
-    border-bottom-color: rgba(255, 255, 255, 0.08);
+    border-bottom-color: var(--app-border-subtle);
   }
 
   .breadcrumbParent {
-    color: rgba(255, 255, 255, 0.35);
+    color: var(--app-text-subtle);
   }
 
   .breadcrumbSeparator {
-    color: rgba(255, 255, 255, 0.2);
+    color: var(--app-border);
   }
 
   .breadcrumbCurrent {
-    color: rgba(255, 255, 255, 0.85);
+    color: var(--app-text-strong);
   }
 
   .loading {
-    color: rgba(255, 255, 255, 0.35);
+    color: var(--app-text-subtle);
   }
 
   /* Tool card */
   .toolCard {
-    background: #2d2d2d;
+    background: var(--app-surface);
 
     &.normalCard {
-      border-color: rgba(255, 255, 255, 0.08) !important;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+      border-color: var(--app-border-subtle) !important;
+      box-shadow: var(--app-shadow-sm) !important;
     }
 
     &.hoverCard {
-      border-color: rgba(255, 255, 255, 0.2) !important;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) !important;
+      border-color: var(--app-primary-border) !important;
+      box-shadow: var(--app-shadow-md) !important;
     }
   }
 
   .toolName {
-    color: rgba(255, 255, 255, 0.85);
+    color: var(--app-text-strong);
   }
 
   .statusDot {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: var(--app-border);
   }
 
   .statusDot.enabled {
-    background-color: rgba(20, 184, 166, 1);
+    background-color: var(--app-success);
   }
 
   .statusText {
-    color: rgba(255, 255, 255, 0.45);
+    color: var(--app-text-subtle);
   }
 
   .statusText.enabled {
-    color: rgba(20, 184, 166, 1);
+    color: var(--app-success);
   }
 
   .toolDescription {
-    color: rgba(255, 255, 255, 0.65);
+    color: var(--app-text-muted);
   }
 
   .cardFooter {
-    border-top-color: rgba(255, 255, 255, 0.08);
+    border-top-color: var(--app-border-subtle);
   }
 
   .toggleButton {
-    color: rgba(255, 255, 255, 0.65);
-    border-color: rgba(255, 255, 255, 0.2);
+    color: var(--app-text-muted);
+    background: var(--app-surface-subtle);
+    border-color: var(--app-border-subtle);
 
     &:hover:not(:disabled) {
-      color: rgba(255, 255, 255, 0.85);
-      border-color: rgba(255, 255, 255, 0.35);
+      color: var(--app-primary-text);
+      background: var(--app-surface-hover);
+      border-color: var(--app-primary-border);
     }
 
     &:disabled {
-      color: rgba(255, 255, 255, 0.25);
-      border-color: rgba(255, 255, 255, 0.1);
+      color: var(--app-text-subtle);
+      border-color: var(--app-border-subtle);
     }
   }
 
   /* Switch component in dark mode */
   .headerAction {
-    :global(.qwenpaw-switch) {
+    :global(.jotaduo-switch) {
       background-color: rgba(255, 255, 255, 0.15);
 
-      &:hover:not(.qwenpaw-switch-disabled) {
+      &:hover:not(.jotaduo-switch-disabled) {
         background-color: rgba(255, 255, 255, 0.25);
       }
 
-      &.qwenpaw-switch-disabled {
+      &.jotaduo-switch-disabled {
         background-color: rgba(255, 255, 255, 0.08);
         opacity: 0.65;
 
-        :global(.qwenpaw-switch-inner) {
+        :global(.jotaduo-switch-inner) {
           color: rgba(255, 255, 255, 0.45);
         }
       }
     }
 
-    :global(.qwenpaw-switch-checked) {
-      background-color: #ff7f16;
+    :global(.jotaduo-switch-checked) {
+      background-color: var(--app-primary);
 
-      &:hover:not(.qwenpaw-switch-disabled) {
-        background-color: #ff9d4d;
+      &:hover:not(.jotaduo-switch-disabled) {
+        background-color: var(--app-primary-hover);
       }
 
-      &.qwenpaw-switch-disabled {
-        background-color: rgba(255, 127, 22, 0.35);
+      &.jotaduo-switch-disabled {
+        background-color: var(--app-primary-soft);
         opacity: 0.65;
 
-        :global(.qwenpaw-switch-inner) {
-          color: rgba(255, 255, 255, 0.55);
+        :global(.jotaduo-switch-inner) {
+          color: var(--app-text-muted);
         }
       }
     }
 
-    :global(.qwenpaw-switch-inner) {
-      color: rgba(255, 255, 255, 0.85);
+    :global(.jotaduo-switch-inner) {
+      color: var(--app-text-inverse);
     }
   }
 }

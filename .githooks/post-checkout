@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ "${JOTADUO_WORKTREE_HOOK_DISABLE:-0}" == "1" ]]; then
+    exit 0
+fi
+
+repo_root="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+if [[ -z "$repo_root" ]]; then
+    exit 0
+fi
+
+branch_name="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || true)"
+if [[ "$branch_name" != feature/* ]]; then
+    exit 0
+fi
+
+bootstrap_script="$repo_root/scripts/worktree_bootstrap.sh"
+if [[ ! -f "$bootstrap_script" ]]; then
+    exit 0
+fi
+
+echo "[worktree-hook] bootstrapping $branch_name"
+if ! bash "$bootstrap_script" --shared-dir ../_shared; then
+    echo "[worktree-hook] bootstrap failed; run manually:" >&2
+    echo "  bash scripts/worktree_bootstrap.sh --shared-dir ../_shared" >&2
+fi

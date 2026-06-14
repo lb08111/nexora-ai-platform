@@ -7,8 +7,8 @@ from pathlib import Path
 
 import pytest
 
-from qwenpaw.backup._ops import restore
-from qwenpaw.backup.models import BackupValidationError
+from jotaduo.backup._ops import restore
+from jotaduo.backup.models import BackupValidationError
 
 
 def test_busy_restore_target_reports_user_actionable_error(

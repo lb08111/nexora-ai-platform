@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Tests for qwenpaw.security.skill_scanner.scanner.
+"""Tests for jotaduo.security.skill_scanner.scanner.
 
 Covers:
 - SkillScanner initialization and defaults
@@ -14,13 +14,13 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from qwenpaw.security.skill_scanner.models import (
+from jotaduo.security.skill_scanner.models import (
     Finding,
     ScanResult,
     Severity,
     ThreatCategory,
 )
-from qwenpaw.security.skill_scanner.scanner import SkillScanner
+from jotaduo.security.skill_scanner.scanner import SkillScanner
 
 
 @pytest.fixture

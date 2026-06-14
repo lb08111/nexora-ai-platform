@@ -1,11 +1,11 @@
-# Nexora AIops 平台二开说明
+# Jotaduo AIops 平台二开说明
 
-本文档记录当前项目基于 QwenPaw 的二次开发内容、后续同步原项目更新的方式，以及托管到 GitHub 前的注意事项。
+本文档记录当前项目基于 JotaDuo 的二次开发内容、后续同步原项目更新的方式，以及托管到 GitHub 前的注意事项。
 
 ## 项目定位
 
 - 上游项目：`agentscope-ai/QwenPaw`
-- 二开项目：Nexora AIops 平台
+- 二开项目：Jotaduo AIops 平台
 - 当前本地目录：`/app`
 - 本地访问地址：`http://127.0.0.1:8088`
 
@@ -14,7 +14,7 @@
 ## 已完成的二开内容
 
 - 中文化：前端默认语言、后端默认语言、登录页标题和主要界面文案。
-- 品牌化：登录页、浏览器标题、favicon、页面 logo 替换为Nexora AIops 平台品牌。
+- 品牌化：登录页、浏览器标题、favicon、页面 logo 替换为Jotaduo AIops 平台品牌。
 - 登录认证：启用登录页，未登录访问受保护页面时跳转登录。
 - 用户体系：补充用户管理、角色管理、权限管理接口和页面。
 - 权限体系：后端 API 增加权限校验能力，前端增加用户权限管理入口。
@@ -25,7 +25,7 @@
 
 ## 重点改动文件
 
-- `start-qwenpaw-zh.sh`
+- `start-jotaduo-zh.sh`
 - `console/index.html`
 - `console/src/i18n.ts`
 - `console/src/App.tsx`
@@ -35,37 +35,37 @@
 - `console/src/locales/zh.json`
 - `console/src/locales/en.json`
 - `console/src/pages/Login/index.tsx`
-- `console/src/nexora/api/users.ts`
-- `console/src/nexora/pages/UserManagement/`
+- `console/src/jotaduo/api/users.ts`
+- `console/src/jotaduo/pages/UserManagement/`
 - `console/public/logo.png`
 - `console/public/logo-icon.svg`
-- `src/qwenpaw_ext/nexora/`
-- `src/qwenpaw/app/auth.py`
-- `src/qwenpaw/app/routers/auth.py`
-- `src/qwenpaw/app/routers/settings.py`
+- `src/jotaduo_ext/jotaduo/`
+- `src/jotaduo/app/auth.py`
+- `src/jotaduo/app/routers/auth.py`
+- `src/jotaduo/app/routers/settings.py`
 - `docs/ops-platform-dev.md`
 
 ## 二开隔离约定
 
-后续Nexora AIops 业务代码优先放在独立扩展目录，原项目只保留必要挂载点：
+后续Jotaduo AIops 业务代码优先放在独立扩展目录，原项目只保留必要挂载点：
 
-- 后端扩展目录：`src/qwenpaw_ext/nexora/`
-- 前端扩展目录：`console/src/nexora/`
+- 后端扩展目录：`src/jotaduo_ext/jotaduo/`
+- 前端扩展目录：`console/src/jotaduo/`
 
-新增用户权限、运维工具、审批、审计、MCP/Skill 接入时，默认先放到这些目录。只有注册路由、注册菜单、接入中间件时，才少量修改 QwenPaw 原生文件。
+新增用户权限、运维工具、审批、审计、MCP/Skill 接入时，默认先放到这些目录。只有注册路由、注册菜单、接入中间件时，才少量修改 JotaDuo 原生文件。
 
 ## 后续同步上游更新
 
 推荐保留两个远端：
 
-- `upstream`：原始 QwenPaw 仓库
-- `origin`：Nexora AIops 自己的 GitHub 仓库
+- `upstream`：原始 JotaDuo 仓库
+- `origin`：Jotaduo AIops 自己的 GitHub 仓库
 
 首次整理远端时：
 
 ```bash
 git remote rename origin upstream
-git remote add origin git@github.com:<your-org-or-user>/nexora-platform.git
+git remote add origin git@github.com:<your-org-or-user>/jotaduo-platform.git
 git fetch upstream
 ```
 
@@ -111,10 +111,10 @@ git merge upstream/main
 建议把当前二开作为第一批提交：
 
 ```bash
-git add .gitignore CUSTOMIZATION.md docs/ops-platform-dev.md start-qwenpaw-zh.sh
+git add .gitignore CUSTOMIZATION.md docs/ops-platform-dev.md start-jotaduo-zh.sh
 git add console/index.html console/public console/src
-git add src/qwenpaw/app/auth.py src/qwenpaw/app/routers/auth.py src/qwenpaw/app/routers/settings.py
-git commit -m "Add nexora platform customization"
+git add src/jotaduo/app/auth.py src/jotaduo/app/routers/auth.py src/jotaduo/app/routers/settings.py
+git commit -m "Add jotaduo platform customization"
 ```
 
 推送到自己的 GitHub：

@@ -5,12 +5,14 @@ import json
 import logging
 from pathlib import Path
 
-from qwenpaw.app.runner.control_commands.base import (
+from jotaduo.app.runner.control_commands.base import (
     BaseControlCommandHandler,
     ControlContext,
 )
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("jotaduo").getChild(
+    __name__.replace("plugin_cloudpaw.", ""),
+)
 
 _A2A_CONFIG_FILENAME = "a2a_config.json"
 
@@ -82,12 +84,11 @@ class A2AListCommandHandler(BaseControlCommandHandler):
             if status != "connected":
                 line += f"\n   状态: {status}"
             lines.append(line)
-
         lines.append(
-            "\n---\n使用 `/a2a <agent_name> <message>` " + "向远程 Agent 发送消息，例如：",
+            "\n---\n"
+            "*Use `/a2a <alias> <message>` to"
+            " send a message to a remote Agent.*",
         )
-        for alias in agents_cfg:
-            lines.append(f"  `/a2a {alias} 如何部署 ECS？`")
 
         return "\n".join(lines)
 

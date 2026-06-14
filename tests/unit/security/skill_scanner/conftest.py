@@ -5,13 +5,13 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from qwenpaw.security.skill_scanner.models import (
+from jotaduo.security.skill_scanner.models import (
     Finding,
     ScanResult,
     Severity,
     ThreatCategory,
 )
-from qwenpaw.security.skill_scanner.scan_policy import ScanPolicy
+from jotaduo.security.skill_scanner.scan_policy import ScanPolicy
 
 
 @pytest.fixture

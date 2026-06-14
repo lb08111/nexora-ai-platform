@@ -7,33 +7,33 @@ from agentscope_runtime.engine.schemas.exception import (
     ConfigurationException,
 )
 
-from qwenpaw.config.config import (
+from jotaduo.config.config import (
     AgentProfileConfig,
     AgentsRunningConfig,
     load_agent_config,
     save_agent_config,
 )
-from qwenpaw.constant import (
+from jotaduo.constant import (
     LLM_BACKOFF_BASE,
     LLM_BACKOFF_CAP,
     LLM_MAX_RETRIES,
 )
-from qwenpaw.config.config import ModelSlotConfig
+from jotaduo.config.config import ModelSlotConfig
 
 
 @pytest.fixture
 def mock_agent_workspace(tmp_path, monkeypatch):
     """Create a temporary agent workspace for testing."""
     import json
-    from qwenpaw.config.utils import get_config_path
-    from qwenpaw.config.config import Config, AgentsConfig, AgentProfileRef
+    from jotaduo.config.utils import get_config_path
+    from jotaduo.config.config import Config, AgentsConfig, AgentProfileRef
 
     # Setup workspace directory
     workspace_dir = tmp_path / "workspaces" / "test_agent"
     workspace_dir.mkdir(parents=True, exist_ok=True)
 
-    monkeypatch.setattr("qwenpaw.config.utils.WORKING_DIR", tmp_path)
-    monkeypatch.setattr("qwenpaw.config.config.WORKING_DIR", tmp_path)
+    monkeypatch.setattr("jotaduo.config.utils.WORKING_DIR", tmp_path)
+    monkeypatch.setattr("jotaduo.config.config.WORKING_DIR", tmp_path)
 
     # Create root config with this agent
     root_config = Config(
@@ -137,17 +137,17 @@ def test_agent_model_config_can_be_cleared(
 
 def test_different_agents_have_independent_models(tmp_path, monkeypatch):
     """Test that different agents can have different model configs."""
-    monkeypatch.setattr("qwenpaw.config.utils.WORKING_DIR", tmp_path)
-    monkeypatch.setattr("qwenpaw.config.config.WORKING_DIR", tmp_path)
+    monkeypatch.setattr("jotaduo.config.utils.WORKING_DIR", tmp_path)
+    monkeypatch.setattr("jotaduo.config.config.WORKING_DIR", tmp_path)
 
     # Create two agents
     import json
-    from qwenpaw.config.config import (
+    from jotaduo.config.config import (
         Config,
         AgentsConfig,
         AgentProfileRef,
     )
-    from qwenpaw.config.utils import get_config_path
+    from jotaduo.config.utils import get_config_path
 
     agent1_dir = tmp_path / "workspaces" / "agent1"
     agent2_dir = tmp_path / "workspaces" / "agent2"

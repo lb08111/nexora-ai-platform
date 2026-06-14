@@ -3,7 +3,7 @@
 import tempfile
 from pathlib import Path
 import pytest
-from qwenpaw.agents.prompt import build_system_prompt_from_working_dir
+from jotaduo.agents.prompt import build_system_prompt_from_working_dir
 
 
 @pytest.fixture

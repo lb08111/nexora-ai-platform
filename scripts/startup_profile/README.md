@@ -1,6 +1,6 @@
-# 🚀 QwenPaw Startup Performance Analyzer
+# 🚀 JotaDuo Startup Performance Analyzer
 
-One-click analysis of QwenPaw startup performance, identify bottlenecks, and provide optimization suggestions.
+One-click analysis of JotaDuo startup performance, identify bottlenecks, and provide optimization suggestions.
 
 ## Quick Start
 
@@ -21,7 +21,7 @@ After execution:
 **Note**: Due to browser security restrictions (CORS), opening HTML directly with `file://` protocol cannot load data.
 Please use `serve.py` or manually start an HTTP server:
 ```bash
-cd /path/to/QwenPaw
+cd /path/to/JotaDuo
 python -m http.server 8000
 # Visit: http://localhost:8000/scripts/startup_profile/output/report.html
 ```
@@ -38,7 +38,7 @@ output/
 
 ## Report Features
 
-- **Import Time Analysis** - QwenPaw modules and third-party library import time ranking
+- **Import Time Analysis** - JotaDuo modules and third-party library import time ranking
 - **Function Execution Time** - Top 20 function execution time statistics
 - **Function Call Tree** - Complete function call hierarchy and timing (limited to 5 levels deep, top 10 calls per level)
 - **Interactive Charts** - Chart.js horizontal bar chart visualization
@@ -53,7 +53,7 @@ output/
 
 2. **Data Analysis**
    - Parse log files
-   - Categorize statistics (QwenPaw/third-party/stdlib)
+   - Categorize statistics (JotaDuo/third-party/stdlib)
    - Calculate percentages and performance metrics
 
 3. **Visualization**
@@ -82,16 +82,16 @@ A: Normal, doesn't affect import analysis. Can use `exec_tracer` separately.
 ## Technical Details
 
 - Python 3.8+
-- No extra dependencies (except QwenPaw itself)
+- No extra dependencies (except JotaDuo itself)
 - Pure JSON data output
 - HTML runs standalone, viewable offline
 
 ## Related Tools
 
-- `src/qwenpaw/utils/startup_display.py` - Startup banner display
+- `src/jotaduo/utils/startup_display.py` - Startup banner display
 
 ---
 
 **Version**: 2.0.0
-**Author**: QwenPaw Team
+**Author**: JotaDuo Team
 **Updated**: 2026-04-17

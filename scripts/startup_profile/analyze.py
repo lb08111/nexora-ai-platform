@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-QwenPaw Startup Performance Analyzer
+JotaDuo Startup Performance Analyzer
 
 Collects startup performance data and outputs JSON for visualization.
 """
@@ -25,7 +25,7 @@ def collect_import_time(output_dir):
         "-X",
         "importtime",
         "-m",
-        "qwenpaw",
+        "jotaduo",
         "app",
         "--help",
     ]
@@ -107,8 +107,8 @@ def parse_import_log(log_file):
                     },
                 )
 
-    # Filter QwenPaw and third-party
-    qwenpaw = [i for i in imports if "qwenpaw" in i["package"]]
+    # Filter JotaDuo and third-party
+    jotaduo = [i for i in imports if "jotaduo" in i["package"]]
     third_party = [
         i
         for i in imports
@@ -118,24 +118,24 @@ def parse_import_log(log_file):
         not in ["io", "os", "sys", "time", "re", "abc", "typing"]
     ]
 
-    qwenpaw.sort(key=lambda x: x["cumulative_ms"], reverse=True)
+    jotaduo.sort(key=lambda x: x["cumulative_ms"], reverse=True)
     third_party.sort(key=lambda x: x["cumulative_ms"], reverse=True)
 
-    total_qwenpaw = sum(
-        i["cumulative_ms"] for i in qwenpaw if i["package"].count(".") == 1
+    total_jotaduo = sum(
+        i["cumulative_ms"] for i in jotaduo if i["package"].count(".") == 1
     )
     total_third_party = sum(i["cumulative_ms"] for i in third_party[:10])
 
     print(
-        f"   ✓ {len(imports)} imports, {len(qwenpaw)} QwenPaw, {len(third_party)} third-party",
+        f"   ✓ {len(imports)} imports, {len(jotaduo)} JotaDuo, {len(third_party)} third-party",
     )
 
     return {
-        "qwenpaw_imports": qwenpaw,
+        "jotaduo_imports": jotaduo,
         "third_party_imports": third_party,
         "summary": {
-            "total_ms": total_qwenpaw + total_third_party,
-            "total_qwenpaw_ms": total_qwenpaw,
+            "total_ms": total_jotaduo + total_third_party,
+            "total_jotaduo_ms": total_jotaduo,
             "total_third_party_ms": total_third_party,
         },
     }
@@ -163,12 +163,12 @@ def parse_execution_trace(trace_file):
         ]
         functions.sort(key=lambda x: x["total_ms"], reverse=True)
 
-        qwenpaw_funcs = [f for f in functions if "qwenpaw" in f["function"]]
+        jotaduo_funcs = [f for f in functions if "jotaduo" in f["function"]]
 
-        print(f"   ✓ {len(functions)} functions, {len(qwenpaw_funcs)} QwenPaw")
+        print(f"   ✓ {len(functions)} functions, {len(jotaduo_funcs)} JotaDuo")
 
         return {
-            "qwenpaw_functions": qwenpaw_funcs[:50],
+            "jotaduo_functions": jotaduo_funcs[:50],
             "metadata": data["metadata"],
             "execution_order": data["execution_order"],
         }
@@ -180,7 +180,7 @@ def parse_execution_trace(trace_file):
 def main():  # pylint: disable=too-many-statements
     """Main function."""
     print("=" * 60)
-    print("🐾 QwenPaw Startup Performance Analyzer")
+    print("🐾 JotaDuo Startup Performance Analyzer")
     print("=" * 60)
     print()
 

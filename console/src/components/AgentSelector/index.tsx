@@ -77,10 +77,6 @@ export default function AgentSelector({
     }
   }, [agents, selectedAgent, setSelectedAgent, t]);
 
-  // Count only enabled agents for badge
-  const enabledCount = agents?.filter((a) => a.enabled).length ?? 0;
-  const agentCount = enabledCount;
-
   const currentAgentInfo = agents?.find((a) => a.id === selectedAgent);
 
   // Collapsed: show just the Bot icon with Tooltip
@@ -93,7 +89,6 @@ export default function AgentSelector({
             : selectedAgent
         }
         placement="right"
-        overlayInnerStyle={{ background: "rgba(0,0,0,0.75)", color: "#fff" }}
       >
         <div className={styles.agentSelectorCollapsed}>
           <Bot size={18} strokeWidth={2} />
@@ -104,14 +99,6 @@ export default function AgentSelector({
 
   return (
     <div className={styles.agentSelectorWrapper}>
-      <div className={styles.agentSelectorLabel}>
-        <span>
-          {t("agent.currentWorkspace")}
-          {agentCount > 0 && (
-            <span className={styles.agentCountBadge}> ({agentCount})</span>
-          )}
-        </span>
-      </div>
       <Select
         value={selectedAgent}
         onChange={handleChange}
@@ -120,11 +107,11 @@ export default function AgentSelector({
         placeholder={t("agent.selectAgent")}
         optionLabelProp="label"
         popupClassName={styles.agentSelectorDropdown}
-        onDropdownVisibleChange={setDropdownOpen}
+        onOpenChange={setDropdownOpen}
         suffixIcon={
           dropdownOpen ? <SparkUpLine size={20} /> : <SparkDownLine size={20} />
         }
-        dropdownRender={(menu) => (
+        popupRender={(menu) => (
           <>
             <div className={styles.dropdownHeader}>
               <span className={styles.dropdownHeaderTitle}>
@@ -149,7 +136,9 @@ export default function AgentSelector({
             disabled={!agent.enabled}
             label={
               <div className={styles.selectedAgentLabel}>
-                <Bot size={14} strokeWidth={2} />
+                <span className={styles.selectedAgentAvatar}>
+                  <Bot size={14} strokeWidth={2} />
+                </span>
                 <span>{getAgentDisplayName(agent, t)}</span>
                 {!agent.enabled && <EyeOff size={12} strokeWidth={2} />}
               </div>

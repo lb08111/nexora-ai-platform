@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Tests for qwenpaw.security.skill_scanner.__init__.
+"""Tests for jotaduo.security.skill_scanner.__init__.
 
 Covers:
 - compute_skill_content_hash
@@ -22,7 +22,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from qwenpaw.security.skill_scanner import (
+from jotaduo.security.skill_scanner import (
     BlockedSkillRecord,
     SkillScanError,
     _finding_to_dict,
@@ -41,7 +41,7 @@ from qwenpaw.security.skill_scanner import (
     remove_blocked_entry,
     scan_skill_directory,
 )
-from qwenpaw.security.skill_scanner.models import (
+from jotaduo.security.skill_scanner.models import (
     Finding,
     ScanResult,
     Severity,
@@ -183,7 +183,7 @@ class TestIsSkillWhitelisted:
     def test_loads_config_when_none(self):
         """When cfg is None, should call _load_scanner_config."""
         with patch(
-            "qwenpaw.security.skill_scanner._load_scanner_config",
+            "jotaduo.security.skill_scanner._load_scanner_config",
             return_value=None,
         ) as mock_load:
             result = is_skill_whitelisted("test-skill")
@@ -319,7 +319,7 @@ class TestBlockedHistoryPersistence:
     def test_get_blocked_history_empty(self, tmp_path):
         """Should return empty list when no history file exists."""
         with patch(
-            "qwenpaw.security.skill_scanner._get_blocked_history_path",
+            "jotaduo.security.skill_scanner._get_blocked_history_path",
             return_value=tmp_path / "nonexistent.json",
         ):
             result = get_blocked_history()
@@ -343,7 +343,7 @@ class TestBlockedHistoryPersistence:
             ],
         )
         with patch(
-            "qwenpaw.security.skill_scanner._get_blocked_history_path",
+            "jotaduo.security.skill_scanner._get_blocked_history_path",
             return_value=history_path,
         ):
             _record_blocked_skill(result, tmp_path, action="blocked")
@@ -357,7 +357,7 @@ class TestBlockedHistoryPersistence:
         history_path = tmp_path / "history.json"
         history_path.write_text("[]", encoding="utf-8")
         with patch(
-            "qwenpaw.security.skill_scanner._get_blocked_history_path",
+            "jotaduo.security.skill_scanner._get_blocked_history_path",
             return_value=history_path,
         ):
             clear_blocked_history()
@@ -366,7 +366,7 @@ class TestBlockedHistoryPersistence:
     def test_clear_nonexistent_history(self, tmp_path):
         """Should not raise when clearing nonexistent history."""
         with patch(
-            "qwenpaw.security.skill_scanner._get_blocked_history_path",
+            "jotaduo.security.skill_scanner._get_blocked_history_path",
             return_value=tmp_path / "nonexistent.json",
         ):
             clear_blocked_history()  # Should not raise
@@ -383,7 +383,7 @@ class TestBlockedHistoryPersistence:
             encoding="utf-8",
         )
         with patch(
-            "qwenpaw.security.skill_scanner._get_blocked_history_path",
+            "jotaduo.security.skill_scanner._get_blocked_history_path",
             return_value=history_path,
         ):
             result = remove_blocked_entry(0)
@@ -397,7 +397,7 @@ class TestBlockedHistoryPersistence:
         history_path = tmp_path / "history.json"
         history_path.write_text("[]", encoding="utf-8")
         with patch(
-            "qwenpaw.security.skill_scanner._get_blocked_history_path",
+            "jotaduo.security.skill_scanner._get_blocked_history_path",
             return_value=history_path,
         ):
             result = remove_blocked_entry(99)
@@ -406,7 +406,7 @@ class TestBlockedHistoryPersistence:
     def test_remove_blocked_entry_no_file(self, tmp_path):
         """Should return False when no history file exists."""
         with patch(
-            "qwenpaw.security.skill_scanner._get_blocked_history_path",
+            "jotaduo.security.skill_scanner._get_blocked_history_path",
             return_value=tmp_path / "nonexistent.json",
         ):
             result = remove_blocked_entry(0)
@@ -416,7 +416,7 @@ class TestBlockedHistoryPersistence:
         """Should append multiple entries."""
         history_path = tmp_path / "history.json"
         with patch(
-            "qwenpaw.security.skill_scanner._get_blocked_history_path",
+            "jotaduo.security.skill_scanner._get_blocked_history_path",
             return_value=history_path,
         ):
             for i in range(3):
@@ -441,7 +441,7 @@ class TestLoadScannerConfig:
     def test_returns_none_on_import_error(self):
         """Should return None when config import fails."""
         with patch(
-            "qwenpaw.config.load_config",
+            "jotaduo.config.load_config",
             side_effect=ImportError,
         ):
             result = _load_scanner_config()
@@ -450,7 +450,7 @@ class TestLoadScannerConfig:
     def test_returns_none_on_generic_exception(self):
         """Should return None on any exception."""
         with patch(
-            "qwenpaw.config.load_config",
+            "jotaduo.config.load_config",
             side_effect=RuntimeError("boom"),
         ):
             result = _load_scanner_config()
@@ -461,25 +461,25 @@ class TestGetScanMode:
     """Tests for _get_scan_mode."""
 
     def test_env_var_block(self):
-        """QWENPAW_SKILL_SCAN_MODE=block should return 'block'."""
+        """JOTADUO_SKILL_SCAN_MODE=block should return 'block'."""
         with patch(
-            "qwenpaw.security.skill_scanner.EnvVarLoader.get_str",
+            "jotaduo.security.skill_scanner.EnvVarLoader.get_str",
             return_value="block",
         ):
             assert _get_scan_mode() == "block"
 
     def test_env_var_warn(self):
-        """QWENPAW_SKILL_SCAN_MODE=warn should return 'warn'."""
+        """JOTADUO_SKILL_SCAN_MODE=warn should return 'warn'."""
         with patch(
-            "qwenpaw.security.skill_scanner.EnvVarLoader.get_str",
+            "jotaduo.security.skill_scanner.EnvVarLoader.get_str",
             return_value="warn",
         ):
             assert _get_scan_mode() == "warn"
 
     def test_env_var_off(self):
-        """QWENPAW_SKILL_SCAN_MODE=off should return 'off'."""
+        """JOTADUO_SKILL_SCAN_MODE=off should return 'off'."""
         with patch(
-            "qwenpaw.security.skill_scanner.EnvVarLoader.get_str",
+            "jotaduo.security.skill_scanner.EnvVarLoader.get_str",
             return_value="off",
         ):
             assert _get_scan_mode() == "off"
@@ -487,7 +487,7 @@ class TestGetScanMode:
     def test_env_var_case_insensitive(self):
         """Env var value should be case-insensitive."""
         with patch(
-            "qwenpaw.security.skill_scanner.EnvVarLoader.get_str",
+            "jotaduo.security.skill_scanner.EnvVarLoader.get_str",
             return_value="BLOCK",
         ):
             assert _get_scan_mode() == "block"
@@ -497,7 +497,7 @@ class TestGetScanMode:
         cfg = MagicMock()
         cfg.mode = "warn"
         with patch(
-            "qwenpaw.security.skill_scanner.EnvVarLoader.get_str",
+            "jotaduo.security.skill_scanner.EnvVarLoader.get_str",
             return_value="invalid",
         ):
             result = _get_scan_mode(cfg=cfg)
@@ -506,10 +506,10 @@ class TestGetScanMode:
     def test_no_env_no_config_defaults_to_block(self):
         """No env var and no config should default to 'block'."""
         with patch(
-            "qwenpaw.security.skill_scanner.EnvVarLoader.get_str",
+            "jotaduo.security.skill_scanner.EnvVarLoader.get_str",
             return_value="",
         ), patch(
-            "qwenpaw.security.skill_scanner._load_scanner_config",
+            "jotaduo.security.skill_scanner._load_scanner_config",
             return_value=None,
         ):
             result = _get_scan_mode()
@@ -529,7 +529,7 @@ class TestScanTimeout:
     def test_default_timeout(self):
         """Should default to 30.0 when no config."""
         with patch(
-            "qwenpaw.security.skill_scanner._load_scanner_config",
+            "jotaduo.security.skill_scanner._load_scanner_config",
             return_value=None,
         ):
             result = _scan_timeout()
@@ -580,8 +580,12 @@ class TestCacheHelpers:
         # Modify directory to change mtime
         import time
 
-        (tmp_path / "new_file.txt").write_text("change")
-        time.sleep(0.1)  # Ensure mtime difference
+        new_file = tmp_path / "new_file.txt"
+        new_file.write_text("change")
+        import os
+
+        future = time.time() + 2
+        os.utime(str(new_file), (future, future))
         cached = _get_cached_result(tmp_path)
         # After modification, cache should be invalidated
         # (mtime changed, so cached result is None)
@@ -653,7 +657,7 @@ class TestScanSkillDirectory:
     def test_scan_mode_off(self, tmp_path):
         """Should return None when scan mode is 'off'."""
         with patch(
-            "qwenpaw.security.skill_scanner._get_scan_mode",
+            "jotaduo.security.skill_scanner._get_scan_mode",
             return_value="off",
         ):
             result = scan_skill_directory(str(tmp_path))
@@ -662,10 +666,10 @@ class TestScanSkillDirectory:
     def test_scan_whitelisted_skill(self, tmp_path):
         """Should return None for whitelisted skill."""
         with patch(
-            "qwenpaw.security.skill_scanner._get_scan_mode",
+            "jotaduo.security.skill_scanner._get_scan_mode",
             return_value="block",
         ), patch(
-            "qwenpaw.security.skill_scanner.is_skill_whitelisted",
+            "jotaduo.security.skill_scanner.is_skill_whitelisted",
             return_value=True,
         ):
             result = scan_skill_directory(str(tmp_path))
@@ -675,13 +679,13 @@ class TestScanSkillDirectory:
         """Should return ScanResult for safe skill."""
         (tmp_path / "safe.py").write_text("print('hello')")
         with patch(
-            "qwenpaw.security.skill_scanner._get_scan_mode",
+            "jotaduo.security.skill_scanner._get_scan_mode",
             return_value="warn",
         ), patch(
-            "qwenpaw.security.skill_scanner.is_skill_whitelisted",
+            "jotaduo.security.skill_scanner.is_skill_whitelisted",
             return_value=False,
         ), patch(
-            "qwenpaw.security.skill_scanner._load_scanner_config",
+            "jotaduo.security.skill_scanner._load_scanner_config",
             return_value=None,
         ):
             result = scan_skill_directory(
@@ -708,21 +712,21 @@ class TestScanSkillDirectory:
             ],
         )
         with patch(
-            "qwenpaw.security.skill_scanner._get_scan_mode",
+            "jotaduo.security.skill_scanner._get_scan_mode",
             return_value="block",
         ), patch(
-            "qwenpaw.security.skill_scanner.is_skill_whitelisted",
+            "jotaduo.security.skill_scanner.is_skill_whitelisted",
             return_value=False,
         ), patch(
-            "qwenpaw.security.skill_scanner._load_scanner_config",
+            "jotaduo.security.skill_scanner._load_scanner_config",
             return_value=None,
         ), patch(
-            "qwenpaw.security.skill_scanner._get_scanner",
+            "jotaduo.security.skill_scanner._get_scanner",
         ) as mock_scanner_cls, patch(
-            "qwenpaw.security.skill_scanner._get_cached_result",
+            "jotaduo.security.skill_scanner._get_cached_result",
             return_value=None,
         ), patch(
-            "qwenpaw.security.skill_scanner._store_cached_result",
+            "jotaduo.security.skill_scanner._store_cached_result",
         ):
             mock_scanner = MagicMock()
             mock_scanner.scan_skill.return_value = unsafe_result
@@ -750,23 +754,23 @@ class TestScanSkillDirectory:
             ],
         )
         with patch(
-            "qwenpaw.security.skill_scanner._get_scan_mode",
+            "jotaduo.security.skill_scanner._get_scan_mode",
             return_value="warn",
         ), patch(
-            "qwenpaw.security.skill_scanner.is_skill_whitelisted",
+            "jotaduo.security.skill_scanner.is_skill_whitelisted",
             return_value=False,
         ), patch(
-            "qwenpaw.security.skill_scanner._load_scanner_config",
+            "jotaduo.security.skill_scanner._load_scanner_config",
             return_value=None,
         ), patch(
-            "qwenpaw.security.skill_scanner._get_scanner",
+            "jotaduo.security.skill_scanner._get_scanner",
         ) as mock_scanner_cls, patch(
-            "qwenpaw.security.skill_scanner._get_cached_result",
+            "jotaduo.security.skill_scanner._get_cached_result",
             return_value=None,
         ), patch(
-            "qwenpaw.security.skill_scanner._store_cached_result",
+            "jotaduo.security.skill_scanner._store_cached_result",
         ), patch(
-            "qwenpaw.security.skill_scanner._record_blocked_skill",
+            "jotaduo.security.skill_scanner._record_blocked_skill",
         ):
             mock_scanner = MagicMock()
             mock_scanner.scan_skill.return_value = unsafe_result
@@ -795,21 +799,21 @@ class TestScanSkillDirectory:
             ],
         )
         with patch(
-            "qwenpaw.security.skill_scanner._get_scan_mode",
+            "jotaduo.security.skill_scanner._get_scan_mode",
             return_value="warn",
         ), patch(
-            "qwenpaw.security.skill_scanner.is_skill_whitelisted",
+            "jotaduo.security.skill_scanner.is_skill_whitelisted",
             return_value=False,
         ), patch(
-            "qwenpaw.security.skill_scanner._load_scanner_config",
+            "jotaduo.security.skill_scanner._load_scanner_config",
             return_value=None,
         ), patch(
-            "qwenpaw.security.skill_scanner._get_scanner",
+            "jotaduo.security.skill_scanner._get_scanner",
         ) as mock_scanner_cls, patch(
-            "qwenpaw.security.skill_scanner._get_cached_result",
+            "jotaduo.security.skill_scanner._get_cached_result",
             return_value=None,
         ), patch(
-            "qwenpaw.security.skill_scanner._store_cached_result",
+            "jotaduo.security.skill_scanner._store_cached_result",
         ):
             mock_scanner = MagicMock()
             mock_scanner.scan_skill.return_value = unsafe_result
@@ -825,13 +829,13 @@ class TestScanSkillDirectory:
         """Should use directory name as skill_name when not provided."""
         (tmp_path / "safe.py").write_text("x = 1")
         with patch(
-            "qwenpaw.security.skill_scanner._get_scan_mode",
+            "jotaduo.security.skill_scanner._get_scan_mode",
             return_value="warn",
         ), patch(
-            "qwenpaw.security.skill_scanner.is_skill_whitelisted",
+            "jotaduo.security.skill_scanner.is_skill_whitelisted",
             return_value=False,
         ), patch(
-            "qwenpaw.security.skill_scanner._load_scanner_config",
+            "jotaduo.security.skill_scanner._load_scanner_config",
             return_value=None,
         ):
             result = scan_skill_directory(str(tmp_path))
@@ -858,12 +862,12 @@ class TestGetBlockedHistoryPath:
         mock_working_dir = MagicMock()
         mock_working_dir.__truediv__ = (
             lambda self, other: Path(
-                "/mock/.qwenpaw",
+                "/mock/.jotaduo",
             )
             / other
         )
         with patch(
-            "qwenpaw.security.skill_scanner._get_blocked_history_path",
+            "jotaduo.security.skill_scanner._get_blocked_history_path",
         ):
             # Just verify the function returns a Path
             result = _get_blocked_history_path()

@@ -14,7 +14,7 @@ Covers:
 import json
 from unittest.mock import MagicMock
 
-from qwenpaw.agents.utils.tool_message_utils import (
+from jotaduo.agents.utils.tool_message_utils import (
     _dedup_tool_blocks,
     _remove_invalid_tool_blocks,
     _repair_empty_tool_inputs,

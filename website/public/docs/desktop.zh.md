@@ -1,4 +1,4 @@
-# QwenPaw Desktop 桌面应用版使用指南
+# JotaDuo Desktop 桌面应用版使用指南
 
 > ⚠️ **Beta 版本说明**
 >
@@ -13,7 +13,7 @@
 
 **下载地址**：[GitHub Releases][releases]
 
-本文档说明如何在 Windows 和 macOS 系统上安装和使用 QwenPaw Desktop 桌面应用。
+本文档说明如何在 Windows 和 macOS 系统上安装和使用 JotaDuo Desktop 桌面应用。
 
 [releases]: https://qwenpaw.agentscope.io/downloads
 
@@ -39,32 +39,32 @@
 ### 安装步骤
 
 1. **下载安装包**
-   从 [Release 页面][releases]下载 `QwenPaw-Setup-<version>.exe` 文件
+   从 [Release 页面][releases]下载 `JotaDuo-Setup-<version>.exe` 文件
 
 2. **运行安装程序**
    双击 `.exe` 文件，按照安装向导提示完成安装
-   - 默认安装位置：`C:\Users\<你的用户名>\AppData\Local\QwenPaw`
+   - 默认安装位置：`C:\Users\<你的用户名>\AppData\Local\JotaDuo`
    - 安装完成后会在桌面和开始菜单创建快捷方式
 
 ### 启动方式
 
 安装完成后，您会看到**两个启动快捷方式**：
 
-#### **QwenPaw Desktop** (推荐日常使用)
+#### **JotaDuo Desktop** (推荐日常使用)
 
 - **特点**: 静默启动，无终端窗口，界面简洁
 - **适用场景**: 正常使用，不需要查看技术日志
-- **启动方式**: 双击桌面或开始菜单的 "QwenPaw Desktop" 图标
+- **启动方式**: 双击桌面或开始菜单的 "JotaDuo Desktop" 图标
 - **技术说明**: 使用 VBScript 启动器，后台运行 Python 进程
 
-#### **QwenPaw Desktop (Debug)** (调试模式)
+#### **JotaDuo Desktop (Debug)** (调试模式)
 
 - **特点**: 显示终端窗口，实时输出运行日志
 - **适用场景**:
   - 遇到问题需要查看错误信息
   - 开发测试
   - 报告 Bug 时需要提供日志
-- **启动方式**: 双击开始菜单的 "QwenPaw Desktop (Debug)" 图标
+- **启动方式**: 双击开始菜单的 "JotaDuo Desktop (Debug)" 图标
 - **日志内容**:
   - 应用启动信息
   - Python 错误堆栈
@@ -82,11 +82,11 @@ A: 这通常是因为系统缺少 **Microsoft WebView2** 运行时（部分 Wind
 
 **Q: 应用启动后没有反应？**
 
-A: 使用 "QwenPaw Desktop (Debug)" 模式启动，查看终端输出的错误信息
+A: 使用 "JotaDuo Desktop (Debug)" 模式启动，查看终端输出的错误信息
 
 **Q: 如何卸载？**
 
-A: 在 Windows 设置 → 应用 → 已安装的应用 → 找到 "QwenPaw Desktop" → 卸载
+A: 在 Windows 设置 → 应用 → 已安装的应用 → 找到 "JotaDuo Desktop" → 卸载
 
 **Q: 安装包是否安全？**
 
@@ -108,7 +108,7 @@ A: 应用未经过 **Microsoft 代码签名**（成本 $200-800/年），Windows
 ### 安装步骤
 
 1. **下载压缩包**
-   从 [Release 页面][releases]下载 `QwenPaw-<version>-macOS.zip` 文件
+   从 [Release 页面][releases]下载 `JotaDuo-<version>-macOS.zip` 文件
 
 2. **解压缩**
    双击 `.zip` 文件自动解压，得到 `QwenPaw.app` 应用
@@ -120,7 +120,7 @@ A: 应用未经过 **Microsoft 代码签名**（成本 $200-800/年），Windows
 
 #### 为什么需要手动信任？
 
-QwenPaw 应用**未经过 Apple 开发者签名和公证（Notarization）**，macOS Gatekeeper 会默认阻止运行。
+JotaDuo 应用**未经过 Apple 开发者签名和公证（Notarization）**，macOS Gatekeeper 会默认阻止运行。
 
 **为什么没有签名？**
 
@@ -147,7 +147,7 @@ QwenPaw 应用**未经过 Apple 开发者签名和公证（Notarization）**，m
 
 1. 打开 **系统设置 → 隐私与安全性**
 2. 向下滚动，找到类似以下提示：
-   _"已阻止使用 'QwenPaw'，因为无法验证开发者"_
+   _"已阻止使用 'JotaDuo'，因为无法验证开发者"_
 3. 点击 **"仍要打开"** 或 **"允许"** 按钮
 4. 输入管理员密码确认
 
@@ -175,7 +175,7 @@ xattr -cr /Applications/QwenPaw.app
 
 - 双击 `QwenPaw.app` 即可启动
 - 应用会在后台运行，打开浏览器窗口
-- 日志输出到：`~/.qwenpaw/desktop.log`
+- 日志输出到：`~/.jotaduo/desktop.log`
 
 #### 终端启动（查看实时日志）
 
@@ -187,7 +187,7 @@ cd /Applications  # 或您的 QwenPaw.app 所在目录
 
 # 设置环境变量并启动（隔离打包环境，避免冲突）
 APP_ENV="$(pwd)/QwenPaw.app/Contents/Resources/env"
-PYTHONNOUSERSITE=1 PYTHONPATH= PYTHONHOME="$APP_ENV" "$APP_ENV/bin/python" -m qwenpaw desktop
+PYTHONNOUSERSITE=1 PYTHONPATH= PYTHONHOME="$APP_ENV" "$APP_ENV/bin/python" -m jotaduo desktop
 ```
 
 **终端启动的优势：**
@@ -201,7 +201,7 @@ PYTHONNOUSERSITE=1 PYTHONPATH= PYTHONHOME="$APP_ENV" "$APP_ENV/bin/python" -m qw
 
 ```bash
 # 查看最近的启动日志
-tail -f ~/.qwenpaw/desktop.log
+tail -f ~/.jotaduo/desktop.log
 ```
 
 ### 常见问题
@@ -210,7 +210,7 @@ tail -f ~/.qwenpaw/desktop.log
 
 A: 请尝试以下步骤：
 
-1. 检查 `~/.qwenpaw/desktop.log` 文件查看错误
+1. 检查 `~/.jotaduo/desktop.log` 文件查看错误
 2. 使用上述终端命令启动，查看实时输出
 
 **Q: 提示"Apple 无法验证此应用"？**
@@ -219,7 +219,7 @@ A: 按照上述"解除系统安全限制"步骤操作
 
 **Q: 如何卸载？**
 
-A: 将 `QwenPaw.app` 拖到废纸篓，然后删除 `~/.qwenpaw` 配置文件夹
+A: 将 `QwenPaw.app` 拖到废纸篓，然后删除 `~/.jotaduo` 配置文件夹
 
 **Q: Intel Mac 可以用吗？**
 A: 可以运行，但可能无法使用内置的本地模型服务
@@ -240,8 +240,8 @@ A: 当前采用
 - **GitHub Issues**: [提交问题](https://github.com/agentscope-ai/QwenPaw/issues)
 - **打包文档**: `scripts/pack/README.md` - 技术细节和本地构建指南
 - **日志位置**:
-  - Windows: Debug 模式终端查看，或 `%USERPROFILE%\.qwenpaw\` 目录
-  - macOS: `~/.qwenpaw/desktop.log`
+  - Windows: Debug 模式终端查看，或 `%USERPROFILE%\.jotaduo\` 目录
+  - macOS: `~/.jotaduo/desktop.log`
 
 ---
 

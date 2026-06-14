@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # pylint:disable=too-many-statements
 """
-Create a temporary conda env, install QwenPaw from a wheel, run conda-pack.
+Create a temporary conda env, install JotaDuo from a wheel, run conda-pack.
 Used by build_macos.sh and build_win.ps1. Run from repo root.
 """
 from __future__ import annotations
@@ -16,7 +16,7 @@ import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-ENV_PREFIX = "qwenpaw_pack_"
+ENV_PREFIX = "jotaduo_pack_"
 
 # Packages affected by conda-unpack bug on Windows (conda-pack Issue #154)
 # conda-unpack modifies Python source files to replace path prefixes, but uses
@@ -61,7 +61,7 @@ def _pick_wheel(wheel_arg: str | None) -> Path:
         return wheel_path
 
     wheels = sorted(
-        (REPO_ROOT / "dist").glob("qwenpaw-*.whl"),
+        (REPO_ROOT / "dist").glob("jotaduo-*.whl"),
         key=lambda p: p.stat().st_mtime,
         reverse=True,
     )
@@ -74,7 +74,7 @@ def _pick_wheel(wheel_arg: str | None) -> Path:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Conda-pack QwenPaw (temp env).",
+        description="Conda-pack JotaDuo (temp env).",
     )
     parser.add_argument(
         "--output",
@@ -99,7 +99,7 @@ def main() -> int:
         default=None,
         help=(
             "Wheel path to install. If omitted, pick the newest "
-            "dist/qwenpaw-*.whl."
+            "dist/jotaduo-*.whl."
         ),
     )
     parser.add_argument(
@@ -128,11 +128,17 @@ def main() -> int:
                 "-n",
                 env_name,
                 f"python={args.python}",
+                # OpenSSL 3.5.7 has a regression (upstream commit 738688d76206
+                # reworking asn1_d2i_read_bio) that breaks
+                # ssl.SSLContext.load_verify_locations(cadata=<DER>), which
+                # _load_windows_store_certs relies on. aiohttp then fails at
+                # import time and the desktop backend never starts. See #5086.
+                "openssl<3.5.7",
                 "pip",
                 "-y",
             ],
         )
-        # Install qwenpaw with all dependencies
+        # Install jotaduo with all dependencies
         # Scope CMAKE_ARGS to this specific command to avoid affecting other
         # CMake-based packages. Only set if we need to compile from source.
         install_env = {}
@@ -147,7 +153,7 @@ def main() -> int:
                 "-m",
                 "pip",
                 "install",
-                f"qwenpaw[full] @ {wheel_uri}",
+                f"jotaduo[full] @ {wheel_uri}",
             ],
             env=install_env,
         )
@@ -187,7 +193,7 @@ def main() -> int:
                 ],
             )
         # pip may uninstall/reinstall files owned by conda while resolving
-        # qwenpaw[full]. Restore conda-managed packaging tools before packing.
+        # jotaduo[full]. Restore conda-managed packaging tools before packing.
         _run(
             [
                 conda,

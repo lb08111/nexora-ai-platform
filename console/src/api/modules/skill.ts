@@ -11,25 +11,6 @@ import type {
   WorkspaceSkillSummary,
 } from "../types";
 
-export interface PendingApprovalResult {
-  status: "pending_approval";
-  approval_request_id: string;
-  message: string;
-}
-
-export function isPendingApprovalResult(
-  value: unknown,
-): value is PendingApprovalResult {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    (value as PendingApprovalResult).status === "pending_approval"
-  );
-}
-
-// Declare VITE_API_BASE_URL as global (injected by Vite)
-declare const VITE_API_BASE_URL: string;
-
 // Simple in-memory cache with TTL
 const CACHE_TTL_MS = 30000; // 30 seconds
 const apiCache = new Map<string, { data: unknown; timestamp: number }>();
@@ -80,7 +61,8 @@ export function invalidateSkillCache(options?: {
 }
 
 function getStreamApiUrl(): string {
-  const base = typeof VITE_API_BASE_URL === "string" ? VITE_API_BASE_URL : "";
+  const v = import.meta.env.VITE_API_BASE_URL as string | undefined;
+  const base = typeof v === "string" ? v : "";
   return `${base}/api`;
 }
 
@@ -203,18 +185,15 @@ export const skillApi = {
     config?: Record<string, unknown>,
     enable?: boolean,
   ) =>
-    request<{ created: boolean; name: string } | PendingApprovalResult>(
-      "/skills",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          name: skillName,
-          content,
-          config,
-          enable,
-        }),
-      },
-    ),
+    request<{ created: boolean; name: string }>("/skills", {
+      method: "POST",
+      body: JSON.stringify({
+        name: skillName,
+        content,
+        config,
+        enable,
+      }),
+    }),
 
   saveSkill: (payload: {
     name: string;
@@ -237,13 +216,10 @@ export const skillApi = {
     content: string;
     config?: Record<string, unknown>;
   }) =>
-    request<{ created: boolean; name: string } | PendingApprovalResult>(
-      "/skills/pool/create",
-      {
-        method: "POST",
-        body: JSON.stringify(payload),
-      },
-    ),
+    request<{ created: boolean; name: string }>("/skills/pool/create", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
 
   saveSkillPoolSkill: (payload: {
     name: string;
@@ -327,7 +303,7 @@ export const skillApi = {
     const headers = agentId
       ? new Headers({ "X-Agent-Id": agentId })
       : undefined;
-    return request<HubInstallTaskResponse | PendingApprovalResult>("/skills/hub/install/start", {
+    return request<HubInstallTaskResponse>("/skills/hub/install/start", {
       method: "POST",
       headers,
       body: JSON.stringify(payload),
@@ -344,7 +320,7 @@ export const skillApi = {
       name: string;
       enabled: boolean;
       source_url: string;
-    } | PendingApprovalResult>("/skills/pool/import", {
+    }>("/skills/pool/import", {
       method: "POST",
       body: JSON.stringify(payload),
     }),
@@ -442,25 +418,22 @@ export const skillApi = {
     overwrite?: boolean;
     preview_only?: boolean;
   }) =>
-    request<
-      | {
-          downloaded: Array<{
-            workspace_id: string;
-            workspace_name?: string;
-            name: string;
-          }>;
-          conflicts?: Array<{
-            reason?: string;
-            skill_name?: string;
-            workspace_id?: string;
-            workspace_name?: string;
-            suggested_name?: string;
-            current_version_text?: string;
-            source_version_text?: string;
-          }>;
-        }
-      | PendingApprovalResult
-    >("/skills/pool/download", {
+    request<{
+      downloaded: Array<{
+        workspace_id: string;
+        workspace_name?: string;
+        name: string;
+      }>;
+      conflicts?: Array<{
+        reason?: string;
+        skill_name?: string;
+        workspace_id?: string;
+        workspace_name?: string;
+        suggested_name?: string;
+        current_version_text?: string;
+        source_version_text?: string;
+      }>;
+    }>("/skills/pool/download", {
       method: "POST",
       body: JSON.stringify(payload),
     }),
@@ -612,7 +585,7 @@ export const skillApi = {
         skill_name: string;
         suggested_name: string;
       }>;
-    } | PendingApprovalResult>,
+    }>,
 
   uploadSkillPoolZip: (
     file: File,
@@ -629,5 +602,5 @@ export const skillApi = {
         skill_name: string;
         suggested_name: string;
       }>;
-    } | PendingApprovalResult>,
+    }>,
 };

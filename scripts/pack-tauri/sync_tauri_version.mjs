@@ -1,4 +1,4 @@
-// Sync the Python PEP 440 version from src/qwenpaw/__version__.py into a
+// Sync the Python PEP 440 version from src/jotaduo/__version__.py into a
 // gitignored Tauri config override. Do not write the tracked tauri.conf.json:
 // its version would otherwise become a stale generated value after rebases.
 import fs from "node:fs";
@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(scriptDir, "../..");
-const versionFile = path.join(repoRoot, "src/qwenpaw/__version__.py");
+const versionFile = path.join(repoRoot, "src/jotaduo/__version__.py");
 const tauriVersionConfigFile = path.join(
   repoRoot,
   "console/src-tauri/tauri.version.conf.json",

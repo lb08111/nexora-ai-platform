@@ -1,6 +1,6 @@
 .drawer {
   :global {
-    .qwenpaw-drawer-body {
+    .jotaduo-drawer-body {
       display: flex;
       flex-direction: column;
       height: 100%;
@@ -101,17 +101,6 @@
   }
 }
 
-/* Background loading indicator — visible through unrendered gaps during fast scroll */
-.virtualListBackground {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 0;
-  pointer-events: none;
-}
-
 /* Top fade gradient overlay */
 .topGradient {
   position: absolute;
@@ -162,7 +151,7 @@
 :global(.dark-mode) {
   .drawer {
     :global {
-      .qwenpaw-drawer-body {
+      .jotaduo-drawer-body {
         background-color: #1f1f1f;
       }
     }

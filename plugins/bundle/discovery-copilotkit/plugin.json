@@ -1,0 +1,33 @@
+{
+  "id": "discovery-copilotkit",
+  "name": "Discovery Agent (CopilotKit)",
+  "version": "0.1.0",
+  "type": "general",
+  "description": "Expõe o discovery agent do JotaDuo com renderização generativa de componentes no padrão CopilotKit (CoAgent shared state + useCoAgentStateRender).",
+  "description_i18n": {
+    "pt-BR": "Expõe o discovery agent do JotaDuo com renderização generativa de componentes no padrão CopilotKit (CoAgent shared state + useCoAgentStateRender).",
+    "en-US": "Wraps the JotaDuo discovery agent with CopilotKit-style generative UI (CoAgent shared state + useCoAgentStateRender)."
+  },
+  "author": "JotaDuo Discovery Team",
+  "entry": {
+    "backend": "plugin.py",
+    "frontend": "components/index.ts"
+  },
+  "dependencies": ["fastapi>=0.110", "pydantic>=2.0"],
+  "min_version": "1.1.5",
+  "meta": {
+    "category": "agent-ui",
+    "features": [
+      "copilotkit-coagent",
+      "generative-ui",
+      "ag-ui-protocol",
+      "discovery-agent"
+    ],
+    "copilotkit": {
+      "agent_id": "discovery",
+      "state_endpoint": "/api/discovery-copilotkit/sessions/{sessionId}",
+      "turn_endpoint": "/api/discovery-copilotkit/sessions/{sessionId}/turn",
+      "components_endpoint": "/api/discovery-copilotkit/components"
+    }
+  }
+}
