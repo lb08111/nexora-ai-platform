@@ -31,8 +31,8 @@ i18n.use(initReactI18next).init({
   resources,
   lng: localStorage.getItem("language") || navigator.language || "en",
   fallbackLng: "en",
-  supportedLngs: Object.keys(resources),
-  nonExplicitSupportedLngs: true,
+  // "pt" added so i18next builds a valid resolution chain for "pt-BR"
+  supportedLngs: [...Object.keys(resources), "pt"],
   interpolation: {
     escapeValue: false,
   },
