@@ -1,13 +1,13 @@
-import { useEffect } from 'react';
-import { ChatProvider, CopilotChat } from '@/components/Chat';
-import { PluginProvider, usePlugins, PluginGrid } from '@/components/Plugins';
-import { examplePlugins } from '@/components/Plugins/examples';
+import { useEffect } from "react";
+import { ChatProvider, CopilotChat } from "@/components/Chat";
+import { PluginProvider, usePlugins, PluginGrid } from "@/components/Plugins";
+import { examplePlugins } from "@/components/Plugins/examples";
 
 function CopilotKitDemoContent() {
   const { registerPlugin } = usePlugins();
 
   useEffect(() => {
-    examplePlugins.forEach(plugin => registerPlugin(plugin));
+    examplePlugins.forEach((plugin) => registerPlugin(plugin));
   }, [registerPlugin]);
 
   return (

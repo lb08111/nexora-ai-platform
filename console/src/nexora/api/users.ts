@@ -79,10 +79,7 @@ export const usersApi = {
       body: JSON.stringify(payload),
     }),
   deleteRole: (roleId: string) =>
-    request<{ deleted: boolean }>(
-      `/auth/roles/${encodeURIComponent(roleId)}`,
-      {
-        method: "DELETE",
-      },
-    ),
+    request<{ deleted: boolean }>(`/auth/roles/${encodeURIComponent(roleId)}`, {
+      method: "DELETE",
+    }),
 };

@@ -1,7 +1,4 @@
-import type {
-  GovernancePolicy,
-  GovernanceSource,
-} from "../api/governance";
+import type { GovernancePolicy, GovernanceSource } from "../api/governance";
 
 export function canAgentUseResource(
   policies: GovernancePolicy[],
