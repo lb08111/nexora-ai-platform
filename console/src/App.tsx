@@ -13,6 +13,7 @@ import enUS from "antd/locale/en_US";
 import jaJP from "antd/locale/ja_JP";
 import ruRU from "antd/locale/ru_RU";
 import idID from "antd/locale/id_ID";
+import ptBR from "antd/locale/pt_BR";
 import type { Locale } from "antd/es/locale";
 import { theme as antdTheme } from "antd";
 import dayjs from "dayjs";
@@ -21,6 +22,7 @@ import "dayjs/locale/zh-cn";
 import "dayjs/locale/ja";
 import "dayjs/locale/ru";
 import "dayjs/locale/id";
+import "dayjs/locale/pt-br";
 dayjs.extend(relativeTime);
 import MainLayout from "./layouts/MainLayout";
 import { ThemeProvider, useTheme } from "./contexts/ThemeContext";
@@ -43,6 +45,8 @@ const antdLocaleMap: Record<string, Locale> = {
   ja: jaJP,
   ru: ruRU,
   id: idID,
+  pt: ptBR,
+  "pt-BR": ptBR,
 };
 
 const dayjsLocaleMap: Record<string, string> = {
@@ -51,6 +55,8 @@ const dayjsLocaleMap: Record<string, string> = {
   ja: "ja",
   ru: "ru",
   id: "id",
+  pt: "pt-br",
+  "pt-BR": "pt-br",
 };
 
 const GlobalStyle = createGlobalStyle`
