@@ -15,8 +15,6 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Callable
 
-import pytest
-
 
 _PLUGIN_ROOT = (
     Path(__file__).resolve().parents[4]

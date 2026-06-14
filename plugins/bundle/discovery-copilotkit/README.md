@@ -48,13 +48,13 @@ No próximo startup do QwenPaw o plugin troca o factory para
 
 ## Endpoints
 
-| Método | Path                                              | Descrição                  |
-| ------ | ------------------------------------------------- | -------------------------- |
-| POST   | `/api/discovery-copilotkit/sessions`              | abre sessão + 1ª pergunta  |
-| POST   | `/api/discovery-copilotkit/sessions/{id}/turn`    | envia resposta, retorna estado |
-| GET    | `/api/discovery-copilotkit/sessions/{id}`         | snapshot atual             |
+| Método | Path                                                | Descrição                               |
+| ------ | --------------------------------------------------- | --------------------------------------- |
+| POST   | `/api/discovery-copilotkit/sessions`                | abre sessão + 1ª pergunta               |
+| POST   | `/api/discovery-copilotkit/sessions/{id}/turn`      | envia resposta, retorna estado          |
+| GET    | `/api/discovery-copilotkit/sessions/{id}`           | snapshot atual                          |
 | GET    | `/api/discovery-copilotkit/sessions/{id}/blueprint` | blueprint final (409 se ainda em curso) |
-| GET    | `/api/discovery-copilotkit/components`            | manifest de componentes    |
+| GET    | `/api/discovery-copilotkit/components`              | manifest de componentes                 |
 
 ## Testes
 

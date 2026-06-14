@@ -59,6 +59,8 @@ export function useBlueprintRender() {
   useCoAgentStateRender<DiscoveryAgentState>({
     name: "discovery",
     render: ({ state }) =>
-      state?.blueprint ? <BlueprintPreview blueprint={state.blueprint} /> : null,
+      state?.blueprint ? (
+        <BlueprintPreview blueprint={state.blueprint} />
+      ) : null,
   });
 }

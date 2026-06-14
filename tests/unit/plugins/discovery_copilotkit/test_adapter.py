@@ -7,16 +7,15 @@ frontend expects (see ``components/types.ts``).
 """
 from __future__ import annotations
 
-import pytest
-
-from qwenpaw.discovery import ScriptedDiscoverySession
-
 from copilotkit_adapter import (
     DiscoveryAgentState,
     build_agent_state,
     components_manifest,
     list_components,
 )
+import pytest
+
+from qwenpaw.discovery import ScriptedDiscoverySession
 
 
 @pytest.mark.asyncio
