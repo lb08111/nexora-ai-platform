@@ -31,7 +31,9 @@ class FocusNFeProvider(AbstractFiscalProvider):
         "producao": "https://api.focusnfe.com.br",
     }
 
-    def __init__(self, *args: Any, timeout_s: float = 30.0, **kwargs: Any) -> None:
+    def __init__(
+        self, *args: Any, timeout_s: float = 30.0, **kwargs: Any
+    ) -> None:
         super().__init__(*args, **kwargs)
         self.timeout_s = timeout_s
         self.base_url = self.BASE_URLS.get(
@@ -114,7 +116,9 @@ class FocusNFeProvider(AbstractFiscalProvider):
             "justificativa": justificativa,
             "cnpj_emitente": self.empresa_cnpj,
         }
-        return await self._request("POST", "/v2/nfe/inutilizacao", json=payload)
+        return await self._request(
+            "POST", "/v2/nfe/inutilizacao", json=payload
+        )
 
     async def baixar_xml_danfe(
         self,
@@ -173,14 +177,18 @@ class FocusNFeProvider(AbstractFiscalProvider):
                     headers=headers,
                 )
         except httpx.HTTPError as exc:
-            logger.warning("Focus NFe HTTP error on %s %s: %s", method, path, exc)
+            logger.warning(
+                "Focus NFe HTTP error on %s %s: %s", method, path, exc
+            )
             return fiscal_response(False, None, f"Focus NFe HTTP error: {exc}")
 
         data: Any
         if expect_binary and response.is_success:
             data = {
                 "content_type": response.headers.get("content-type"),
-                "content_base64": base64.b64encode(response.content).decode("ascii"),
+                "content_base64": base64.b64encode(response.content).decode(
+                    "ascii"
+                ),
             }
         else:
             data = self._decode_response(response)

@@ -12,7 +12,13 @@ import os
 import re
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    ValidationError,
+    field_validator,
+)
 
 from ..providers import build_provider, current_ambiente, current_provider_name
 
@@ -38,7 +44,9 @@ def _only_digits(value: str) -> str:
 def _validate_cnpj_cpf(value: str, field_name: str = "documento") -> str:
     digits = _only_digits(value)
     if len(digits) not in (11, 14):
-        raise ValueError(f"{field_name} deve ter CPF (11) ou CNPJ (14) dígitos")
+        raise ValueError(
+            f"{field_name} deve ter CPF (11) ou CNPJ (14) dígitos"
+        )
     if len(set(digits)) == 1:
         raise ValueError(f"{field_name} parece inválido")
     return digits
@@ -53,7 +61,9 @@ def _validate_cnpj(value: str, field_name: str = "CNPJ") -> str:
     return digits
 
 
-def _configured_provider_or_error() -> tuple[Any | None, dict[str, Any] | None]:
+def _configured_provider_or_error() -> (
+    tuple[Any | None, dict[str, Any] | None]
+):
     missing = []
     if not os.environ.get("FISCAL_API_KEY"):
         missing.append("FISCAL_API_KEY")
@@ -155,7 +165,9 @@ class NFSeRequest(BaseModel):
             or value.get("documento")
         )
         if not doc:
-            raise ValueError("tomador deve informar cnpj_cpf, cnpj, cpf ou documento")
+            raise ValueError(
+                "tomador deve informar cnpj_cpf, cnpj, cpf ou documento"
+            )
         value = dict(value)
         value["cnpj_cpf"] = _validate_cnpj_cpf(str(doc), "tomador")
         return value
@@ -211,7 +223,9 @@ class InutilizacaoRequest(BaseModel):
     @field_validator("numero_final")
     @classmethod
     def validate_range(cls, value: int, info: Any) -> int:
-        start = info.data.get("numero_inicial") if hasattr(info, "data") else None
+        start = (
+            info.data.get("numero_inicial") if hasattr(info, "data") else None
+        )
         if start is not None and value < start:
             raise ValueError("numero_final deve ser maior ou igual ao inicial")
         return value
@@ -347,7 +361,9 @@ async def consultar_nota(
     return await _call_provider("consultar_nota", request.chave_acesso)
 
 
-async def cancelar_nota(chave_acesso: str, justificativa: str) -> dict[str, Any]:
+async def cancelar_nota(
+    chave_acesso: str, justificativa: str
+) -> dict[str, Any]:
     """Cancela uma nota fiscal autorizada.
 
     Use somente após confirmação humana explícita. A justificativa deve ter no

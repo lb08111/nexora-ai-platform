@@ -15,7 +15,12 @@ from pydantic import BaseModel, Field
 
 from ..auth import get_user, is_auth_enabled, verify_token
 from ..utils import schedule_agent_reload
-from ...config.config import MCPClientConfig, MCPConfig, load_agent_config, save_agent_config
+from ...config.config import (
+    MCPClientConfig,
+    MCPConfig,
+    load_agent_config,
+    save_agent_config,
+)
 from qwenpaw_ext.nexora.approval_requests import (
     APPLIED,
     PENDING,
@@ -167,7 +172,9 @@ def _apply_mcp_create_approval(
     client_key = str(payload.get("client_key") or "")
     client_data = payload.get("client") or {}
     if not agent_id or not client_key or not isinstance(client_data, dict):
-        raise HTTPException(status_code=400, detail="Invalid MCP approval payload")
+        raise HTTPException(
+            status_code=400, detail="Invalid MCP approval payload"
+        )
 
     agent_config = load_agent_config(agent_id)
     if agent_config.mcp is None:
@@ -185,7 +192,9 @@ def _apply_mcp_create_approval(
         "mcp",
         client_key,
         display_name=new_client.name or client_key,
-        description=new_client.description or new_client.url or new_client.command,
+        description=new_client.description
+        or new_client.url
+        or new_client.command,
         allowed_agents=[agent_id],
     )
     schedule_agent_reload(request, agent_id)
@@ -205,7 +214,9 @@ def _apply_mcp_delete_approval(
     agent_id = str(payload.get("agent_id") or "")
     client_key = str(payload.get("client_key") or "")
     if not agent_id or not client_key:
-        raise HTTPException(status_code=400, detail="Invalid MCP delete approval payload")
+        raise HTTPException(
+            status_code=400, detail="Invalid MCP delete approval payload"
+        )
 
     agent_config = load_agent_config(agent_id)
     if agent_config.mcp is None or client_key not in agent_config.mcp.clients:
@@ -562,7 +573,10 @@ async def _load_plugin_from_source_path(
                     detail=f"Invalid plugin manifest: {exc}",
                 ) from exc
             existing_id = raw.get("id")
-            if existing_id and loader.get_loaded_plugin(existing_id) is not None:
+            if (
+                existing_id
+                and loader.get_loaded_plugin(existing_id) is not None
+            ):
                 pids, cmds = _collect_plugin_runtime_ids(
                     loader.registry,
                     existing_id,
@@ -619,20 +633,31 @@ async def _apply_skill_delete_approval(
         agent_id = str(payload.get("agent_id") or "")
         skill_name = str(payload.get("skill_name") or "")
         if not agent_id or not skill_name:
-            raise HTTPException(status_code=400, detail="Invalid skill delete payload")
+            raise HTTPException(
+                status_code=400, detail="Invalid skill delete payload"
+            )
         workspace_dir = _workspace_dir_for_agent(agent_id)
         service = SkillService(workspace_dir)
         service.disable_skill(skill_name)
         deleted = service.delete_skill(skill_name)
         if not deleted:
-            raise HTTPException(status_code=409, detail="Skill could not be deleted")
-        return {"operation": operation, "agent_id": agent_id, "skill_name": skill_name, "deleted": True}
+            raise HTTPException(
+                status_code=409, detail="Skill could not be deleted"
+            )
+        return {
+            "operation": operation,
+            "agent_id": agent_id,
+            "skill_name": skill_name,
+            "deleted": True,
+        }
 
     if operation == "workspace.batch_delete":
         agent_id = str(payload.get("agent_id") or "")
         skill_names = payload.get("skill_names") or []
         if not agent_id or not skill_names:
-            raise HTTPException(status_code=400, detail="Invalid batch skill delete payload")
+            raise HTTPException(
+                status_code=400, detail="Invalid batch skill delete payload"
+            )
         workspace_dir = _workspace_dir_for_agent(agent_id)
         service = SkillService(workspace_dir)
         results = {}
@@ -642,21 +667,36 @@ async def _apply_skill_delete_approval(
                 results[name] = service.delete_skill(name)
             except Exception as exc:
                 results[name] = False
-        return {"operation": operation, "agent_id": agent_id, "results": results}
+        return {
+            "operation": operation,
+            "agent_id": agent_id,
+            "results": results,
+        }
 
     if operation == "pool.delete":
         skill_name = str(payload.get("skill_name") or "")
         if not skill_name:
-            raise HTTPException(status_code=400, detail="Invalid pool skill delete payload")
+            raise HTTPException(
+                status_code=400, detail="Invalid pool skill delete payload"
+            )
         deleted = SkillPoolService().delete_skill(skill_name)
         if not deleted:
-            raise HTTPException(status_code=409, detail="Pool skill could not be deleted")
-        return {"operation": operation, "skill_name": skill_name, "deleted": True}
+            raise HTTPException(
+                status_code=409, detail="Pool skill could not be deleted"
+            )
+        return {
+            "operation": operation,
+            "skill_name": skill_name,
+            "deleted": True,
+        }
 
     if operation == "pool.batch_delete":
         skill_names = payload.get("skill_names") or []
         if not skill_names:
-            raise HTTPException(status_code=400, detail="Invalid batch pool skill delete payload")
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid batch pool skill delete payload",
+            )
         service = SkillPoolService()
         results = {}
         for name in skill_names:
@@ -761,15 +801,21 @@ async def _apply_plugin_uninstall_approval(
     payload = approval.get("payload") or {}
     plugin_id = str(payload.get("plugin_id") or "")
     if not plugin_id:
-        raise HTTPException(status_code=400, detail="Invalid plugin uninstall payload")
+        raise HTTPException(
+            status_code=400, detail="Invalid plugin uninstall payload"
+        )
 
     loader = getattr(request.app.state, "plugin_loader", None)
     if loader is None:
-        raise HTTPException(status_code=503, detail="Plugin loader is not ready")
+        raise HTTPException(
+            status_code=503, detail="Plugin loader is not ready"
+        )
 
     record = loader.get_loaded_plugin(plugin_id)
     if record is None:
-        raise HTTPException(status_code=404, detail=f"Plugin '{plugin_id}' is not loaded")
+        raise HTTPException(
+            status_code=404, detail=f"Plugin '{plugin_id}' is not loaded"
+        )
 
     from .plugins import (
         _collect_plugin_runtime_ids,
@@ -780,7 +826,8 @@ async def _apply_plugin_uninstall_approval(
 
     meta: dict = record.manifest.meta or {}
     provider_ids, command_names = _collect_plugin_runtime_ids(
-        loader.registry, plugin_id,
+        loader.registry,
+        plugin_id,
     )
     await loader.unload_plugin(plugin_id, delete_files=True)
     _post_unload_cleanup(request, plugin_id, provider_ids, command_names)
@@ -820,7 +867,9 @@ async def save_governance_policy(req: GovernancePolicy, request: Request):
     """Create or update a governance policy."""
     _require_governance_manage(request)
     if not req.source.strip() or not req.resource_id.strip():
-        raise HTTPException(status_code=400, detail="source and resource_id are required")
+        raise HTTPException(
+            status_code=400, detail="source and resource_id are required"
+        )
     return upsert_policy(req.dict())
 
 
@@ -885,9 +934,13 @@ async def approve_platform_approval_request(
     username = _require_approval_manage(request)
     approval = get_approval_request(request_id)
     if approval is None:
-        raise HTTPException(status_code=404, detail="Approval request not found")
+        raise HTTPException(
+            status_code=404, detail="Approval request not found"
+        )
     if approval["status"] != PENDING:
-        raise HTTPException(status_code=409, detail="Approval request is not pending")
+        raise HTTPException(
+            status_code=409, detail="Approval request is not pending"
+        )
 
     role_ids = _current_role_ids(username, request)
     if not role_ids_can_approve_action(
@@ -922,7 +975,9 @@ async def approve_platform_approval_request(
         },
     )
     if updated is None:
-        raise HTTPException(status_code=404, detail="Approval request not found")
+        raise HTTPException(
+            status_code=404, detail="Approval request not found"
+        )
     record_audit_event(
         actor=username,
         action=f"{approval['action']}.approved",
@@ -947,9 +1002,13 @@ async def reject_platform_approval_request(
     username = _require_approval_manage(request)
     approval = get_approval_request(request_id)
     if approval is None:
-        raise HTTPException(status_code=404, detail="Approval request not found")
+        raise HTTPException(
+            status_code=404, detail="Approval request not found"
+        )
     if approval["status"] != PENDING:
-        raise HTTPException(status_code=409, detail="Approval request is not pending")
+        raise HTTPException(
+            status_code=409, detail="Approval request is not pending"
+        )
 
     is_own_request = username == approval["requester"]
     role_ids = _current_role_ids(username, request)
@@ -970,7 +1029,9 @@ async def reject_platform_approval_request(
         },
     )
     if updated is None:
-        raise HTTPException(status_code=404, detail="Approval request not found")
+        raise HTTPException(
+            status_code=404, detail="Approval request not found"
+        )
     record_audit_event(
         actor=username,
         action=f"{approval['action']}.rejected",
@@ -1033,10 +1094,18 @@ async def audit_events_export(
     # BOM for Excel to recognize UTF-8
     buf.write("﻿")
     writer = csv.writer(buf)
-    writer.writerow([
-        "Horário", "Usuário", "Operação", "Resultado", "Tipo de Recurso", "ID do Recurso",
-        "IP de Origem", "Detalhes",
-    ])
+    writer.writerow(
+        [
+            "Horário",
+            "Usuário",
+            "Operação",
+            "Resultado",
+            "Tipo de Recurso",
+            "ID do Recurso",
+            "IP de Origem",
+            "Detalhes",
+        ]
+    )
     for e in events:
         ts = e.get("timestamp", 0)
         time_str = (
@@ -1048,16 +1117,18 @@ async def audit_events_export(
         )
         detail = e.get("detail")
         detail_str = json.dumps(detail, ensure_ascii=False) if detail else ""
-        writer.writerow([
-            time_str,
-            e.get("actor", ""),
-            e.get("action", ""),
-            e.get("status", ""),
-            e.get("resource_type", ""),
-            e.get("resource_id", ""),
-            e.get("ip", ""),
-            detail_str,
-        ])
+        writer.writerow(
+            [
+                time_str,
+                e.get("actor", ""),
+                e.get("action", ""),
+                e.get("status", ""),
+                e.get("resource_type", ""),
+                e.get("resource_id", ""),
+                e.get("ip", ""),
+                detail_str,
+            ]
+        )
 
     now_str = datetime.now().strftime("%Y%m%d_%H%M%S")
     return StreamingResponse(
@@ -1104,9 +1175,13 @@ async def token_usage_by_user(
     from sqlalchemy import text
     from datetime import date as date_type, timedelta
 
-    end_d = date_type.fromisoformat(end_date) if end_date else date_type.today()
+    end_d = (
+        date_type.fromisoformat(end_date) if end_date else date_type.today()
+    )
     start_d = (
-        date_type.fromisoformat(start_date) if start_date else end_d - timedelta(days=30)
+        date_type.fromisoformat(start_date)
+        if start_date
+        else end_d - timedelta(days=30)
     )
     engine = get_engine()
     with engine.connect() as conn:
@@ -1119,7 +1194,7 @@ async def token_usage_by_user(
                 "FROM nexora_token_usage "
                 "WHERE date >= :s AND date <= :e "
                 "GROUP BY actor, agent_id, provider_id, model "
-                "ORDER BY SUM(prompt_tokens + completion_tokens) DESC"
+                "ORDER BY SUM(prompt_tokens + completion_tokens) DESC",
             ),
             {"s": start_d, "e": end_d},
         ).fetchall()
@@ -1191,6 +1266,7 @@ class AgentTemplateUpdateModel(BaseModel):
 async def list_agent_grants(agent_id: str, request: Request):
     _require_governance_view(request)
     from qwenpaw_ext.nexora import agent_grants
+
     return agent_grants.list_grants_for_agent(agent_id)
 
 
@@ -1202,6 +1278,7 @@ async def list_agent_grants(agent_id: str, request: Request):
 async def list_user_grants(username: str, request: Request):
     _require_governance_view(request)
     from qwenpaw_ext.nexora import agent_grants
+
     return agent_grants.list_grants_for_user(username)
 
 
@@ -1210,12 +1287,15 @@ async def list_user_grants(username: str, request: Request):
     summary="Grant agent to users (batch)",
 )
 async def grant_agent_to_users(
-    agent_id: str, req: AgentGrantRequest, request: Request,
+    agent_id: str,
+    req: AgentGrantRequest,
+    request: Request,
 ):
     admin_user = _require_governance_manage(request)
     if not req.usernames:
         raise HTTPException(status_code=400, detail="usernames is required")
     from qwenpaw_ext.nexora import agent_grants
+
     count = agent_grants.batch_grant_agent(agent_id, req.usernames, admin_user)
     record_audit_event(
         actor=admin_user,
@@ -1233,12 +1313,15 @@ async def grant_agent_to_users(
     summary="Revoke agent from users (batch)",
 )
 async def revoke_agent_from_users(
-    agent_id: str, req: AgentGrantRequest, request: Request,
+    agent_id: str,
+    req: AgentGrantRequest,
+    request: Request,
 ):
     admin_user = _require_governance_manage(request)
     if not req.usernames:
         raise HTTPException(status_code=400, detail="usernames is required")
     from qwenpaw_ext.nexora import agent_grants
+
     count = agent_grants.batch_revoke_agent(agent_id, req.usernames)
     record_audit_event(
         actor=admin_user,
@@ -1262,6 +1345,7 @@ async def revoke_agent_from_users(
 async def list_capability_approval_configs(request: Request):
     _require_governance_view(request)
     from qwenpaw_ext.nexora import capability_approval
+
     configs = capability_approval.list_configs()
     if not configs:
         capability_approval.ensure_default_configs()
@@ -1281,6 +1365,7 @@ async def update_capability_approval_config(
 ):
     admin_user = _require_governance_manage(request)
     from qwenpaw_ext.nexora import capability_approval
+
     if capability_type not in capability_approval.CAPABILITY_TYPES:
         raise HTTPException(
             status_code=400,
@@ -1291,18 +1376,26 @@ async def update_capability_approval_config(
             status_code=400,
             detail=f"add_policy must be one of {sorted(VALID_ADD_POLICIES)}",
         )
-    if req.remove_policy is not None and req.remove_policy not in VALID_REMOVE_POLICIES:
+    if (
+        req.remove_policy is not None
+        and req.remove_policy not in VALID_REMOVE_POLICIES
+    ):
         raise HTTPException(
             status_code=400,
             detail=f"remove_policy must be one of {sorted(VALID_REMOVE_POLICIES)}",
         )
-    result = capability_approval.partial_update_config(capability_type, {
-        k: v for k, v in {
-            "add_policy": req.add_policy,
-            "remove_policy": req.remove_policy,
-            "approver_roles": req.approver_roles,
-        }.items() if v is not None
-    })
+    result = capability_approval.partial_update_config(
+        capability_type,
+        {
+            k: v
+            for k, v in {
+                "add_policy": req.add_policy,
+                "remove_policy": req.remove_policy,
+                "approver_roles": req.approver_roles,
+            }.items()
+            if v is not None
+        },
+    )
     record_audit_event(
         actor=admin_user,
         action="capability_approval.update",
@@ -1325,6 +1418,7 @@ async def update_capability_approval_config(
 async def list_agent_templates(request: Request):
     _require_governance_view(request)
     from qwenpaw_ext.nexora import agent_templates
+
     templates = agent_templates.list_templates()
     if not templates:
         agent_templates.ensure_builtin_templates()
@@ -1340,6 +1434,7 @@ async def list_agent_templates(request: Request):
 async def get_agent_template(template_id: str, request: Request):
     _require_governance_view(request)
     from qwenpaw_ext.nexora import agent_templates
+
     t = agent_templates.get_template(template_id)
     if t is None:
         raise HTTPException(status_code=404, detail="Template not found")
@@ -1352,17 +1447,21 @@ async def get_agent_template(template_id: str, request: Request):
     summary="Create a new agent template",
 )
 async def create_agent_template(
-    req: AgentTemplateModel, request: Request,
+    req: AgentTemplateModel,
+    request: Request,
 ):
     admin_user = _require_governance_manage(request)
     from qwenpaw_ext.nexora import agent_templates
-    t = agent_templates.create_template({
-        "template_id": req.template_id,
-        "name": req.name,
-        "description": req.description,
-        "capabilities": req.capabilities,
-        "created_by": admin_user,
-    })
+
+    t = agent_templates.create_template(
+        {
+            "template_id": req.template_id,
+            "name": req.name,
+            "description": req.description,
+            "capabilities": req.capabilities,
+            "created_by": admin_user,
+        }
+    )
     record_audit_event(
         actor=admin_user,
         action="agent_template.create",
@@ -1386,6 +1485,7 @@ async def update_agent_template(
 ):
     admin_user = _require_governance_manage(request)
     from qwenpaw_ext.nexora import agent_templates
+
     updates = {}
     if req.name is not None:
         updates["name"] = req.name
@@ -1413,6 +1513,7 @@ async def update_agent_template(
 async def delete_agent_template(template_id: str, request: Request):
     admin_user = _require_governance_manage(request)
     from qwenpaw_ext.nexora import agent_templates
+
     if not agent_templates.delete_template(template_id):
         raise HTTPException(status_code=404, detail="Template not found")
     record_audit_event(

@@ -82,7 +82,9 @@ async def run_discovery_session(
             break
 
         state.transcript.append(Turn(role="user", text=user_text))
-        reply = await agent.reply(Msg(role="user", name="user", content=user_text))
+        reply = await agent.reply(
+            Msg(role="user", name="user", content=user_text)
+        )
         _persist(state, out_dir)
         print(f"\nConsultor: {reply.get_text_content()}")
 

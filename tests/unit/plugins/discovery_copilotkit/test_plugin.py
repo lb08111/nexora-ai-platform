@@ -69,9 +69,9 @@ def _load_plugin_module():
 
 def test_plugin_exports_plugin_object():
     module = _load_plugin_module()
-    assert hasattr(module, "plugin"), (
-        "plugin.py must export `plugin` (per QwenPaw plugin contract)"
-    )
+    assert hasattr(
+        module, "plugin"
+    ), "plugin.py must export `plugin` (per QwenPaw plugin contract)"
     assert hasattr(module.plugin, "register")
 
 

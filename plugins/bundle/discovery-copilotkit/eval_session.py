@@ -123,7 +123,9 @@ def _percentile(values: list[float], pct: float) -> float:
     ordered = sorted(values)
     # Nearest-rank percentile — fine for the small (<=10) samples this
     # eval produces; avoids pulling numpy just for one number.
-    k = max(0, min(len(ordered) - 1, int(round(pct / 100.0 * len(ordered))) - 1))
+    k = max(
+        0, min(len(ordered) - 1, int(round(pct / 100.0 * len(ordered))) - 1)
+    )
     return ordered[k]
 
 
@@ -152,7 +154,10 @@ def _evaluate(
             f"blueprint_team_size={metrics.blueprint_team_size} < min "
             f"{thresholds['blueprint_team_size_min']}",
         )
-    if metrics.blueprint_integrations < thresholds["blueprint_integrations_min"]:
+    if (
+        metrics.blueprint_integrations
+        < thresholds["blueprint_integrations_min"]
+    ):
         failures.append(
             f"blueprint_integrations={metrics.blueprint_integrations} < min "
             f"{thresholds['blueprint_integrations_min']}",

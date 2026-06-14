@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Nexora AIops 平台 100 用户并发压力测试
 模拟真实用户操作：登录 → 列表查询 → 聊天 → 审计 → 审批
@@ -66,11 +67,15 @@ class AIOpsUser(HttpUser):
 
     @task(5)
     def list_agents(self):
-        self.client.get("/api/agents", headers=self.headers, name="/api/agents")
+        self.client.get(
+            "/api/agents", headers=self.headers, name="/api/agents"
+        )
 
     @task(5)
     def list_skills(self):
-        self.client.get("/api/skills", headers=self.headers, name="/api/skills")
+        self.client.get(
+            "/api/skills", headers=self.headers, name="/api/skills"
+        )
 
     @task(3)
     def list_chats(self):
@@ -143,7 +148,9 @@ class AIOpsUser(HttpUser):
     def admin_list_users(self):
         if not self.is_admin:
             return
-        self.client.get("/api/auth/users", headers=self.headers, name="/api/auth/users")
+        self.client.get(
+            "/api/auth/users", headers=self.headers, name="/api/auth/users"
+        )
 
     @task(1)
     def admin_agent_grants(self):

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """PostgreSQL repository for per-capability-type approval configuration."""
 from __future__ import annotations
 
@@ -27,33 +28,41 @@ def _config_row(row: Any) -> dict:
 def list_configs() -> list[dict]:
     db.initialize_schema()
     with db.get_engine().begin() as conn:
-        rows = conn.execute(
-            text(
-                """
+        rows = (
+            conn.execute(
+                text(
+                    """
                 SELECT capability_type, add_policy, remove_policy,
                        approver_roles, updated_at
                 FROM nexora_capability_approval_config
                 ORDER BY capability_type
-                """
-            ),
-        ).mappings().all()
+                """,
+                ),
+            )
+            .mappings()
+            .all()
+        )
     return [_config_row(r) for r in rows]
 
 
 def get_config(capability_type: str) -> dict | None:
     db.initialize_schema()
     with db.get_engine().begin() as conn:
-        row = conn.execute(
-            text(
-                """
+        row = (
+            conn.execute(
+                text(
+                    """
                 SELECT capability_type, add_policy, remove_policy,
                        approver_roles, updated_at
                 FROM nexora_capability_approval_config
                 WHERE capability_type = :capability_type
-                """
-            ),
-            {"capability_type": capability_type},
-        ).mappings().first()
+                """,
+                ),
+                {"capability_type": capability_type},
+            )
+            .mappings()
+            .first()
+        )
     return _config_row(row) if row else None
 
 
@@ -66,9 +75,10 @@ def upsert_config(config: dict) -> dict:
         separators=(",", ":"),
     )
     with db.get_engine().begin() as conn:
-        row = conn.execute(
-            text(
-                """
+        row = (
+            conn.execute(
+                text(
+                    """
                 INSERT INTO nexora_capability_approval_config (
                     capability_type, add_policy, remove_policy,
                     approver_roles, updated_at
@@ -84,16 +94,19 @@ def upsert_config(config: dict) -> dict:
                     updated_at = EXCLUDED.updated_at
                 RETURNING capability_type, add_policy, remove_policy,
                           approver_roles, updated_at
-                """
-            ),
-            {
-                "capability_type": config["capability_type"],
-                "add_policy": config.get("add_policy", "approval"),
-                "remove_policy": config.get("remove_policy", "log"),
-                "approver_roles": approver_roles,
-                "updated_at": now,
-            },
-        ).mappings().one()
+                """,
+                ),
+                {
+                    "capability_type": config["capability_type"],
+                    "add_policy": config.get("add_policy", "approval"),
+                    "remove_policy": config.get("remove_policy", "log"),
+                    "approver_roles": approver_roles,
+                    "updated_at": now,
+                },
+            )
+            .mappings()
+            .one()
+        )
     return _config_row(row)
 
 
@@ -115,27 +128,35 @@ def partial_update(capability_type: str, updates: dict) -> dict:
     if "approver_roles" in updates:
         set_clauses.append("approver_roles = CAST(:approver_roles AS JSONB)")
         params["approver_roles"] = json.dumps(
-            updates["approver_roles"], ensure_ascii=False, separators=(",", ":")
+            updates["approver_roles"],
+            ensure_ascii=False,
+            separators=(",", ":"),
         )
     set_sql = ", ".join(set_clauses)
     with db.get_engine().begin() as conn:
-        row = conn.execute(
-            text(
-                f"""
+        row = (
+            conn.execute(
+                text(
+                    f"""
                 UPDATE nexora_capability_approval_config
                 SET {set_sql}
                 WHERE capability_type = :capability_type
                 RETURNING capability_type, add_policy, remove_policy,
                           approver_roles, updated_at
-                """
-            ),
-            params,
-        ).mappings().first()
+                """,
+                ),
+                params,
+            )
+            .mappings()
+            .first()
+        )
     if row is None:
-        return upsert_config({
-            "capability_type": capability_type,
-            **updates,
-        })
+        return upsert_config(
+            {
+                "capability_type": capability_type,
+                **updates,
+            }
+        )
     return _config_row(row)
 
 

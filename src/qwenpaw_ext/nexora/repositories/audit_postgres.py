@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """PostgreSQL repository for Nexora audit events."""
 from __future__ import annotations
 

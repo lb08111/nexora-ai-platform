@@ -49,9 +49,9 @@ class AuditEntry:
     """One row in the audit trail of a production."""
 
     timestamp: float
-    actor: str          # agent_id or human user id
-    actor_kind: str     # "agent" | "human" | "system"
-    action: str         # "created" | "status_changed" | "edited" | ...
+    actor: str  # agent_id or human user id
+    actor_kind: str  # "agent" | "human" | "system"
+    action: str  # "created" | "status_changed" | "edited" | ...
     detail: str = ""
     from_status: str | None = None
     to_status: str | None = None

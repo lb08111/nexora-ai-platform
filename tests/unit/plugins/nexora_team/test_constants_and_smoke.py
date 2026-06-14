@@ -60,9 +60,7 @@ def test_skill_md_exists_and_has_frontmatter():
 
 def test_plugin_skills_list_matches_filesystem():
     skills_root = PLUGIN_DIR / "skills"
-    on_disk = {
-        p.name for p in skills_root.iterdir() if p.is_dir()
-    }
+    on_disk = {p.name for p in skills_root.iterdir() if p.is_dir()}
     assert set(PLUGIN_SKILLS).issubset(on_disk)
 
 

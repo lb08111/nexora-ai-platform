@@ -87,9 +87,13 @@ async def register_production(
         "notification": {...} | None}``.
     """
     if not title or not title.strip():
-        return text_response("❌ title é obrigatório para registrar uma produção.")
+        return text_response(
+            "❌ title é obrigatório para registrar uma produção."
+        )
     if not type or not type.strip():
-        return text_response("❌ type é obrigatório (ex.: post, landing_page, document).")
+        return text_response(
+            "❌ type é obrigatório (ex.: post, landing_page, document)."
+        )
 
     store = get_production_store()
     initial_status = (
@@ -151,7 +155,10 @@ async def register_production(
 
     logger.info(
         "[ai-productions] registered %s (%s) by %s status=%s",
-        prod.id, prod.type, prod.agent_id, prod.status,
+        prod.id,
+        prod.type,
+        prod.agent_id,
+        prod.status,
     )
     return json_response(
         {
@@ -204,7 +211,8 @@ async def request_approval(
         kind=NOTIFICATION_KIND_APPROVAL_REQUESTED,
         level="warning",
         title=f"Aprovação pendente: {prod.title}",
-        body=note or (
+        body=note
+        or (
             f"O agente {prod.agent_name} solicitou aprovação para "
             f"a {prod.type} '{prod.title}'."
         ),

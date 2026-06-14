@@ -139,9 +139,7 @@ async def scaffold_plugin(
 
     plugin_id = kebab(name)
     plugin_id_us = slugify(name)
-    class_name = "".join(
-        part.capitalize() for part in plugin_id_us.split("_")
-    )
+    class_name = "".join(part.capitalize() for part in plugin_id_us.split("_"))
     if not class_name.endswith("Plugin"):
         class_name = f"{class_name}Plugin"
     title = name.strip()

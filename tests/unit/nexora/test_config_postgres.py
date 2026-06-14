@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Tests for v4 runtime config PostgreSQL dual-mode storage."""
 from __future__ import annotations
 
@@ -31,10 +32,16 @@ class TestConfigPostgresRepository:
         fake_conn = mock.MagicMock()
         fake_conn.execute.return_value.first.return_value = None
         fake_engine = mock.MagicMock()
-        fake_engine.connect.return_value.__enter__ = mock.Mock(return_value=fake_conn)
-        fake_engine.connect.return_value.__exit__ = mock.Mock(return_value=False)
+        fake_engine.connect.return_value.__enter__ = mock.Mock(
+            return_value=fake_conn
+        )
+        fake_engine.connect.return_value.__exit__ = mock.Mock(
+            return_value=False
+        )
 
-        with mock.patch("qwenpaw_ext.nexora.db.get_engine", return_value=fake_engine):
+        with mock.patch(
+            "qwenpaw_ext.nexora.db.get_engine", return_value=fake_engine
+        ):
             result = repo.load_global_config()
 
         assert result is None
@@ -46,10 +53,16 @@ class TestConfigPostgresRepository:
         fake_conn = mock.MagicMock()
         fake_conn.execute.return_value.first.return_value = (payload, 100)
         fake_engine = mock.MagicMock()
-        fake_engine.connect.return_value.__enter__ = mock.Mock(return_value=fake_conn)
-        fake_engine.connect.return_value.__exit__ = mock.Mock(return_value=False)
+        fake_engine.connect.return_value.__enter__ = mock.Mock(
+            return_value=fake_conn
+        )
+        fake_engine.connect.return_value.__exit__ = mock.Mock(
+            return_value=False
+        )
 
-        with mock.patch("qwenpaw_ext.nexora.db.get_engine", return_value=fake_engine):
+        with mock.patch(
+            "qwenpaw_ext.nexora.db.get_engine", return_value=fake_engine
+        ):
             result = repo.load_global_config()
 
         assert result == payload
@@ -57,12 +70,18 @@ class TestConfigPostgresRepository:
     def test_save_global_config_inserts_when_no_row(self):
         repo = self._make_repo()
         fake_conn = mock.MagicMock()
-        fake_conn.execute.return_value.first.return_value = None  # no existing row
+        fake_conn.execute.return_value.first.return_value = (
+            None  # no existing row
+        )
         fake_engine = mock.MagicMock()
-        fake_engine.begin.return_value.__enter__ = mock.Mock(return_value=fake_conn)
+        fake_engine.begin.return_value.__enter__ = mock.Mock(
+            return_value=fake_conn
+        )
         fake_engine.begin.return_value.__exit__ = mock.Mock(return_value=False)
 
-        with mock.patch("qwenpaw_ext.nexora.db.get_engine", return_value=fake_engine):
+        with mock.patch(
+            "qwenpaw_ext.nexora.db.get_engine", return_value=fake_engine
+        ):
             repo.save_global_config({"test": True})
 
         calls = fake_conn.execute.call_args_list
@@ -73,12 +92,18 @@ class TestConfigPostgresRepository:
     def test_save_global_config_updates_when_row_exists(self):
         repo = self._make_repo()
         fake_conn = mock.MagicMock()
-        fake_conn.execute.return_value.first.return_value = (1,)  # existing row
+        fake_conn.execute.return_value.first.return_value = (
+            1,
+        )  # existing row
         fake_engine = mock.MagicMock()
-        fake_engine.begin.return_value.__enter__ = mock.Mock(return_value=fake_conn)
+        fake_engine.begin.return_value.__enter__ = mock.Mock(
+            return_value=fake_conn
+        )
         fake_engine.begin.return_value.__exit__ = mock.Mock(return_value=False)
 
-        with mock.patch("qwenpaw_ext.nexora.db.get_engine", return_value=fake_engine):
+        with mock.patch(
+            "qwenpaw_ext.nexora.db.get_engine", return_value=fake_engine
+        ):
             repo.save_global_config({"test": True})
 
         calls = fake_conn.execute.call_args_list
@@ -93,10 +118,16 @@ class TestConfigPostgresRepository:
         fake_conn = mock.MagicMock()
         fake_conn.execute.return_value.first.return_value = None
         fake_engine = mock.MagicMock()
-        fake_engine.connect.return_value.__enter__ = mock.Mock(return_value=fake_conn)
-        fake_engine.connect.return_value.__exit__ = mock.Mock(return_value=False)
+        fake_engine.connect.return_value.__enter__ = mock.Mock(
+            return_value=fake_conn
+        )
+        fake_engine.connect.return_value.__exit__ = mock.Mock(
+            return_value=False
+        )
 
-        with mock.patch("qwenpaw_ext.nexora.db.get_engine", return_value=fake_engine):
+        with mock.patch(
+            "qwenpaw_ext.nexora.db.get_engine", return_value=fake_engine
+        ):
             result = repo.load_agent_config("test-agent")
 
         assert result is None
@@ -106,10 +137,14 @@ class TestConfigPostgresRepository:
         fake_conn = mock.MagicMock()
         fake_conn.execute.return_value.first.return_value = None
         fake_engine = mock.MagicMock()
-        fake_engine.begin.return_value.__enter__ = mock.Mock(return_value=fake_conn)
+        fake_engine.begin.return_value.__enter__ = mock.Mock(
+            return_value=fake_conn
+        )
         fake_engine.begin.return_value.__exit__ = mock.Mock(return_value=False)
 
-        with mock.patch("qwenpaw_ext.nexora.db.get_engine", return_value=fake_engine):
+        with mock.patch(
+            "qwenpaw_ext.nexora.db.get_engine", return_value=fake_engine
+        ):
             repo.save_agent_config("test-agent", {"id": "test-agent"})
 
         calls = fake_conn.execute.call_args_list
@@ -121,10 +156,14 @@ class TestConfigPostgresRepository:
         repo = self._make_repo()
         fake_conn = mock.MagicMock()
         fake_engine = mock.MagicMock()
-        fake_engine.begin.return_value.__enter__ = mock.Mock(return_value=fake_conn)
+        fake_engine.begin.return_value.__enter__ = mock.Mock(
+            return_value=fake_conn
+        )
         fake_engine.begin.return_value.__exit__ = mock.Mock(return_value=False)
 
-        with mock.patch("qwenpaw_ext.nexora.db.get_engine", return_value=fake_engine):
+        with mock.patch(
+            "qwenpaw_ext.nexora.db.get_engine", return_value=fake_engine
+        ):
             repo.delete_agent_config("test-agent")
 
         calls = fake_conn.execute.call_args_list
@@ -155,7 +194,8 @@ class TestGlobalConfigDualMode:
 
         with (
             mock.patch(
-                "qwenpaw.config.utils._get_pg_config_version", return_value=42
+                "qwenpaw.config.utils._get_pg_config_version",
+                return_value=42,
             ),
             mock.patch(
                 "qwenpaw.config.utils._load_config_from_pg",
@@ -168,17 +208,21 @@ class TestGlobalConfigDualMode:
 
         assert cfg.user_timezone == "UTC"
 
-    def test_load_config_falls_back_to_file_when_pg_unavailable(self, tmp_path):
+    def test_load_config_falls_back_to_file_when_pg_unavailable(
+        self, tmp_path
+    ):
         self._reset_cache()
         from qwenpaw.config.config import Config
 
         config_file = tmp_path / "config.json"
         config_file.write_text(
-            json.dumps({"user_timezone": "Asia/Tokyo"}), encoding="utf-8"
+            json.dumps({"user_timezone": "Asia/Tokyo"}),
+            encoding="utf-8",
         )
 
         with mock.patch(
-            "qwenpaw.config.utils._get_pg_config_version", return_value=None
+            "qwenpaw.config.utils._get_pg_config_version",
+            return_value=None,
         ):
             from qwenpaw.config.utils import load_config
 
@@ -195,7 +239,8 @@ class TestGlobalConfigDualMode:
         cfg = Config(user_timezone="Europe/London")
 
         with mock.patch(
-            "qwenpaw.config.utils._save_config_to_pg", return_value=True
+            "qwenpaw.config.utils._save_config_to_pg",
+            return_value=True,
         ) as pg_save:
             save_config(cfg, config_path=config_file)
 
@@ -218,7 +263,8 @@ class TestGlobalConfigDualMode:
 
         with (
             mock.patch(
-                "qwenpaw.config.utils._get_pg_config_version", return_value=99
+                "qwenpaw.config.utils._get_pg_config_version",
+                return_value=99,
             ),
             mock.patch(
                 "qwenpaw.config.utils._load_config_from_pg",
@@ -259,10 +305,13 @@ class TestAgentConfigDualMode:
         config_data = {
             "agents": {
                 "profiles": {
-                    "test-bot": {"id": "test-bot", "workspace_dir": str(workspace)}
+                    "test-bot": {
+                        "id": "test-bot",
+                        "workspace_dir": str(workspace),
+                    },
                 },
                 "agent_order": ["test-bot"],
-            }
+            },
         }
         return Config.model_validate(config_data), workspace
 
@@ -272,14 +321,16 @@ class TestAgentConfigDualMode:
 
         cfg_obj, workspace = self._make_test_config(tmp_path)
         (workspace / "agent.json").write_text(
-            json.dumps({"id": "test-bot", "name": "File Bot"}), encoding="utf-8"
+            json.dumps({"id": "test-bot", "name": "File Bot"}),
+            encoding="utf-8",
         )
 
         pg_agent = AgentProfileConfig(id="test-bot", name="PG Bot")
 
         with (
             mock.patch(
-                "qwenpaw.config.utils.load_config", return_value=cfg_obj,
+                "qwenpaw.config.utils.load_config",
+                return_value=cfg_obj,
             ),
             mock.patch(
                 "qwenpaw.config.config._get_pg_agent_config_version",
@@ -305,10 +356,12 @@ class TestAgentConfigDualMode:
 
         with (
             mock.patch(
-                "qwenpaw.config.utils.load_config", return_value=cfg_obj,
+                "qwenpaw.config.utils.load_config",
+                return_value=cfg_obj,
             ),
             mock.patch(
-                "qwenpaw.config.config._save_agent_config_to_pg", return_value=True
+                "qwenpaw.config.config._save_agent_config_to_pg",
+                return_value=True,
             ) as pg_save,
         ):
             from qwenpaw.config.config import save_agent_config
@@ -351,7 +404,8 @@ class TestRuntimeConfigMigration:
         ws = working_dir / "workspaces" / "bot1"
         ws.mkdir(parents=True)
         (ws / "agent.json").write_text(
-            json.dumps({"id": "bot1", "name": "Bot One"}), encoding="utf-8"
+            json.dumps({"id": "bot1", "name": "Bot One"}),
+            encoding="utf-8",
         )
 
         saved_global = []

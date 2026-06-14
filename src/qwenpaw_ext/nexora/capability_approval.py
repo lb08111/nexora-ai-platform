@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Per-capability-type approval configuration — file-backed with optional PG.
 
 Controls whether adding/removing capabilities (skill, mcp, tool, acp, plugin)
@@ -60,6 +61,7 @@ DEFAULT_CONFIGS: list[dict] = [
 
 def _secret_dir() -> Path:
     from qwenpaw.constant import SECRET_DIR
+
     return Path(SECRET_DIR)
 
 
@@ -82,7 +84,9 @@ def _load_configs() -> list[dict]:
 def _migrate_legacy(config: dict) -> dict:
     """Convert old bool fields to new policy strings."""
     if "add_policy" not in config and "add_approval" in config:
-        config["add_policy"] = "approval" if config.pop("add_approval") else "none"
+        config["add_policy"] = (
+            "approval" if config.pop("add_approval") else "none"
+        )
     if "remove_policy" not in config:
         remove = config.pop("remove_approval", True)
         auto = config.pop("auto_approve_remove", True)
@@ -103,13 +107,15 @@ def _save_configs(configs: list[dict]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_suffix(".tmp")
     tmp.write_text(
-        json.dumps(configs, ensure_ascii=False, indent=2), encoding="utf-8"
+        json.dumps(configs, ensure_ascii=False, indent=2),
+        encoding="utf-8",
     )
     tmp.replace(path)
 
 
 def _use_pg() -> bool:
     from qwenpaw_ext.nexora import db
+
     return db.is_database_enabled()
 
 
@@ -125,6 +131,7 @@ def ensure_default_configs() -> None:
 def list_configs() -> list[dict]:
     if _use_pg():
         from .repositories import capability_approval_postgres as repo
+
         return [_migrate_legacy(c) for c in repo.list_configs()]
     configs = _load_configs()
     return [_migrate_legacy(c) for c in configs]
@@ -133,6 +140,7 @@ def list_configs() -> list[dict]:
 def get_config(capability_type: str) -> dict | None:
     if _use_pg():
         from .repositories import capability_approval_postgres as repo
+
         c = repo.get_config(capability_type)
         return _migrate_legacy(c) if c else None
     for c in _load_configs():
@@ -145,6 +153,7 @@ def upsert_config(config: dict) -> dict:
     config = _migrate_legacy(config)
     if _use_pg():
         from .repositories import capability_approval_postgres as repo
+
         return repo.upsert_config(config)
     configs = _load_configs()
     configs = [_migrate_legacy(c) for c in configs]
@@ -170,6 +179,7 @@ def partial_update_config(capability_type: str, updates: dict) -> dict:
         return config
     if _use_pg():
         from .repositories import capability_approval_postgres as repo
+
         existing = repo.get_config(capability_type)
         if not existing:
             ensure_default_configs()

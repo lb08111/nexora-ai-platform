@@ -434,7 +434,10 @@ async def conciliar_pagamento(
         if expected != body.valor_recebido:
             return _err(
                 "Valor recebido divergente",
-                {"esperado": str(expected), "recebido": str(body.valor_recebido)},
+                {
+                    "esperado": str(expected),
+                    "recebido": str(body.valor_recebido),
+                },
             )
         updated = await update_payment(
             txid=body.txid,
@@ -449,7 +452,9 @@ async def conciliar_pagamento(
         return _err(str(exc))
 
 
-async def devolver_pix(e2eid: str, valor: float, motivo: str) -> dict[str, Any]:
+async def devolver_pix(
+    e2eid: str, valor: float, motivo: str
+) -> dict[str, Any]:
     """Solicita devolução Pix ao PSP pelo E2EID e valor informado."""
     try:
         body = RefundInput(e2eid=e2eid, valor=valor, motivo=motivo)
@@ -494,7 +499,7 @@ async def gerar_qr_code_estatico(
                 "qr_code_image_b64": image_b64,
                 "valor": str(body.valor) if body.valor is not None else None,
                 "descricao": body.descricao,
-            }
+            },
         )
     except Exception as exc:  # pylint: disable=broad-except
         logger.warning("gerar_qr_code_estatico failed: %s", exc)

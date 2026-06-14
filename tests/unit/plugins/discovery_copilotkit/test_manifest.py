@@ -71,13 +71,15 @@ def test_index_reexports_every_component():
     manifest = components_manifest()
     index = (_COMPONENTS_DIR / "index.ts").read_text(encoding="utf-8")
     for c in manifest["components"]:
-        assert c["name"] in index, (
-            f"components/index.ts does not export {c['name']}"
-        )
+        assert (
+            c["name"] in index
+        ), f"components/index.ts does not export {c['name']}"
 
 
 def test_plugin_json_declares_components_endpoint():
-    data = json.loads((_PLUGIN_ROOT / "plugin.json").read_text(encoding="utf-8"))
+    data = json.loads(
+        (_PLUGIN_ROOT / "plugin.json").read_text(encoding="utf-8")
+    )
     meta = data["meta"]["copilotkit"]
     assert meta["agent_id"] == "discovery"
     assert meta["components_endpoint"].endswith("/components")

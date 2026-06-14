@@ -87,7 +87,10 @@ def test_approval_requests_use_postgres_repository_when_configured(
         {"status": approval_requests.APPLIED, "approver": "bob"},
     )
 
-    assert approval_requests.get_approval_request(item["id"])["requester"] == "alice"
+    assert (
+        approval_requests.get_approval_request(item["id"])["requester"]
+        == "alice"
+    )
     assert updated["status"] == approval_requests.APPLIED
     assert approval_requests.list_approval_requests()[0]["approver"] == "bob"
 
@@ -115,7 +118,9 @@ def test_governance_uses_postgres_repository_when_configured(
     monkeypatch.setattr(
         governance_postgres,
         "upsert_resource_policy",
-        lambda policy: resource_policies.setdefault(policy["id"], dict(policy)),
+        lambda policy: resource_policies.setdefault(
+            policy["id"], dict(policy)
+        ),
     )
     monkeypatch.setattr(
         governance_postgres,
@@ -155,7 +160,9 @@ def test_governance_uses_postgres_repository_when_configured(
     monkeypatch.setattr(
         governance_postgres,
         "upsert_approval_policy",
-        lambda policy: approval_policies.setdefault(policy["action"], dict(policy)),
+        lambda policy: approval_policies.setdefault(
+            policy["action"], dict(policy)
+        ),
     )
 
     policy = governance.upsert_policy(
@@ -178,11 +185,17 @@ def test_governance_uses_postgres_repository_when_configured(
         },
     )
 
-    assert governance.get_resource_policy("mcp", "prod-shell")["id"] == policy["id"]
+    assert (
+        governance.get_resource_policy("mcp", "prod-shell")["id"]
+        == policy["id"]
+    )
     assert governance.list_policies()[0]["allowed_agents"] == ["ops-agent"]
     assert governance.get_agent_policy("ops-agent")["id"] == agent_policy["id"]
     assert governance.list_agent_policies()[0]["allowed_roles"] == ["operator"]
-    assert governance.get_approval_policy("mcp.create")["id"] == approval_policy["id"]
+    assert (
+        governance.get_approval_policy("mcp.create")["id"]
+        == approval_policy["id"]
+    )
     assert governance.delete_policy("mcp:prod-shell")
     assert governance.delete_agent_policy("agent:ops-agent")
 
@@ -213,7 +226,9 @@ def test_governance_db_migration_backfills_missing_agent_policies(
     monkeypatch.setattr(
         governance_postgres,
         "upsert_resource_policy",
-        lambda policy: resource_policies.__setitem__(policy["id"], dict(policy))
+        lambda policy: resource_policies.__setitem__(
+            policy["id"], dict(policy)
+        )
         or dict(policy),
     )
     monkeypatch.setattr(
@@ -243,7 +258,9 @@ def test_governance_db_migration_backfills_missing_agent_policies(
         "agent_policies_created": 2,
         "resource_policies_migrated": 1,
     }
-    assert resource_policies["skill:restart"]["allowed_agents"] == ["ops-agent"]
+    assert resource_policies["skill:restart"]["allowed_agents"] == [
+        "ops-agent"
+    ]
     assert agent_policies["agent:ops-agent"]["display_name"] == "Ops Agent"
 
 

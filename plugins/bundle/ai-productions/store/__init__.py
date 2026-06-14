@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 """Store package for ai-productions plugin."""
 
-from .notifications import Notification, NotificationStore, get_notification_store
+from .notifications import (
+    Notification,
+    NotificationStore,
+    get_notification_store,
+)
 from .productions import (
     AuditEntry,
     Production,

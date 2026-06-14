@@ -36,7 +36,7 @@ class Notification:
     id: str
     team: str
     kind: str
-    level: str          # "info" | "success" | "warning" | "error"
+    level: str  # "info" | "success" | "warning" | "error"
     title: str
     body: str = ""
     actor: str = "system"

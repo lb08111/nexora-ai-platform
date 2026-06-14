@@ -37,9 +37,7 @@ def test_team_list_returns_5_agents():
         "financeiro",
     }
     # orchestrator carries the convene_meeting tool spec
-    orch = next(
-        a for a in data["agents"] if a["role"] == "orchestrator"
-    )
+    orch = next(a for a in data["agents"] if a["role"] == "orchestrator")
     assert orch["tools_count"] >= 4
 
 

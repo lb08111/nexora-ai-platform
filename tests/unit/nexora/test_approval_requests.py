@@ -47,9 +47,12 @@ def test_create_and_update_approval_request():
     )
 
     assert updated["status"] == approval_requests.APPLIED
-    assert approval_requests.list_approval_requests(
-        status=approval_requests.APPLIED,
-    )[0]["approver"] == "bob"
+    assert (
+        approval_requests.list_approval_requests(
+            status=approval_requests.APPLIED,
+        )[0]["approver"]
+        == "bob"
+    )
 
 
 @pytest.mark.asyncio
@@ -72,7 +75,9 @@ async def test_create_mcp_client_submits_approval_without_saving(
     async def fake_get_agent_for_request(_request):
         return agent
 
-    monkeypatch.setattr(agent_context, "get_agent_for_request", fake_get_agent_for_request)
+    monkeypatch.setattr(
+        agent_context, "get_agent_for_request", fake_get_agent_for_request
+    )
     monkeypatch.setattr(auth, "is_auth_enabled", lambda: True)
     monkeypatch.setattr(auth, "has_registered_users", lambda: True)
     monkeypatch.setattr(
@@ -130,7 +135,9 @@ async def test_create_skill_submits_approval_without_writing(
     def fail_create_skill(*_args, **_kwargs):
         raise AssertionError("skill should wait for approval")
 
-    monkeypatch.setattr(agent_context, "get_agent_for_request", fake_get_agent_for_request)
+    monkeypatch.setattr(
+        agent_context, "get_agent_for_request", fake_get_agent_for_request
+    )
     monkeypatch.setattr(auth, "is_auth_enabled", lambda: True)
     monkeypatch.setattr(auth, "has_registered_users", lambda: True)
     monkeypatch.setattr(
@@ -139,7 +146,8 @@ async def test_create_skill_submits_approval_without_writing(
     )
     monkeypatch.setattr(
         "qwenpaw_ext.nexora.approval_requests.create_approval_request",
-        lambda data: created_approvals.append(data) or {"id": "approval-skill"},
+        lambda data: created_approvals.append(data)
+        or {"id": "approval-skill"},
     )
     monkeypatch.setattr(SkillService, "create_skill", fail_create_skill)
 
@@ -180,7 +188,8 @@ async def test_pool_download_submits_approval_without_broadcasting(
     )
     monkeypatch.setattr(
         "qwenpaw_ext.nexora.approval_requests.create_approval_request",
-        lambda data: created_approvals.append(data) or {"id": "approval-broadcast"},
+        lambda data: created_approvals.append(data)
+        or {"id": "approval-broadcast"},
     )
     monkeypatch.setattr(
         skills,
@@ -193,7 +202,9 @@ async def test_pool_download_submits_approval_without_broadcasting(
             },
         ],
     )
-    monkeypatch.setattr(SkillPoolService, "download_to_workspace", fail_download)
+    monkeypatch.setattr(
+        SkillPoolService, "download_to_workspace", fail_download
+    )
 
     result = await skills.download_pool_skill_to_workspaces(
         request,  # type: ignore[arg-type]
@@ -325,7 +336,8 @@ async def test_install_plugin_submits_approval_without_loader(
     )
     monkeypatch.setattr(
         "qwenpaw_ext.nexora.approval_requests.create_approval_request",
-        lambda data: created_approvals.append(data) or {"id": "approval-plugin"},
+        lambda data: created_approvals.append(data)
+        or {"id": "approval-plugin"},
     )
 
     result = await plugins.install_plugin(

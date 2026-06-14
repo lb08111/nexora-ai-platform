@@ -28,7 +28,9 @@ async def test_file_preview_rejects_paths_outside_current_agent_workspace(
     async def fake_get_agent_for_request(_request):
         return SimpleNamespace(workspace_dir=workspace_dir)
 
-    monkeypatch.setattr(files, "get_agent_for_request", fake_get_agent_for_request)
+    monkeypatch.setattr(
+        files, "get_agent_for_request", fake_get_agent_for_request
+    )
 
     response = await files.preview_file(SimpleNamespace(), "note.txt")
     assert isinstance(response, FileResponse)
@@ -40,7 +42,9 @@ async def test_file_preview_rejects_paths_outside_current_agent_workspace(
 
 
 @pytest.mark.asyncio
-async def test_file_tools_reject_paths_outside_current_agent_workspace(tmp_path):
+async def test_file_tools_reject_paths_outside_current_agent_workspace(
+    tmp_path,
+):
     from qwenpaw.agents.tools import file_io
     from qwenpaw.config.context import set_current_workspace_dir
 
@@ -56,17 +60,21 @@ async def test_file_tools_reject_paths_outside_current_agent_workspace(tmp_path)
 
         write_response = await file_io.write_file("notes/todo.md", "inside")
         assert "Wrote" in write_response.content[0]["text"]
-        assert (workspace_dir / "notes" / "todo.md").read_text("utf-8") == "inside"
+        assert (workspace_dir / "notes" / "todo.md").read_text(
+            "utf-8"
+        ) == "inside"
 
         read_response = await file_io.read_file(str(outside))
-        assert "limited to the current agent workspace" in read_response.content[0][
-            "text"
-        ]
+        assert (
+            "limited to the current agent workspace"
+            in read_response.content[0]["text"]
+        )
 
         append_response = await file_io.append_file(str(outside), "leak")
-        assert "limited to the current agent workspace" in append_response.content[0][
-            "text"
-        ]
+        assert (
+            "limited to the current agent workspace"
+            in append_response.content[0]["text"]
+        )
         assert outside.read_text("utf-8") == "outside"
     finally:
         set_current_workspace_dir(None)

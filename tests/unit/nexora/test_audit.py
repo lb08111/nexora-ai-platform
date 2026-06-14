@@ -39,8 +39,12 @@ def test_record_audit_event_appends_jsonl_and_lists_newest_first():
 
 
 def test_list_audit_events_filters_by_actor_action_and_status():
-    audit.record_audit_event(actor="alice", action="login.success", status="success")
-    denied = audit.record_audit_event(actor="alice", action="api.denied", status="denied")
+    audit.record_audit_event(
+        actor="alice", action="login.success", status="success"
+    )
+    denied = audit.record_audit_event(
+        actor="alice", action="api.denied", status="denied"
+    )
     audit.record_audit_event(actor="bob", action="api.denied", status="denied")
 
     events = audit.list_audit_events(
@@ -51,7 +55,6 @@ def test_list_audit_events_filters_by_actor_action_and_status():
     )
 
     assert [event["id"] for event in events] == [denied["id"]]
-
 
 
 def test_record_tool_audit_event_stores_bounded_preview():

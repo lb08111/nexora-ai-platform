@@ -56,9 +56,7 @@ def _list_agent_packages() -> list[str]:
         return []
     skip = {"skills", "__pycache__", "tools", "skill_system"}
     return sorted(
-        p.name
-        for p in root.iterdir()
-        if p.is_dir() and p.name not in skip
+        p.name for p in root.iterdir() if p.is_dir() and p.name not in skip
     )
 
 

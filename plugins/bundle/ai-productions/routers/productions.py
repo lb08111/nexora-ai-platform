@@ -336,7 +336,9 @@ def edit_production(
             payload=body.payload,
         )
     except KeyError as exc:
-        raise HTTPException(status_code=404, detail="Production not found") from exc
+        raise HTTPException(
+            status_code=404, detail="Production not found"
+        ) from exc
     return _to_view(prod)
 
 
@@ -358,7 +360,8 @@ def clear_productions() -> dict[str, str]:
 # Approval workflow
 # ----------------------------------------------------------------------
 @router.post(
-    "/{production_id}/request-approval", response_model=ProductionView,
+    "/{production_id}/request-approval",
+    response_model=ProductionView,
 )
 def request_approval_route(
     production_id: str,
@@ -372,7 +375,9 @@ def request_approval_route(
             note=body.note,
         )
     except KeyError as exc:
-        raise HTTPException(status_code=404, detail="Production not found") from exc
+        raise HTTPException(
+            status_code=404, detail="Production not found"
+        ) from exc
     except ProductionTransitionError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
 
@@ -380,9 +385,8 @@ def request_approval_route(
         prod,
         kind=NOTIFICATION_KIND_APPROVAL_REQUESTED,
         title=f"Aprovação pendente: {prod.title}",
-        body=body.note or (
-            f"{body.actor} solicitou revisão de '{prod.title}'."
-        ),
+        body=body.note
+        or (f"{body.actor} solicitou revisão de '{prod.title}'."),
         level="warning",
         actor=body.actor,
         actor_kind=body.actor_kind,
@@ -404,7 +408,9 @@ def approve_route(
             detail=body.note or "Aprovado",
         )
     except KeyError as exc:
-        raise HTTPException(status_code=404, detail="Production not found") from exc
+        raise HTTPException(
+            status_code=404, detail="Production not found"
+        ) from exc
     except ProductionTransitionError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
 
@@ -435,7 +441,9 @@ def reject_route(
             rejection_reason=body.reason,
         )
     except KeyError as exc:
-        raise HTTPException(status_code=404, detail="Production not found") from exc
+        raise HTTPException(
+            status_code=404, detail="Production not found"
+        ) from exc
     except ProductionTransitionError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
 
@@ -465,7 +473,9 @@ def publish_route(
             detail=body.note or "Publicado",
         )
     except KeyError as exc:
-        raise HTTPException(status_code=404, detail="Production not found") from exc
+        raise HTTPException(
+            status_code=404, detail="Production not found"
+        ) from exc
     except ProductionTransitionError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
 
@@ -495,7 +505,9 @@ def archive_route(
             detail=body.note or "Arquivado",
         )
     except KeyError as exc:
-        raise HTTPException(status_code=404, detail="Production not found") from exc
+        raise HTTPException(
+            status_code=404, detail="Production not found"
+        ) from exc
     except ProductionTransitionError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
     return _to_view(prod)

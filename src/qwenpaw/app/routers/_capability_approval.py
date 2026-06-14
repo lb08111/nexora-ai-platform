@@ -30,6 +30,7 @@ def capability_create_requires_approval(
         return capability_approval.requires_approval(cap_type, "add")
 
     from qwenpaw_ext.nexora.governance import get_approval_policy
+
     return bool(get_approval_policy(action).get("enabled", True))
 
 

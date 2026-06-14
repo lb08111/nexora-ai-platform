@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Nexora role-based access control extension.
 
 This module keeps the platform-specific RBAC policy away from QwenPaw core
@@ -367,7 +368,8 @@ def delete_user(username: str) -> bool:
     active_admins = [
         item
         for item in users
-        if item.get("status") == "active" and "admin" in (item.get("roles") or [])
+        if item.get("status") == "active"
+        and "admin" in (item.get("roles") or [])
     ]
     if "admin" in (user.get("roles") or []) and len(active_admins) <= 1:
         return False

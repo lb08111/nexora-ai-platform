@@ -346,7 +346,10 @@ def _has_identity_payload(data: dict) -> bool:
 
 
 def _has_file_secret_payload(data: dict) -> bool:
-    file_keys = set(AUTH_SECRET_FIELDS) | {"revoked_tokens", "revoked_tokens_meta"}
+    file_keys = set(AUTH_SECRET_FIELDS) | {
+        "revoked_tokens",
+        "revoked_tokens_meta",
+    }
     return any(key in data for key in file_keys)
 
 
@@ -368,7 +371,10 @@ def _save_auth_data(data: dict) -> None:
         file_data = _load_auth_data()
         if file_data.get("_auth_load_error"):
             file_data = {}
-        for key in set(AUTH_SECRET_FIELDS) | {"revoked_tokens", "revoked_tokens_meta"}:
+        for key in set(AUTH_SECRET_FIELDS) | {
+            "revoked_tokens",
+            "revoked_tokens_meta",
+        }:
             if key in data:
                 file_data[key] = data[key]
         _save_auth_file(file_data)
@@ -770,16 +776,18 @@ def register_user(
 
     pw_hash, salt = _hash_password(password)
     ts = _now()
-    data["users"] = [{
-        "id": secrets.token_hex(8),
-        "username": username,
-        "password_hash": pw_hash,
-        "password_salt": salt,
-        "roles": ["admin"],
-        "status": "active",
-        "created_at": ts,
-        "updated_at": ts,
-    }]
+    data["users"] = [
+        {
+            "id": secrets.token_hex(8),
+            "username": username,
+            "password_hash": pw_hash,
+            "password_salt": salt,
+            "roles": ["admin"],
+            "status": "active",
+            "created_at": ts,
+            "updated_at": ts,
+        }
+    ]
 
     # Ensure jwt_secret exists
     if not data.get("jwt_secret"):
@@ -1050,7 +1058,8 @@ def delete_user(username: str) -> bool:
     active_admins = [
         item
         for item in users
-        if item.get("status") == "active" and "admin" in (item.get("roles") or [])
+        if item.get("status") == "active"
+        and "admin" in (item.get("roles") or [])
     ]
     if "admin" in (user.get("roles") or []) and len(active_admins) <= 1:
         return False

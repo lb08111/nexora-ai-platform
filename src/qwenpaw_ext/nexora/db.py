@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Database helpers for Nexora persistent storage."""
 from __future__ import annotations
 
@@ -358,7 +359,7 @@ def check_database_health() -> None:
             conn.execute(text("SELECT 1"))
     except Exception as exc:
         raise RuntimeError(
-            f"Nexora PostgreSQL health check failed: {exc}"
+            f"Nexora PostgreSQL health check failed: {exc}",
         ) from exc
 
 
@@ -372,9 +373,18 @@ def cascade_delete_agent(agent_id: str) -> dict:
     result: dict[str, int] = {}
     with engine.begin() as conn:
         tables = [
-            ("grants", "DELETE FROM nexora_agent_user_grants WHERE agent_id = :aid"),
-            ("agent_policies", "DELETE FROM nexora_agent_policies WHERE agent_id = :aid"),
-            ("agent_configs", "DELETE FROM nexora_agent_configs WHERE agent_id = :aid"),
+            (
+                "grants",
+                "DELETE FROM nexora_agent_user_grants WHERE agent_id = :aid",
+            ),
+            (
+                "agent_policies",
+                "DELETE FROM nexora_agent_policies WHERE agent_id = :aid",
+            ),
+            (
+                "agent_configs",
+                "DELETE FROM nexora_agent_configs WHERE agent_id = :aid",
+            ),
         ]
         for key, sql in tables:
             r = conn.execute(text(sql), {"aid": agent_id})

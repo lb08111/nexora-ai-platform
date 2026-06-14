@@ -149,7 +149,8 @@ def _extract_payload(resp) -> dict:
     if isinstance(content, list):
         for blk in content:
             text = (
-                blk.get("text") if isinstance(blk, dict)
+                blk.get("text")
+                if isinstance(blk, dict)
                 else getattr(blk, "text", None)
             )
             if text:

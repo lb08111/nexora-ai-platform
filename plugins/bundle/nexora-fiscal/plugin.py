@@ -57,7 +57,9 @@ def _register_fiscal_tools(api: Any | None = None) -> None:
                     description=spec["description"],
                     icon=spec.get("icon", "🧾"),
                 )
-                logger.info("Registered fiscal tool via PluginApi: %s", tool_name)
+                logger.info(
+                    "Registered fiscal tool via PluginApi: %s", tool_name
+                )
             except Exception as exc:  # pylint: disable=broad-except
                 logger.warning("PluginApi tool registration failed: %s", exc)
 
@@ -75,7 +77,9 @@ def _register_fiscal_tools(api: Any | None = None) -> None:
             register(tool_name, getattr(fiscal_tools, tool_name))
             logger.info("Registered fiscal tool in registry: %s", tool_name)
         except Exception as exc:  # pylint: disable=broad-except
-            logger.warning("Registry tool registration failed for %s: %s", tool_name, exc)
+            logger.warning(
+                "Registry tool registration failed for %s: %s", tool_name, exc
+            )
 
 
 def _patch_plugin_loader_unload() -> None:

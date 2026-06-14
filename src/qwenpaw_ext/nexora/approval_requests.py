@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Persistent approval requests for platform capability changes."""
 from __future__ import annotations
 
@@ -83,8 +84,12 @@ def _normalize_request(raw: dict) -> dict:
         "resource_name": str(raw.get("resource_name") or ""),
         "summary": str(raw.get("summary") or ""),
         "reason": str(raw.get("reason") or ""),
-        "payload": raw.get("payload") if isinstance(raw.get("payload"), dict) else {},
-        "result": raw.get("result") if isinstance(raw.get("result"), dict) else {},
+        "payload": raw.get("payload")
+        if isinstance(raw.get("payload"), dict)
+        else {},
+        "result": raw.get("result")
+        if isinstance(raw.get("result"), dict)
+        else {},
         "created_at": int(raw.get("created_at") or now),
         "updated_at": int(raw.get("updated_at") or now),
     }
@@ -156,7 +161,9 @@ def update_approval_request(request_id: str, changes: dict) -> dict | None:
     existing = data.get("requests", {}).get(request_id)
     if not isinstance(existing, dict):
         return None
-    item = _normalize_request({**existing, **changes, "updated_at": int(time.time())})
+    item = _normalize_request(
+        {**existing, **changes, "updated_at": int(time.time())}
+    )
     data.setdefault("requests", {})[request_id] = item
     _save_data(data)
     return item

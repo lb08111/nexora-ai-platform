@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Nexora operation governance policy store.
 
 The upstream QwenPaw pages own tool, MCP, and skill configuration.  This
@@ -75,6 +76,7 @@ DEFAULT_APPROVAL_POLICIES: dict[str, dict] = {
         "allow_self_approval": False,
     },
 }
+
 
 def _legacy_allowed_agents_from_roles(policy: dict) -> set[str]:
     """Return agent ids saved by the old UI into allowed_roles.
@@ -199,7 +201,7 @@ def default_resource_policy(
             "approval_required": False,
             "audit_enabled": True,
             "enabled": True,
-        }
+        },
     )
 
 
@@ -217,13 +219,17 @@ def get_resource_policy(
         )
         if isinstance(policy, dict):
             return _normalize_policy(policy)
-        return default_resource_policy(source, resource_id, display_name, description)
+        return default_resource_policy(
+            source, resource_id, display_name, description
+        )
 
     data = _load_data()
     policy = data.get("policies", {}).get(policy_key(source, resource_id))
     if isinstance(policy, dict):
         return _normalize_policy(policy)
-    return default_resource_policy(source, resource_id, display_name, description)
+    return default_resource_policy(
+        source, resource_id, display_name, description
+    )
 
 
 def list_policies() -> list[dict]:
@@ -249,7 +255,7 @@ def upsert_policy(policy: dict) -> dict:
             **policy,
             "id": policy_key(policy["source"], policy["resource_id"]),
             "updated_at": int(time.time()),
-        }
+        },
     )
     if db.is_database_enabled():
         from qwenpaw_ext.nexora.repositories import governance_postgres
@@ -282,8 +288,12 @@ def ensure_resource_policy(
     if not source or not resource_id:
         raise ValueError("source and resource_id are required")
 
-    current = get_resource_policy(source, resource_id, display_name, description)
-    existing = current if current.get("id") == policy_key(source, resource_id) else {}
+    current = get_resource_policy(
+        source, resource_id, display_name, description
+    )
+    existing = (
+        current if current.get("id") == policy_key(source, resource_id) else {}
+    )
     merged_agents = list(
         dict.fromkeys(
             [
@@ -347,7 +357,7 @@ def default_agent_policy(agent_id: str) -> dict:
             "usable": True,
             "manageable": False,
             "enabled": True,
-        }
+        },
     )
 
 
@@ -433,7 +443,9 @@ def list_approval_policies() -> list[dict]:
 
     data = _load_data()
     stored = data.get("approval_policies", {})
-    actions = list(dict.fromkeys([*DEFAULT_APPROVAL_POLICIES.keys(), *stored.keys()]))
+    actions = list(
+        dict.fromkeys([*DEFAULT_APPROVAL_POLICIES.keys(), *stored.keys()])
+    )
     return [
         _normalize_approval_policy(
             stored.get(action) or default_approval_policy(action),
@@ -530,8 +542,7 @@ def migrate_governance_data(
                 changed = True
 
         existing_agent_policy_ids = {
-            policy.get("agent_id")
-            for policy in list_agent_policies()
+            policy.get("agent_id") for policy in list_agent_policies()
         }
         for agent_id in known_agent_ids:
             key = agent_policy_key(agent_id)
@@ -620,7 +631,9 @@ def get_agent_policy(agent_id: str) -> dict:
     if db.is_database_enabled():
         from qwenpaw_ext.nexora.repositories import governance_postgres
 
-        policy = governance_postgres.get_agent_policy(agent_policy_key(agent_id))
+        policy = governance_postgres.get_agent_policy(
+            agent_policy_key(agent_id)
+        )
         if isinstance(policy, dict):
             return _normalize_agent_policy(policy)
         return default_agent_policy(agent_id)
@@ -655,7 +668,7 @@ def upsert_agent_policy(policy: dict) -> dict:
             **policy,
             "id": agent_policy_key(policy["agent_id"]),
             "updated_at": int(time.time()),
-        }
+        },
     )
     if db.is_database_enabled():
         from qwenpaw_ext.nexora.repositories import governance_postgres
@@ -764,4 +777,5 @@ def enforce_agent_access_for_request(request: Request) -> None:
     from qwenpaw_ext.nexora.authorization import (
         enforce_agent_access_for_request as _enforce_v2,
     )
+
     _enforce_v2(request)
