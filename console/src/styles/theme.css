@@ -1,30 +1,30 @@
 /* Nexora console visual tokens: compact IDE shell, dark-first compatible. */
 :root {
-  --app-bg: #f4f7fb;
-  --app-bg-elevated: #ffffff;
-  --app-sidebar-bg: #eef3f8;
-  --app-surface: #ffffff;
-  --app-surface-subtle: #f0f4f9;
-  --app-surface-hover: #e7eef8;
+  --app-bg: oklch(97.5% 0.009 248);
+  --app-bg-elevated: oklch(99.2% 0.004 248);
+  --app-sidebar-bg: oklch(95.4% 0.014 248);
+  --app-surface: oklch(98.8% 0.005 248);
+  --app-surface-subtle: oklch(96.2% 0.012 248);
+  --app-surface-hover: oklch(93.8% 0.021 248);
   --app-border: rgba(15, 23, 42, 0.16);
   --app-border-subtle: rgba(15, 23, 42, 0.1);
   --app-text: rgba(15, 23, 42, 0.82);
-  --app-text-strong: #0f172a;
+  --app-text-strong: oklch(21.2% 0.034 265);
   --app-text-muted: rgba(71, 85, 105, 0.78);
   --app-text-subtle: rgba(100, 116, 139, 0.72);
-  --app-text-inverse: #ffffff;
-  --app-primary: #3c79b7;
-  --app-primary-hover: #4b8fce;
+  --app-text-inverse: oklch(98.8% 0.005 248);
+  --app-primary: oklch(52% 0.115 251);
+  --app-primary-hover: oklch(59% 0.125 251);
   --app-primary-soft: rgba(60, 121, 183, 0.12);
   --app-primary-selected: rgba(60, 121, 183, 0.18);
   --app-primary-border: rgba(60, 121, 183, 0.28);
-  --app-primary-text: #2563a8;
-  --app-danger: #ef4444;
+  --app-primary-text: oklch(45% 0.125 251);
+  --app-danger: oklch(58% 0.19 28);
   --app-danger-soft: rgba(239, 68, 68, 0.12);
-  --app-success: #22c55e;
+  --app-success: oklch(63% 0.16 150);
   --app-success-soft: rgba(34, 197, 94, 0.12);
-  --app-warning: #d08a18;
-  --app-focus: #3c79b7;
+  --app-warning: oklch(62% 0.13 78);
+  --app-focus: oklch(52% 0.115 251);
   --app-focus-ring: 0 0 0 2px rgba(60, 121, 183, 0.28);
   --app-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
   --app-shadow-md: 0 10px 28px rgba(15, 23, 42, 0.12);
@@ -51,30 +51,30 @@
 }
 
 html.dark-mode {
-  --app-bg: #101214;
-  --app-bg-elevated: #171a1e;
-  --app-sidebar-bg: #111315;
-  --app-surface: #151719;
-  --app-surface-subtle: #20242a;
-  --app-surface-hover: #26303a;
+  --app-bg: oklch(17% 0.008 248);
+  --app-bg-elevated: oklch(20% 0.009 248);
+  --app-sidebar-bg: oklch(16.5% 0.008 248);
+  --app-surface: oklch(19% 0.009 248);
+  --app-surface-subtle: oklch(25% 0.012 248);
+  --app-surface-hover: oklch(30% 0.02 248);
   --app-border: rgba(226, 232, 240, 0.16);
   --app-border-subtle: rgba(226, 232, 240, 0.09);
   --app-text: rgba(241, 245, 249, 0.82);
-  --app-text-strong: #f8fafc;
+  --app-text-strong: oklch(98.5% 0.006 248);
   --app-text-muted: rgba(203, 213, 225, 0.68);
   --app-text-subtle: rgba(148, 163, 184, 0.62);
-  --app-primary: #4b8fce;
-  --app-primary-hover: #62a2dc;
+  --app-primary: oklch(65% 0.13 251);
+  --app-primary-hover: oklch(71% 0.12 251);
   --app-primary-soft: rgba(75, 143, 206, 0.14);
   --app-primary-selected: rgba(75, 143, 206, 0.22);
   --app-primary-border: rgba(75, 143, 206, 0.34);
-  --app-primary-text: #7eb7ff;
-  --app-danger: #f87171;
+  --app-primary-text: oklch(78% 0.105 251);
+  --app-danger: oklch(72% 0.145 28);
   --app-danger-soft: rgba(248, 113, 113, 0.14);
-  --app-success: #4ade80;
+  --app-success: oklch(73% 0.15 150);
   --app-success-soft: rgba(74, 222, 128, 0.13);
-  --app-warning: #e3a13f;
-  --app-focus: #4b8fce;
+  --app-warning: oklch(74% 0.12 78);
+  --app-focus: oklch(65% 0.13 251);
   --app-focus-ring: 0 0 0 2px rgba(75, 143, 206, 0.34);
   --app-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.34);
   --app-shadow-md: 0 16px 36px rgba(0, 0, 0, 0.4);
@@ -107,7 +107,7 @@ body,
 .ant-btn-primary {
   background: var(--app-primary) !important;
   border-color: var(--app-primary) !important;
-  color: #f8fbff !important;
+  color: var(--app-text-inverse) !important;
 }
 
 .jotaduo-btn-primary:hover,
@@ -116,7 +116,13 @@ body,
 .ant-btn-primary:focus-visible {
   background: var(--app-primary-hover) !important;
   border-color: var(--app-primary-hover) !important;
-  color: #ffffff !important;
+  color: var(--app-text-inverse) !important;
+}
+
+.jotaduo-btn:focus-visible,
+.ant-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--app-focus-ring) !important;
 }
 
 .jotaduo-btn-default,

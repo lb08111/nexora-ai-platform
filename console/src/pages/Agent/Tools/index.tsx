@@ -27,14 +27,14 @@ import styles from "./index.module.less";
 
 /** Stable background colours for the initial-letter fallback icon. */
 const ICON_PALETTE = [
-  "#f56a00",
-  "#7265e6",
-  "#ffbf00",
-  "#00a2ae",
-  "#87d068",
-  "#1890ff",
-  "#eb2f96",
-  "#722ed1",
+  "oklch(58% 0.12 251)",
+  "oklch(58% 0.11 280)",
+  "oklch(62% 0.12 162)",
+  "oklch(62% 0.13 78)",
+  "oklch(56% 0.13 24)",
+  "oklch(58% 0.11 205)",
+  "oklch(55% 0.12 330)",
+  "oklch(54% 0.09 110)",
 ];
 
 function hashStringToIndex(value: string, mod: number): number {

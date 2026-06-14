@@ -271,8 +271,8 @@
   }
 
   .stickyChatButtonActive {
-    background: rgba(255, 127, 22, 0.5);
-    color: #ff7f16;
+    background: var(--app-primary-selected);
+    color: var(--app-primary-text);
   }
 
     :global {
@@ -534,13 +534,13 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: #fff;
-  border: 1px solid rgba(43, 18, 0, 0.12);
+  background: var(--app-surface);
+  border: 1px solid var(--app-border-subtle);
   border-radius: 20px;
   padding: 3px 12px;
   font-size: 12px;
   font-weight: 500;
-  color: rgba(26, 23, 22, 0.65);
+  color: var(--app-text-muted);
   width: fit-content;
 }
 
@@ -549,11 +549,11 @@
   font-weight: 500;
   line-height: 64.78px;
   letter-spacing: normal;
-  color: #ff7f16;
+  color: var(--app-primary-text);
 }
 
 .updateModalTitle {
-  color: #ff7f16;
+  color: var(--app-primary-text);
 }
 
 .updateModalBody {
@@ -572,19 +572,19 @@
 }
 
 .updateViewReleasesBtn {
-  background: #ff7f16 !important;
-  border-color: #ff7f16 !important;
-  color: #fff !important;
+  background: var(--app-primary) !important;
+  border-color: var(--app-primary) !important;
+  color: var(--app-text-inverse) !important;
 
   &:hover {
-    background: #d45b0a !important;
-    border-color: #d45b0a !important;
+    background: var(--app-primary-hover) !important;
+    border-color: var(--app-primary-hover) !important;
   }
 }
 
 .updateModalPrimaryBtn {
-  background: #ff7f16;
-  border-color: #ff7f16;
+  background: var(--app-primary);
+  border-color: var(--app-primary);
 }
 
 // ─── Code block inside update modal ──────────────────────────────────────────
@@ -650,8 +650,8 @@
       color: rgba(255, 255, 255, 0.75) !important;
 
       &:hover {
-        color: #fff !important;
-        background: rgba(255, 255, 255, 0.08) !important;
+        color: var(--app-text-strong) !important;
+        background: var(--app-surface-hover) !important;
       }
 
       .anticon,
@@ -704,8 +704,8 @@
     color: rgba(255, 255, 255, 0.45);
 
     &:hover {
-      background: rgba(255, 255, 255, 0.08);
-      color: #ff7f16;
+      background: var(--app-surface-hover);
+      color: var(--app-primary-text);
     }
   }
 
@@ -719,8 +719,8 @@
   }
 
   .collapsedNavItemActive {
-    background: rgba(255, 127, 22, 0.5) !important;
-    color: rgba(255, 255, 255, 0.88) !important;
+    background: var(--app-primary-selected) !important;
+    color: var(--app-primary-text) !important;
   }
 
   .codeBlock {

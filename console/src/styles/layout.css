@@ -182,13 +182,13 @@ html.dark-mode .ant-pagination .ant-pagination-item a {
 
 html.dark-mode .jotaduo-pagination .jotaduo-pagination-item-active,
 html.dark-mode .ant-pagination .ant-pagination-item-active {
-  background: #ff7f16 !important;
-  border-color: #ff7f16 !important;
+  background: var(--app-primary) !important;
+  border-color: var(--app-primary) !important;
 }
 
 html.dark-mode .jotaduo-pagination .jotaduo-pagination-item-active a,
 html.dark-mode .ant-pagination .ant-pagination-item-active a {
-  color: #fff !important;
+  color: var(--app-text-inverse) !important;
 }
 
 html.dark-mode .jotaduo-pagination .jotaduo-pagination-prev button,
@@ -210,7 +210,7 @@ html.dark-mode .jotaduo-table-column-sorter-up.active,
 html.dark-mode .jotaduo-table-column-sorter-down.active,
 html.dark-mode .ant-table-column-sorter-up.active,
 html.dark-mode .ant-table-column-sorter-down.active {
-  color: #ff7f16 !important;
+  color: var(--app-primary-text) !important;
 }
 
 /* Checkbox in table */
@@ -222,8 +222,8 @@ html.dark-mode .ant-checkbox-inner {
 
 html.dark-mode .jotaduo-checkbox-checked .jotaduo-checkbox-inner,
 html.dark-mode .ant-checkbox-checked .ant-checkbox-inner {
-  background: #ff7f16 !important;
-  border-color: #ff7f16 !important;
+  background: var(--app-primary) !important;
+  border-color: var(--app-primary) !important;
 }
 
 /* Page titles (h1) */
@@ -316,7 +316,7 @@ html.dark-mode .ant-select-item-option-active {
 html.dark-mode .jotaduo-select-item-option-selected,
 html.dark-mode .ant-select-item-option-selected {
   background: rgba(97, 92, 237, 0.2) !important;
-  color: #ff7f16 !important;
+  color: var(--app-primary-text) !important;
 }
 
 /* Form labels */
@@ -397,7 +397,7 @@ html.dark-mode
   .ant-picker-time-panel-cell-selected
   .ant-picker-time-panel-cell-inner {
   background: rgba(97, 92, 237, 0.2) !important;
-  color: #ff7f16 !important;
+  color: var(--app-primary-text) !important;
 }
 
 /* DatePicker / RangePicker calendar panel */
@@ -467,7 +467,7 @@ html.dark-mode .ant-picker-cell-disabled {
 /* Today marker */
 html.dark-mode .jotaduo-picker-cell-today .jotaduo-picker-cell-inner::before,
 html.dark-mode .ant-picker-cell-today .ant-picker-cell-inner::before {
-  border-color: #ff7f16 !important;
+  border-color: var(--app-primary) !important;
 }
 
 /* Selected start/end cell */
@@ -477,8 +477,8 @@ html.dark-mode .jotaduo-picker-cell-range-start .jotaduo-picker-cell-inner,
 html.dark-mode .ant-picker-cell-range-start .ant-picker-cell-inner,
 html.dark-mode .jotaduo-picker-cell-range-end .jotaduo-picker-cell-inner,
 html.dark-mode .ant-picker-cell-range-end .ant-picker-cell-inner {
-  background: #ff7f16 !important;
-  color: #fff !important;
+  background: var(--app-primary) !important;
+  color: var(--app-text-inverse) !important;
 }
 
 /* Range in-between cells */
@@ -503,7 +503,7 @@ html.dark-mode
 html.dark-mode
   .jotaduo-picker-cell-in-view.jotaduo-picker-cell-range-hover-end::after,
 html.dark-mode .ant-picker-cell-in-view.ant-picker-cell-range-hover-end::after {
-  border-color: #ff7f16 !important;
+  border-color: var(--app-primary) !important;
 }
 
 /* Panel footer (OK button area) */
@@ -515,7 +515,7 @@ html.dark-mode .ant-picker-footer {
 
 html.dark-mode .jotaduo-picker-today-btn,
 html.dark-mode .ant-picker-today-btn {
-  color: #ff7f16 !important;
+  color: var(--app-primary-text) !important;
 }
 
 /* Divider between two panels in RangePicker */
@@ -673,12 +673,12 @@ html.dark-mode .ant-slider-rail {
 
 html.dark-mode .jotaduo-slider-track,
 html.dark-mode .ant-slider-track {
-  background-color: #ff7f16 !important;
+  background-color: var(--app-primary) !important;
 }
 
 html.dark-mode .jotaduo-slider-mark-text,
 html.dark-mode .ant-slider-mark-text {
-  color: #ff7f16 !important;
+  color: var(--app-primary-text) !important;
 }
 
 html.dark-mode .jotaduo-form-item-label > label .jotaduo-form-item-tooltip,
@@ -688,7 +688,7 @@ html.dark-mode .ant-form-item-label > label .ant-form-item-tooltip {
 
 html.dark-mode .jotaduo-slider-handle::after,
 html.dark-mode .ant-slider-handle::after {
-  box-shadow: 0 0 0 2px #ff7f16 !important;
+  box-shadow: 0 0 0 2px var(--app-primary) !important;
   background-color: #1f1f1f !important;
 }
 
@@ -714,7 +714,7 @@ html.dark-mode .ant-tooltip-arrow::before {
 .jotaduo-tooltip-inner,
 .ant-tooltip-inner {
   background-color: rgba(0, 0, 0, 0.75) !important;
-  color: #fff !important;
+  color: var(--app-text-inverse) !important;
 }
 
 .jotaduo-tooltip-arrow::before,
@@ -804,7 +804,7 @@ html.dark-mode [class*="chat-anywhere"] [class*="message"] code {
 }
 
 html.dark-mode [class*="chat-anywhere"] [class*="message"] a {
-  color: #ff7f16 !important;
+  color: var(--app-primary-text) !important;
 }
 
 /* Tool card content blocks — dark mode text and background overrides.

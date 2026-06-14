@@ -15,9 +15,9 @@
 
   &:hover,
   &.triggerActive {
-    border-color: #ff7f16;
-    color: #ff7f16;
-    box-shadow: 0 2px 8px rgba(97, 92, 237, 0.12);
+    border-color: var(--app-primary-border);
+    color: var(--app-primary-text);
+    box-shadow: var(--app-shadow-sm);
   }
 }
 
@@ -38,7 +38,7 @@
 
   &.triggerArrowOpen {
     transform: rotate(180deg);
-    color: #ff7f16;
+    color: var(--app-primary-text);
   }
 }
 
@@ -55,7 +55,7 @@
   width: 360px;
   max-height: 480px;
   border-radius: 8px;
-  background: #fff;
+  background: var(--app-surface);
   border: 1px solid rgba(0, 0, 0, 0.06);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
   display: flex;
@@ -133,7 +133,7 @@
   }
 
   &.tabButtonActive {
-    color: #ff7f16;
+    color: var(--app-primary-text);
 
     &::after {
       content: "";
@@ -142,7 +142,7 @@
       left: 20%;
       right: 20%;
       height: 2px;
-      background: #ff7f16;
+      background: var(--app-primary);
       border-radius: 1px;
     }
   }
@@ -219,12 +219,12 @@
   }
 
   &.modelItemActive {
-    background: rgba(255, 127, 22, 0.08);
-    color: #ff7f16;
+    background: var(--app-primary-soft);
+    color: var(--app-primary-text);
     font-weight: 500;
 
     .modelName {
-      color: #ff7f16;
+      color: var(--app-primary-text);
     }
   }
 }
@@ -272,7 +272,7 @@
 .checkIcon {
   flex-shrink: 0;
   font-size: 14px;
-  color: #ff7f16;
+  color: var(--app-primary-text);
 }
 
 .emptyTip {
@@ -417,8 +417,8 @@
 
     &:hover,
     &.triggerActive {
-      color: #ff7f16;
-      box-shadow: 0 2px 8px rgba(97, 92, 237, 0.2);
+      color: var(--app-primary-text);
+      box-shadow: var(--app-shadow-sm);
     }
   }
 
@@ -426,7 +426,7 @@
     color: rgba(255, 255, 255, 0.3);
 
     &.triggerArrowOpen {
-      color: #ff7f16;
+      color: var(--app-primary-text);
     }
   }
 
@@ -472,7 +472,7 @@
     }
 
     &.tabButtonActive {
-      color: #ff7f16;
+      color: var(--app-primary-text);
     }
   }
 
@@ -501,11 +501,11 @@
     }
 
     &.modelItemActive {
-      background: rgba(255, 127, 22, 0.12);
-      color: #ff7f16;
+      background: var(--app-primary-selected);
+      color: var(--app-primary-text);
 
       .modelName {
-        color: #ff7f16;
+        color: var(--app-primary-text);
       }
     }
   }
@@ -527,7 +527,7 @@
   }
 
   .checkIcon {
-    color: #ff7f16;
+    color: var(--app-primary-text);
   }
 
   .proBanner {
