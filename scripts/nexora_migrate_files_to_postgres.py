@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """Migrate first-phase Nexora files into PostgreSQL.
 
 Requires NEXORA_DB_URL to point at the target PostgreSQL database.
@@ -73,7 +74,8 @@ def _load_auth_identity(path: Path) -> dict:
         if isinstance(legacy_user, dict) and legacy_user.get("username"):
             users = [
                 {
-                    "id": legacy_user.get("id") or f"legacy-{legacy_user['username']}",
+                    "id": legacy_user.get("id")
+                    or f"legacy-{legacy_user['username']}",
                     "username": legacy_user.get("username", ""),
                     "password_hash": legacy_user.get("password_hash", ""),
                     "password_salt": legacy_user.get("password_salt", ""),
@@ -113,13 +115,17 @@ def _migrate_runtime_config(working_dir: Path) -> dict[str, int]:
             if agent_json.is_file():
                 agent_data = _load_json_dict(agent_json)
                 if agent_data:
-                    config_postgres.save_agent_config(agent_dir.name, agent_data)
+                    config_postgres.save_agent_config(
+                        agent_dir.name, agent_data
+                    )
                     result["agent_configs"] += 1
 
     return result
 
 
-def migrate(secret_dir: Path, working_dir: Path | None = None) -> dict[str, int]:
+def migrate(
+    secret_dir: Path, working_dir: Path | None = None
+) -> dict[str, int]:
     _ensure_src_on_path()
 
     from sqlalchemy.exc import IntegrityError
@@ -183,7 +189,9 @@ def migrate(secret_dir: Path, working_dir: Path | None = None) -> dict[str, int]
                         _normalize_agent_policy(raw),
                     )
                     agent_policies += 1
-            for raw in (governance_data.get("approval_policies") or {}).values():
+            for raw in (
+                governance_data.get("approval_policies") or {}
+            ).values():
                 if isinstance(raw, dict):
                     governance_postgres.upsert_approval_policy(
                         _normalize_approval_policy(raw),
@@ -197,7 +205,9 @@ def migrate(secret_dir: Path, working_dir: Path | None = None) -> dict[str, int]
         if role_id not in roles:
             roles[role_id] = role
         else:
-            existing_permissions = list(roles[role_id].get("permissions") or [])
+            existing_permissions = list(
+                roles[role_id].get("permissions") or []
+            )
             roles[role_id]["permissions"] = list(
                 dict.fromkeys(
                     [*existing_permissions, *role.get("permissions", [])],
@@ -311,8 +321,14 @@ def main() -> int:
         "When provided, global config and per-agent configs are also imported.",
     )
     args = parser.parse_args()
-    wd = Path(args.working_dir).expanduser().resolve() if args.working_dir else None
-    result = migrate(Path(args.secret_dir).expanduser().resolve(), working_dir=wd)
+    wd = (
+        Path(args.working_dir).expanduser().resolve()
+        if args.working_dir
+        else None
+    )
+    result = migrate(
+        Path(args.secret_dir).expanduser().resolve(), working_dir=wd
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

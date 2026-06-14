@@ -97,5 +97,6 @@ async def scaffold_skill(
 
 def _indent(text: str, n: int) -> str:
     pad = " " * n
-    return "\n".join(f"{pad}{line}" if line else line
-                     for line in text.splitlines())
+    return "\n".join(
+        f"{pad}{line}" if line else line for line in text.splitlines()
+    )

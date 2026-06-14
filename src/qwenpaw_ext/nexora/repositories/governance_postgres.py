@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """PostgreSQL repository for Nexora governance policies."""
 from __future__ import annotations
 
@@ -73,18 +74,22 @@ def _approval_row(row: Any) -> dict:
 def get_resource_policy(policy_id: str) -> dict | None:
     db.initialize_schema()
     with db.get_engine().begin() as conn:
-        row = conn.execute(
-            text(
-                """
+        row = (
+            conn.execute(
+                text(
+                    """
                 SELECT id, source, resource_id, display_name, description,
                        risk_level, allowed_agents, allowed_roles,
                        approval_required, audit_enabled, enabled, updated_at
                 FROM nexora_resource_policies
                 WHERE id = :id
                 """,
-            ),
-            {"id": policy_id},
-        ).mappings().first()
+                ),
+                {"id": policy_id},
+            )
+            .mappings()
+            .first()
+        )
     return _resource_row(row) if row else None
 
 
@@ -92,9 +97,10 @@ def list_resource_policies(limit: int = 1000) -> list[dict]:
     db.initialize_schema()
     limit = max(1, min(limit, 5000))
     with db.get_engine().begin() as conn:
-        rows = conn.execute(
-            text(
-                """
+        rows = (
+            conn.execute(
+                text(
+                    """
                 SELECT id, source, resource_id, display_name, description,
                        risk_level, allowed_agents, allowed_roles,
                        approval_required, audit_enabled, enabled, updated_at
@@ -102,18 +108,22 @@ def list_resource_policies(limit: int = 1000) -> list[dict]:
                 ORDER BY source, resource_id
                 LIMIT :limit
                 """,
-            ),
-            {"limit": limit},
-        ).mappings().all()
+                ),
+                {"limit": limit},
+            )
+            .mappings()
+            .all()
+        )
     return [_resource_row(row) for row in rows]
 
 
 def upsert_resource_policy(policy: dict) -> dict:
     db.initialize_schema()
     with db.get_engine().begin() as conn:
-        row = conn.execute(
-            text(
-                """
+        row = (
+            conn.execute(
+                text(
+                    """
                 INSERT INTO nexora_resource_policies (
                     id, source, resource_id, display_name, description,
                     risk_level, allowed_agents, allowed_roles,
@@ -141,13 +151,18 @@ def upsert_resource_policy(policy: dict) -> dict:
                           risk_level, allowed_agents, allowed_roles,
                           approval_required, audit_enabled, enabled, updated_at
                 """,
-            ),
-            {
-                **policy,
-                "allowed_agents": _json_for_db(policy.get("allowed_agents")),
-                "allowed_roles": _json_for_db(policy.get("allowed_roles")),
-            },
-        ).mappings().one()
+                ),
+                {
+                    **policy,
+                    "allowed_agents": _json_for_db(
+                        policy.get("allowed_agents")
+                    ),
+                    "allowed_roles": _json_for_db(policy.get("allowed_roles")),
+                },
+            )
+            .mappings()
+            .one()
+        )
     return _resource_row(row)
 
 
@@ -164,17 +179,21 @@ def delete_resource_policy(policy_id: str) -> bool:
 def get_agent_policy(policy_id: str) -> dict | None:
     db.initialize_schema()
     with db.get_engine().begin() as conn:
-        row = conn.execute(
-            text(
-                """
+        row = (
+            conn.execute(
+                text(
+                    """
                 SELECT id, agent_id, display_name, description, allowed_roles,
                        visible, usable, manageable, enabled, updated_at
                 FROM nexora_agent_policies
                 WHERE id = :id
                 """,
-            ),
-            {"id": policy_id},
-        ).mappings().first()
+                ),
+                {"id": policy_id},
+            )
+            .mappings()
+            .first()
+        )
     return _agent_row(row) if row else None
 
 
@@ -182,27 +201,32 @@ def list_agent_policies(limit: int = 1000) -> list[dict]:
     db.initialize_schema()
     limit = max(1, min(limit, 5000))
     with db.get_engine().begin() as conn:
-        rows = conn.execute(
-            text(
-                """
+        rows = (
+            conn.execute(
+                text(
+                    """
                 SELECT id, agent_id, display_name, description, allowed_roles,
                        visible, usable, manageable, enabled, updated_at
                 FROM nexora_agent_policies
                 ORDER BY agent_id
                 LIMIT :limit
                 """,
-            ),
-            {"limit": limit},
-        ).mappings().all()
+                ),
+                {"limit": limit},
+            )
+            .mappings()
+            .all()
+        )
     return [_agent_row(row) for row in rows]
 
 
 def upsert_agent_policy(policy: dict) -> dict:
     db.initialize_schema()
     with db.get_engine().begin() as conn:
-        row = conn.execute(
-            text(
-                """
+        row = (
+            conn.execute(
+                text(
+                    """
                 INSERT INTO nexora_agent_policies (
                     id, agent_id, display_name, description, allowed_roles,
                     visible, usable, manageable, enabled, updated_at
@@ -226,12 +250,15 @@ def upsert_agent_policy(policy: dict) -> dict:
                           allowed_roles, visible, usable, manageable,
                           enabled, updated_at
                 """,
-            ),
-            {
-                **policy,
-                "allowed_roles": _json_for_db(policy.get("allowed_roles")),
-            },
-        ).mappings().one()
+                ),
+                {
+                    **policy,
+                    "allowed_roles": _json_for_db(policy.get("allowed_roles")),
+                },
+            )
+            .mappings()
+            .one()
+        )
     return _agent_row(row)
 
 
@@ -248,17 +275,21 @@ def delete_agent_policy(policy_id: str) -> bool:
 def get_approval_policy(action: str) -> dict | None:
     db.initialize_schema()
     with db.get_engine().begin() as conn:
-        row = conn.execute(
-            text(
-                """
+        row = (
+            conn.execute(
+                text(
+                    """
                 SELECT id, action, display_name, description, enabled,
                        approver_roles, allow_self_approval, updated_at
                 FROM nexora_approval_policies
                 WHERE action = :action
                 """,
-            ),
-            {"action": action},
-        ).mappings().first()
+                ),
+                {"action": action},
+            )
+            .mappings()
+            .first()
+        )
     return _approval_row(row) if row else None
 
 
@@ -266,27 +297,32 @@ def list_approval_policies(limit: int = 1000) -> list[dict]:
     db.initialize_schema()
     limit = max(1, min(limit, 5000))
     with db.get_engine().begin() as conn:
-        rows = conn.execute(
-            text(
-                """
+        rows = (
+            conn.execute(
+                text(
+                    """
                 SELECT id, action, display_name, description, enabled,
                        approver_roles, allow_self_approval, updated_at
                 FROM nexora_approval_policies
                 ORDER BY action
                 LIMIT :limit
                 """,
-            ),
-            {"limit": limit},
-        ).mappings().all()
+                ),
+                {"limit": limit},
+            )
+            .mappings()
+            .all()
+        )
     return [_approval_row(row) for row in rows]
 
 
 def upsert_approval_policy(policy: dict) -> dict:
     db.initialize_schema()
     with db.get_engine().begin() as conn:
-        row = conn.execute(
-            text(
-                """
+        row = (
+            conn.execute(
+                text(
+                    """
                 INSERT INTO nexora_approval_policies (
                     id, action, display_name, description, enabled,
                     approver_roles, allow_self_approval, updated_at
@@ -307,12 +343,17 @@ def upsert_approval_policy(policy: dict) -> dict:
                 RETURNING id, action, display_name, description, enabled,
                           approver_roles, allow_self_approval, updated_at
                 """,
-            ),
-            {
-                **policy,
-                "approver_roles": _json_for_db(policy.get("approver_roles")),
-            },
-        ).mappings().one()
+                ),
+                {
+                    **policy,
+                    "approver_roles": _json_for_db(
+                        policy.get("approver_roles")
+                    ),
+                },
+            )
+            .mappings()
+            .one()
+        )
     return _approval_row(row)
 
 

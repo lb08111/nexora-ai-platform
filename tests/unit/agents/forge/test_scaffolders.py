@@ -44,8 +44,7 @@ async def test_inspect_repo_lists_known_packages():
     assert "br_team" in data["agents"]
     assert "skills" in data
     assert any(
-        s.startswith("br_") or s == "agent_forge-pt"
-        for s in data["skills"]
+        s.startswith("br_") or s == "agent_forge-pt" for s in data["skills"]
     )
 
 

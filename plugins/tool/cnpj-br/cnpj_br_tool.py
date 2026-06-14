@@ -10,8 +10,10 @@ from typing import Any, Optional
 try:
     from qwenpaw.plugins import get_tool_config
 except Exception:  # pragma: no cover - available inside Nexora/QwenPaw runtime
+
     def get_tool_config(_tool_name: str) -> dict[str, Any]:
         return {}
+
 
 try:
     from clients import BrasilApiClient, ReceitaWsClient
@@ -163,15 +165,22 @@ def _parse_capital_social(value: Any) -> float | None:
         return None
 
 
-def _normalizar_cnae_principal_brasilapi(raw: dict[str, Any]) -> dict[str, Any] | None:
+def _normalizar_cnae_principal_brasilapi(
+    raw: dict[str, Any]
+) -> dict[str, Any] | None:
     codigo = raw.get("cnae_fiscal") or raw.get("cnae_fiscal_codigo")
     descricao = raw.get("cnae_fiscal_descricao")
     if not codigo and not descricao:
         return None
-    return {"codigo": _str_or_none(codigo), "descricao": _str_or_none(descricao)}
+    return {
+        "codigo": _str_or_none(codigo),
+        "descricao": _str_or_none(descricao),
+    }
 
 
-def _normalizar_cnae_principal_receitaws(raw: dict[str, Any]) -> dict[str, Any] | None:
+def _normalizar_cnae_principal_receitaws(
+    raw: dict[str, Any]
+) -> dict[str, Any] | None:
     atividades = raw.get("atividade_principal") or []
     if not atividades:
         return None
@@ -182,7 +191,9 @@ def _normalizar_cnae_principal_receitaws(raw: dict[str, Any]) -> dict[str, Any] 
     }
 
 
-def _normalizar_cnaes_secundarios(items: Any, fonte: str) -> list[dict[str, Any]]:
+def _normalizar_cnaes_secundarios(
+    items: Any, fonte: str
+) -> list[dict[str, Any]]:
     if not isinstance(items, list):
         return []
     normalized = []
@@ -196,7 +207,10 @@ def _normalizar_cnaes_secundarios(items: Any, fonte: str) -> list[dict[str, Any]
             codigo = item.get("code") or item.get("codigo")
             descricao = item.get("text") or item.get("descricao")
         normalized.append(
-            {"codigo": _str_or_none(codigo), "descricao": _str_or_none(descricao)}
+            {
+                "codigo": _str_or_none(codigo),
+                "descricao": _str_or_none(descricao),
+            },
         )
     return normalized
 
@@ -221,9 +235,9 @@ def _normalizar_socios(items: Any, fonte: str) -> list[dict[str, Any]]:
                 "cpf_cnpj": _str_or_none(
                     item.get("cnpj_cpf_do_socio")
                     or item.get("cpf_cnpj")
-                    or item.get("cpf_representante_legal")
+                    or item.get("cpf_representante_legal"),
                 ),
-            }
+            },
         )
     return socios
 
@@ -246,7 +260,8 @@ def _normalizar_brasilapi(raw: dict[str, Any]) -> dict[str, Any]:
         "razao_social": _str_or_none(raw.get("razao_social")),
         "nome_fantasia": _str_or_none(raw.get("nome_fantasia")),
         "situacao": _str_or_none(
-            raw.get("descricao_situacao_cadastral") or raw.get("situacao_cadastral")
+            raw.get("descricao_situacao_cadastral")
+            or raw.get("situacao_cadastral"),
         ),
         "data_situacao": _str_or_none(raw.get("data_situacao_cadastral")),
         "abertura": _str_or_none(raw.get("data_inicio_atividade")),
@@ -265,7 +280,8 @@ def _normalizar_brasilapi(raw: dict[str, Any]) -> dict[str, Any]:
         "email": _str_or_none(raw.get("email")),
         "cnae_principal": _normalizar_cnae_principal_brasilapi(raw),
         "cnaes_secundarios": _normalizar_cnaes_secundarios(
-            raw.get("cnaes_secundarios"), "brasilapi"
+            raw.get("cnaes_secundarios"),
+            "brasilapi",
         ),
         "socios": _normalizar_socios(raw.get("qsa"), "brasilapi"),
         "simples": {
@@ -277,7 +293,9 @@ def _normalizar_brasilapi(raw: dict[str, Any]) -> dict[str, Any]:
 
 
 def _normalizar_receitaws(raw: dict[str, Any]) -> dict[str, Any]:
-    simples = raw.get("simples") if isinstance(raw.get("simples"), dict) else {}
+    simples = (
+        raw.get("simples") if isinstance(raw.get("simples"), dict) else {}
+    )
     simei = raw.get("simei") if isinstance(raw.get("simei"), dict) else {}
     return {
         "cnpj": formatar_cnpj(str(raw.get("cnpj") or "")),
@@ -301,7 +319,8 @@ def _normalizar_receitaws(raw: dict[str, Any]) -> dict[str, Any]:
         "email": _str_or_none(raw.get("email")),
         "cnae_principal": _normalizar_cnae_principal_receitaws(raw),
         "cnaes_secundarios": _normalizar_cnaes_secundarios(
-            raw.get("atividades_secundarias"), "receitaws"
+            raw.get("atividades_secundarias"),
+            "receitaws",
         ),
         "socios": _normalizar_socios(raw.get("qsa"), "receitaws"),
         "simples": {
@@ -320,7 +339,9 @@ def _provider_order(provider: str) -> list[str]:
     return ["brasilapi", "receitaws"]
 
 
-async def _consultar_cnpj_impl(cnpj: str, config_tool_name: str) -> dict[str, Any]:
+async def _consultar_cnpj_impl(
+    cnpj: str, config_tool_name: str
+) -> dict[str, Any]:
     cnpj_limpo = limpar_documento(cnpj)
     if not validar_cnpj(cnpj_limpo):
         return _result(
@@ -341,20 +362,34 @@ async def _consultar_cnpj_impl(cnpj: str, config_tool_name: str) -> dict[str, An
         if source == "brasilapi":
             payload = await brasilapi.cnpj(cnpj_limpo)
             if not _is_client_error(payload):
-                return _result(True, _normalizar_brasilapi(payload), None, "brasilapi")
+                return _result(
+                    True, _normalizar_brasilapi(payload), None, "brasilapi"
+                )
             last_error = _provider_error(payload)
             logger.info("BrasilAPI CNPJ lookup failed: %s", last_error)
             continue
 
         payload = await receitaws.cnpj(cnpj_limpo)
         if not _is_client_error(payload) and payload.get("status") != "ERROR":
-            return _result(True, _normalizar_receitaws(payload), None, "receitaws")
-        last_error = _provider_error(payload) if _is_client_error(payload) else str(
-            payload.get("message") or "ReceitaWS não retornou dados para o CNPJ."
+            return _result(
+                True, _normalizar_receitaws(payload), None, "receitaws"
+            )
+        last_error = (
+            _provider_error(payload)
+            if _is_client_error(payload)
+            else str(
+                payload.get("message")
+                or "ReceitaWS não retornou dados para o CNPJ.",
+            )
         )
         logger.info("ReceitaWS CNPJ lookup failed: %s", last_error)
 
-    return _result(False, None, f"Não foi possível consultar o CNPJ: {last_error}", last_source)
+    return _result(
+        False,
+        None,
+        f"Não foi possível consultar o CNPJ: {last_error}",
+        last_source,
+    )
 
 
 async def consultar_cnpj(cnpj: str) -> dict[str, Any]:
@@ -383,16 +418,22 @@ async def consultar_cep(cep: str) -> dict[str, Any]:
         )
 
     _, timeout, cache_ttl, _ = _settings("consultar_cep")
-    payload = await BrasilApiClient(timeout=timeout, cache_ttl_seconds=cache_ttl).cep(
-        cep_limpo
+    payload = await BrasilApiClient(
+        timeout=timeout, cache_ttl_seconds=cache_ttl
+    ).cep(
+        cep_limpo,
     )
     if _is_client_error(payload):
         return _result(False, None, _provider_error(payload), "brasilapi")
 
     data = {
         "cep": _formatar_cep(payload.get("cep") or cep_limpo),
-        "logradouro": _str_or_none(payload.get("street") or payload.get("logradouro")),
-        "bairro": _str_or_none(payload.get("neighborhood") or payload.get("bairro")),
+        "logradouro": _str_or_none(
+            payload.get("street") or payload.get("logradouro")
+        ),
+        "bairro": _str_or_none(
+            payload.get("neighborhood") or payload.get("bairro")
+        ),
         "cidade": _str_or_none(payload.get("city") or payload.get("cidade")),
         "uf": _str_or_none(payload.get("state") or payload.get("uf")),
         "ibge": _str_or_none(payload.get("city_ibge") or payload.get("ibge")),
@@ -411,7 +452,9 @@ async def consultar_cpf(cpf: str) -> dict[str, Any]:
     valido = validar_cpf(cpf_limpo)
     data = {
         "cpf": cpf_limpo,
-        "cpf_formatado": formatar_cpf(cpf_limpo) if len(cpf_limpo) == 11 else None,
+        "cpf_formatado": formatar_cpf(cpf_limpo)
+        if len(cpf_limpo) == 11
+        else None,
         "valido": valido,
         "observacao": (
             "Validação offline por dígito verificador; não consulta dados pessoais."
@@ -438,9 +481,15 @@ def _validar_ie_sp(ie: str) -> bool:
     digits = _digits_ie(ie)
     if len(digits) != 12 or _all_same(digits):
         return False
-    first = sum(int(digits[i]) * weight for i, weight in enumerate([1, 3, 4, 5, 6, 7, 8, 10]))
+    first = sum(
+        int(digits[i]) * weight
+        for i, weight in enumerate([1, 3, 4, 5, 6, 7, 8, 10])
+    )
     first_digit = (first % 11) % 10
-    second = sum(int(digits[i]) * weight for i, weight in enumerate([3, 2, 10, 9, 8, 7, 6, 5, 4, 3, 2]))
+    second = sum(
+        int(digits[i]) * weight
+        for i, weight in enumerate([3, 2, 10, 9, 8, 7, 6, 5, 4, 3, 2])
+    )
     second_digit = (second % 11) % 10
     return int(digits[8]) == first_digit and int(digits[11]) == second_digit
 
@@ -461,7 +510,9 @@ def _validar_ie_mg(ie: str) -> bool:
     for digit, weight in zip(body, [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2]):
         total += sum(int(part) for part in str(int(digit) * weight))
     first_digit = (10 - (total % 10)) % 10
-    second_digit = _mod11_check(digits[:3] + digits[3:12], [3, 2, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2])
+    second_digit = _mod11_check(
+        digits[:3] + digits[3:12], [3, 2, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2]
+    )
     return int(digits[11]) == first_digit and int(digits[12]) == second_digit
 
 
@@ -469,7 +520,9 @@ def _validar_ie_rs(ie: str) -> bool:
     digits = _digits_ie(ie)
     if len(digits) != 10 or _all_same(digits):
         return False
-    return int(digits[-1]) == _mod11_check(digits[:9], [2, 9, 8, 7, 6, 5, 4, 3, 2])
+    return int(digits[-1]) == _mod11_check(
+        digits[:9], [2, 9, 8, 7, 6, 5, 4, 3, 2]
+    )
 
 
 def _validar_ie_pr(ie: str) -> bool:
@@ -499,10 +552,14 @@ def _validar_ie_ba(ie: str) -> bool:
     modulo = _ba_modulo(digits[0])
     if len(digits) == 8:
         second = _ba_digit(digits[:7], [7, 6, 5, 4, 3, 2, 1], modulo)
-        first = _ba_digit(digits[:6] + str(second), [8, 7, 6, 5, 4, 3, 2], modulo)
+        first = _ba_digit(
+            digits[:6] + str(second), [8, 7, 6, 5, 4, 3, 2], modulo
+        )
         return int(digits[6]) == first and int(digits[7]) == second
     second = _ba_digit(digits[:8], [8, 7, 6, 5, 4, 3, 2, 1], modulo)
-    first = _ba_digit(digits[:7] + str(second), [9, 8, 7, 6, 5, 4, 3, 2], modulo)
+    first = _ba_digit(
+        digits[:7] + str(second), [9, 8, 7, 6, 5, 4, 3, 2], modulo
+    )
     return int(digits[7]) == first and int(digits[8]) == second
 
 
@@ -517,9 +574,16 @@ def _validar_ie_pe(ie: str) -> bool:
 
 def _validar_ie_go(ie: str) -> bool:
     digits = _digits_ie(ie)
-    if len(digits) != 9 or _all_same(digits) or digits[:2] not in {"10", "11", "15"}:
+    if (
+        len(digits) != 9
+        or _all_same(digits)
+        or digits[:2] not in {"10", "11", "15"}
+    ):
         return False
-    total = sum(int(digit) * weight for digit, weight in zip(digits[:8], [9, 8, 7, 6, 5, 4, 3, 2]))
+    total = sum(
+        int(digit) * weight
+        for digit, weight in zip(digits[:8], [9, 8, 7, 6, 5, 4, 3, 2])
+    )
     remainder = total % 11
     digit = 11 - remainder
     if digit == 10:
@@ -535,7 +599,9 @@ def _validar_ie_df(ie: str) -> bool:
     if len(digits) != 13 or _all_same(digits) or not digits.startswith("07"):
         return False
     first = _mod11_check(digits[:11], [4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2])
-    second = _mod11_check(digits[:11] + str(first), [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2])
+    second = _mod11_check(
+        digits[:11] + str(first), [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
+    )
     return int(digits[11]) == first and int(digits[12]) == second
 
 
@@ -543,7 +609,9 @@ def _validar_ie_sc_es_ce(ie: str) -> bool:
     digits = _digits_ie(ie)
     if len(digits) != 9 or _all_same(digits):
         return False
-    return int(digits[-1]) == _mod11_check(digits[:8], [9, 8, 7, 6, 5, 4, 3, 2])
+    return int(digits[-1]) == _mod11_check(
+        digits[:8], [9, 8, 7, 6, 5, 4, 3, 2]
+    )
 
 
 _IE_VALIDATORS = {
@@ -583,7 +651,9 @@ def _classificar_simples(simples: dict[str, Any], mei: dict[str, Any]) -> str:
     if mei.get("optante") is True:
         return "Optante pelo MEI. Abordagem recomendada: baixo ticket e onboarding simples."
     if simples.get("optante") is True:
-        return "Optante pelo Simples Nacional. Boa aderência para soluções SMB."
+        return (
+            "Optante pelo Simples Nacional. Boa aderência para soluções SMB."
+        )
     if simples.get("optante") is False:
         return "Não optante pelo Simples Nacional ou informação não atualizada na fonte."
     return "Situação no Simples Nacional não informada pela fonte pública."
@@ -632,7 +702,9 @@ def _capital_points(capital: float | None) -> tuple[int, str]:
     return 0, "Capital social zerado ou indisponível."
 
 
-def _cnae_is_high_value(cnae: dict[str, Any] | None, prefixes: set[str]) -> bool:
+def _cnae_is_high_value(
+    cnae: dict[str, Any] | None, prefixes: set[str]
+) -> bool:
     if not cnae:
         return False
     codigo = limpar_documento(str(cnae.get("codigo") or ""))
@@ -643,7 +715,9 @@ def _suggestion(score: int) -> str:
     if score >= 75:
         return "Priorizar contato comercial consultivo com proposta personalizada."
     if score >= 50:
-        return "Nutrir o lead e validar dor, orçamento e decisor antes da oferta."
+        return (
+            "Nutrir o lead e validar dor, orçamento e decisor antes da oferta."
+        )
     return "Coletar mais dados e qualificar fit antes de acionar vendas."
 
 
@@ -674,18 +748,28 @@ async def enriquecer_lead(
         {
             "sinal": "situacao_cadastral_ativa",
             "pontos": ativa_points,
-            "detalhe": "Situação cadastral ATIVA." if ativa_points else "Situação cadastral não está ATIVA.",
-        }
+            "detalhe": "Situação cadastral ATIVA."
+            if ativa_points
+            else "Situação cadastral não está ATIVA.",
+        },
     )
 
-    capital_points, capital_detail = _capital_points(dados.get("capital_social"))
+    capital_points, capital_detail = _capital_points(
+        dados.get("capital_social")
+    )
     score += capital_points
     breakdown.append(
-        {"sinal": "capital_social", "pontos": capital_points, "detalhe": capital_detail}
+        {
+            "sinal": "capital_social",
+            "pontos": capital_points,
+            "detalhe": capital_detail,
+        },
     )
 
     cadastro_email = _str_or_none(dados.get("email"))
-    cadastro_telefone = _str_or_none(dados.get("telefone")) or _str_or_none(telefone)
+    cadastro_telefone = _str_or_none(dados.get("telefone")) or _str_or_none(
+        telefone
+    )
     email_points = 10 if cadastro_email else 0
     phone_points = 10 if cadastro_telefone else 0
     score += email_points + phone_points
@@ -693,21 +777,29 @@ async def enriquecer_lead(
         {
             "sinal": "email_no_cadastro",
             "pontos": email_points,
-            "detalhe": "Email encontrado no cadastro." if email_points else "Sem email público no cadastro.",
-        }
+            "detalhe": "Email encontrado no cadastro."
+            if email_points
+            else "Sem email público no cadastro.",
+        },
     )
     breakdown.append(
         {
             "sinal": "telefone_disponivel",
             "pontos": phone_points,
-            "detalhe": "Telefone disponível." if phone_points else "Telefone não informado.",
-        }
+            "detalhe": "Telefone disponível."
+            if phone_points
+            else "Telefone não informado.",
+        },
     )
 
     informed_domain = _email_domain(email)
     registry_domain = _email_domain(cadastro_email)
     domain_points = 0
-    if informed_domain and registry_domain and informed_domain == registry_domain:
+    if (
+        informed_domain
+        and registry_domain
+        and informed_domain == registry_domain
+    ):
         domain_points = 15
     elif informed_domain and informed_domain not in _FREE_EMAIL_DOMAINS:
         domain_points = 8
@@ -723,17 +815,23 @@ async def enriquecer_lead(
                 if domain_points == 8
                 else "Sem evidência de domínio corporativo compatível."
             ),
-        }
+        },
     )
 
-    cnae_points = 15 if _cnae_is_high_value(dados.get("cnae_principal"), high_value_cnaes) else 0
+    cnae_points = (
+        15
+        if _cnae_is_high_value(dados.get("cnae_principal"), high_value_cnaes)
+        else 0
+    )
     score += cnae_points
     breakdown.append(
         {
             "sinal": "cnae_alto_valor",
             "pontos": cnae_points,
-            "detalhe": "CNAE principal em categoria de alto valor." if cnae_points else "CNAE principal fora da lista de alto valor.",
-        }
+            "detalhe": "CNAE principal em categoria de alto valor."
+            if cnae_points
+            else "CNAE principal fora da lista de alto valor.",
+        },
     )
 
     score = min(score, 100)

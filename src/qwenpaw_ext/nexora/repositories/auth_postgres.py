@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """PostgreSQL repository for Nexora users, roles, and permissions."""
 from __future__ import annotations
 
@@ -15,24 +16,32 @@ def _now() -> int:
 def _load_roles_map() -> dict[str, dict]:
     db.initialize_schema()
     with db.get_engine().begin() as conn:
-        roles = conn.execute(
-            text(
-                """
+        roles = (
+            conn.execute(
+                text(
+                    """
                 SELECT id, name, description, builtin
                 FROM nexora_roles
                 ORDER BY id
                 """,
-            ),
-        ).mappings().all()
-        perms = conn.execute(
-            text(
-                """
+                ),
+            )
+            .mappings()
+            .all()
+        )
+        perms = (
+            conn.execute(
+                text(
+                    """
                 SELECT role_id, permission
                 FROM nexora_role_permissions
                 ORDER BY role_id, permission
                 """,
-            ),
-        ).mappings().all()
+                ),
+            )
+            .mappings()
+            .all()
+        )
 
     permissions_by_role: dict[str, list[str]] = {}
     for row in perms:
@@ -55,25 +64,33 @@ def _load_roles_map() -> dict[str, dict]:
 def load_auth_data() -> dict:
     db.initialize_schema()
     with db.get_engine().begin() as conn:
-        users = conn.execute(
-            text(
-                """
+        users = (
+            conn.execute(
+                text(
+                    """
                 SELECT id, username, password_hash, password_salt, status,
                        created_at, updated_at
                 FROM nexora_users
                 ORDER BY username
                 """,
-            ),
-        ).mappings().all()
-        user_roles = conn.execute(
-            text(
-                """
+                ),
+            )
+            .mappings()
+            .all()
+        )
+        user_roles = (
+            conn.execute(
+                text(
+                    """
                 SELECT username, role_id
                 FROM nexora_user_roles
                 ORDER BY username, role_id
                 """,
-            ),
-        ).mappings().all()
+                ),
+            )
+            .mappings()
+            .all()
+        )
 
     roles_by_user: dict[str, list[str]] = {}
     for row in user_roles:
@@ -103,7 +120,9 @@ def save_auth_data(data: dict) -> None:
     roles = data.get("roles") if isinstance(data.get("roles"), dict) else {}
     sync_users = "users" in data
     sync_roles = "roles" in data
-    user_names = {user.get("username") for user in users if user.get("username")}
+    user_names = {
+        user.get("username") for user in users if user.get("username")
+    }
     role_ids = set(roles.keys())
 
     with db.get_engine().begin() as conn:
@@ -187,7 +206,9 @@ def save_auth_data(data: dict) -> None:
                 },
             )
             conn.execute(
-                text("DELETE FROM nexora_role_permissions WHERE role_id = :role_id"),
+                text(
+                    "DELETE FROM nexora_role_permissions WHERE role_id = :role_id"
+                ),
                 {"role_id": role_id},
             )
             for permission in role.get("permissions") or []:
@@ -236,7 +257,9 @@ def save_auth_data(data: dict) -> None:
                 },
             )
             conn.execute(
-                text("DELETE FROM nexora_user_roles WHERE username = :username"),
+                text(
+                    "DELETE FROM nexora_user_roles WHERE username = :username"
+                ),
                 {"username": username},
             )
             for role_id in user.get("roles") or []:
@@ -270,7 +293,9 @@ def delete_role(role_id: str) -> bool:
     db.initialize_schema()
     with db.get_engine().begin() as conn:
         conn.execute(
-            text("DELETE FROM nexora_role_permissions WHERE role_id = :role_id"),
+            text(
+                "DELETE FROM nexora_role_permissions WHERE role_id = :role_id"
+            ),
             {"role_id": role_id},
         )
         result = conn.execute(

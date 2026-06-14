@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """PostgreSQL repository for agent initialization templates."""
 from __future__ import annotations
 
@@ -32,33 +33,41 @@ def _template_row(row: Any) -> dict:
 def list_templates() -> list[dict]:
     db.initialize_schema()
     with db.get_engine().begin() as conn:
-        rows = conn.execute(
-            text(
-                """
+        rows = (
+            conn.execute(
+                text(
+                    """
                 SELECT template_id, name, description, capabilities,
                        created_by, created_at, updated_at
                 FROM nexora_agent_templates
                 ORDER BY created_at
-                """
-            ),
-        ).mappings().all()
+                """,
+                ),
+            )
+            .mappings()
+            .all()
+        )
     return [_template_row(r) for r in rows]
 
 
 def get_template(template_id: str) -> dict | None:
     db.initialize_schema()
     with db.get_engine().begin() as conn:
-        row = conn.execute(
-            text(
-                """
+        row = (
+            conn.execute(
+                text(
+                    """
                 SELECT template_id, name, description, capabilities,
                        created_by, created_at, updated_at
                 FROM nexora_agent_templates
                 WHERE template_id = :template_id
-                """
-            ),
-            {"template_id": template_id},
-        ).mappings().first()
+                """,
+                ),
+                {"template_id": template_id},
+            )
+            .mappings()
+            .first()
+        )
     return _template_row(row) if row else None
 
 
@@ -72,9 +81,10 @@ def create_template(template: dict) -> dict:
         separators=(",", ":"),
     )
     with db.get_engine().begin() as conn:
-        row = conn.execute(
-            text(
-                """
+        row = (
+            conn.execute(
+                text(
+                    """
                 INSERT INTO nexora_agent_templates (
                     template_id, name, description, capabilities,
                     created_by, created_at, updated_at
@@ -86,18 +96,21 @@ def create_template(template: dict) -> dict:
                 )
                 RETURNING template_id, name, description, capabilities,
                           created_by, created_at, updated_at
-                """
-            ),
-            {
-                "template_id": template_id,
-                "name": template["name"],
-                "description": template.get("description", ""),
-                "capabilities": caps_json,
-                "created_by": template.get("created_by", "admin"),
-                "created_at": now,
-                "updated_at": now,
-            },
-        ).mappings().one()
+                """,
+                ),
+                {
+                    "template_id": template_id,
+                    "name": template["name"],
+                    "description": template.get("description", ""),
+                    "capabilities": caps_json,
+                    "created_by": template.get("created_by", "admin"),
+                    "created_at": now,
+                    "updated_at": now,
+                },
+            )
+            .mappings()
+            .one()
+        )
     return _template_row(row)
 
 
@@ -115,22 +128,28 @@ def update_template(template_id: str, updates: dict) -> dict | None:
     if "capabilities" in updates:
         sets.append("capabilities = CAST(:capabilities AS JSONB)")
         params["capabilities"] = json.dumps(
-            updates["capabilities"], ensure_ascii=False, separators=(",", ":")
+            updates["capabilities"],
+            ensure_ascii=False,
+            separators=(",", ":"),
         )
     set_clause = ", ".join(sets)
     with db.get_engine().begin() as conn:
-        row = conn.execute(
-            text(
-                f"""
+        row = (
+            conn.execute(
+                text(
+                    f"""
                 UPDATE nexora_agent_templates
                 SET {set_clause}
                 WHERE template_id = :template_id
                 RETURNING template_id, name, description, capabilities,
                           created_by, created_at, updated_at
-                """
-            ),
-            params,
-        ).mappings().first()
+                """,
+                ),
+                params,
+            )
+            .mappings()
+            .first()
+        )
     return _template_row(row) if row else None
 
 
@@ -139,7 +158,7 @@ def delete_template(template_id: str) -> bool:
     with db.get_engine().begin() as conn:
         result = conn.execute(
             text(
-                "DELETE FROM nexora_agent_templates WHERE template_id = :id"
+                "DELETE FROM nexora_agent_templates WHERE template_id = :id",
             ),
             {"id": template_id},
         )

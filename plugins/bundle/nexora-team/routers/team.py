@@ -97,10 +97,14 @@ def build_from_blueprint(body: BuildTeamRequest) -> BuildTeamResponse:
 
     result = build_team_from_blueprint(blueprint, instantiate=False)
 
-    resolved = [
-        {"original_name": spec.name, "role": role}
-        for spec, role in result.role_map.items()
-    ] if isinstance(result.role_map, dict) else []
+    resolved = (
+        [
+            {"original_name": spec.name, "role": role}
+            for spec, role in result.role_map.items()
+        ]
+        if isinstance(result.role_map, dict)
+        else []
+    )
 
     return BuildTeamResponse(
         resolved=resolved,

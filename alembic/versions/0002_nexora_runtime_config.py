@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Add runtime config tables for global and per-agent configuration."""
 
 from __future__ import annotations

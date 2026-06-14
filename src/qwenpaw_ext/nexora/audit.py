@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Nexora audit log storage and helpers."""
 from __future__ import annotations
 
@@ -68,12 +69,18 @@ def safe_preview(value: Any, *, max_length: int = 2000) -> Any:
     if value is None or isinstance(value, (bool, int, float)):
         return value
     if isinstance(value, str):
-        return value if len(value) <= max_length else value[:max_length] + "..."
+        return (
+            value if len(value) <= max_length else value[:max_length] + "..."
+        )
     try:
         rendered = json.dumps(value, ensure_ascii=False, default=str)
     except (TypeError, ValueError):
         rendered = str(value)
-    return rendered if len(rendered) <= max_length else rendered[:max_length] + "..."
+    return (
+        rendered
+        if len(rendered) <= max_length
+        else rendered[:max_length] + "..."
+    )
 
 
 def record_tool_audit_event(
@@ -146,7 +153,11 @@ def record_audit_event(
         _prepare_file()
         with open(AUDIT_FILE, "a", encoding="utf-8") as fh:
             with _exclusive_file_lock(fh):
-                fh.write(json.dumps(event, ensure_ascii=False, separators=(",", ":")))
+                fh.write(
+                    json.dumps(
+                        event, ensure_ascii=False, separators=(",", ":")
+                    )
+                )
                 fh.write("\n")
                 fh.flush()
                 os.fsync(fh.fileno())

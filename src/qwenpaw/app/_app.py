@@ -19,7 +19,10 @@ from agentscope_runtime.engine.schemas.exception import (
     AppBaseException,
 )
 
-from ..config import load_config, save_config  # pylint: disable=no-name-in-module
+from ..config import (
+    load_config,
+    save_config,
+)  # pylint: disable=no-name-in-module
 from ..config.utils import get_config_path
 from ..constant import (
     DOCS_ENABLED,
@@ -307,6 +310,7 @@ async def lifespan(  # pylint: disable=too-many-statements,too-many-branches
 
     try:
         from qwenpaw_ext.nexora.db import check_database_health
+
         check_database_health()
         logger.info("Nexora PostgreSQL health check passed")
     except Exception:

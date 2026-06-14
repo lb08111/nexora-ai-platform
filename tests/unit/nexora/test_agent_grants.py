@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Tests for agent-user grant management (multi-tenant authorization)."""
 from __future__ import annotations
 
@@ -15,7 +16,8 @@ def _patch_secret_dir(tmp_path: Path):
 
 def _patch_no_pg():
     return patch(
-        "qwenpaw_ext.nexora.agent_grants._use_pg", return_value=False
+        "qwenpaw_ext.nexora.agent_grants._use_pg",
+        return_value=False,
     )
 
 

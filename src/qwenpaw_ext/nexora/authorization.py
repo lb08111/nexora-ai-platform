@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Multi-tenant agent authorization — replaces role-based agent access.
 
 Core rule: a user can access an agent if and only if:
@@ -22,6 +23,7 @@ logger = logging.getLogger(__name__)
 
 def _is_auth_active() -> bool:
     from qwenpaw.app import auth
+
     return auth.is_auth_enabled() and auth.has_registered_users()
 
 
@@ -43,7 +45,9 @@ def _get_roles(request: "Request") -> list[str]:
     return list(getattr(request.state, "roles", []) or [])
 
 
-def user_can_access_agent(username: str, roles: list[str], agent_id: str) -> bool:
+def user_can_access_agent(
+    username: str, roles: list[str], agent_id: str
+) -> bool:
     """Check if a user can access a specific agent."""
     if not _is_auth_active():
         return True
@@ -52,6 +56,7 @@ def user_can_access_agent(username: str, roles: list[str], agent_id: str) -> boo
     if "admin" in roles:
         return True
     from qwenpaw_ext.nexora import agent_grants
+
     return agent_grants.is_user_granted(agent_id, username)
 
 
@@ -66,6 +71,7 @@ def filter_agent_ids_for_user(
     if "admin" in roles:
         return agent_ids
     from qwenpaw_ext.nexora import agent_grants
+
     granted_ids = set(agent_grants.get_authorized_agent_ids(username))
     return [aid for aid in agent_ids if aid in granted_ids]
 

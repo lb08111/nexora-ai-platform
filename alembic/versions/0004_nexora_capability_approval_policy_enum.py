@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Migrate capability approval config from boolean columns to policy enum strings.
 
 Also creates 0003 tables if they don't exist yet (handles stamp-over scenario).
@@ -24,7 +25,7 @@ def _table_exists(conn, table_name: str) -> bool:
     result = conn.execute(
         sa.text(
             "SELECT EXISTS (SELECT 1 FROM information_schema.tables "
-            "WHERE table_name = :name)"
+            "WHERE table_name = :name)",
         ),
         {"name": table_name},
     )
@@ -35,7 +36,7 @@ def _column_exists(conn, table_name: str, column_name: str) -> bool:
     result = conn.execute(
         sa.text(
             "SELECT EXISTS (SELECT 1 FROM information_schema.columns "
-            "WHERE table_name = :table AND column_name = :col)"
+            "WHERE table_name = :table AND column_name = :col)",
         ),
         {"table": table_name, "col": column_name},
     )
@@ -51,7 +52,9 @@ def upgrade() -> None:
             "nexora_agent_user_grants",
             sa.Column("agent_id", sa.Text(), nullable=False),
             sa.Column("username", sa.Text(), nullable=False),
-            sa.Column("granted_by", sa.Text(), nullable=False, server_default=""),
+            sa.Column(
+                "granted_by", sa.Text(), nullable=False, server_default=""
+            ),
             sa.Column("granted_at", sa.BigInteger(), nullable=False),
             sa.PrimaryKeyConstraint("agent_id", "username"),
         )
@@ -71,14 +74,18 @@ def upgrade() -> None:
             "nexora_agent_templates",
             sa.Column("template_id", sa.Text(), primary_key=True),
             sa.Column("name", sa.Text(), nullable=False),
-            sa.Column("description", sa.Text(), nullable=False, server_default=""),
+            sa.Column(
+                "description", sa.Text(), nullable=False, server_default=""
+            ),
             sa.Column(
                 "capabilities",
                 postgresql.JSONB(astext_type=sa.Text()),
                 nullable=False,
                 server_default=sa.text("'{}'::jsonb"),
             ),
-            sa.Column("created_by", sa.Text(), nullable=False, server_default=""),
+            sa.Column(
+                "created_by", sa.Text(), nullable=False, server_default=""
+            ),
             sa.Column("created_at", sa.BigInteger(), nullable=False),
             sa.Column("updated_at", sa.BigInteger(), nullable=False),
         )
@@ -113,7 +120,9 @@ def upgrade() -> None:
             ),
             sa.Column("updated_at", sa.BigInteger(), nullable=False),
         )
-    elif _column_exists(conn, "nexora_capability_approval_config", "add_approval"):
+    elif _column_exists(
+        conn, "nexora_capability_approval_config", "add_approval"
+    ):
         # Migrate old boolean columns to new policy strings
         op.add_column(
             "nexora_capability_approval_config",
@@ -133,7 +142,7 @@ def upgrade() -> None:
                     WHEN auto_approve_remove THEN 'log'
                     ELSE 'approval'
                 END
-            """
+            """,
         )
 
         op.alter_column(
@@ -154,12 +163,14 @@ def upgrade() -> None:
             UPDATE nexora_capability_approval_config
             SET approver_roles = '["admin"]'::jsonb
             WHERE approver_roles @> '"ops_admin"'::jsonb
-            """
+            """,
         )
 
         op.drop_column("nexora_capability_approval_config", "add_approval")
         op.drop_column("nexora_capability_approval_config", "remove_approval")
-        op.drop_column("nexora_capability_approval_config", "auto_approve_remove")
+        op.drop_column(
+            "nexora_capability_approval_config", "auto_approve_remove"
+        )
 
 
 def downgrade() -> None:
@@ -184,7 +195,7 @@ def downgrade() -> None:
                 add_approval = (add_policy = 'approval'),
                 remove_approval = (remove_policy != 'none'),
                 auto_approve_remove = (remove_policy = 'log')
-            """
+            """,
         )
 
         op.alter_column(

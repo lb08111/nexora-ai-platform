@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Tests for agent initialization templates."""
 from __future__ import annotations
 
@@ -25,16 +26,18 @@ class TestAgentTemplates:
         with _patch_secret_dir(tmp_path), _patch_no_pg():
             from qwenpaw_ext.nexora import agent_templates as m
 
-            t = m.create_template({
-                "name": "测试模板",
-                "description": "用于测试",
-                "capabilities": {
-                    "tools": ["read_file"],
-                    "skills": [],
-                    "mcps": [],
-                },
-                "created_by": "admin",
-            })
+            t = m.create_template(
+                {
+                    "name": "测试模板",
+                    "description": "用于测试",
+                    "capabilities": {
+                        "tools": ["read_file"],
+                        "skills": [],
+                        "mcps": [],
+                    },
+                    "created_by": "admin",
+                }
+            )
             assert t["name"] == "测试模板"
             assert t["template_id"]
 
@@ -45,11 +48,13 @@ class TestAgentTemplates:
         with _patch_secret_dir(tmp_path), _patch_no_pg():
             from qwenpaw_ext.nexora import agent_templates as m
 
-            t = m.create_template({
-                "template_id": "test-1",
-                "name": "测试",
-                "capabilities": {"tools": ["read_file"]},
-            })
+            t = m.create_template(
+                {
+                    "template_id": "test-1",
+                    "name": "测试",
+                    "capabilities": {"tools": ["read_file"]},
+                }
+            )
             fetched = m.get_template("test-1")
             assert fetched is not None
             assert fetched["name"] == "测试"
@@ -61,15 +66,20 @@ class TestAgentTemplates:
         with _patch_secret_dir(tmp_path), _patch_no_pg():
             from qwenpaw_ext.nexora import agent_templates as m
 
-            m.create_template({
-                "template_id": "test-1",
-                "name": "原名称",
-                "capabilities": {"tools": []},
-            })
-            updated = m.update_template("test-1", {
-                "name": "新名称",
-                "capabilities": {"tools": ["read_file", "write_file"]},
-            })
+            m.create_template(
+                {
+                    "template_id": "test-1",
+                    "name": "原名称",
+                    "capabilities": {"tools": []},
+                }
+            )
+            updated = m.update_template(
+                "test-1",
+                {
+                    "name": "新名称",
+                    "capabilities": {"tools": ["read_file", "write_file"]},
+                },
+            )
             assert updated is not None
             assert updated["name"] == "新名称"
             assert len(updated["capabilities"]["tools"]) == 2
@@ -112,11 +122,13 @@ class TestAgentTemplates:
         with _patch_secret_dir(tmp_path), _patch_no_pg():
             from qwenpaw_ext.nexora import agent_templates as m
 
-            m.create_template({
-                "template_id": "t1",
-                "name": "持久化测试",
-                "capabilities": {},
-            })
+            m.create_template(
+                {
+                    "template_id": "t1",
+                    "name": "持久化测试",
+                    "capabilities": {},
+                }
+            )
             path = tmp_path / "nexora_agent_templates.json"
             assert path.exists()
             data = json.loads(path.read_text())

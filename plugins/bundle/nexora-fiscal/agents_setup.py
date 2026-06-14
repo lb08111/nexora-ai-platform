@@ -87,7 +87,9 @@ def ensure_builtin_agents() -> None:
         from qwenpaw.config.utils import load_config, save_config
         from qwenpaw.constant import WORKING_DIR
     except ImportError:
-        logger.error("Cannot import qwenpaw.config; agent registration skipped")
+        logger.error(
+            "Cannot import qwenpaw.config; agent registration skipped"
+        )
         return
 
     config = load_config()
@@ -126,9 +128,7 @@ def _register_one_agent(
 ) -> None:
     agent_id = spec["agent_id"]
     expected_ws = (
-        (Path(WORKING_DIR) / "workspaces" / agent_id)
-        .expanduser()
-        .resolve()
+        (Path(WORKING_DIR) / "workspaces" / agent_id).expanduser().resolve()
     )
 
     if agent_id in config.agents.profiles:
@@ -177,7 +177,9 @@ def _register_one_agent(
     except ValueError:
         logger.exception("Failed to save agent.json for %s", agent_id)
 
-    register_extra_tools(agent_id, spec.get("extra_tools", FISCAL_TOOL_CONFIGS))
+    register_extra_tools(
+        agent_id, spec.get("extra_tools", FISCAL_TOOL_CONFIGS)
+    )
 
 
 def _initialize_agent_workspace(workspace_dir: Path, role: str) -> None:
@@ -230,4 +232,6 @@ def uninstall_agents() -> None:
             shutil.rmtree(workspace_dir)
             logger.info("Removed Nexora Fiscal workspace: %s", workspace_dir)
         except Exception as exc:  # pylint: disable=broad-except
-            logger.warning("Failed to delete workspace %s: %s", workspace_dir, exc)
+            logger.warning(
+                "Failed to delete workspace %s: %s", workspace_dir, exc
+            )

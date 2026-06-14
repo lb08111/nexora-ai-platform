@@ -71,7 +71,7 @@ class AsaasPixProvider(AbstractPixProvider):
                 expires_in=expiracao_segundos,
             )
 
-        due_date = (datetime.now(UTC) + timedelta(seconds=expiracao_segundos))
+        due_date = datetime.now(UTC) + timedelta(seconds=expiracao_segundos)
         payment = await self._request(
             "POST",
             "/payments",
@@ -291,7 +291,9 @@ class AsaasPixProvider(AbstractPixProvider):
             "base_url": self.base_url,
         }
 
-    async def _request(self, method: str, path: str, **kwargs: Any) -> dict[str, Any]:
+    async def _request(
+        self, method: str, path: str, **kwargs: Any
+    ) -> dict[str, Any]:
         url = f"{self.base_url}{path}"
         async with httpx.AsyncClient(timeout=30.0) as client:
             response = await client.request(

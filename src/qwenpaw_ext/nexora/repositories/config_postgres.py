@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """PostgreSQL repository for QwenPaw runtime configuration."""
 from __future__ import annotations
 
@@ -36,7 +37,9 @@ def load_global_config() -> Optional[dict]:
     engine = db.get_engine()
     with engine.connect() as conn:
         row = conn.execute(
-            text("SELECT data, updated_at FROM nexora_global_config WHERE id = 1"),
+            text(
+                "SELECT data, updated_at FROM nexora_global_config WHERE id = 1"
+            ),
         ).first()
     if row is None:
         return None
@@ -59,7 +62,7 @@ def save_global_config(data: dict) -> None:
                 text(
                     "UPDATE nexora_global_config "
                     "SET data = CAST(:data AS JSONB), updated_at = :ts "
-                    "WHERE id = 1"
+                    "WHERE id = 1",
                 ),
                 {"data": payload, "ts": now},
             )
@@ -67,7 +70,7 @@ def save_global_config(data: dict) -> None:
             conn.execute(
                 text(
                     "INSERT INTO nexora_global_config (id, data, updated_at) "
-                    "VALUES (1, CAST(:data AS JSONB), :ts)"
+                    "VALUES (1, CAST(:data AS JSONB), :ts)",
                 ),
                 {"data": payload, "ts": now},
             )
@@ -95,7 +98,7 @@ def load_agent_config(agent_id: str) -> Optional[dict]:
         row = conn.execute(
             text(
                 "SELECT data, updated_at FROM nexora_agent_configs "
-                "WHERE agent_id = :aid"
+                "WHERE agent_id = :aid",
             ),
             {"aid": agent_id},
         ).first()
@@ -113,7 +116,7 @@ def save_agent_config(agent_id: str, data: dict) -> None:
         existing = conn.execute(
             text(
                 "SELECT agent_id FROM nexora_agent_configs "
-                "WHERE agent_id = :aid FOR UPDATE"
+                "WHERE agent_id = :aid FOR UPDATE",
             ),
             {"aid": agent_id},
         ).first()
@@ -122,7 +125,7 @@ def save_agent_config(agent_id: str, data: dict) -> None:
                 text(
                     "UPDATE nexora_agent_configs "
                     "SET data = CAST(:data AS JSONB), updated_at = :ts "
-                    "WHERE agent_id = :aid"
+                    "WHERE agent_id = :aid",
                 ),
                 {"aid": agent_id, "data": payload, "ts": now},
             )
@@ -130,7 +133,7 @@ def save_agent_config(agent_id: str, data: dict) -> None:
             conn.execute(
                 text(
                     "INSERT INTO nexora_agent_configs (agent_id, data, updated_at) "
-                    "VALUES (:aid, CAST(:data AS JSONB), :ts)"
+                    "VALUES (:aid, CAST(:data AS JSONB), :ts)",
                 ),
                 {"aid": agent_id, "data": payload, "ts": now},
             )
@@ -152,7 +155,7 @@ def get_agent_config_version(agent_id: str) -> Optional[int]:
     with engine.connect() as conn:
         row = conn.execute(
             text(
-                "SELECT updated_at FROM nexora_agent_configs WHERE agent_id = :aid"
+                "SELECT updated_at FROM nexora_agent_configs WHERE agent_id = :aid",
             ),
             {"aid": agent_id},
         ).first()
@@ -164,6 +167,8 @@ def list_agent_ids() -> list[str]:
     engine = db.get_engine()
     with engine.connect() as conn:
         rows = conn.execute(
-            text("SELECT agent_id FROM nexora_agent_configs ORDER BY agent_id"),
+            text(
+                "SELECT agent_id FROM nexora_agent_configs ORDER BY agent_id"
+            ),
         ).fetchall()
     return [r[0] for r in rows]

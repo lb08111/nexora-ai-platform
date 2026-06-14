@@ -169,7 +169,7 @@ async def scaffold_team(
         f'        "{default_prompt_prefix} "\n'
         f'        "Você atua como {role}. "\n'
         f'        "Responda em português do Brasil."\n'
-        f'    ),'
+        f"    ),"
         for role in roles
     )
 

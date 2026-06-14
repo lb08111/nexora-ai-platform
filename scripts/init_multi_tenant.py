@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """Initialize multi-tenant permission data — idempotent, safe to re-run.
 
 Actions:
@@ -56,7 +57,9 @@ def step1_clear_old_governance():
             print(f"  [OK] {key}: already empty")
 
     if changed:
-        path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+        path.write_text(
+            json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
         print(f"  [SAVED] {path}")
 
 
@@ -75,18 +78,26 @@ def step2_clear_grants():
 
 def step3_init_approval_config():
     """Initialize capability approval defaults via the module."""
-    from qwenpaw_ext.nexora.capability_approval import ensure_default_configs, list_configs
+    from qwenpaw_ext.nexora.capability_approval import (
+        ensure_default_configs,
+        list_configs,
+    )
 
     ensure_default_configs()
     configs = list_configs()
     print(f"  [OK] {len(configs)} capability approval configs initialized:")
     for c in configs:
-        print(f"       {c['capability_type']:8s} add={c['add_approval']} rm={c['remove_approval']} auto={c['auto_approve_remove']}")
+        print(
+            f"       {c['capability_type']:8s} add={c['add_approval']} rm={c['remove_approval']} auto={c['auto_approve_remove']}"
+        )
 
 
 def step4_init_templates():
     """Initialize built-in templates via the module."""
-    from qwenpaw_ext.nexora.agent_templates import ensure_builtin_templates, list_templates
+    from qwenpaw_ext.nexora.agent_templates import (
+        ensure_builtin_templates,
+        list_templates,
+    )
 
     ensure_builtin_templates()
     templates = list_templates()

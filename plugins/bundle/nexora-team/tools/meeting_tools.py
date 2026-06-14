@@ -238,9 +238,7 @@ def _summarize(topic: str, contribs: list[Contribution]) -> str:
     ok = [c for c in contribs if not c.error]
     err = [c for c in contribs if c.error]
     head = f"Reunião sobre: {topic}\n"
-    head += (
-        f"{len(ok)} contribuição(ões), {len(err)} sem resposta."
-    )
+    head += f"{len(ok)} contribuição(ões), {len(err)} sem resposta."
     if not ok:
         return head
     lines = [head, ""]

@@ -23,18 +23,27 @@ SUPPORTED_PROVIDERS = {
 
 def current_provider_name() -> str:
     """Return configured provider key, defaulting to Focus NFe."""
-    return os.environ.get(
-        "FISCAL_PROVIDER",
-        DEFAULT_ENV_VALUES["FISCAL_PROVIDER"],
-    ).strip().lower()
+    return (
+        os.environ.get(
+            "FISCAL_PROVIDER",
+            DEFAULT_ENV_VALUES["FISCAL_PROVIDER"],
+        )
+        .strip()
+        .lower()
+    )
 
 
 def current_ambiente() -> str:
     """Return configured fiscal environment, defaulting to homologacao."""
-    return os.environ.get(
-        "FISCAL_AMBIENTE",
-        DEFAULT_ENV_VALUES["FISCAL_AMBIENTE"],
-    ).strip().lower() or DEFAULT_ENV_VALUES["FISCAL_AMBIENTE"]
+    return (
+        os.environ.get(
+            "FISCAL_AMBIENTE",
+            DEFAULT_ENV_VALUES["FISCAL_AMBIENTE"],
+        )
+        .strip()
+        .lower()
+        or DEFAULT_ENV_VALUES["FISCAL_AMBIENTE"]
+    )
 
 
 def build_provider() -> AbstractFiscalProvider:
@@ -67,7 +76,7 @@ def provider_status() -> dict[str, Any]:
             "EMPRESA_IE": bool(os.environ.get("EMPRESA_IE")),
             "EMPRESA_REGIME_TRIBUTARIO": bool(
                 os.environ.get("EMPRESA_REGIME_TRIBUTARIO")
-                or DEFAULT_ENV_VALUES["EMPRESA_REGIME_TRIBUTARIO"]
+                or DEFAULT_ENV_VALUES["EMPRESA_REGIME_TRIBUTARIO"],
             ),
         },
     }

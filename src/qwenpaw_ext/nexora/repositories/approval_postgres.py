@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """PostgreSQL repository for Nexora approval requests."""
 from __future__ import annotations
 
@@ -48,9 +49,10 @@ def create_request(item: dict) -> dict:
     db.initialize_schema()
     engine = db.get_engine()
     with engine.begin() as conn:
-        row = conn.execute(
-            text(
-                """
+        row = (
+            conn.execute(
+                text(
+                    """
                 INSERT INTO nexora_approval_requests (
                     id, action, status, requester, approver, resource_type,
                     resource_id, resource_name, summary, reason, payload,
@@ -66,13 +68,16 @@ def create_request(item: dict) -> dict:
                           resource_type, resource_id, resource_name, summary,
                           reason, payload, result, created_at, updated_at
                 """,
-            ),
-            {
-                **item,
-                "payload": _json_for_db(item.get("payload")),
-                "result": _json_for_db(item.get("result")),
-            },
-        ).mappings().one()
+                ),
+                {
+                    **item,
+                    "payload": _json_for_db(item.get("payload")),
+                    "result": _json_for_db(item.get("result")),
+                },
+            )
+            .mappings()
+            .one()
+        )
     return _row_to_request(row)
 
 
@@ -80,18 +85,22 @@ def get_request(request_id: str) -> dict | None:
     db.initialize_schema()
     engine = db.get_engine()
     with engine.begin() as conn:
-        row = conn.execute(
-            text(
-                """
+        row = (
+            conn.execute(
+                text(
+                    """
                 SELECT id, action, status, requester, approver, resource_type,
                        resource_id, resource_name, summary, reason, payload,
                        result, created_at, updated_at
                 FROM nexora_approval_requests
                 WHERE id = :id
                 """,
-            ),
-            {"id": request_id},
-        ).mappings().first()
+                ),
+                {"id": request_id},
+            )
+            .mappings()
+            .first()
+        )
     return _row_to_request(row) if row is not None else None
 
 
@@ -132,9 +141,10 @@ def update_request(request_id: str, item: dict) -> dict | None:
     db.initialize_schema()
     engine = db.get_engine()
     with engine.begin() as conn:
-        row = conn.execute(
-            text(
-                """
+        row = (
+            conn.execute(
+                text(
+                    """
                 UPDATE nexora_approval_requests
                 SET action = :action,
                     status = :status,
@@ -154,12 +164,15 @@ def update_request(request_id: str, item: dict) -> dict | None:
                           resource_type, resource_id, resource_name, summary,
                           reason, payload, result, created_at, updated_at
                 """,
-            ),
-            {
-                **item,
-                "id": request_id,
-                "payload": _json_for_db(item.get("payload")),
-                "result": _json_for_db(item.get("result")),
-            },
-        ).mappings().first()
+                ),
+                {
+                    **item,
+                    "id": request_id,
+                    "payload": _json_for_db(item.get("payload")),
+                    "result": _json_for_db(item.get("result")),
+                },
+            )
+            .mappings()
+            .first()
+        )
     return _row_to_request(row) if row is not None else None

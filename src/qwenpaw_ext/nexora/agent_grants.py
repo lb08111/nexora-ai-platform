@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Agent-user grant management — file-backed with optional PostgreSQL.
 
 Manages which users are authorized to use which agents.
@@ -19,6 +20,7 @@ _GRANTS_FILE = "nexora_agent_grants.json"
 
 def _secret_dir() -> Path:
     from qwenpaw.constant import SECRET_DIR
+
     return Path(SECRET_DIR)
 
 
@@ -42,19 +44,22 @@ def _save_grants(data: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_suffix(".tmp")
     tmp.write_text(
-        json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8"
+        json.dumps(data, ensure_ascii=False, indent=2),
+        encoding="utf-8",
     )
     tmp.replace(path)
 
 
 def _use_pg() -> bool:
     from qwenpaw_ext.nexora import db
+
     return db.is_database_enabled()
 
 
 def list_grants_for_agent(agent_id: str) -> list[dict]:
     if _use_pg():
         from .repositories import agent_grants_postgres as repo
+
         return repo.list_grants_for_agent(agent_id)
     data = _load_grants()
     return data.get(agent_id, [])
@@ -63,6 +68,7 @@ def list_grants_for_agent(agent_id: str) -> list[dict]:
 def list_grants_for_user(username: str) -> list[dict]:
     if _use_pg():
         from .repositories import agent_grants_postgres as repo
+
         return repo.list_grants_for_user(username)
     data = _load_grants()
     result = []
@@ -82,6 +88,7 @@ def get_authorized_agent_ids(username: str) -> list[str]:
 def is_user_granted(agent_id: str, username: str) -> bool:
     if _use_pg():
         from .repositories import agent_grants_postgres as repo
+
         return repo.is_user_granted(agent_id, username)
     data = _load_grants()
     for g in data.get(agent_id, []):
@@ -91,10 +98,13 @@ def is_user_granted(agent_id: str, username: str) -> bool:
 
 
 def grant_agent_to_user(
-    agent_id: str, username: str, granted_by: str
+    agent_id: str,
+    username: str,
+    granted_by: str,
 ) -> dict:
     if _use_pg():
         from .repositories import agent_grants_postgres as repo
+
         return repo.grant_agent_to_user(agent_id, username, granted_by)
     data = _load_grants()
     grants = data.setdefault(agent_id, [])
@@ -118,6 +128,7 @@ def grant_agent_to_user(
 def revoke_agent_from_user(agent_id: str, username: str) -> bool:
     if _use_pg():
         from .repositories import agent_grants_postgres as repo
+
         return repo.revoke_agent_from_user(agent_id, username)
     data = _load_grants()
     grants = data.get(agent_id, [])
@@ -130,10 +141,13 @@ def revoke_agent_from_user(agent_id: str, username: str) -> bool:
 
 
 def batch_grant_agent(
-    agent_id: str, usernames: list[str], granted_by: str
+    agent_id: str,
+    usernames: list[str],
+    granted_by: str,
 ) -> int:
     if _use_pg():
         from .repositories import agent_grants_postgres as repo
+
         return repo.batch_grant_agent(agent_id, usernames, granted_by)
     count = 0
     for username in usernames:
@@ -145,6 +159,7 @@ def batch_grant_agent(
 def batch_revoke_agent(agent_id: str, usernames: list[str]) -> int:
     if _use_pg():
         from .repositories import agent_grants_postgres as repo
+
         return repo.batch_revoke_agent(agent_id, usernames)
     count = 0
     for username in usernames:

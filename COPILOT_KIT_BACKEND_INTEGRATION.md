@@ -117,19 +117,19 @@ async def chat_endpoint(request: ChatRequest):
     try:
         # Processar mensagem com QwenPaw
         agent = get_agent()  # Obter instância do agente
-        
+
         # Construir histórico para o agente
         history_text = "\n".join([
-            f"{msg.role.upper()}: {msg.content}" 
+            f"{msg.role.upper()}: {msg.content}"
             for msg in request.history
         ])
-        
+
         # Enviar para o agente
         response = await agent.process_message(
             message=request.message,
             history=history_text
         )
-        
+
         return ChatResponse(
             reply=response,
             metadata={
@@ -169,11 +169,11 @@ def chat():
     data = request.json
     message = data.get('message')
     history = data.get('history', [])
-    
+
     try:
         agent = get_agent()
         response = agent.process_message(message, history)
-        
+
         return jsonify({
             'reply': response,
             'metadata': {'source': 'qwenpaw'}
@@ -297,9 +297,9 @@ logger = logging.getLogger(__name__)
 async def chat_endpoint(request: ChatRequest):
     logger.info(f"Chat request: {request.message}")
     logger.info(f"History length: {len(request.history)}")
-    
+
     # Processamento...
-    
+
     logger.info(f"Chat response: {response}")
     return ChatResponse(reply=response)
 ```
@@ -312,13 +312,13 @@ async def chat_endpoint(request: ChatRequest):
 class PluginManager:
     def __init__(self):
         self.plugins = {}
-    
+
     def register(self, plugin_id: str, plugin: Plugin):
         self.plugins[plugin_id] = plugin
-    
+
     def get(self, plugin_id: str):
         return self.plugins.get(plugin_id)
-    
+
     def list_all(self):
         return [
             {

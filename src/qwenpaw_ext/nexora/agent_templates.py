@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Agent initialization templates — file-backed with optional PostgreSQL.
 
 Templates define a preset collection of capabilities (skills, tools, MCPs, etc.)
@@ -78,6 +79,7 @@ BUILTIN_TEMPLATES: list[dict] = [
 
 def _secret_dir() -> Path:
     from qwenpaw.constant import SECRET_DIR
+
     return Path(SECRET_DIR)
 
 
@@ -102,13 +104,15 @@ def _save_templates(templates: list[dict]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_suffix(".tmp")
     tmp.write_text(
-        json.dumps(templates, ensure_ascii=False, indent=2), encoding="utf-8"
+        json.dumps(templates, ensure_ascii=False, indent=2),
+        encoding="utf-8",
     )
     tmp.replace(path)
 
 
 def _use_pg() -> bool:
     from qwenpaw_ext.nexora import db
+
     return db.is_database_enabled()
 
 
@@ -124,6 +128,7 @@ def ensure_builtin_templates() -> None:
 def list_templates() -> list[dict]:
     if _use_pg():
         from .repositories import agent_templates_postgres as repo
+
         return repo.list_templates()
     return _load_templates()
 
@@ -131,6 +136,7 @@ def list_templates() -> list[dict]:
 def get_template(template_id: str) -> dict | None:
     if _use_pg():
         from .repositories import agent_templates_postgres as repo
+
         return repo.get_template(template_id)
     for t in _load_templates():
         if t.get("template_id") == template_id:
@@ -141,6 +147,7 @@ def get_template(template_id: str) -> dict | None:
 def create_template(template: dict) -> dict:
     if _use_pg():
         from .repositories import agent_templates_postgres as repo
+
         return repo.create_template(template)
     templates = _load_templates()
     now = int(time.time() * 1000)
@@ -162,6 +169,7 @@ def create_template(template: dict) -> dict:
 def update_template(template_id: str, updates: dict) -> dict | None:
     if _use_pg():
         from .repositories import agent_templates_postgres as repo
+
         return repo.update_template(template_id, updates)
     templates = _load_templates()
     now = int(time.time() * 1000)
@@ -179,6 +187,7 @@ def update_template(template_id: str, updates: dict) -> dict | None:
 def delete_template(template_id: str) -> bool:
     if _use_pg():
         from .repositories import agent_templates_postgres as repo
+
         return repo.delete_template(template_id)
     templates = _load_templates()
     before = len(templates)

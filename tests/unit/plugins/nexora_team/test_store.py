@@ -77,10 +77,7 @@ def test_list_filters_by_status_and_reverse_chronological():
 
 def test_eviction_when_over_capacity():
     store = MeetingStore(max_meetings=3)
-    ids = [
-        store.create(f"t{i}", "c", ["a"]).id
-        for i in range(5)
-    ]
+    ids = [store.create(f"t{i}", "c", ["a"]).id for i in range(5)]
     listed = store.list(limit=10)
     assert len(listed) == 3
     # the two oldest are gone

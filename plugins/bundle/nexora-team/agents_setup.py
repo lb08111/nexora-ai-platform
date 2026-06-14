@@ -165,9 +165,7 @@ def _register_one_agent(
 ) -> None:
     agent_id = spec["agent_id"]
     expected_ws = (
-        (Path(WORKING_DIR) / "workspaces" / agent_id)
-        .expanduser()
-        .resolve()
+        (Path(WORKING_DIR) / "workspaces" / agent_id).expanduser().resolve()
     )
 
     if agent_id in config.agents.profiles:

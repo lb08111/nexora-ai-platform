@@ -71,7 +71,7 @@ class CnpjBrPlugin:
         if not hasattr(api, "register_tool"):
             logger.warning(
                 "Plugin API does not expose register_tool; relying on "
-                "tool-type auto-discovery from plugin.json meta.tools"
+                "tool-type auto-discovery from plugin.json meta.tools",
             )
             return
 

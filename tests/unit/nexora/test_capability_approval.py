@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Tests for per-capability-type approval configuration."""
 from __future__ import annotations
 
@@ -25,18 +26,22 @@ class TestCapabilityApprovalConfig:
         with _patch_secret_dir(tmp_path), _patch_no_pg():
             from qwenpaw_ext.nexora import capability_approval as m
 
-            m.upsert_config({
-                "capability_type": "mcp",
-                "add_policy": "approval",
-                "remove_policy": "log",
-                "approver_roles": ["admin"],
-            })
-            m.upsert_config({
-                "capability_type": "tool",
-                "add_policy": "none",
-                "remove_policy": "log",
-                "approver_roles": ["admin"],
-            })
+            m.upsert_config(
+                {
+                    "capability_type": "mcp",
+                    "add_policy": "approval",
+                    "remove_policy": "log",
+                    "approver_roles": ["admin"],
+                }
+            )
+            m.upsert_config(
+                {
+                    "capability_type": "tool",
+                    "add_policy": "none",
+                    "remove_policy": "log",
+                    "approver_roles": ["admin"],
+                }
+            )
 
             configs = m.list_configs()
             assert len(configs) == 2
@@ -47,11 +52,13 @@ class TestCapabilityApprovalConfig:
         with _patch_secret_dir(tmp_path), _patch_no_pg():
             from qwenpaw_ext.nexora import capability_approval as m
 
-            m.upsert_config({
-                "capability_type": "skill",
-                "add_policy": "approval",
-                "remove_policy": "none",
-            })
+            m.upsert_config(
+                {
+                    "capability_type": "skill",
+                    "add_policy": "approval",
+                    "remove_policy": "none",
+                }
+            )
             config = m.get_config("skill")
             assert config is not None
             assert config["add_policy"] == "approval"
@@ -63,11 +70,13 @@ class TestCapabilityApprovalConfig:
         with _patch_secret_dir(tmp_path), _patch_no_pg():
             from qwenpaw_ext.nexora import capability_approval as m
 
-            m.upsert_config({
-                "capability_type": "tool",
-                "add_policy": "none",
-                "remove_policy": "approval",
-            })
+            m.upsert_config(
+                {
+                    "capability_type": "tool",
+                    "add_policy": "none",
+                    "remove_policy": "approval",
+                }
+            )
             assert m.requires_approval("tool", "add") is False
             assert m.requires_approval("tool", "remove") is True
             # Unknown type defaults to requiring approval
@@ -77,33 +86,39 @@ class TestCapabilityApprovalConfig:
         with _patch_secret_dir(tmp_path), _patch_no_pg():
             from qwenpaw_ext.nexora import capability_approval as m
 
-            m.upsert_config({
-                "capability_type": "mcp",
-                "add_policy": "approval",
-                "remove_policy": "log",
-            })
+            m.upsert_config(
+                {
+                    "capability_type": "mcp",
+                    "add_policy": "approval",
+                    "remove_policy": "log",
+                }
+            )
             assert m.requires_approval("mcp", "remove") is True
 
     def test_requires_approval_remove_none(self, tmp_path):
         with _patch_secret_dir(tmp_path), _patch_no_pg():
             from qwenpaw_ext.nexora import capability_approval as m
 
-            m.upsert_config({
-                "capability_type": "mcp",
-                "add_policy": "approval",
-                "remove_policy": "none",
-            })
+            m.upsert_config(
+                {
+                    "capability_type": "mcp",
+                    "add_policy": "approval",
+                    "remove_policy": "none",
+                }
+            )
             assert m.requires_approval("mcp", "remove") is False
 
     def test_should_auto_approve(self, tmp_path):
         with _patch_secret_dir(tmp_path), _patch_no_pg():
             from qwenpaw_ext.nexora import capability_approval as m
 
-            m.upsert_config({
-                "capability_type": "mcp",
-                "add_policy": "approval",
-                "remove_policy": "log",
-            })
+            m.upsert_config(
+                {
+                    "capability_type": "mcp",
+                    "add_policy": "approval",
+                    "remove_policy": "log",
+                }
+            )
             assert m.should_auto_approve("mcp", "add") is False
             assert m.should_auto_approve("mcp", "remove") is True
 
@@ -111,22 +126,26 @@ class TestCapabilityApprovalConfig:
         with _patch_secret_dir(tmp_path), _patch_no_pg():
             from qwenpaw_ext.nexora import capability_approval as m
 
-            m.upsert_config({
-                "capability_type": "mcp",
-                "add_policy": "approval",
-                "remove_policy": "approval",
-            })
+            m.upsert_config(
+                {
+                    "capability_type": "mcp",
+                    "add_policy": "approval",
+                    "remove_policy": "approval",
+                }
+            )
             assert m.should_auto_approve("mcp", "remove") is False
 
     def test_get_approver_roles(self, tmp_path):
         with _patch_secret_dir(tmp_path), _patch_no_pg():
             from qwenpaw_ext.nexora import capability_approval as m
 
-            m.upsert_config({
-                "capability_type": "plugin",
-                "add_policy": "approval",
-                "approver_roles": ["admin"],
-            })
+            m.upsert_config(
+                {
+                    "capability_type": "plugin",
+                    "add_policy": "approval",
+                    "approver_roles": ["admin"],
+                }
+            )
             assert m.get_approver_roles("plugin") == ["admin"]
             assert m.get_approver_roles("unknown") == ["admin"]
 
@@ -147,14 +166,18 @@ class TestCapabilityApprovalConfig:
         with _patch_secret_dir(tmp_path), _patch_no_pg():
             from qwenpaw_ext.nexora import capability_approval as m
 
-            m.upsert_config({
-                "capability_type": "mcp",
-                "add_policy": "approval",
-            })
-            m.upsert_config({
-                "capability_type": "mcp",
-                "add_policy": "none",
-            })
+            m.upsert_config(
+                {
+                    "capability_type": "mcp",
+                    "add_policy": "approval",
+                }
+            )
+            m.upsert_config(
+                {
+                    "capability_type": "mcp",
+                    "add_policy": "none",
+                }
+            )
             config = m.get_config("mcp")
             assert config["add_policy"] == "none"
             assert len(m.list_configs()) == 1
@@ -164,13 +187,15 @@ class TestCapabilityApprovalConfig:
         with _patch_secret_dir(tmp_path), _patch_no_pg():
             from qwenpaw_ext.nexora import capability_approval as m
 
-            m.upsert_config({
-                "capability_type": "skill",
-                "add_approval": True,
-                "remove_approval": True,
-                "auto_approve_remove": True,
-                "approver_roles": ["admin"],
-            })
+            m.upsert_config(
+                {
+                    "capability_type": "skill",
+                    "add_approval": True,
+                    "remove_approval": True,
+                    "auto_approve_remove": True,
+                    "approver_roles": ["admin"],
+                }
+            )
             config = m.get_config("skill")
             assert config["add_policy"] == "approval"
             assert config["remove_policy"] == "log"
@@ -182,11 +207,13 @@ class TestCapabilityApprovalConfig:
         with _patch_secret_dir(tmp_path), _patch_no_pg():
             from qwenpaw_ext.nexora import capability_approval as m
 
-            m.upsert_config({
-                "capability_type": "tool",
-                "add_approval": False,
-                "remove_approval": False,
-            })
+            m.upsert_config(
+                {
+                    "capability_type": "tool",
+                    "add_approval": False,
+                    "remove_approval": False,
+                }
+            )
             config = m.get_config("tool")
             assert config["add_policy"] == "none"
             assert config["remove_policy"] == "none"
@@ -195,12 +222,14 @@ class TestCapabilityApprovalConfig:
         with _patch_secret_dir(tmp_path), _patch_no_pg():
             from qwenpaw_ext.nexora import capability_approval as m
 
-            m.upsert_config({
-                "capability_type": "acp",
-                "add_approval": True,
-                "remove_approval": True,
-                "auto_approve_remove": False,
-            })
+            m.upsert_config(
+                {
+                    "capability_type": "acp",
+                    "add_approval": True,
+                    "remove_approval": True,
+                    "auto_approve_remove": False,
+                }
+            )
             config = m.get_config("acp")
             assert config["add_policy"] == "approval"
             assert config["remove_policy"] == "approval"

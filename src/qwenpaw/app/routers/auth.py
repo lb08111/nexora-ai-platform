@@ -235,7 +235,9 @@ async def register(req: RegisterRequest, request: Request):
         detail={"roles": ["admin"]},
         request=request,
     )
-    return LoginResponse(token=token, username=req.username.strip(), roles=["admin"])
+    return LoginResponse(
+        token=token, username=req.username.strip(), roles=["admin"]
+    )
 
 
 @router.get("/status")
@@ -341,7 +343,9 @@ async def remove_user(username: str, request: Request):
     """Delete a platform user."""
     current = _require_user_admin(request)
     if username == current:
-        raise HTTPException(status_code=400, detail="Não é possível excluir a si mesmo")
+        raise HTTPException(
+            status_code=400, detail="Não é possível excluir a si mesmo"
+        )
     if not delete_user(username):
         raise HTTPException(status_code=400, detail="Failed to delete user")
     return {"deleted": True}

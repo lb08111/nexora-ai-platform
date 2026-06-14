@@ -20,9 +20,7 @@ def test_prompt_em_pt_br(role):
     p = PROMPTS_BY_ROLE[role].lower()
     # heurística: ao menos 1 palavra-chave pt-BR em cada prompt
     pt_markers = [" você ", "português", "pt-br", "brasil", "cliente"]
-    assert any(m in p for m in pt_markers), (
-        f"prompt {role} não parece pt-BR"
-    )
+    assert any(m in p for m in pt_markers), f"prompt {role} não parece pt-BR"
 
 
 def test_recepcionista_saude_menciona_lgpd_e_samu():

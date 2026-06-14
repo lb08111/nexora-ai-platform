@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Add multi-tenant agent grants, capability approval config, and templates.
 
 Revision ID: 0003_nexora_multi_tenant
@@ -62,7 +63,7 @@ def upgrade() -> None:
             "approver_roles",
             postgresql.JSONB(astext_type=sa.Text()),
             nullable=False,
-            server_default=sa.text("'[\"admin\",\"ops_admin\"]'::jsonb"),
+            server_default=sa.text('\'["admin","ops_admin"]\'::jsonb'),
         ),
         sa.Column("updated_at", sa.BigInteger(), nullable=False),
     )
@@ -92,7 +93,8 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     op.drop_index(
-        "idx_cj_agent_templates_name", table_name="nexora_agent_templates"
+        "idx_cj_agent_templates_name",
+        table_name="nexora_agent_templates",
     )
     op.drop_table("nexora_agent_templates")
     op.drop_table("nexora_capability_approval_config")

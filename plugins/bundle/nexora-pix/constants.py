@@ -104,7 +104,7 @@ AGENT_SPECS: list[dict[str, Any]] = [
             "auto_continue_on_text_only": False,
             "max_iters": 50,
         },
-    }
+    },
 ]
 
 DEFAULT_ENV_KEYS = (

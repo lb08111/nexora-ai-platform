@@ -23,7 +23,9 @@ class _BaseHttpClient:
         self.timeout = float(timeout)
         self.cache_ttl_seconds = int(cache_ttl_seconds)
 
-    def _cache_get(self, endpoint: str, identifier: str) -> dict[str, Any] | None:
+    def _cache_get(
+        self, endpoint: str, identifier: str
+    ) -> dict[str, Any] | None:
         if self.cache_ttl_seconds <= 0:
             return None
         key = (endpoint, identifier)
