@@ -40,8 +40,8 @@ export default function BackendLoadingPage({
 
   const percent = Math.min(Math.round((elapsed / totalSec) * 100), 100);
   const style = {
-    "--qwenpaw-brand-color": BRAND_COLOR,
-    "--qwenpaw-error-color": ERROR_COLOR,
+    "--jotaduo-brand-color": BRAND_COLOR,
+    "--jotaduo-error-color": ERROR_COLOR,
   } as CSSProperties;
 
   return (
@@ -52,7 +52,7 @@ export default function BackendLoadingPage({
       style={style}
     >
       <div className={styles.card}>
-        <img src="/qwenpaw.png" alt="QwenPaw" className={styles.logo} />
+        <img src="/jotaduo.png" alt="JotaDuo" className={styles.logo} />
 
         <Progress
           type="dashboard"

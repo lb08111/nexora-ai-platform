@@ -304,7 +304,7 @@ def test_api_workspace_download_zip_contract(app_server) -> None:
             "",
         ).lower()
         assert "attachment;" in content_disposition
-        assert "qwenpaw_workspace_" in content_disposition
+        assert "jotaduo_workspace_" in content_disposition
         assert agent_id.lower() in content_disposition
 
         zip_bytes = download_resp.content

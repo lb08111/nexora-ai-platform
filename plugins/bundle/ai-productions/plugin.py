@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""AI Productions Plugin for QwenPaw / Nexora.
+"""AI Productions Plugin for JotaDuo / Jotaduo.
 
 Centralizes everything AI agents produce — posts, landing pages,
 documents, e-mails, ad creatives, scripts, etc. — with a built-in
@@ -23,7 +23,7 @@ import logging
 import sys
 from pathlib import Path
 
-logger = logging.getLogger("qwenpaw").getChild("plugin.ai-productions")
+logger = logging.getLogger("jotaduo").getChild("plugin.ai-productions")
 
 
 def _init_plugin_path() -> None:
@@ -35,7 +35,7 @@ def _init_plugin_path() -> None:
 def _register_agent_tools() -> None:
     """Expose plugin tools so any agent can call them."""
     try:
-        from qwenpaw.agents.tools import registry as tool_registry
+        from jotaduo.agents.tools import registry as tool_registry
     except ImportError:
         logger.debug(
             "tool registry not available; ai-productions tools will "
@@ -75,7 +75,7 @@ def _register_agent_tools() -> None:
 def _patch_plugin_loader_unload() -> None:
     """Hook into PluginLoader to clean stores on uninstall."""
     try:
-        from qwenpaw.plugins.loader import PluginLoader
+        from jotaduo.plugins.loader import PluginLoader
     except ImportError:
         logger.warning(
             "PluginLoader unavailable; ai-productions uninstall cleanup disabled",

@@ -8,7 +8,7 @@ import json
 
 import pytest
 
-from qwenpaw.agents.forge.tools import (
+from jotaduo.agents.forge.tools import (
     inspect_repo,
     scaffold_agent,
     scaffold_plugin,

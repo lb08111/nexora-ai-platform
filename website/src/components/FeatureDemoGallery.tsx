@@ -41,8 +41,8 @@ const DEFAULT_DEMO_VIDEOS: DemoVideoConfig[] = [
     enUrl:
       "https://cloud.video.taobao.com/vod/JoYL8YwV0HXjQFuPCzDN2gaSxmSdudvc5rPWph4N_6s.mp4",
     titleKey: "docs.demoVideos.doctor",
-    docsLinkUrl: "https://qwenpaw.agentscope.io/docs/cli#qwenpaw-doctor",
-    docsLinkEnUrl: "https://qwenpaw.agentscope.io/docs/cli/#qwenpaw-doctor",
+    docsLinkUrl: "https://qwenpaw.agentscope.io/docs/cli#jotaduo-doctor",
+    docsLinkEnUrl: "https://qwenpaw.agentscope.io/docs/cli/#jotaduo-doctor",
   },
   {
     key: "mission-mode",

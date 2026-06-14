@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from qwenpaw.providers.capability_baseline import (
+from jotaduo.providers.capability_baseline import (
     ExpectedCapability,
     ExpectedCapabilityRegistry,
     compare_probe_result,

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-QwenPaw cross-module end-to-end test cases.
+JotaDuo cross-module end-to-end test cases.
 
 Verify business linkages between multiple modules:
 - CROSS-001: Skill full chain (Skills -> Agents -> Chat)
@@ -101,7 +101,7 @@ class TestSkillAgentChatFlow:
             page.wait_for_timeout(1500)
 
             log_test_step("3. Fill in skill information")
-            drawer = page.locator('.qwenpaw-drawer').first
+            drawer = page.locator('.jotaduo-drawer').first
             expect(drawer).to_be_visible(timeout=5000)
 
             name_input = drawer.locator('input[placeholder*="name"], input').first
@@ -149,9 +149,9 @@ When invoked, respond with: "Cross-module test skill executed successfully."
             navigate_to_agents(page)
 
             log_test_step("6. Verify the agent list loads")
-            agent_table = page.locator('.qwenpaw-table').first
+            agent_table = page.locator('.jotaduo-table').first
             expect(agent_table).to_be_visible(timeout=5000)
-            agent_rows = page.locator('.qwenpaw-table-tbody tr.qwenpaw-table-row').all()
+            agent_rows = page.locator('.jotaduo-table-tbody tr.jotaduo-table-row').all()
             assert len(agent_rows) > 0, "Agent list is empty"
             logger.info(f"Agent list loaded; {len(agent_rows)} agents")
 
@@ -160,7 +160,7 @@ When invoked, respond with: "Cross-module test skill executed successfully."
             for agent_row in agent_rows:
                 edit_btn = agent_row.locator(
                     'button:has(.spark-icon-spark-edit-line), '
-                    '.qwenpaw-space-item:nth-child(1) button'
+                    '.jotaduo-space-item:nth-child(1) button'
                 ).first
                 if edit_btn.count() > 0 and edit_btn.is_enabled(timeout=1000):
                     edit_btn.click()
@@ -171,11 +171,11 @@ When invoked, respond with: "Cross-module test skill executed successfully."
 
             if editable_agent_found:
                 log_test_step("8. Verify the edit form has a Skills section")
-                modal = page.locator('.qwenpaw-modal, [role="dialog"]').first
+                modal = page.locator('.jotaduo-modal, [role="dialog"]').first
                 expect(modal).to_be_visible(timeout=5000)
 
                 skills_section = modal.locator(
-                    '.qwenpaw-form-item:has-text("Skills"), '
+                    '.jotaduo-form-item:has-text("Skills"), '
                     '[class*=skill]'
                 ).first
                 if skills_section.is_visible(timeout=3000):
@@ -186,7 +186,7 @@ When invoked, respond with: "Cross-module test skill executed successfully."
                 # Close the edit dialog
                 cancel_btn = modal.locator(
                     'button:has-text("Cancel"), '
-                    '.qwenpaw-modal-footer button.qwenpaw-btn-default'
+                    '.jotaduo-modal-footer button.jotaduo-btn-default'
                 ).first
                 if cancel_btn.is_visible(timeout=2000):
                     cancel_btn.click()
@@ -227,7 +227,7 @@ When invoked, respond with: "Cross-module test skill executed successfully."
                             delete_btn.click()
                             page.wait_for_timeout(500)
                             confirm_btn = page.locator(
-                                '.qwenpaw-popconfirm-buttons button.qwenpaw-btn-primary, '
+                                '.jotaduo-popconfirm-buttons button.jotaduo-btn-primary, '
                                 'button:has-text("OK")'
                             ).first
                             if confirm_btn.is_visible(timeout=2000):
@@ -378,15 +378,15 @@ class TestSecurityInterceptionInChat:
             navigate_to_security(page)
 
             log_test_step("2. Check the tool-guard tab")
-            tool_guard_tab = page.locator('[data-node-key="toolGuard"] .qwenpaw-tabs-tab-btn').first
+            tool_guard_tab = page.locator('[data-node-key="toolGuard"] .jotaduo-tabs-tab-btn').first
             if tool_guard_tab.is_visible(timeout=5000):
                 tool_guard_tab.click()
                 page.wait_for_timeout(1500)
                 logger.info("Tool-guard tab switched")
 
             log_test_step("3. Record the tool-guard switch state")
-            tool_guard_panel = page.locator('.qwenpaw-tabs-tabpane-active').first
-            guard_switch = tool_guard_panel.locator('button.qwenpaw-switch[role="switch"]').first
+            tool_guard_panel = page.locator('.jotaduo-tabs-tabpane-active').first
+            guard_switch = tool_guard_panel.locator('button.jotaduo-switch[role="switch"]').first
             if guard_switch.is_visible(timeout=3000):
                 initial_guard_state = guard_switch.get_attribute('aria-checked')
                 logger.info(f"Tool-guard current state: {'enabled' if initial_guard_state == 'true' else 'disabled'}")
@@ -394,12 +394,12 @@ class TestSecurityInterceptionInChat:
                 logger.info("Tool-guard switch not found")
 
             log_test_step("4. Check the file-guard tab")
-            file_guard_tab = page.locator('[data-node-key="fileGuard"] .qwenpaw-tabs-tab-btn').first
+            file_guard_tab = page.locator('[data-node-key="fileGuard"] .jotaduo-tabs-tab-btn').first
             if file_guard_tab.is_visible(timeout=3000):
                 file_guard_tab.click()
                 page.wait_for_timeout(1000)
-                file_guard_panel = page.locator('.qwenpaw-tabs-tabpane-active').first
-                file_switch = file_guard_panel.locator('button.qwenpaw-switch[role="switch"]').first
+                file_guard_panel = page.locator('.jotaduo-tabs-tabpane-active').first
+                file_switch = file_guard_panel.locator('button.jotaduo-switch[role="switch"]').first
                 if file_switch.is_visible(timeout=3000):
                     file_guard_state = file_switch.get_attribute('aria-checked')
                     logger.info(f"File-guard current state: {'enabled' if file_guard_state == 'true' else 'disabled'}")
@@ -457,13 +457,13 @@ class TestSecurityInterceptionInChat:
             log_test_step("8. Return to the security page and verify config consistency")
             navigate_to_security(page)
 
-            tool_guard_tab = page.locator('[data-node-key="toolGuard"] .qwenpaw-tabs-tab-btn').first
+            tool_guard_tab = page.locator('[data-node-key="toolGuard"] .jotaduo-tabs-tab-btn').first
             if tool_guard_tab.is_visible(timeout=5000):
                 tool_guard_tab.click()
                 page.wait_for_timeout(1000)
 
-            tool_guard_panel = page.locator('.qwenpaw-tabs-tabpane-active').first
-            guard_switch = tool_guard_panel.locator('button.qwenpaw-switch[role="switch"]').first
+            tool_guard_panel = page.locator('.jotaduo-tabs-tabpane-active').first
+            guard_switch = tool_guard_panel.locator('button.jotaduo-switch[role="switch"]').first
             if guard_switch.is_visible(timeout=3000):
                 current_state = guard_switch.get_attribute('aria-checked')
                 assert current_state == initial_guard_state, \
@@ -512,10 +512,10 @@ class TestWorkspaceFileChatFlow:
 
             log_test_step("2. Verify the file list loads")
             file_list = page.locator(
-                '.qwenpaw-table, '
+                '.jotaduo-table, '
                 '[class*=fileList], '
                 '[class*=file-tree], '
-                '.qwenpaw-list'
+                '.jotaduo-list'
             ).first
             if file_list.is_visible(timeout=5000):
                 logger.info("File list loaded")
@@ -537,7 +537,7 @@ class TestWorkspaceFileChatFlow:
                 # Try clicking the first file to open the editor
                 file_items = page.locator(
                     '[class*=fileName], '
-                    '.qwenpaw-table-row, '
+                    '.jotaduo-table-row, '
                     '[class*=fileItem]'
                 ).all()
                 if file_items:
@@ -586,7 +586,7 @@ class TestWorkspaceFileChatFlow:
             logger.info(f"File Q&A reply: {file_text[:200]}")
 
             # Verify the reply is related to the file content
-            file_keywords = ["QwenPaw", "智能", "对话", "功能", "平台"]
+            file_keywords = ["JotaDuo", "智能", "对话", "功能", "平台"]
             keyword_found = any(kw in file_text for kw in file_keywords)
             if keyword_found:
                 logger.info("AI reply contains file-related keywords; file linkage verified")
@@ -642,9 +642,9 @@ class TestEnvAndRuntimeConfigFlow:
 
         log_test_step("2. Record the environment variable count")
         env_rows = page.locator(
-            '.qwenpaw-table-tbody tr.qwenpaw-table-row, '
+            '.jotaduo-table-tbody tr.jotaduo-table-row, '
             '[class*=envRow], '
-            '.qwenpaw-form-item'
+            '.jotaduo-form-item'
         ).all()
         env_count = len(env_rows)
         logger.info(f"Environment variable count: {env_count}")
@@ -656,8 +656,8 @@ class TestEnvAndRuntimeConfigFlow:
 
         log_test_step("4. Verify the runtime config page loads")
         config_area = page.locator(
-            '.qwenpaw-tabs, '
-            '.qwenpaw-form, '
+            '.jotaduo-tabs, '
+            '.jotaduo-form, '
             '[class*=config], '
             '[class*=setting]'
         ).first
@@ -672,9 +672,9 @@ class TestEnvAndRuntimeConfigFlow:
         page.wait_for_timeout(2000)
 
         env_rows_after = page.locator(
-            '.qwenpaw-table-tbody tr.qwenpaw-table-row, '
+            '.jotaduo-table-tbody tr.jotaduo-table-row, '
             '[class*=envRow], '
-            '.qwenpaw-form-item'
+            '.jotaduo-form-item'
         ).all()
         env_count_after = len(env_rows_after)
         assert env_count_after == env_count, \

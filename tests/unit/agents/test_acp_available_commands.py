@@ -11,11 +11,11 @@ from __future__ import annotations
 
 import asyncio
 
-from qwenpaw.agents.acp.server import (
+from jotaduo.agents.acp.server import (
     _ACP_REDUNDANT_COMMANDS,
     ACP_AGENT_META_KEY,
     ACP_ERROR_META_KEY,
-    QwenPawACPAgent,
+    JotaDuoACPAgent,
 )
 
 
@@ -36,7 +36,7 @@ async def _drain() -> None:
 
 
 def test_build_available_commands_set():
-    commands = QwenPawACPAgent._build_available_commands()
+    commands = JotaDuoACPAgent._build_available_commands()
     names = {c.name for c in commands}
 
     # Exactly the curated subset is advertised: the user-facing conversation
@@ -60,7 +60,7 @@ def test_build_available_commands_set():
 
 
 async def test_new_session_advertises_commands():
-    agent = QwenPawACPAgent(agent_id="default")
+    agent = JotaDuoACPAgent(agent_id="default")
     conn = _FakeConn()
     agent.on_connect(conn)
 
@@ -78,7 +78,7 @@ async def test_new_session_advertises_commands():
 
 
 async def test_load_session_advertises_commands():
-    agent = QwenPawACPAgent(agent_id="default")
+    agent = JotaDuoACPAgent(agent_id="default")
     conn = _FakeConn()
     agent.on_connect(conn)
 
@@ -92,7 +92,7 @@ async def test_load_session_advertises_commands():
 
 
 async def test_new_session_reports_agent_id_in_meta():
-    agent = QwenPawACPAgent(agent_id="my-agent")
+    agent = JotaDuoACPAgent(agent_id="my-agent")
     conn = _FakeConn()
     agent.on_connect(conn)
 
@@ -101,7 +101,7 @@ async def test_new_session_reports_agent_id_in_meta():
 
 
 async def test_report_prompt_error_is_sent_to_client():
-    agent = QwenPawACPAgent(agent_id="default")
+    agent = JotaDuoACPAgent(agent_id="default")
     conn = _FakeConn()
     agent.on_connect(conn)
 

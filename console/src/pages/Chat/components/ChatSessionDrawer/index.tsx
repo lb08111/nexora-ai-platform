@@ -100,7 +100,7 @@ const SessionRow = React.memo(function SessionRow({
   );
 });
 
-/** Sessions from QwenPaw backend include extra fields beyond the runtime UI type */
+/** Sessions from JotaDuo backend include extra fields beyond the runtime UI type */
 interface ExtendedChatSession extends IAgentScopeRuntimeWebUISession {
   realId?: string;
   sessionId?: string;

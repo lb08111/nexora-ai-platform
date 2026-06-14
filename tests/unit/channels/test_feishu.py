@@ -32,7 +32,7 @@ from typing import Generator
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-from qwenpaw.app.channels.base import ContentType, OutgoingContentPart
+from jotaduo.app.channels.base import ContentType, OutgoingContentPart
 
 # =============================================================================
 # Fixtures
@@ -75,7 +75,7 @@ def feishu_channel(
     temp_media_dir,
 ) -> Generator:
     """Create a FeishuChannel instance for testing."""
-    from qwenpaw.app.channels.feishu.channel import FeishuChannel
+    from jotaduo.app.channels.feishu.channel import FeishuChannel
 
     channel = FeishuChannel(
         process=mock_process_handler,
@@ -96,7 +96,7 @@ def feishu_channel_with_workspace(
     temp_workspace_dir,
 ) -> Generator:
     """Create a FeishuChannel with workspace for testing."""
-    from qwenpaw.app.channels.feishu.channel import FeishuChannel
+    from jotaduo.app.channels.feishu.channel import FeishuChannel
 
     channel = FeishuChannel(
         process=mock_process_handler,
@@ -136,7 +136,7 @@ class TestFeishuChannelInit:
         temp_media_dir,
     ):
         """Constructor should store all basic configuration parameters."""
-        from qwenpaw.app.channels.feishu.channel import FeishuChannel
+        from jotaduo.app.channels.feishu.channel import FeishuChannel
 
         channel = FeishuChannel(
             process=mock_process_handler,
@@ -159,7 +159,7 @@ class TestFeishuChannelInit:
 
     def test_init_uses_default_domain(self, mock_process_handler):
         """Constructor should default domain to 'feishu'."""
-        from qwenpaw.app.channels.feishu.channel import FeishuChannel
+        from jotaduo.app.channels.feishu.channel import FeishuChannel
 
         channel = FeishuChannel(
             process=mock_process_handler,
@@ -173,7 +173,7 @@ class TestFeishuChannelInit:
 
     def test_init_accepts_lark_domain(self, mock_process_handler):
         """Constructor should accept 'lark' as domain."""
-        from qwenpaw.app.channels.feishu.channel import FeishuChannel
+        from jotaduo.app.channels.feishu.channel import FeishuChannel
 
         channel = FeishuChannel(
             process=mock_process_handler,
@@ -188,7 +188,7 @@ class TestFeishuChannelInit:
 
     def test_init_rejects_invalid_domain(self, mock_process_handler):
         """Constructor should fallback to 'feishu' for invalid domain."""
-        from qwenpaw.app.channels.feishu.channel import FeishuChannel
+        from jotaduo.app.channels.feishu.channel import FeishuChannel
 
         channel = FeishuChannel(
             process=mock_process_handler,
@@ -206,7 +206,7 @@ class TestFeishuChannelInit:
         mock_process_handler,
     ):
         """Constructor should initialize required internal data structures."""
-        from qwenpaw.app.channels.feishu.channel import FeishuChannel
+        from jotaduo.app.channels.feishu.channel import FeishuChannel
 
         channel = FeishuChannel(
             process=mock_process_handler,
@@ -234,7 +234,7 @@ class TestFeishuChannelInit:
 
     def test_init_creates_locks(self, mock_process_handler):
         """Constructor should create required locks for thread safety."""
-        from qwenpaw.app.channels.feishu.channel import FeishuChannel
+        from jotaduo.app.channels.feishu.channel import FeishuChannel
 
         channel = FeishuChannel(
             process=mock_process_handler,
@@ -268,7 +268,7 @@ class TestFeishuChannelFromEnv:
         monkeypatch,
     ):
         """from_env should read basic environment variables."""
-        from qwenpaw.app.channels.feishu.channel import FeishuChannel
+        from jotaduo.app.channels.feishu.channel import FeishuChannel
 
         monkeypatch.setenv("FEISHU_CHANNEL_ENABLED", "0")
         monkeypatch.setenv("FEISHU_APP_ID", "env_app_id")
@@ -288,7 +288,7 @@ class TestFeishuChannelFromEnv:
 
     def test_from_env_reads_domain(self, mock_process_handler, monkeypatch):
         """from_env should read FEISHU_DOMAIN environment variable."""
-        from qwenpaw.app.channels.feishu.channel import FeishuChannel
+        from jotaduo.app.channels.feishu.channel import FeishuChannel
 
         monkeypatch.setenv("FEISHU_APP_ID", "test_id")
         monkeypatch.setenv("FEISHU_APP_SECRET", "test_secret")
@@ -304,7 +304,7 @@ class TestFeishuChannelFromEnv:
         monkeypatch,
     ):
         """from_env should parse FEISHU_ALLOW_FROM correctly."""
-        from qwenpaw.app.channels.feishu.channel import FeishuChannel
+        from jotaduo.app.channels.feishu.channel import FeishuChannel
 
         monkeypatch.setenv("FEISHU_APP_ID", "test_id")
         monkeypatch.setenv("FEISHU_APP_SECRET", "test_secret")
@@ -322,7 +322,7 @@ class TestFeishuChannelFromEnv:
         monkeypatch,
     ):
         """from_env should handle empty FEISHU_ALLOW_FROM."""
-        from qwenpaw.app.channels.feishu.channel import FeishuChannel
+        from jotaduo.app.channels.feishu.channel import FeishuChannel
 
         monkeypatch.setenv("FEISHU_APP_ID", "test_id")
         monkeypatch.setenv("FEISHU_APP_SECRET", "test_secret")
@@ -334,7 +334,7 @@ class TestFeishuChannelFromEnv:
 
     def test_from_env_require_mention(self, mock_process_handler, monkeypatch):
         """from_env should parse FEISHU_REQUIRE_MENTION correctly."""
-        from qwenpaw.app.channels.feishu.channel import FeishuChannel
+        from jotaduo.app.channels.feishu.channel import FeishuChannel
 
         monkeypatch.setenv("FEISHU_APP_ID", "test_id")
         monkeypatch.setenv("FEISHU_APP_SECRET", "test_secret")
@@ -346,7 +346,7 @@ class TestFeishuChannelFromEnv:
 
     def test_from_env_defaults(self, mock_process_handler, monkeypatch):
         """from_env should use sensible defaults."""
-        from qwenpaw.app.channels.feishu.channel import FeishuChannel
+        from jotaduo.app.channels.feishu.channel import FeishuChannel
 
         monkeypatch.setenv("FEISHU_APP_ID", "test_id")
         monkeypatch.setenv("FEISHU_APP_SECRET", "test_secret")
@@ -368,8 +368,8 @@ class TestFeishuChannelFromConfig:
 
     def test_from_config_uses_config_values(self, mock_process_handler):
         """from_config should use values from config object."""
-        from qwenpaw.app.channels.feishu.channel import FeishuChannel
-        from qwenpaw.config.config import FeishuConfig
+        from jotaduo.app.channels.feishu.channel import FeishuChannel
+        from jotaduo.config.config import FeishuConfig
 
         config = FeishuConfig(
             enabled=False,
@@ -402,8 +402,8 @@ class TestFeishuChannelFromConfig:
 
     def test_from_config_with_workspace(self, mock_process_handler, tmp_path):
         """from_config should use workspace_dir when provided."""
-        from qwenpaw.app.channels.feishu.channel import FeishuChannel
-        from qwenpaw.config.config import FeishuConfig
+        from jotaduo.app.channels.feishu.channel import FeishuChannel
+        from jotaduo.config.config import FeishuConfig
 
         config = FeishuConfig(
             enabled=True,
@@ -731,7 +731,7 @@ class TestFeishuChannelMessageDeduplication:
 
     def test_message_id_tracked(self, feishu_channel):
         """Processed message IDs should be tracked."""
-        from qwenpaw.app.channels.feishu.constants import (
+        from jotaduo.app.channels.feishu.constants import (
             FEISHU_PROCESSED_IDS_MAX,
         )
 
@@ -745,7 +745,7 @@ class TestFeishuChannelMessageDeduplication:
 
     def test_message_id_trims_when_over_limit(self, feishu_channel):
         """Old message IDs should be trimmed when over limit."""
-        from qwenpaw.app.channels.feishu.constants import (
+        from jotaduo.app.channels.feishu.constants import (
             FEISHU_PROCESSED_IDS_MAX,
         )
 
@@ -839,7 +839,7 @@ class TestFeishuChannelEnabledCheck:
         temp_media_dir,
     ):
         """send_content_parts should return None when channel disabled."""
-        from qwenpaw.app.channels.feishu.channel import FeishuChannel
+        from jotaduo.app.channels.feishu.channel import FeishuChannel
 
         channel = FeishuChannel(
             process=mock_process_handler,
@@ -864,7 +864,7 @@ class TestFeishuChannelEnabledCheck:
         temp_media_dir,
     ):
         """send should return None when channel disabled."""
-        from qwenpaw.app.channels.feishu.channel import FeishuChannel
+        from jotaduo.app.channels.feishu.channel import FeishuChannel
 
         channel = FeishuChannel(
             process=mock_process_handler,
@@ -1095,7 +1095,7 @@ class TestFeishuChannelFileUpload:
         tmp_path,
     ):
         """Should return None for files exceeding max size."""
-        from qwenpaw.app.channels.feishu.constants import FEISHU_FILE_MAX_BYTES
+        from jotaduo.app.channels.feishu.constants import FEISHU_FILE_MAX_BYTES
 
         # Create a file just over the limit
         large_file = tmp_path / "large.bin"
@@ -1690,7 +1690,7 @@ class TestFeishuChannelDownloadImageResource:
         mock_builder.build.return_value = mock_request
 
         with patch(
-            "qwenpaw.app.channels.feishu.channel.GetMessageResourceRequest",
+            "jotaduo.app.channels.feishu.channel.GetMessageResourceRequest",
         ) as mock_class:
             mock_class.builder.return_value = mock_builder
             yield mock_class, mock_request
@@ -1861,7 +1861,7 @@ class TestFeishuChannelDownloadFileResource:
         mock_builder.build.return_value = mock_request
 
         with patch(
-            "qwenpaw.app.channels.feishu.channel.GetMessageResourceRequest",
+            "jotaduo.app.channels.feishu.channel.GetMessageResourceRequest",
         ) as mock_class:
             mock_class.builder.return_value = mock_builder
             yield mock_class, mock_request
@@ -2039,10 +2039,10 @@ class TestFeishuChannelUploadImage:
 
         with (
             patch(
-                "qwenpaw.app.channels.feishu.channel.CreateImageRequestBody",
+                "jotaduo.app.channels.feishu.channel.CreateImageRequestBody",
             ) as mock_body_class,
             patch(
-                "qwenpaw.app.channels.feishu.channel.CreateImageRequest",
+                "jotaduo.app.channels.feishu.channel.CreateImageRequest",
             ) as mock_request_class,
         ):
             mock_body_class.builder.return_value = mock_body_builder
@@ -2161,10 +2161,10 @@ class TestFeishuChannelUploadFile:
 
         with (
             patch(
-                "qwenpaw.app.channels.feishu.channel.CreateFileRequestBody",
+                "jotaduo.app.channels.feishu.channel.CreateFileRequestBody",
             ) as mock_body_class,
             patch(
-                "qwenpaw.app.channels.feishu.channel.CreateFileRequest",
+                "jotaduo.app.channels.feishu.channel.CreateFileRequest",
             ) as mock_request_class,
         ):
             mock_body_class.builder.return_value = mock_body_builder
@@ -2219,7 +2219,7 @@ class TestFeishuChannelUploadFile:
         tmp_path,
     ):
         """Should return None for files exceeding max size."""
-        from qwenpaw.app.channels.feishu.constants import FEISHU_FILE_MAX_BYTES
+        from jotaduo.app.channels.feishu.constants import FEISHU_FILE_MAX_BYTES
 
         feishu_channel._media_dir = tmp_path / "media"
         feishu_channel._media_dir.mkdir(parents=True, exist_ok=True)
@@ -2373,10 +2373,10 @@ class TestFeishuChannelSendMessage:
 
         with (
             patch(
-                "qwenpaw.app.channels.feishu.channel.CreateMessageRequestBody",
+                "jotaduo.app.channels.feishu.channel.CreateMessageRequestBody",
             ) as mock_body_class,
             patch(
-                "qwenpaw.app.channels.feishu.channel.CreateMessageRequest",
+                "jotaduo.app.channels.feishu.channel.CreateMessageRequest",
             ) as mock_request_class,
         ):
             mock_body_class.builder.return_value = mock_body_builder
@@ -2723,10 +2723,10 @@ class TestFeishuChannelThreadReply:
 
         with (
             patch(
-                "qwenpaw.app.channels.feishu.channel.ReplyMessageRequest",
+                "jotaduo.app.channels.feishu.channel.ReplyMessageRequest",
             ) as mock_request_class,
             patch(
-                "qwenpaw.app.channels.feishu.channel.ReplyMessageRequestBody",
+                "jotaduo.app.channels.feishu.channel.ReplyMessageRequestBody",
             ) as mock_body_class,
         ):
             mock_request_class.builder.return_value = mock_builder
@@ -3167,7 +3167,7 @@ class TestExtractInteractiveText:
     """Unit tests for extract_interactive_text()."""
 
     def test_extracts_title_and_elements(self):
-        from qwenpaw.app.channels.feishu.utils import extract_interactive_text
+        from jotaduo.app.channels.feishu.utils import extract_interactive_text
 
         payload = json.dumps(
             {
@@ -3184,7 +3184,7 @@ class TestExtractInteractiveText:
 
     def test_cardkit_v2_body_elements(self):
         """CardKit v2 nests elements under body — must still extract."""
-        from qwenpaw.app.channels.feishu.utils import extract_interactive_text
+        from jotaduo.app.channels.feishu.utils import extract_interactive_text
 
         payload = json.dumps(
             {
@@ -3202,7 +3202,7 @@ class TestExtractInteractiveText:
         assert "Body content here" in result
 
     def test_extracts_links_as_markdown(self):
-        from qwenpaw.app.channels.feishu.utils import extract_interactive_text
+        from jotaduo.app.channels.feishu.utils import extract_interactive_text
 
         payload = json.dumps(
             {
@@ -3222,7 +3222,7 @@ class TestExtractInteractiveText:
         assert "[Click me](https://example.com)" in result
 
     def test_returns_none_for_empty_or_invalid(self):
-        from qwenpaw.app.channels.feishu.utils import extract_interactive_text
+        from jotaduo.app.channels.feishu.utils import extract_interactive_text
 
         assert extract_interactive_text(None) is None
         assert extract_interactive_text("") is None
@@ -3230,13 +3230,13 @@ class TestExtractInteractiveText:
         assert extract_interactive_text(json.dumps({"other": "data"})) is None
 
     def test_title_only(self):
-        from qwenpaw.app.channels.feishu.utils import extract_interactive_text
+        from jotaduo.app.channels.feishu.utils import extract_interactive_text
 
         result = extract_interactive_text(json.dumps({"title": "Hello"}))
         assert result == "Hello"
 
     def test_header_title_content(self):
-        from qwenpaw.app.channels.feishu.utils import extract_interactive_text
+        from jotaduo.app.channels.feishu.utils import extract_interactive_text
 
         payload = json.dumps(
             {

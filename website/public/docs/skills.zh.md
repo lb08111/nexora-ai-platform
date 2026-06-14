@@ -6,9 +6,9 @@
 管理 Skill 有两种方式：
 
 - **控制台：** 在 [控制台](./console) 的 **工作区 → 技能** 页面操作。
-- **工作目录：** 直接在 `$QWENPAW_WORKING_DIR`（默认 `~/.qwenpaw`）下编辑技能文件，
-  包括 `$QWENPAW_WORKING_DIR/skill_pool/` 和各工作区下的
-  `$QWENPAW_WORKING_DIR/workspaces/{agent_id}/skills/`。
+- **工作目录：** 直接在 `$JOTADUO_WORKING_DIR`（默认 `~/.jotaduo`）下编辑技能文件，
+  包括 `$JOTADUO_WORKING_DIR/skill_pool/` 和各工作区下的
+  `$JOTADUO_WORKING_DIR/workspaces/{agent_id}/skills/`。
 
 > 若尚未了解「频道」「心跳」「定时任务」等概念，建议先阅读 [项目介绍](./intro)。
 
@@ -18,16 +18,16 @@
 
 ## 技能结构
 
-QwenPaw 的 skills 分为两层：
+JotaDuo 的 skills 分为两层：
 
-- **技能池：** 共享本地仓库，路径是 `$QWENPAW_WORKING_DIR/skill_pool/`
-  （默认 `~/.qwenpaw/skill_pool/`）。
+- **技能池：** 共享本地仓库，路径是 `$JOTADUO_WORKING_DIR/skill_pool/`
+  （默认 `~/.jotaduo/skill_pool/`）。
 - **工作区技能副本：** 某个工作区真正运行时使用的本地副本，路径是
-  `$QWENPAW_WORKING_DIR/workspaces/{agent_id}/skills/`
-  （默认 `~/.qwenpaw/workspaces/{agent_id}/skills/`）。
+  `$JOTADUO_WORKING_DIR/workspaces/{agent_id}/skills/`
+  （默认 `~/.jotaduo/workspaces/{agent_id}/skills/`）。
 
 ```
-$QWENPAW_WORKING_DIR/                      # 默认 ~/.qwenpaw
+$JOTADUO_WORKING_DIR/                      # 默认 ~/.jotaduo
   skill_pool/                # 共享池
     skill.json               # 池清单
     pdf/
@@ -62,7 +62,7 @@ $QWENPAW_WORKING_DIR/                      # 默认 ~/.qwenpaw
   能。改成新名字保存时，会生成一个改名后的条目。内置技能不能用原名字原地定
   制覆盖；如果要改 builtin，必须另存为新名字，原 builtin 槽位保持不动。
 - **冲突：** 如果保存、导入、上传或广播后会落到一个已经存在的名字上，
-  QwenPaw 不会静默覆盖，而是直接返回冲突。界面 / API 会同时给出一个建议的新名
+  JotaDuo 不会静默覆盖，而是直接返回冲突。界面 / API 会同时给出一个建议的新名
   字，便于你按这个名字重试。
 
 向池子中添加技能的方式：
@@ -75,12 +75,12 @@ $QWENPAW_WORKING_DIR/                      # 默认 ~/.qwenpaw
    | **browser_cdp**               | 连接到已运行的 Chrome 或以开启 CDP / 远程调试的方式启动浏览器。仅在用户明确要求 CDP 时使用。       | 自建                                                           |
    | **browser_visible**           | 以可见模式（headed）启动真实浏览器窗口，适用于演示、调试或需要人工参与的场景。                     | 自建                                                           |
    | **channel_message**           | 在先定位目标 session / channel 后，主动向会话或频道发送单向消息。                                  | 自建                                                           |
-   | **QA_source_index**           | QwenPaw 自身源码与文档的快速索引技能，用于把关键词映射到本地源码路径和文档。                       | 自建                                                           |
-   | **cron**                      | 定时任务管理。通过 `qwenpaw cron` 或控制台定时任务创建、查询、暂停、恢复、删除定时任务。           | 自建                                                           |
+   | **QA_source_index**           | JotaDuo 自身源码与文档的快速索引技能，用于把关键词映射到本地源码路径和文档。                       | 自建                                                           |
+   | **cron**                      | 定时任务管理。通过 `jotaduo cron` 或控制台定时任务创建、查询、暂停、恢复、删除定时任务。           | 自建                                                           |
    | **dingtalk_channel**          | 通过可视浏览器辅助完成钉钉频道接入流程，并提示用户完成必要手动步骤。                               | 自建                                                           |
    | **docx**                      | Word 文档（.docx）的创建、阅读、编辑，含目录、页眉页脚、表格、图片、修订与批注等。                 | https://github.com/anthropics/skills/tree/main/skills/docx     |
    | **file_reader**               | 读取与摘要文本类文件（如 .txt、.md、.json、.csv、.log、.py 等）。PDF 与 Office 由专用 Skill 处理。 | 自建                                                           |
-   | **guidance**                  | 回答 QwenPaw 安装与配置问题，优先查本地文档。                                                      | 自建                                                           |
+   | **guidance**                  | 回答 JotaDuo 安装与配置问题，优先查本地文档。                                                      | 自建                                                           |
    | **himalaya**                  | 通过 CLI 管理邮件（IMAP/SMTP）。使用 `himalaya` 列出、阅读、搜索、整理邮件。                       | https://github.com/openclaw/openclaw/tree/main/skills/himalaya |
    | **multi_agent_collaboration** | 当用户明确要求其他 agent 参与，或需要其他 agent 的上下文与能力时，用于协作与双向沟通。             | 自建                                                           |
    | **news**                      | 从指定新闻站点查询最新新闻，支持政治、财经、社会、国际、科技、体育、娱乐等分类，并做摘要。         | 自建                                                           |
@@ -93,11 +93,11 @@ $QWENPAW_WORKING_DIR/                      # 默认 ~/.qwenpaw
    打包版本。
 
    内置的 **Cron** 技能提供定时任务管理。通过 [CLI](./cli) 的
-   `qwenpaw cron` 或控制台 **控制 → 定时任务** 管理：
+   `jotaduo cron` 或控制台 **控制 → 定时任务** 管理：
 
-   - 创建任务：`qwenpaw cron create --type agent --name "xxx" --cron "0 9 * * *" ...`
-   - 查看列表：`qwenpaw cron list`
-   - 查看状态：`qwenpaw cron state <job_id>`
+   - 创建任务：`jotaduo cron create --type agent --name "xxx" --cron "0 9 * * *" ...`
+   - 查看列表：`jotaduo cron list`
+   - 查看状态：`jotaduo cron state <job_id>`
 
 2. **直接在技能池页面中创建**。
    适合一开始就想做成共享 skill，而不是先在某个工作区里创建。
@@ -112,13 +112,13 @@ $QWENPAW_WORKING_DIR/                      # 默认 ~/.qwenpaw
    在 **工作区 → 技能** 页面点击 **同步到技能池**，可以把某个工作区技能发布到池子。
 
 6. **手动在技能池目录中操作**。
-   可以直接往 `$QWENPAW_WORKING_DIR/skill_pool/` 下放目录，但**不推荐**。技能池上的直接文件操作
+   可以直接往 `$JOTADUO_WORKING_DIR/skill_pool/` 下放目录，但**不推荐**。技能池上的直接文件操作
    更容易被后续同步、重导入或人工误操作影响，尤其是自定义技能，要格外小心。
 
 ### 外部技能路径
 
-默认情况下，技能池只有一个根目录：主池 `$QWENPAW_WORKING_DIR/skill_pool/`。
-你还可以在配置中登记一个或多个 **外部技能根目录**，让 QwenPaw 把这些目录里的技能
+默认情况下，技能池只有一个根目录：主池 `$JOTADUO_WORKING_DIR/skill_pool/`。
+你还可以在配置中登记一个或多个 **外部技能根目录**，让 JotaDuo 把这些目录里的技能
 一并读进 **同一个技能池视图**。这适合复用本机已有的技能集合（例如 git 仓库、团队
 共享目录），而无需把它们复制进主池。
 
@@ -132,7 +132,7 @@ $QWENPAW_WORKING_DIR/                      # 默认 ~/.qwenpaw
 
 #### 如何配置
 
-编辑`$QWENPAW_WORKING_DIR/config.json`，添加顶层字段 `skill_paths`：
+编辑`$JOTADUO_WORKING_DIR/config.json`，添加顶层字段 `skill_paths`：
 
 ```json
 {
@@ -147,8 +147,8 @@ $QWENPAW_WORKING_DIR/                      # 默认 ~/.qwenpaw
 - 不存在或无效的路径会被静默跳过。
 - 保存后，下次加载技能池（刷新、重启或相关接口触发）时，外部技能即会出现。
 
-`$QWENPAW_WORKING_DIR` 默认是 `~/.qwenpaw`，可由环境变量
-`QWENPAW_WORKING_DIR` 覆盖。完整配置说明见 [配置](./config)。
+`$JOTADUO_WORKING_DIR` 默认是 `~/.jotaduo`，可由环境变量
+`JOTADUO_WORKING_DIR` 覆盖。完整配置说明见 [配置](./config)。
 
 ### 工作区技能副本
 
@@ -203,15 +203,15 @@ CLI 支持相同的基于 URL 的导入方式：
 **指定工作区：** 指定单个智能体工作区时使用 `--agent-id`；不指定时，`install` / `uninstall` 作用于技能池。
 
 ```bash
-qwenpaw skills install <skill_url>
-qwenpaw skills install <skill_url> --agent-id <agent_id>
+jotaduo skills install <skill_url>
+jotaduo skills install <skill_url> --agent-id <agent_id>
 ```
 
 CLI 也支持从共享技能池或单个工作区卸载技能：
 
 ```bash
-qwenpaw skills uninstall <skill_name>
-qwenpaw skills uninstall <skill_name> --agent-id <agent_id>
+jotaduo skills uninstall <skill_name>
+jotaduo skills uninstall <skill_name> --agent-id <agent_id>
 ```
 
 #### 步骤
@@ -262,15 +262,15 @@ qwenpaw skills uninstall <skill_name> --agent-id <agent_id>
 
 ### 5. 手动创建
 
-也可以直接在 `$QWENPAW_WORKING_DIR/workspaces/{agent_id}/skills/` 下创建 skill 文件，包括让
-QwenPaw 帮你写这些文件。
+也可以直接在 `$JOTADUO_WORKING_DIR/workspaces/{agent_id}/skills/` 下创建 skill 文件，包括让
+JotaDuo 帮你写这些文件。
 
 这种方式更灵活，但写入位置和 skill 质量不一定总是可控。你需要监督创建过程，
 确认文件确实写进了正确的工作区目录，并检查 skill 内容质量后再使用。
 
-在 `$QWENPAW_WORKING_DIR/workspaces/{agent_id}/skills/` 下新建目录，并放入 `SKILL.md`。
+在 `$JOTADUO_WORKING_DIR/workspaces/{agent_id}/skills/` 下新建目录，并放入 `SKILL.md`。
 `SKILL.md` 必须包含带 `name` 和 `description` 的 YAML front matter。若 Skill
-依赖外部二进制或环境变量，可在 `metadata.requires` 中声明；QwenPaw 会将其透出为
+依赖外部二进制或环境变量，可在 `metadata.requires` 中声明；JotaDuo 会将其透出为
 `require_bins` 和 `require_envs` 元数据，但不会因此自动禁用 Skill。
 
 #### SKILL.md 示例
@@ -372,7 +372,7 @@ Discord 上。
 ## Skill Config 运行时注入
 
 每个 Skill 可以在 manifest 条目中存储一个 `config` 对象。这个 config 不只是
-展示字段。当某个 Skill 在当前 workspace 和频道下生效时，QwenPaw 会在该次 Agent
+展示字段。当某个 Skill 在当前 workspace 和频道下生效时，JotaDuo 会在该次 Agent
 运行期间把它注入到运行时环境中，Skill 结束后再回滚。
 
 可以在控制台 **工作区 → 技能** 中点击技能的配置图标设置 config，也可以通过
@@ -384,7 +384,7 @@ config 中与 SKILL.md `metadata.requires.env` 声明匹配的 key 会被注入�
 未在 `requires.env` 中声明的 key 不会注入（但仍可通过完整 JSON 变量读取）。
 如果 config 缺少某个必需 key，会记录警告日志。
 
-完整 config 始终以 `QWENPAW_SKILL_CONFIG_<SKILL_NAME>`（JSON 字符串）注入，
+完整 config 始终以 `JOTADUO_SKILL_CONFIG_<SKILL_NAME>`（JSON 字符串）注入，
 不受 `requires.env` 影响。
 
 宿主进程中已存在的同名环境变量不会被覆盖。
@@ -418,7 +418,7 @@ config 为：
 - `MY_API_KEY` 来自 config，并匹配 `requires.env`。
 - `BASE_URL` 来自 config，并匹配 `requires.env`。
 - `timeout` 不在 `requires.env` 中，因此只能通过完整 JSON 读取。
-- `QWENPAW_SKILL_CONFIG_MY_SKILL` 始终包含完整 JSON 配置。
+- `JOTADUO_SKILL_CONFIG_MY_SKILL` 始终包含完整 JSON 配置。
 
 Python 示例：
 
@@ -428,7 +428,7 @@ import os
 
 api_key = os.environ.get("MY_API_KEY", "")
 base_url = os.environ.get("BASE_URL", "")
-cfg = json.loads(os.environ.get("QWENPAW_SKILL_CONFIG_MY_SKILL", "{}"))
+cfg = json.loads(os.environ.get("JOTADUO_SKILL_CONFIG_MY_SKILL", "{}"))
 timeout = cfg.get("timeout", 30)
 ```
 
@@ -445,7 +445,7 @@ Skill 运行时，生效配置按以下优先级（高优先覆盖低优先）�
 3. **池配置：** 从池下载技能到工作区时，池的 `config` 会作为初始工作区配
    置复制过来，之后工作区的编辑优先。
 
-对于 `requires` 元数据，解析器按顺序检查：`metadata.openclaw.requires` → `metadata.qwenpaw.requires` → `metadata.requires`，取第一个找到的。
+对于 `requires` 元数据，解析器按顺序检查：`metadata.openclaw.requires` → `metadata.jotaduo.requires` → `metadata.requires`，取第一个找到的。
 
 ---
 

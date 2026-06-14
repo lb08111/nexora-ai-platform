@@ -1,4 +1,4 @@
-# QwenPaw E2E Test Framework
+# JotaDuo E2E Test Framework
 
 End-to-end test framework built on Playwright + pytest + the Page Object Pattern.
 
@@ -36,17 +36,17 @@ tests/
 ### 1. Install dependencies
 
 ```bash
-cd /Users/ming/.qwenpaw/workspaces/Hv3HJ9
+cd /Users/ming/.jotaduo/workspaces/Hv3HJ9
 pip install -r tests/requirements.txt
 playwright install chromium
 ```
 
-### 2. Ensure the QwenPaw service is running
+### 2. Ensure the JotaDuo service is running
 
 ```bash
-qwenpaw start
+jotaduo start
 # or
-cd /Users/ming/Desktop/qwenpaw && python -m qwenpaw
+cd /Users/ming/Desktop/jotaduo && python -m jotaduo
 ```
 
 ### 3. Run tests
@@ -69,7 +69,7 @@ pytest tests/tests/test_chat_p0.py -m "chat_file" -v
 ### 4. Headed mode (visual debugging)
 
 ```bash
-QWENPAW_HEADLESS=false pytest tests/tests/test_chat_p0.py -v
+JOTADUO_HEADLESS=false pytest tests/tests/test_chat_p0.py -v
 ```
 
 ### 5. Slow-motion mode (for debugging)
@@ -97,24 +97,24 @@ PLAYWRIGHT_SLOW_MO=1000 pytest tests/tests/test_chat_p0.py -v
 
 | Name | Default | Description |
 |------|---------|-------------|
-| `QWENPAW_BASE_URL` | `http://localhost:8088` | QwenPaw service URL |
-| `QWENPAW_HEADLESS` | `true` | Headless mode (`true`/`false`) |
-| `QWENPAW_TIMEOUT` | `30000` | Timeout (milliseconds) |
-| `QWENPAW_USER_ID` | `default` | User ID |
-| `QWENPAW_CHANNEL` | `console` | Channel name |
+| `JOTADUO_BASE_URL` | `http://localhost:8088` | JotaDuo service URL |
+| `JOTADUO_HEADLESS` | `true` | Headless mode (`true`/`false`) |
+| `JOTADUO_TIMEOUT` | `30000` | Timeout (milliseconds) |
+| `JOTADUO_USER_ID` | `default` | User ID |
+| `JOTADUO_CHANNEL` | `console` | Channel name |
 | `PLAYWRIGHT_SLOW_MO` | `0` | Slow-motion delay (milliseconds) |
 
 ### Examples
 
 ```bash
 # Override the service URL
-QWENPAW_BASE_URL=http://127.0.0.1:9000 pytest tests/tests/test_chat_p0.py -v
+JOTADUO_BASE_URL=http://127.0.0.1:9000 pytest tests/tests/test_chat_p0.py -v
 
 # Headed mode + slow motion
-QWENPAW_HEADLESS=false PLAYWRIGHT_SLOW_MO=500 pytest tests/tests/test_chat_p0.py -v
+JOTADUO_HEADLESS=false PLAYWRIGHT_SLOW_MO=500 pytest tests/tests/test_chat_p0.py -v
 
 # Increase timeout
-QWENPAW_TIMEOUT=60000 pytest tests/tests/test_chat_p0.py -v
+JOTADUO_TIMEOUT=60000 pytest tests/tests/test_chat_p0.py -v
 ```
 
 ## Test Reports
@@ -247,27 +247,27 @@ def test_various_messages(self, chat_page, message, expected_keyword):
 
 ## FAQ
 
-### 1. Test failure: cannot connect to the QwenPaw service
+### 1. Test failure: cannot connect to the JotaDuo service
 
 ```bash
 # Check service status
-qwenpaw status
+jotaduo status
 
 # Start manually
-cd /Users/ming/Desktop/qwenpaw && python -m qwenpaw
+cd /Users/ming/Desktop/jotaduo && python -m jotaduo
 ```
 
 ### 2. Test failure: element not found
 
 ```bash
 # Debug in headed mode
-QWENPAW_HEADLESS=false pytest tests/tests/test_chat_p0.py::TestNewChatAndBasicQA -v
+JOTADUO_HEADLESS=false pytest tests/tests/test_chat_p0.py::TestNewChatAndBasicQA -v
 
 # Increase timeout
-QWENPAW_TIMEOUT=60000 pytest tests/tests/test_chat_p0.py -v
+JOTADUO_TIMEOUT=60000 pytest tests/tests/test_chat_p0.py -v
 
 # Use slow motion to inspect page loading
-PLAYWRIGHT_SLOW_MO=1000 QWENPAW_HEADLESS=false pytest tests/tests/test_chat_p0.py -v
+PLAYWRIGHT_SLOW_MO=1000 JOTADUO_HEADLESS=false pytest tests/tests/test_chat_p0.py -v
 ```
 
 ### 3. Browser fails to launch

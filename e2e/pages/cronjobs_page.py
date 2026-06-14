@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-QwenPaw CronJobs page object.
+JotaDuo CronJobs page object.
 
 Wraps all interactions on the CronJobs page and exposes business-level methods.
 """
@@ -30,40 +30,40 @@ class CronJobsPage(BasePage):
     - Run a job immediately
     """
 
-    PAGE_TITLE = "QwenPaw Console"
+    PAGE_TITLE = "JotaDuo Console"
     PAGE_URL = f"{config.base_url}/cron-jobs"
 
     # ========== Selector definitions ==========
 
     # Page-loaded indicator (the page has no h1; use the create button as the load-complete marker)
-    PAGE_LOAD_INDICATOR = 'button:has-text("创建任务"), button:has-text("Create Job"), .qwenpaw-table, .ant-table'
+    PAGE_LOAD_INDICATOR = 'button:has-text("创建任务"), button:has-text("Create Job"), .jotaduo-table, .ant-table'
 
     # Create button (UI text is in Chinese)
     CREATE_JOB_BTN = 'button:has-text("创建任务"), button:has-text("+ 创建任务"), button:has-text("Create Job"), button:has-text("+ Create Job")'
 
     # Table selectors
-    JOB_TABLE = ".ant-table, .qwenpaw-table, table"
-    JOB_TABLE_ROW = ".ant-table-tbody > tr, .qwenpaw-table-tbody > tr, table tbody tr"
+    JOB_TABLE = ".ant-table, .jotaduo-table, table"
+    JOB_TABLE_ROW = ".ant-table-tbody > tr, .jotaduo-table-tbody > tr, table tbody tr"
 
     # Job action buttons
     EDIT_BTN = 'button:has-text("Edit"), button:has-text("编辑"), .ant-btn:has(svg):not(:has-text("Delete")):not(:has-text("删除"))'
     DELETE_BTN = 'button:has-text("Delete"), button:has-text("删除")'
-    ENABLE_TOGGLE = '.ant-switch, .qwenpaw-switch'
+    ENABLE_TOGGLE = '.ant-switch, .jotaduo-switch'
     EXECUTE_NOW_BTN = 'button:has-text("Execute Now"), button:has-text("Run"), button:has-text("立即执行"), button:has-text("执行")'
 
     # Drawer / dialog
-    DRAWER = ".ant-drawer, .qwenpaw-drawer, [class*=drawer]"
-    DRAWER_TITLE = ".ant-drawer-title, .qwenpaw-drawer-title"
-    DRAWER_SAVE_BTN = '.ant-drawer .ant-btn-primary:has-text("Save"), .ant-drawer button:has-text("OK"), [class*=drawer] button:has-text("Save"), [class*=drawer] button:has-text("OK"), [class*=drawer] button:has-text("保存"), [class*=drawer] button:has-text("保 存"), [class*=drawer] button:has-text("确定"), [class*=drawer] .qwenpaw-btn-primary'
+    DRAWER = ".ant-drawer, .jotaduo-drawer, [class*=drawer]"
+    DRAWER_TITLE = ".ant-drawer-title, .jotaduo-drawer-title"
+    DRAWER_SAVE_BTN = '.ant-drawer .ant-btn-primary:has-text("Save"), .ant-drawer button:has-text("OK"), [class*=drawer] button:has-text("Save"), [class*=drawer] button:has-text("OK"), [class*=drawer] button:has-text("保存"), [class*=drawer] button:has-text("保 存"), [class*=drawer] button:has-text("确定"), [class*=drawer] .jotaduo-btn-primary'
     DRAWER_CANCEL_BTN = '.ant-drawer .ant-btn:has-text("Cancel"), [class*=drawer] button:has-text("取消"), [class*=drawer] button:has-text("取 消")'
 
     # Form fields
     JOB_NAME_INPUT = 'input#name, input[id*="jobName"], input[placeholder*="Job Name" i], input[placeholder*="任务名称" i], input[placeholder*="每日早报" i]'
     CRON_EXPRESSION_INPUT = '#schedule_cron'
-    TIMEZONE_SELECT = '.ant-select[data-placeholder*="Timezone" i], .qwenpaw-select[data-placeholder*="时区" i]'
-    TASK_TYPE_SELECT = '.ant-select[data-placeholder*="Task Type" i], .qwenpaw-select[data-placeholder*="任务类型" i]'
+    TIMEZONE_SELECT = '.ant-select[data-placeholder*="Timezone" i], .jotaduo-select[data-placeholder*="时区" i]'
+    TASK_TYPE_SELECT = '.ant-select[data-placeholder*="Task Type" i], .jotaduo-select[data-placeholder*="任务类型" i]'
     DESCRIPTION_INPUT = 'textarea[id*="description"], textarea[placeholder*="Description" i], textarea[placeholder*="描述" i]'
-    ENABLED_SWITCH = '.ant-switch, .qwenpaw-switch'
+    ENABLED_SWITCH = '.ant-switch, .jotaduo-switch'
 
     # Filter and search
     SEARCH_INPUT = 'input[placeholder*="Search" i], input[placeholder*="搜索" i]'
@@ -77,13 +77,13 @@ class CronJobsPage(BasePage):
         if select.count() == 0 or not select.first.is_visible():
             return
         # Check whether the Select already holds the target value
-        current_value = select.first.locator('.qwenpaw-select-selection-item, .ant-select-selection-item')
+        current_value = select.first.locator('.jotaduo-select-selection-item, .ant-select-selection-item')
         if current_value.count() > 0 and current_value.first.is_visible():
             current_text = current_value.first.inner_text().strip()
             if current_text == value:
                 return  # Already correct, skip
         # Click the Select's selector area to open the dropdown (bypass occlusion via JS)
-        selector = select.first.locator('.qwenpaw-select-selector, .ant-select-selector')
+        selector = select.first.locator('.jotaduo-select-selector, .ant-select-selector')
         if selector.count() > 0:
             selector.first.evaluate("el => el.click()")
         else:
@@ -93,7 +93,7 @@ class CronJobsPage(BasePage):
         self.page.keyboard.type(value, delay=50)
         self.page.wait_for_timeout(500)
         # Try clicking the matching option
-        option = self.page.locator(f'.qwenpaw-select-item-option-content:has-text("{value}")').first
+        option = self.page.locator(f'.jotaduo-select-item-option-content:has-text("{value}")').first
         if option.is_visible(timeout=1500):
             option.click()
         else:
@@ -125,7 +125,7 @@ class CronJobsPage(BasePage):
 
     def get_job_row(self, job_name: str) -> Locator:
         """Get the row of the given job (excluding hidden rows and placeholder rows)."""
-        return self.page.locator(f"tr:not([aria-hidden='true']):not(.qwenpaw-table-placeholder):not(.qwenpaw-table-measure-row):has-text('{job_name}')")
+        return self.page.locator(f"tr:not([aria-hidden='true']):not(.jotaduo-table-placeholder):not(.jotaduo-table-measure-row):has-text('{job_name}')")
 
     def job_exists(self, job_name: str) -> bool:
         """Check whether the job exists (traverses all pages of pagination)."""
@@ -134,7 +134,7 @@ class CronJobsPage(BasePage):
             return True
 
         # Iterate through pagination to look up
-        pagination_items = self.page.locator('.qwenpaw-pagination-item:not(.qwenpaw-pagination-item-active)').all()
+        pagination_items = self.page.locator('.jotaduo-pagination-item:not(.jotaduo-pagination-item-active)').all()
         for page_item in pagination_items:
             if page_item.is_visible():
                 page_item.click()
@@ -234,9 +234,9 @@ class CronJobsPage(BasePage):
         }""")
         self.page.wait_for_timeout(2000)
         # If the drawer is still visible, close it manually
-        drawer = self.page.locator('.qwenpaw-drawer:visible, .ant-drawer:visible')
+        drawer = self.page.locator('.jotaduo-drawer:visible, .ant-drawer:visible')
         if drawer.count() > 0:
-            close_btn = self.page.locator('.qwenpaw-drawer-close, .ant-drawer-close')
+            close_btn = self.page.locator('.jotaduo-drawer-close, .ant-drawer-close')
             if close_btn.count() > 0 and close_btn.first.is_visible():
                 close_btn.first.click()
                 self.page.wait_for_timeout(500)
@@ -296,7 +296,7 @@ class CronJobsPage(BasePage):
 
         if confirm:
             # Confirm deletion
-            confirm_btn = self.page.locator('.ant-modal .ant-btn-danger:has-text("OK"), .qwenpaw-modal .qwenpaw-btn-danger:has-text("OK"), .ant-modal button:has-text("确定"), .qwenpaw-modal button:has-text("确定"), button:has-text("确认")')
+            confirm_btn = self.page.locator('.ant-modal .ant-btn-danger:has-text("OK"), .jotaduo-modal .jotaduo-btn-danger:has-text("OK"), .ant-modal button:has-text("确定"), .jotaduo-modal button:has-text("确定"), button:has-text("确认")')
             if confirm_btn.count() > 0:
                 confirm_btn.click()
                 expect(self.page.locator(self.DRAWER).first).to_be_hidden(timeout=10000)
@@ -316,7 +316,7 @@ class CronJobsPage(BasePage):
         """Enable a job."""
         row = self.get_job_row(job_name)
         toggle = row.locator(self.ENABLE_TOGGLE)
-        is_enabled = toggle.first.evaluate("el => el.classList.contains('ant-switch-checked') || el.classList.contains('qwenpaw-switch-checked')")
+        is_enabled = toggle.first.evaluate("el => el.classList.contains('ant-switch-checked') || el.classList.contains('jotaduo-switch-checked')")
         if not is_enabled:
             toggle.click()
         return self
@@ -325,7 +325,7 @@ class CronJobsPage(BasePage):
         """Disable a job."""
         row = self.get_job_row(job_name)
         toggle = row.locator(self.ENABLE_TOGGLE)
-        is_enabled = toggle.first.evaluate("el => el.classList.contains('ant-switch-checked') || el.classList.contains('qwenpaw-switch-checked')")
+        is_enabled = toggle.first.evaluate("el => el.classList.contains('ant-switch-checked') || el.classList.contains('jotaduo-switch-checked')")
         if is_enabled:
             toggle.click()
         return self
@@ -361,7 +361,7 @@ class CronJobsPage(BasePage):
         # Try the switch component first
         toggle = row.locator(self.ENABLE_TOGGLE)
         if toggle.count() > 0:
-            is_enabled = toggle.first.evaluate("el => el.classList.contains('ant-switch-checked') || el.classList.contains('qwenpaw-switch-checked') || el.getAttribute('aria-checked') === 'true'")
+            is_enabled = toggle.first.evaluate("el => el.classList.contains('ant-switch-checked') || el.classList.contains('jotaduo-switch-checked') || el.getAttribute('aria-checked') === 'true'")
             assert is_enabled, f"Job '{job_name}' should be enabled"
         else:
             # Fall back to text check
@@ -374,7 +374,7 @@ class CronJobsPage(BasePage):
         row = self.get_job_row(job_name)
         toggle = row.locator(self.ENABLE_TOGGLE)
         if toggle.count() > 0:
-            is_enabled = toggle.first.evaluate("el => el.classList.contains('ant-switch-checked') || el.classList.contains('qwenpaw-switch-checked') || el.getAttribute('aria-checked') === 'true'")
+            is_enabled = toggle.first.evaluate("el => el.classList.contains('ant-switch-checked') || el.classList.contains('jotaduo-switch-checked') || el.getAttribute('aria-checked') === 'true'")
             assert not is_enabled, f"Job '{job_name}' should be disabled"
         else:
             row_text = row.inner_text()

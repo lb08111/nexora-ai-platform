@@ -6,7 +6,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from qwenpaw.providers.retry_chat_model import (
+from jotaduo.providers.retry_chat_model import (
     RETRYABLE_STATUS_CODES,
     RetryConfig,
     RateLimitConfig,

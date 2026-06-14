@@ -1,6 +1,6 @@
 # Backend Integration Guide for Copilot Kit
 
-Este documento descreve como integrar o frontend de chat e plugins com o backend Python (QwenPaw).
+Este documento descreve como integrar o frontend de chat e plugins com o backend Python (JotaDuo).
 
 ## 🔌 Endpoints Necessários
 
@@ -32,7 +32,7 @@ Processa mensagens do usuário e retorna respostas do assistente.
   "reply": "Resposta do assistente",
   "message": "Resposta do assistente (fallback)",
   "metadata": {
-    "source": "qwenpaw",
+    "source": "jotaduo",
     "model": "gpt-4",
     "tokens": 150
   }
@@ -115,7 +115,7 @@ class ChatResponse(BaseModel):
 @app.post("/api/chat")
 async def chat_endpoint(request: ChatRequest):
     try:
-        # Processar mensagem com QwenPaw
+        # Processar mensagem com JotaDuo
         agent = get_agent()  # Obter instância do agente
 
         # Construir histórico para o agente
@@ -133,7 +133,7 @@ async def chat_endpoint(request: ChatRequest):
         return ChatResponse(
             reply=response,
             metadata={
-                "source": "qwenpaw",
+                "source": "jotaduo",
                 "model": agent.model_name
             }
         )
@@ -176,7 +176,7 @@ def chat():
 
         return jsonify({
             'reply': response,
-            'metadata': {'source': 'qwenpaw'}
+            'metadata': {'source': 'jotaduo'}
         })
     except Exception as e:
         return jsonify({'error': str(e)}), 500

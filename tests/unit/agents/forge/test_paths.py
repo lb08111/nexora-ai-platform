@@ -3,7 +3,7 @@
 
 import pytest
 
-from qwenpaw.agents.forge._paths import (
+from jotaduo.agents.forge._paths import (
     ALLOWED_ROOTS,
     PathGuardError,
     REPO_ROOT,
@@ -29,7 +29,7 @@ class TestSlugify:
 
 class TestSafeJoin:
     def test_accepts_allowed_root(self):
-        result = safe_join("src/qwenpaw/agents/foo_agent.py")
+        result = safe_join("src/jotaduo/agents/foo_agent.py")
         assert result.is_absolute()
         assert str(result).startswith(str(REPO_ROOT))
 
@@ -44,7 +44,7 @@ class TestSafeJoin:
 
     def test_rejects_dotdot_escape(self):
         with pytest.raises(PathGuardError):
-            safe_join("src/qwenpaw/agents/../../../etc/passwd")
+            safe_join("src/jotaduo/agents/../../../etc/passwd")
 
     def test_rejects_unrelated_dir(self):
         with pytest.raises(PathGuardError):

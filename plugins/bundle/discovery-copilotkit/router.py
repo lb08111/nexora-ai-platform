@@ -25,8 +25,8 @@ from uuid import uuid4
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
-from qwenpaw.discovery import ScriptedDiscoverySession
-from qwenpaw.discovery.session import DiscoverySession
+from jotaduo.discovery import ScriptedDiscoverySession
+from jotaduo.discovery.session import DiscoverySession
 
 from copilotkit_adapter import (
     DiscoveryAgentState,

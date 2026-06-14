@@ -8,8 +8,8 @@ import re
 from typing import Any, Optional
 
 try:
-    from qwenpaw.plugins import get_tool_config
-except Exception:  # pragma: no cover - available inside Nexora/QwenPaw runtime
+    from jotaduo.plugins import get_tool_config
+except Exception:  # pragma: no cover - available inside Jotaduo/JotaDuo runtime
 
     def get_tool_config(_tool_name: str) -> dict[str, Any]:
         return {}

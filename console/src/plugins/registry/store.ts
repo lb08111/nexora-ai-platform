@@ -40,7 +40,7 @@ function notify(): void {
     try {
       fn();
     } catch (err) {
-      console.warn("[QwenPaw registry] subscriber threw:", err);
+      console.warn("[JotaDuo registry] subscriber threw:", err);
     }
   }
 }

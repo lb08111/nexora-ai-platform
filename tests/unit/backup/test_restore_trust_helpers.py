@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
-from qwenpaw.backup._ops.restore_helpers import (
+from jotaduo.backup._ops.restore_helpers import (
     LOCAL_PROTECTED_CONFIG_KEYS,
     overlay_local_keys,
     resolve_preserve_flag,
 )
-from qwenpaw.backup.models import BackupMeta, RestoreBackupRequest
+from jotaduo.backup.models import BackupMeta, RestoreBackupRequest
 
 
 def test_preserve_keys_are_limited_to_backup_trust_boundary():

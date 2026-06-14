@@ -14,7 +14,7 @@ import {
 } from "../../utils/sessionRoute";
 import styles from "./index.module.less";
 
-const CONFIRMED_KEY = "qwenpaw-coding-mode-confirmed";
+const CONFIRMED_KEY = "jotaduo-coding-mode-confirmed";
 
 export default function CodingModeToggle() {
   const { t } = useTranslation();

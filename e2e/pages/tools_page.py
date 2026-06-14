@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-QwenPaw Tools page object.
+JotaDuo Tools page object.
 
 Wraps all interactions on the tool management page and exposes business-level
 methods.
@@ -29,7 +29,7 @@ class ToolsPage(BasePage):
     - Check whether a tool is enabled
     """
 
-    PAGE_TITLE = "QwenPaw Console"
+    PAGE_TITLE = "JotaDuo Console"
     PAGE_URL = f"{config.base_url}/tools"
 
     # ========== Selector definitions ==========
@@ -39,8 +39,8 @@ class ToolsPage(BasePage):
     PAGE_LOAD_INDICATOR = TOOL_PAGE_CONTAINER
 
     # Tool card selectors
-    TOOL_CARD = ".qwenpaw-card"
-    SWITCH = ".qwenpaw-switch"
+    TOOL_CARD = ".jotaduo-card"
+    SWITCH = ".jotaduo-switch"
     BREADCRUMB = 'span[class*="breadcrumbCurrent"]'
 
     # ========== Navigation ==========
@@ -69,7 +69,7 @@ class ToolsPage(BasePage):
     def get_tool_name(self, card: Locator) -> str:
         """Return the tool name."""
         # Try to get the tool name from the card title
-        title_element = card.locator('.ant-card-meta-title, .qwenpaw-card-meta-title, h3, h4, [class*="title"]').first
+        title_element = card.locator('.ant-card-meta-title, .jotaduo-card-meta-title, h3, h4, [class*="title"]').first
         if title_element.count() > 0:
             return title_element.inner_text()
 
@@ -89,7 +89,7 @@ class ToolsPage(BasePage):
         switch = card.locator(self.SWITCH).first
         if switch.count() > 0:
             return switch.evaluate(
-                "el => el.classList.contains('qwenpaw-switch-checked') || "
+                "el => el.classList.contains('jotaduo-switch-checked') || "
                 "el.classList.contains('ant-switch-checked') || "
                 "el.getAttribute('aria-checked') === 'true'"
             )

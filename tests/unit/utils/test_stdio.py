@@ -6,8 +6,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
-import qwenpaw.utils.stdio as stdio_module
-from qwenpaw.utils.stdio import (
+import jotaduo.utils.stdio as stdio_module
+from jotaduo.utils.stdio import (
     _close_fallback_streams,
     _is_stream_usable,
     ensure_standard_streams,

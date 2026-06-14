@@ -12,7 +12,7 @@ import logging
 import os
 from typing import Any, Optional
 
-from qwenpaw.app.channels.base import BaseChannel
+from jotaduo.app.channels.base import BaseChannel
 
 logger = logging.getLogger(__name__)
 

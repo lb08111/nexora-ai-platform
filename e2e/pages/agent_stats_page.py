@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-QwenPaw AgentStats agent statistics page object.
+JotaDuo AgentStats agent statistics page object.
 
 Wraps all interactions on the agent statistics dashboard page and exposes
 business-level methods.
@@ -30,7 +30,7 @@ class AgentStatsPage(BasePage):
     - Empty and loading state handling
     """
 
-    PAGE_TITLE = "QwenPaw Console"
+    PAGE_TITLE = "JotaDuo Console"
     PAGE_URL = f"{config.base_url}/agent-stats"
 
     # ========== Selector definitions ==========
@@ -41,14 +41,14 @@ class AgentStatsPage(BasePage):
     BREADCRUMB_CURRENT = 'span[class*="breadcrumbCurrent"]'
 
     # Date range picker
-    DATE_RANGE_PICKER = ".qwenpaw-picker-range, .qwenpaw-picker"
-    DATE_RANGE_INPUT = ".qwenpaw-picker-range input, .qwenpaw-picker input"
-    DATE_PICKER_PANEL = ".qwenpaw-picker-panel, .qwenpaw-picker-dropdown"
+    DATE_RANGE_PICKER = ".jotaduo-picker-range, .jotaduo-picker"
+    DATE_RANGE_INPUT = ".jotaduo-picker-range input, .jotaduo-picker input"
+    DATE_PICKER_PANEL = ".jotaduo-picker-panel, .jotaduo-picker-dropdown"
 
     # Summary cards
-    SUMMARY_CARD = '[class*="summaryCard"], [class*="SummaryCard"], .qwenpaw-card'
-    SUMMARY_CARD_TITLE = '[class*="cardTitle"], [class*="title"], .qwenpaw-statistic-title'
-    SUMMARY_CARD_VALUE = '[class*="cardValue"], [class*="value"], .qwenpaw-statistic-content-value'
+    SUMMARY_CARD = '[class*="summaryCard"], [class*="SummaryCard"], .jotaduo-card'
+    SUMMARY_CARD_TITLE = '[class*="cardTitle"], [class*="title"], .jotaduo-statistic-title'
+    SUMMARY_CARD_VALUE = '[class*="cardValue"], [class*="value"], .jotaduo-statistic-content-value'
 
     # Chart container
     CHART_CONTAINER = '[class*="chartContainer"], [class*="chart"], canvas'
@@ -56,13 +56,13 @@ class AgentStatsPage(BasePage):
     PIE_CHART = '[class*="pie"], [class*="donut"]'
 
     # Empty and loading states
-    EMPTY_STATE = ".qwenpaw-empty, [class*='empty']"
-    LOADING_SPIN = ".qwenpaw-spin, [class*='loading']"
+    EMPTY_STATE = ".jotaduo-empty, [class*='empty']"
+    LOADING_SPIN = ".jotaduo-spin, [class*='loading']"
     ERROR_STATE = '[class*="error"]'
     RETRY_BUTTON = 'button:has-text("Retry"), button:has-text("重试")'
 
     # Tooltip
-    TOOLTIP = '.qwenpaw-tooltip, [class*="tooltip"]'
+    TOOLTIP = '.jotaduo-tooltip, [class*="tooltip"]'
 
     # ========== Initialization ==========
 
@@ -138,7 +138,7 @@ class AgentStatsPage(BasePage):
     def get_card_title(self, card: Locator) -> str:
         """Return the card title."""
         title_el = card.locator(
-            '[class*="title"], .qwenpaw-statistic-title, h3, h4, span'
+            '[class*="title"], .jotaduo-statistic-title, h3, h4, span'
         ).first
         if title_el.is_visible(timeout=3000):
             return title_el.inner_text().strip()
@@ -147,7 +147,7 @@ class AgentStatsPage(BasePage):
     def get_card_value(self, card: Locator) -> str:
         """Return the card value."""
         value_el = card.locator(
-            '[class*="value"], .qwenpaw-statistic-content-value, '
+            '[class*="value"], .jotaduo-statistic-content-value, '
             '[class*="number"], [class*="count"]'
         ).first
         if value_el.is_visible(timeout=3000):

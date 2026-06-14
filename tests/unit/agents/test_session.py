@@ -8,7 +8,7 @@ import tempfile
 
 import pytest
 
-from qwenpaw.app.runner.session import SafeJSONSession
+from jotaduo.app.runner.session import SafeJSONSession
 
 
 @pytest.fixture

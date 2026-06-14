@@ -9,8 +9,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
-import qwenpaw.utils.telemetry as telemetry_module
-from qwenpaw.utils.telemetry import (
+import jotaduo.utils.telemetry as telemetry_module
+from jotaduo.utils.telemetry import (
     TELEMETRY_MARKER_FILE,
     _detect_gpu,
     _safe_get,
@@ -101,7 +101,7 @@ def test_has_collected_v11_compat(
         lambda: "0.5.0",
     )
     marker = tmp_path / TELEMETRY_MARKER_FILE
-    marker.write_text(json.dumps({"qwenpaw_version": "0.5.0"}))
+    marker.write_text(json.dumps({"jotaduo_version": "0.5.0"}))
     assert has_telemetry_been_collected(tmp_path) is True
 
 
@@ -191,7 +191,7 @@ def test_mark_collected_v11_migration(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     marker = tmp_path / TELEMETRY_MARKER_FILE
-    marker.write_text(json.dumps({"qwenpaw_version": "0.5.0"}))
+    marker.write_text(json.dumps({"jotaduo_version": "0.5.0"}))
     monkeypatch.setattr(
         telemetry_module,
         "_get_current_version",

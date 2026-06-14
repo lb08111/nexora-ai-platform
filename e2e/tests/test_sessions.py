@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-QwenPaw Sessions module P0 end-to-end test cases.
+JotaDuo Sessions module P0 end-to-end test cases.
 
 P0 definition:
 - Core user flows
@@ -114,7 +114,7 @@ class TestSessionListFilterAndDetail:
             first_row.click()
             sessions_page.page.wait_for_timeout(2000)
             # Verify the detail panel or drawer opens
-            detail_panel = sessions_page.page.locator('.qwenpaw-drawer, .qwenpaw-modal, [class*="detail"]').first
+            detail_panel = sessions_page.page.locator('.jotaduo-drawer, .jotaduo-modal, [class*="detail"]').first
             if detail_panel.count() > 0 and detail_panel.is_visible(timeout=3000):
                 detail_text = detail_panel.text_content() or ""
                 assert len(detail_text) > 10, "Session detail content should not be empty"
@@ -226,7 +226,7 @@ class TestEditAndDeleteSession:
         # --- Batch delete: checkbox must actually be selectable ---
         log_test_step("6. Verify batch-selection checkbox is selectable")
         row_checkboxes = sessions_page.page.locator(
-            'tbody tr .qwenpaw-checkbox-input, '
+            'tbody tr .jotaduo-checkbox-input, '
             'tbody tr .ant-checkbox-input, '
             'tbody tr input[type="checkbox"]'
         )
@@ -238,7 +238,7 @@ class TestEditAndDeleteSession:
         sessions_page.step_shot("06_first_checkbox_checked")
         # After selection, a batch-delete button should appear (fixed bar or toolbar)
         batch_btns = sessions_page.page.locator(
-            'button.qwenpaw-btn-dangerous:has-text("Delete"), '
+            'button.jotaduo-btn-dangerous:has-text("Delete"), '
             'button:has-text("Batch Delete")'
         )
         # This is a soft check: batch-delete button text/class varies by frontend; any dangerous button is fine
@@ -322,7 +322,7 @@ class TestSessionEditAndSave:
         edit_btn = first_row.locator('button:has-text("Edit")').first
         if not edit_btn.is_visible():
             # Try the fixed column
-            fixed_row = sessions_page.page.locator('.qwenpaw-table-cell-fix-right button:has-text("Edit")').first
+            fixed_row = sessions_page.page.locator('.jotaduo-table-cell-fix-right button:has-text("Edit")').first
             if fixed_row.is_visible():
                 edit_btn = fixed_row
         if not edit_btn.is_visible():
@@ -352,7 +352,7 @@ class TestSessionEditAndSave:
         log_test_step("6. Click the save button")
         save_btn = sessions_page.page.locator(sessions_page.FORM_SUBMIT_BTN).first
         if save_btn.count() == 0:
-            save_btn = sessions_page.page.locator('button:has-text("Save"), button.qwenpaw-btn-primary').first
+            save_btn = sessions_page.page.locator('button:has-text("Save"), button.jotaduo-btn-primary').first
         if save_btn.count() > 0 and save_btn.is_visible():
             save_btn.click()
             logger.info("Clicked save button")
@@ -389,7 +389,7 @@ class TestSessionEditAndSave:
                 name_input.fill(original_name)
                 save_btn = sessions_page.page.locator(sessions_page.FORM_SUBMIT_BTN).first
                 if save_btn.count() == 0:
-                    save_btn = sessions_page.page.locator('button:has-text("Save"), button.qwenpaw-btn-primary').first
+                    save_btn = sessions_page.page.locator('button:has-text("Save"), button.jotaduo-btn-primary').first
                 if save_btn.count() > 0:
                     save_btn.click()
                     expect(sessions_page.page.locator(sessions_page.SESSION_DRAWER).first).to_be_hidden(timeout=5000)
@@ -454,9 +454,9 @@ class TestSessionBatchDelete:
         log_test_step("3. Tick checkboxes for the first two sessions")
         # Source: Table rowSelection; each tbody tr has a checkbox.
         # Don't tick the select-all (in thead); tick the tbody row checkboxes.
-        # Use broad selectors to cover both antd and qwenpaw prefixes
+        # Use broad selectors to cover both antd and jotaduo prefixes
         row_checkboxes = sessions_page.page.locator(
-            'tbody tr .qwenpaw-checkbox-input, '
+            'tbody tr .jotaduo-checkbox-input, '
             'tbody tr .ant-checkbox-input, '
             'tbody tr input[type="checkbox"]'
         ).all()
@@ -476,10 +476,10 @@ class TestSessionBatchDelete:
 
         log_test_step("4. Verify the batch-delete button appears")
         # Source: button Type="primary" danger renders only when selectedRowKeys.length > 0
-        # antd Button type="primary" danger may have classes qwenpaw-btn-primary + qwenpaw-btn-dangerous
+        # antd Button type="primary" danger may have classes jotaduo-btn-primary + jotaduo-btn-dangerous
         batch_delete_btn = None
         batch_btn_selectors = [
-            'button.qwenpaw-btn-dangerous:has-text("Delete")',
+            'button.jotaduo-btn-dangerous:has-text("Delete")',
             'button:has-text("Batch Delete")',
             'button:has-text("Delete")',
         ]
@@ -506,7 +506,7 @@ class TestSessionBatchDelete:
         # Explicitly wait for the dialog to appear
         modal_visible = False
         try:
-            modal = sessions_page.page.locator('.qwenpaw-modal, .ant-modal').first
+            modal = sessions_page.page.locator('.jotaduo-modal, .ant-modal').first
             modal.wait_for(state="visible", timeout=5000)
             modal_visible = True
             logger.info("Confirm dialog appeared")
@@ -519,20 +519,20 @@ class TestSessionBatchDelete:
         confirm_btn = None
         confirm_selectors = [
             # Modal.confirm okType="danger" buttons
-            '.qwenpaw-modal-confirm-btns .qwenpaw-btn-dangerous',
-            '.qwenpaw-modal-confirm-btns .qwenpaw-btn-primary',
-            '.qwenpaw-modal .qwenpaw-btn-dangerous',
-            '.qwenpaw-modal .qwenpaw-btn-primary',
+            '.jotaduo-modal-confirm-btns .jotaduo-btn-dangerous',
+            '.jotaduo-modal-confirm-btns .jotaduo-btn-primary',
+            '.jotaduo-modal .jotaduo-btn-dangerous',
+            '.jotaduo-modal .jotaduo-btn-primary',
             # Original antd prefixes
             '.ant-modal-confirm-btns .ant-btn-dangerous',
             '.ant-modal-confirm-btns .ant-btn-primary',
             '.ant-modal .ant-btn-primary',
             # Generic text matchers
-            '.qwenpaw-modal button:has-text("OK")',
-            '.qwenpaw-modal button:has-text("Delete")',
+            '.jotaduo-modal button:has-text("OK")',
+            '.jotaduo-modal button:has-text("Delete")',
             '.ant-modal button:has-text("OK")',
             # Popconfirm or other confirm components
-            '.qwenpaw-popconfirm button.qwenpaw-btn-primary',
+            '.jotaduo-popconfirm button.jotaduo-btn-primary',
             'button:has-text("OK")',
         ]
         for selector in confirm_selectors:
@@ -596,8 +596,8 @@ def ensure_session_data(page: Page):
 
     existing_count = page.locator(
         "tbody tr:not([aria-hidden='true'])"
-        ":not(.qwenpaw-table-placeholder)"
-        ":not(.qwenpaw-table-measure-row)"
+        ":not(.jotaduo-table-placeholder)"
+        ":not(.jotaduo-table-measure-row)"
     ).count()
 
     needed = max(0, 3 - existing_count)
@@ -740,7 +740,7 @@ class TestSessionFilterByUseridAndChannel:
             "input[placeholder*='userid'], input[placeholder*='UserId'], "
             "input[placeholder*='ID'], input[placeholder*='id']"
         ).first
-        channel_select = page.locator(".qwenpaw-select, .ant-select").first
+        channel_select = page.locator(".jotaduo-select, .ant-select").first
 
         # At least one filter control must exist
         has_userid_input = userid_input.count() > 0
@@ -750,7 +750,7 @@ class TestSessionFilterByUseridAndChannel:
         logger.info(f"Filter controls: UserID input={'yes' if has_userid_input else 'no'}, Channel selector={'yes' if has_channel_select else 'no'}")
 
         log_test_step("Get the initial session list")
-        session_row_selector = "tbody tr:not(.qwenpaw-table-placeholder):not(.qwenpaw-table-measure-row)"
+        session_row_selector = "tbody tr:not(.jotaduo-table-placeholder):not(.jotaduo-table-measure-row)"
         initial_sessions = page.locator(session_row_selector).all()
         initial_count = len(initial_sessions)
         assert initial_count > 0, "ensure_session_data fixture should have created test data, but session list is still empty"

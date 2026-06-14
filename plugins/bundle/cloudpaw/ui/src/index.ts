@@ -1,16 +1,16 @@
 /**
- * CloudPaw frontend plugin for QwenPaw
+ * CloudPaw frontend plugin for JotaDuo
  *
  * Registers custom tool renderers for:
  * - proposal_choice: interactive resource proposal tables with confirm/adjust
  * - manage_prd: interactive PRD display (auto-rendered after each manage_prd call)
  *
- * Uses window.QwenPaw plugin API (PR #3512+)
+ * Uses window.JotaDuo plugin API (PR #3512+)
  */
 
 function buildPlugin() {
   const { React, antd, antdIcons, getApiUrl, getApiToken } = (window as any)
-    .QwenPaw.host;
+    .JotaDuo.host;
   const {
     Card,
     Table,
@@ -1145,8 +1145,8 @@ function buildPlugin() {
   function getSelectedAgentId(): string | null {
     try {
       const raw =
-        sessionStorage.getItem("qwenpaw-agent-storage") ||
-        localStorage.getItem("qwenpaw-agent-storage");
+        sessionStorage.getItem("jotaduo-agent-storage") ||
+        localStorage.getItem("jotaduo-agent-storage");
       if (raw) {
         const parsed = JSON.parse(raw);
         return parsed?.state?.selectedAgent || null;
@@ -2847,9 +2847,9 @@ function buildPlugin() {
   }
 
   async function subscribeSSE(container: HTMLElement) {
-    const QP = (window as any).QwenPaw;
+    const QP = (window as any).JotaDuo;
     if (!QP?.host) {
-      console.warn("[a2a] QwenPaw.host not available");
+      console.warn("[a2a] JotaDuo.host not available");
       return;
     }
     const { getApiUrl, getApiToken } = QP.host;
@@ -2878,8 +2878,8 @@ function buildPlugin() {
 
       try {
         const raw =
-          sessionStorage.getItem("qwenpaw-agent-storage") ||
-          localStorage.getItem("qwenpaw-agent-storage");
+          sessionStorage.getItem("jotaduo-agent-storage") ||
+          localStorage.getItem("jotaduo-agent-storage");
         const agentId = JSON.parse(raw || "{}")?.state?.selectedAgent;
         if (agentId) headers["X-Agent-Id"] = agentId;
       } catch {}
@@ -3038,13 +3038,13 @@ function buildPlugin() {
 
   // ── Register plugin ──────────────────────────────────────────────────
 
-  (window as any).QwenPaw.registerToolRender?.("cloudpaw", {
+  (window as any).JotaDuo.registerToolRender?.("cloudpaw", {
     proposal_choice: ProposalChoiceRender,
     manage_prd: ManagePRDRender,
     a2a_call: A2ACallRender,
   });
 
-  (window as any).QwenPaw.registerRoutes?.("cloudpaw", [
+  (window as any).JotaDuo.registerRoutes?.("cloudpaw", [
     {
       path: "/a2a",
       component: A2APage,
@@ -3058,7 +3058,7 @@ function buildPlugin() {
 
   ensureDefaultAgent();
 
-  // ── Patchable module overrides (QwenPaw ≥ 1.1.4b1) ─────────────────
+  // ── Patchable module overrides (JotaDuo ≥ 1.1.4b1) ─────────────────
 
   patchWelcomeAndTheme();
 
@@ -3070,8 +3070,8 @@ function buildPlugin() {
 // ── First-install default agent selection ────────────────────────────
 
 function ensureDefaultAgent() {
-  const LAST_USED_KEY = "qwenpaw-last-used-agent";
-  const STORAGE_KEY = "qwenpaw-agent-storage";
+  const LAST_USED_KEY = "jotaduo-last-used-agent";
+  const STORAGE_KEY = "jotaduo-agent-storage";
   const FIRST_INSTALL_KEY = "cloudpaw-first-install";
   const CLOUDPAW_MASTER_AGENT_ID = "cloud-orchestrator";
 
@@ -3151,7 +3151,7 @@ function ensureDefaultAgent() {
 // ── Welcome & Theme customisation via configProvider monkey-patch ──────
 
 function patchWelcomeAndTheme() {
-  const modules = (window as any).QwenPaw?.modules;
+  const modules = (window as any).JotaDuo?.modules;
   if (!modules) return;
 
   const configModule = modules["Chat/OptionsPanel/defaultConfig"];

@@ -3,7 +3,7 @@
  *
  * Importing self-registers all builtins into routeRegistry. MainLayout's
  * `useRoutes()` snapshot returns them. Plugin routes are registered via
- * `QwenPaw.route.add(...)` into the same registry and treated uniformly.
+ * `JotaDuo.route.add(...)` into the same registry and treated uniformly.
  *
  * Lazy components use `lazyImportWithRetry` inline; eager pages (Chat,
  * CodingPage) are passed as ComponentType directly. The `/` redirect is a

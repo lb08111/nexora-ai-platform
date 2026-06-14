@@ -42,8 +42,8 @@ console/.vite
 node_modules
 **/node_modules
 **/dist
-!src/qwenpaw/console/dist
-!src/qwenpaw/console/dist/**
+!src/jotaduo/console/dist
+!src/jotaduo/console/dist/**
 **/.vite
 
 # Example and local config (mount at runtime instead)

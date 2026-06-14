@@ -7,7 +7,7 @@
     "pt-BR": "Ferramentas leves para consultas cadastrais brasileiras: CNPJ, CPF, CEP, inscrição estadual, Simples Nacional e enriquecimento de leads usando fontes públicas.",
     "en-US": "Lightweight Brazilian cadastral lookup tools for CNPJ, CPF, CEP, state registration, Simples Nacional and lead enrichment using public sources."
   },
-  "author": "Nexora",
+  "author": "Jotaduo",
   "entry": {
     "backend": "cnpj_br.py"
   },

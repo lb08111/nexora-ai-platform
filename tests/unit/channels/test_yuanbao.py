@@ -39,7 +39,7 @@ def mock_process():
 @pytest.fixture
 def yuanbao_channel(mock_process, tmp_path):
     """Create YuanbaoChannel instance for testing."""
-    from qwenpaw.app.channels.yuanbao.channel import YuanbaoChannel
+    from jotaduo.app.channels.yuanbao.channel import YuanbaoChannel
 
     channel = YuanbaoChannel(
         process=mock_process,
@@ -73,7 +73,7 @@ def connected_channel(yuanbao_channel):
 @pytest.fixture
 def sample_upload_result():
     """Create a sample UploadResult."""
-    from qwenpaw.app.channels.yuanbao.media import UploadResult
+    from jotaduo.app.channels.yuanbao.media import UploadResult
 
     return UploadResult(
         url="https://cdn.example.com/image.jpg",
@@ -95,7 +95,7 @@ class TestYuanbaoChannelInit:
     """P0: YuanbaoChannel initialization tests."""
 
     def test_init_stores_basic_config(self, mock_process, tmp_path):
-        from qwenpaw.app.channels.yuanbao.channel import YuanbaoChannel
+        from jotaduo.app.channels.yuanbao.channel import YuanbaoChannel
 
         channel = YuanbaoChannel(
             process=mock_process,
@@ -124,7 +124,7 @@ class TestYuanbaoChannelInit:
         assert yuanbao_channel._token_manager is None
 
     def test_init_media_dir_from_workspace(self, mock_process, tmp_path):
-        from qwenpaw.app.channels.yuanbao.channel import YuanbaoChannel
+        from jotaduo.app.channels.yuanbao.channel import YuanbaoChannel
 
         workspace = tmp_path / "workspace"
         channel = YuanbaoChannel(
@@ -149,7 +149,7 @@ class TestYuanbaoChannelFactory:
     """P0: Factory method tests."""
 
     def test_from_config_with_dict(self, mock_process):
-        from qwenpaw.app.channels.yuanbao.channel import YuanbaoChannel
+        from jotaduo.app.channels.yuanbao.channel import YuanbaoChannel
 
         config = {
             "enabled": True,
@@ -169,7 +169,7 @@ class TestYuanbaoChannelFactory:
         assert channel.api_domain == "dict.domain.com"
 
     def test_from_config_with_object(self, mock_process):
-        from qwenpaw.app.channels.yuanbao.channel import YuanbaoChannel
+        from jotaduo.app.channels.yuanbao.channel import YuanbaoChannel
 
         config = Mock()
         config.enabled = True
@@ -254,28 +254,28 @@ class TestMediaHelpers:
     """P1: media.py helper function tests."""
 
     def test_guess_mime_jpeg(self):
-        from qwenpaw.app.channels.yuanbao.media import _guess_mime
+        from jotaduo.app.channels.yuanbao.media import _guess_mime
 
         assert _guess_mime("photo.jpg") == "image/jpeg"
         assert _guess_mime("photo.jpeg") == "image/jpeg"
 
     def test_guess_mime_png(self):
-        from qwenpaw.app.channels.yuanbao.media import _guess_mime
+        from jotaduo.app.channels.yuanbao.media import _guess_mime
 
         assert _guess_mime("icon.png") == "image/png"
 
     def test_guess_mime_pdf(self):
-        from qwenpaw.app.channels.yuanbao.media import _guess_mime
+        from jotaduo.app.channels.yuanbao.media import _guess_mime
 
         assert _guess_mime("doc.pdf") == "application/pdf"
 
     def test_guess_mime_unknown(self):
-        from qwenpaw.app.channels.yuanbao.media import _guess_mime
+        from jotaduo.app.channels.yuanbao.media import _guess_mime
 
         assert _guess_mime("data.xyz") == "application/octet-stream"
 
     def test_parse_image_size_png(self):
-        from qwenpaw.app.channels.yuanbao.media import _parse_image_size
+        from jotaduo.app.channels.yuanbao.media import _parse_image_size
 
         # Minimal PNG header: width=100, height=200
         header = b"\x89PNG\r\n\x1a\n" + b"\x00" * 8
@@ -285,29 +285,29 @@ class TestMediaHelpers:
         assert height == 200
 
     def test_parse_image_size_unknown(self):
-        from qwenpaw.app.channels.yuanbao.media import _parse_image_size
+        from jotaduo.app.channels.yuanbao.media import _parse_image_size
 
         width, height = _parse_image_size(b"not an image")
         assert width == 0
         assert height == 0
 
     def test_resolve_local_path_file_uri(self):
-        from qwenpaw.app.channels.yuanbao.media import _resolve_local_path
+        from jotaduo.app.channels.yuanbao.media import _resolve_local_path
 
         assert _resolve_local_path("file:///tmp/test.jpg") == "/tmp/test.jpg"
 
     def test_resolve_local_path_absolute(self):
-        from qwenpaw.app.channels.yuanbao.media import _resolve_local_path
+        from jotaduo.app.channels.yuanbao.media import _resolve_local_path
 
         assert _resolve_local_path("/tmp/test.jpg") == "/tmp/test.jpg"
 
     def test_resolve_local_path_url_returns_none(self):
-        from qwenpaw.app.channels.yuanbao.media import _resolve_local_path
+        from jotaduo.app.channels.yuanbao.media import _resolve_local_path
 
         assert _resolve_local_path("https://example.com/img.jpg") is None
 
     def test_resolve_local_path_empty(self):
-        from qwenpaw.app.channels.yuanbao.media import _resolve_local_path
+        from jotaduo.app.channels.yuanbao.media import _resolve_local_path
 
         assert _resolve_local_path("") is None
 
@@ -316,7 +316,7 @@ class TestMediaMsgBody:
     """P1: TIMImageElem / TIMFileElem message body building."""
 
     def test_build_image_msg_body(self, sample_upload_result):
-        from qwenpaw.app.channels.yuanbao.media import build_image_msg_body
+        from jotaduo.app.channels.yuanbao.media import build_image_msg_body
 
         body = build_image_msg_body(sample_upload_result)
 
@@ -333,7 +333,7 @@ class TestMediaMsgBody:
         assert images[0]["size"] == 12345
 
     def test_build_file_msg_body(self):
-        from qwenpaw.app.channels.yuanbao.media import (
+        from jotaduo.app.channels.yuanbao.media import (
             UploadResult,
             build_file_msg_body,
         )
@@ -360,7 +360,7 @@ class TestCosSignature:
     """P1: COS HMAC-SHA1 signature generation."""
 
     def test_sign_cos_request_format(self):
-        from qwenpaw.app.channels.yuanbao.media import _sign_cos_request
+        from jotaduo.app.channels.yuanbao.media import _sign_cos_request
 
         auth = _sign_cos_request(
             secret_id="AKIDxxx",
@@ -381,7 +381,7 @@ class TestCosSignature:
         assert "q-signature=" in auth
 
     def test_sign_cos_request_deterministic(self):
-        from qwenpaw.app.channels.yuanbao.media import _sign_cos_request
+        from jotaduo.app.channels.yuanbao.media import _sign_cos_request
 
         args = {
             "secret_id": "id",
@@ -404,7 +404,7 @@ class TestAuthSignature:
     """P1: Auth signature computation."""
 
     def test_compute_signature(self):
-        from qwenpaw.app.channels.yuanbao.auth import _compute_signature
+        from jotaduo.app.channels.yuanbao.auth import _compute_signature
 
         sig = _compute_signature(
             nonce="abc123",
@@ -416,13 +416,13 @@ class TestAuthSignature:
         assert len(sig) > 0
 
     def test_compute_signature_deterministic(self):
-        from qwenpaw.app.channels.yuanbao.auth import _compute_signature
+        from jotaduo.app.channels.yuanbao.auth import _compute_signature
 
         args = ("nonce1", "2026-01-01 00:00:00", "key", "secret")
         assert _compute_signature(*args) == _compute_signature(*args)
 
     def test_compute_signature_changes_with_nonce(self):
-        from qwenpaw.app.channels.yuanbao.auth import _compute_signature
+        from jotaduo.app.channels.yuanbao.auth import _compute_signature
 
         sig1 = _compute_signature("nonce1", "ts", "key", "secret")
         sig2 = _compute_signature("nonce2", "ts", "key", "secret")
@@ -434,7 +434,7 @@ class TestTokenManager:
     """P1: TokenManager lifecycle tests."""
 
     async def test_token_manager_init(self):
-        from qwenpaw.app.channels.yuanbao.auth import TokenManager
+        from jotaduo.app.channels.yuanbao.auth import TokenManager
 
         manager = TokenManager(
             app_id="test_key",
@@ -447,7 +447,7 @@ class TestTokenManager:
         assert manager._cache is None
 
     async def test_get_auth_headers(self):
-        from qwenpaw.app.channels.yuanbao.auth import (
+        from jotaduo.app.channels.yuanbao.auth import (
             SignTokenResult,
             TokenCache,
             TokenManager,
@@ -504,7 +504,7 @@ class TestSendText:
         }
 
         with patch(
-            "qwenpaw.app.channels.yuanbao.channel.build_send_c2c_msg",
+            "jotaduo.app.channels.yuanbao.channel.build_send_c2c_msg",
         ) as mock_build:
             mock_build.return_value = (b"\x00\x01\x02", "msg_id_1")
             await connected_channel.send(
@@ -559,7 +559,7 @@ class TestSendMedia:
     async def test_send_media_part_upload_success(self, connected_channel):
         """Media part should upload to COS and send via WebSocket."""
         from agentscope_runtime.engine.schemas.agent_schemas import ContentType
-        from qwenpaw.app.channels.yuanbao.media import UploadResult
+        from jotaduo.app.channels.yuanbao.media import UploadResult
 
         part = MagicMock()
         part.type = ContentType.IMAGE
@@ -576,7 +576,7 @@ class TestSendMedia:
         )
 
         with patch(
-            "qwenpaw.app.channels.yuanbao.channel.download_and_upload_media",
+            "jotaduo.app.channels.yuanbao.channel.download_and_upload_media",
             new_callable=AsyncMock,
             return_value=mock_result,
         ), patch.object(
@@ -610,7 +610,7 @@ class TestSendMedia:
         part.image_url = "https://example.com/photo.jpg"
 
         with patch(
-            "qwenpaw.app.channels.yuanbao.channel.download_and_upload_media",
+            "jotaduo.app.channels.yuanbao.channel.download_and_upload_media",
             new_callable=AsyncMock,
             side_effect=RuntimeError("COS upload failed"),
         ), patch.object(
@@ -649,7 +649,7 @@ class TestCodecHelpers:
     """P1: Codec encode/decode helpers."""
 
     def test_to_proto_msg_body_text(self):
-        from qwenpaw.app.channels.yuanbao.codec import _to_proto_msg_body
+        from jotaduo.app.channels.yuanbao.codec import _to_proto_msg_body
 
         elements = [
             {"msg_type": "TIMTextElem", "msg_content": {"text": "hello"}},
@@ -659,7 +659,7 @@ class TestCodecHelpers:
         assert result[0]["msgType"] == "TIMTextElem"
 
     def test_to_proto_msg_body_image(self):
-        from qwenpaw.app.channels.yuanbao.codec import _to_proto_msg_body
+        from jotaduo.app.channels.yuanbao.codec import _to_proto_msg_body
 
         elements = [
             {
@@ -688,7 +688,7 @@ class TestCodecHelpers:
         assert "imageInfoArray" in content
 
     def test_from_proto_msg_body(self):
-        from qwenpaw.app.channels.yuanbao.codec import _from_proto_msg_body
+        from jotaduo.app.channels.yuanbao.codec import _from_proto_msg_body
 
         # _from_proto_msg_body expects msgContent as a dict, not JSON string
         elements = [
@@ -712,7 +712,7 @@ class TestHelperFunctions:
     """P1: Helper function tests (_short_id, _sender_display)."""
 
     def test_short_id_long_string(self):
-        from qwenpaw.app.channels.yuanbao.channel import _short_id
+        from jotaduo.app.channels.yuanbao.channel import _short_id
 
         result = _short_id(
             "CK8kfT4SpnXTsZg7ovLVTzWJLv8EymvNXO1BhLuAgOYwVFC1HLHzx5qq7AG0zjPq",
@@ -721,13 +721,13 @@ class TestHelperFunctions:
         assert len(result) == 8
 
     def test_short_id_short_string(self):
-        from qwenpaw.app.channels.yuanbao.channel import _short_id
+        from jotaduo.app.channels.yuanbao.channel import _short_id
 
         result = _short_id("abc")
         assert result == "abc"
 
     def test_sender_display_normal(self):
-        from qwenpaw.app.channels.yuanbao.channel import _sender_display
+        from jotaduo.app.channels.yuanbao.channel import _sender_display
 
         result = _sender_display(
             "灰",
@@ -736,13 +736,13 @@ class TestHelperFunctions:
         assert result == "灰#zjPq"
 
     def test_sender_display_empty_nickname(self):
-        from qwenpaw.app.channels.yuanbao.channel import _sender_display
+        from jotaduo.app.channels.yuanbao.channel import _sender_display
 
         result = _sender_display("", "abcdefgh")
         assert result == "unknown#efgh"
 
     def test_sender_display_short_id(self):
-        from qwenpaw.app.channels.yuanbao.channel import _sender_display
+        from jotaduo.app.channels.yuanbao.channel import _sender_display
 
         result = _sender_display("Test", "ab")
         assert result == "Test#ab"
@@ -752,7 +752,7 @@ class TestNormalizeInbound:
     """P1: _normalize_inbound tests."""
 
     def test_normalize_text_message(self):
-        from qwenpaw.app.channels.yuanbao.channel import YuanbaoChannel
+        from jotaduo.app.channels.yuanbao.channel import YuanbaoChannel
 
         data = {
             "callback_command": "C2C.CallbackAfterSendMsg",
@@ -765,7 +765,7 @@ class TestNormalizeInbound:
         assert result["msg_body"][0]["msg_content"]["text"] == "你好"
 
     def test_normalize_string_content(self):
-        from qwenpaw.app.channels.yuanbao.channel import YuanbaoChannel
+        from jotaduo.app.channels.yuanbao.channel import YuanbaoChannel
 
         data = {
             "msg_body": [
@@ -776,7 +776,7 @@ class TestNormalizeInbound:
         assert result["msg_body"][0]["msg_content"] == {"text": "hi"}
 
     def test_normalize_invalid_json_string_content(self):
-        from qwenpaw.app.channels.yuanbao.channel import YuanbaoChannel
+        from jotaduo.app.channels.yuanbao.channel import YuanbaoChannel
 
         data = {
             "msg_body": [
@@ -869,7 +869,7 @@ class TestParseMsgBody:
             },
         ]
         with patch(
-            "qwenpaw.app.channels.yuanbao.channel.download_media",
+            "jotaduo.app.channels.yuanbao.channel.download_media",
             new_callable=AsyncMock,
             return_value=None,
         ), patch.object(

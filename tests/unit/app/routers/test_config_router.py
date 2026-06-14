@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Unit tests for ``qwenpaw.app.routers.config``.
+"""Unit tests for ``jotaduo.app.routers.config``.
 
 Scope: representative subset of the config router as called out in the
 acceptance criteria — GET / PUT happy paths, 404 / 422 validation
@@ -22,8 +22,8 @@ import pytest
 from fastapi import FastAPI, HTTPException
 from fastapi.testclient import TestClient
 
-from qwenpaw.app.routers.config import router as config_router
-from qwenpaw.config.config import (
+from jotaduo.app.routers.config import router as config_router
+from jotaduo.config.config import (
     ChannelConfig,
     ConsoleConfig,
     ToolGuardConfig,
@@ -62,7 +62,7 @@ def fake_agent_workspace():
 def patch_get_agent(fake_agent_workspace):
     """Patch ``get_agent_for_request`` (imported lazily inside handlers)."""
     with patch(
-        "qwenpaw.app.agent_context.get_agent_for_request",
+        "jotaduo.app.agent_context.get_agent_for_request",
         new=AsyncMock(return_value=fake_agent_workspace),
     ) as patched:
         yield patched
@@ -104,7 +104,7 @@ def test_list_channels_returns_dict_with_isBuiltin_flag(
 
 def test_list_channels_404_when_agent_lookup_fails(client):
     with patch(
-        "qwenpaw.app.agent_context.get_agent_for_request",
+        "jotaduo.app.agent_context.get_agent_for_request",
         new=AsyncMock(
             side_effect=HTTPException(status_code=404, detail="nope"),
         ),
@@ -121,10 +121,10 @@ def test_put_channels_saves_and_triggers_reload(
 ):
     with (
         patch(
-            "qwenpaw.config.config.save_agent_config",
+            "jotaduo.config.config.save_agent_config",
         ) as save_mock,
         patch(
-            "qwenpaw.app.routers.config.schedule_agent_reload",
+            "jotaduo.app.routers.config.schedule_agent_reload",
         ) as reload_mock,
     ):
         payload = ChannelConfig(
@@ -162,7 +162,7 @@ def test_get_tool_guard_returns_current_config(client):
     fake_cfg.security.tool_guard = ToolGuardConfig(enabled=True)
 
     with patch(
-        "qwenpaw.app.routers.config.load_config",
+        "jotaduo.app.routers.config.load_config",
         return_value=fake_cfg,
     ):
         response = client.get("/api/config/security/tool-guard")
@@ -178,12 +178,12 @@ def test_put_tool_guard_saves_and_reloads_engine(client):
 
     with (
         patch(
-            "qwenpaw.app.routers.config.load_config",
+            "jotaduo.app.routers.config.load_config",
             return_value=fake_cfg,
         ),
-        patch("qwenpaw.app.routers.config.save_config") as save_mock,
+        patch("jotaduo.app.routers.config.save_config") as save_mock,
         patch(
-            "qwenpaw.security.tool_guard.engine.get_guard_engine",
+            "jotaduo.security.tool_guard.engine.get_guard_engine",
             return_value=engine_mock,
         ),
     ):

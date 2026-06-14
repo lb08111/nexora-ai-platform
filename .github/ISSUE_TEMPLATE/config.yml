@@ -6,7 +6,7 @@ blank_issues_enabled: true
 contact_links:
   - name: GitHub Discussions
     url: https://github.com/agentscope-ai/QwenPaw/discussions
-    about: Ask questions, share ideas, or discuss QwenPaw here.
+    about: Ask questions, share ideas, or discuss JotaDuo here.
   - name: View docs
     url: https://qwenpaw.agentscope.io/
-    about: QwenPaw docs and guides.
+    about: JotaDuo docs and guides.

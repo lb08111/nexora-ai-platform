@@ -14,8 +14,8 @@ import "./layouts/registry/builtinRoutes.tsx";
 // so that plugin UI modules can use them without bundling their own copies.
 installHostExternals();
 
-// Attach window.QwenPaw.chat (Chat customization), extend
-// window.QwenPaw.host with hooks + fetch, attach window.QwenPaw.audit.
+// Attach window.JotaDuo.chat (Chat customization), extend
+// window.JotaDuo.host with hooks + fetch, attach window.JotaDuo.audit.
 installHostSdk();
 
 // Register built-in tool card renderers into the PluginSystem
@@ -24,7 +24,7 @@ registerBuiltinCards();
 
 // Dynamic module registration — fire-and-forget. Pages register into
 // `moduleRegistry` as they are lazy-loaded; this background pass pre-warms
-// the registry so `window.QwenPaw.modules.<page>` is populated soon after
+// the registry so `window.JotaDuo.modules.<page>` is populated soon after
 // startup without blocking the first paint (eager mode used to synchronously
 // pull all 233 page modules + transitive deps into the main thread).
 void registerHostModulesDynamic();

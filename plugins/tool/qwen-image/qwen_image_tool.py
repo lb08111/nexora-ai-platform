@@ -14,8 +14,8 @@ from typing import List
 import httpx
 from agentscope.message import ImageBlock, TextBlock
 from agentscope.tool import ToolResponse
-from qwenpaw.constant import DEFAULT_MEDIA_DIR
-from qwenpaw.plugins import get_tool_config
+from jotaduo.constant import DEFAULT_MEDIA_DIR
+from jotaduo.plugins import get_tool_config
 
 logger = logging.getLogger(__name__)
 

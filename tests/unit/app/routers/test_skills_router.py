@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Unit tests for ``qwenpaw.app.routers.skills``.
+"""Unit tests for ``jotaduo.app.routers.skills``.
 
 Per the issue acceptance criteria the focus is on:
 
@@ -24,8 +24,8 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from qwenpaw.app.routers import skills as skills_module
-from qwenpaw.app.routers.skills import router as skills_router
+from jotaduo.app.routers import skills as skills_module
+from jotaduo.app.routers.skills import router as skills_router
 
 
 @pytest.fixture(autouse=True)
@@ -66,7 +66,7 @@ def fake_workspace(tmp_path: Path):
 @pytest.fixture
 def patch_get_agent(fake_workspace):
     with patch(
-        "qwenpaw.app.agent_context.get_agent_for_request",
+        "jotaduo.app.agent_context.get_agent_for_request",
         new=AsyncMock(return_value=fake_workspace),
     ) as patched:
         yield patched
@@ -79,7 +79,7 @@ def patch_get_agent(fake_workspace):
 
 def test_list_skills_returns_workspace_specs(client, patch_get_agent):
     with patch(
-        "qwenpaw.app.routers.skills._build_workspace_skill_specs",
+        "jotaduo.app.routers.skills._build_workspace_skill_specs",
         return_value=[],
     ) as build_mock:
         response = client.get("/api/skills")
@@ -93,7 +93,7 @@ def test_list_skills_404_when_agent_lookup_fails(client):
     from fastapi import HTTPException
 
     with patch(
-        "qwenpaw.app.agent_context.get_agent_for_request",
+        "jotaduo.app.agent_context.get_agent_for_request",
         new=AsyncMock(
             side_effect=HTTPException(status_code=404, detail="missing"),
         ),
@@ -121,7 +121,7 @@ def test_search_hub_returns_mapped_specs(client):
         icon_url="",
     )
     with patch(
-        "qwenpaw.app.routers.skills.search_hub_skills",
+        "jotaduo.app.routers.skills.search_hub_skills",
         new=AsyncMock(return_value=[fake_hub_result]),
     ) as search_mock:
         response = client.get("/api/skills/hub/search?q=cool&limit=5")
@@ -140,7 +140,7 @@ def test_search_hub_returns_mapped_specs(client):
 
 def test_list_pool_skills_returns_pool_specs(client):
     with patch(
-        "qwenpaw.app.routers.skills._build_pool_skill_specs",
+        "jotaduo.app.routers.skills._build_pool_skill_specs",
         return_value=[],
     ) as build_mock:
         response = client.get("/api/skills/pool")
@@ -165,7 +165,7 @@ def test_start_install_registers_task_and_returns_id(
         return None
 
     with patch(
-        "qwenpaw.app.routers.skills._run_hub_install_task",
+        "jotaduo.app.routers.skills._run_hub_install_task",
         new=noop,
     ):
         response = client.post(
@@ -186,7 +186,7 @@ def test_get_install_status_returns_task(client, patch_get_agent):
         return None
 
     with patch(
-        "qwenpaw.app.routers.skills._run_hub_install_task",
+        "jotaduo.app.routers.skills._run_hub_install_task",
         new=noop,
     ):
         start = client.post(
@@ -212,7 +212,7 @@ def test_cancel_install_marks_task_cancelled(client, patch_get_agent):
         await asyncio.sleep(60)
 
     with patch(
-        "qwenpaw.app.routers.skills._run_hub_install_task",
+        "jotaduo.app.routers.skills._run_hub_install_task",
         new=noop,
     ):
         start = client.post(

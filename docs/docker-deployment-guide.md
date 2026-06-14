@@ -1,10 +1,10 @@
-# Nexora AIops 平台 Docker 一键部署说明
+# Jotaduo AIops 平台 Docker 一键部署说明
 
 本文档说明本项目如何改造成 Docker 一键部署，以及另一台 Linux 服务器如何在“不拉源码”的情况下部署运行。
 
 ## 1. 部署目标
 
-本项目基于 QwenPaw 二次开发，前端、后端、权限体系、智能体权限、审计日志等能力都已经包含在代码仓库中。Docker 化后的目标是：
+本项目基于 JotaDuo 二次开发，前端、后端、权限体系、智能体权限、审计日志等能力都已经包含在代码仓库中。Docker 化后的目标是：
 
 - 开发机负责构建镜像。
 - 镜像包含前端构建产物和 Python 后端应用。
@@ -20,7 +20,7 @@
 - `docker-compose.yml`：本地构建和本机运行使用。
 - `deploy/docker-compose.server.yml`：服务器免源码部署使用。
 - `.dockerignore`：减少构建上下文，避免把本地缓存、日志、密钥和临时文件打进镜像。
-- `scripts/docker_build.sh`：统一镜像构建脚本，默认镜像名改为 `nexora-platform:latest`。
+- `scripts/docker_build.sh`：统一镜像构建脚本，默认镜像名改为 `jotaduo-platform:latest`。
 
 ## 3. 镜像里包含什么
 
@@ -42,7 +42,7 @@
   - `/app/working.secret`
   - `/app/working.backups`
 - 启动时自动初始化配置。
-- 通过 `qwenpaw app --host 0.0.0.0 --port 8088` 提供 Web 服务。
+- 通过 `jotaduo app --host 0.0.0.0 --port 8088` 提供 Web 服务。
 
 ## 4. 本地构建镜像
 
@@ -50,7 +50,7 @@
 
 ```bash
 cd /app
-bash scripts/docker_build.sh nexora-platform:latest
+bash scripts/docker_build.sh jotaduo-platform:latest
 ```
 
 也可以直接用 Compose 构建并启动：
@@ -77,7 +77,7 @@ docker compose ps
 查看日志：
 
 ```bash
-docker compose logs -f nexora
+docker compose logs -f jotaduo
 ```
 
 停止服务：
@@ -93,7 +93,7 @@ docker compose down
 推荐使用 GitHub Container Registry，镜像地址建议为：
 
 ```text
-ghcr.io/lb08111/nexora-platform:latest
+ghcr.io/lb08111/jotaduo-platform:latest
 ```
 
 登录 GitHub 镜像仓库：
@@ -106,20 +106,20 @@ echo <你的_GitHub_Token> | docker login ghcr.io -u lb08111 --password-stdin
 
 ```bash
 cd /app
-bash scripts/docker_build.sh ghcr.io/lb08111/nexora-platform:latest
+bash scripts/docker_build.sh ghcr.io/lb08111/jotaduo-platform:latest
 ```
 
 推送：
 
 ```bash
-docker push ghcr.io/lb08111/nexora-platform:latest
+docker push ghcr.io/lb08111/jotaduo-platform:latest
 ```
 
 如果要保留版本号，建议同时推送：
 
 ```bash
-docker tag ghcr.io/lb08111/nexora-platform:latest ghcr.io/lb08111/nexora-platform:v0.1.0
-docker push ghcr.io/lb08111/nexora-platform:v0.1.0
+docker tag ghcr.io/lb08111/jotaduo-platform:latest ghcr.io/lb08111/jotaduo-platform:v0.1.0
+docker push ghcr.io/lb08111/jotaduo-platform:v0.1.0
 ```
 
 ## 7. 另一台 Linux 服务器免源码部署
@@ -154,42 +154,42 @@ docker compose version
 ### 7.2 准备部署目录
 
 ```bash
-sudo mkdir -p /opt/nexora
-sudo chown -R $USER:$USER /opt/nexora
-cd /opt/nexora
+sudo mkdir -p /opt/jotaduo
+sudo chown -R $USER:$USER /opt/jotaduo
+cd /opt/jotaduo
 ```
 
 ### 7.3 创建 Compose 文件
 
-在服务器创建 `/opt/nexora/docker-compose.yml`：
+在服务器创建 `/opt/jotaduo/docker-compose.yml`：
 
 ```yaml
 volumes:
-  nexora-data:
-    name: nexora-data
-  nexora-secrets:
-    name: nexora-secrets
-  nexora-backups:
-    name: nexora-backups
+  jotaduo-data:
+    name: jotaduo-data
+  jotaduo-secrets:
+    name: jotaduo-secrets
+  jotaduo-backups:
+    name: jotaduo-backups
 
 services:
-  nexora:
-    image: ghcr.io/lb08111/nexora-platform:latest
-    container_name: nexora-platform
+  jotaduo:
+    image: ghcr.io/lb08111/jotaduo-platform:latest
+    container_name: jotaduo-platform
     restart: unless-stopped
     ports:
       - "127.0.0.1:8088:8088"
     environment:
-      QWENPAW_AUTH_ENABLED: "true"
-      QWENPAW_PORT: "8088"
-      QWENPAW_WORKING_DIR: "/app/working"
-      QWENPAW_SECRET_DIR: "/app/working.secret"
-      QWENPAW_BACKUP_DIR: "/app/working.backups"
-      QWENPAW_OPENAPI_DOCS: "false"
+      JOTADUO_AUTH_ENABLED: "true"
+      JOTADUO_PORT: "8088"
+      JOTADUO_WORKING_DIR: "/app/working"
+      JOTADUO_SECRET_DIR: "/app/working.secret"
+      JOTADUO_BACKUP_DIR: "/app/working.backups"
+      JOTADUO_OPENAPI_DOCS: "false"
     volumes:
-      - nexora-data:/app/working
-      - nexora-secrets:/app/working.secret
-      - nexora-backups:/app/working.backups
+      - jotaduo-data:/app/working
+      - jotaduo-secrets:/app/working.secret
+      - jotaduo-backups:/app/working.backups
 ```
 
 这里默认只监听服务器本机 `127.0.0.1`，适合前面再接 Nginx 或 Cloudflare Tunnel。
@@ -197,7 +197,7 @@ services:
 ### 7.4 启动服务
 
 ```bash
-cd /opt/nexora
+cd /opt/jotaduo
 docker compose pull
 docker compose up -d
 ```
@@ -206,7 +206,7 @@ docker compose up -d
 
 ```bash
 docker compose ps
-docker compose logs -f nexora
+docker compose logs -f jotaduo
 ```
 
 服务器本机访问：
@@ -277,14 +277,14 @@ cloudflared tunnel --url http://127.0.0.1:8088
 
 ```bash
 cd /app
-bash scripts/docker_build.sh ghcr.io/lb08111/nexora-platform:latest
-docker push ghcr.io/lb08111/nexora-platform:latest
+bash scripts/docker_build.sh ghcr.io/lb08111/jotaduo-platform:latest
+docker push ghcr.io/lb08111/jotaduo-platform:latest
 ```
 
 服务器升级：
 
 ```bash
-cd /opt/nexora
+cd /opt/jotaduo
 docker compose pull
 docker compose up -d
 docker image prune -f
@@ -297,13 +297,13 @@ docker image prune -f
 如果发布了版本号，例如 `v0.1.0`、`v0.1.1`，服务器只需要修改镜像：
 
 ```yaml
-image: ghcr.io/lb08111/nexora-platform:v0.1.0
+image: ghcr.io/lb08111/jotaduo-platform:v0.1.0
 ```
 
 然后执行：
 
 ```bash
-cd /opt/nexora
+cd /opt/jotaduo
 docker compose pull
 docker compose up -d
 ```
@@ -313,38 +313,38 @@ docker compose up -d
 查看数据卷：
 
 ```bash
-docker volume ls | grep nexora
+docker volume ls | grep jotaduo
 ```
 
 备份数据卷：
 
 ```bash
-mkdir -p /opt/nexora-backup
+mkdir -p /opt/jotaduo-backup
 docker run --rm \
-  -v nexora-data:/data \
-  -v /opt/nexora-backup:/backup \
-  busybox tar czf /backup/nexora-data.tar.gz -C /data .
+  -v jotaduo-data:/data \
+  -v /opt/jotaduo-backup:/backup \
+  busybox tar czf /backup/jotaduo-data.tar.gz -C /data .
 
 docker run --rm \
-  -v nexora-secrets:/data \
-  -v /opt/nexora-backup:/backup \
-  busybox tar czf /backup/nexora-secrets.tar.gz -C /data .
+  -v jotaduo-secrets:/data \
+  -v /opt/jotaduo-backup:/backup \
+  busybox tar czf /backup/jotaduo-secrets.tar.gz -C /data .
 
 docker run --rm \
-  -v nexora-backups:/data \
-  -v /opt/nexora-backup:/backup \
-  busybox tar czf /backup/nexora-backups.tar.gz -C /data .
+  -v jotaduo-backups:/data \
+  -v /opt/jotaduo-backup:/backup \
+  busybox tar czf /backup/jotaduo-backups.tar.gz -C /data .
 ```
 
-其中 `nexora-secrets` 里会包含密钥和敏感配置，备份文件必须妥善保管。
+其中 `jotaduo-secrets` 里会包含密钥和敏感配置，备份文件必须妥善保管。
 
 ## 12. 从本地迁移到服务器
 
 如果要把开发机已有平台数据迁移到服务器，需要迁移以下目录内容：
 
-- 工作目录：`.qwenpaw`
-- 密钥目录：`.qwenpaw.secret`
-- 备份目录：`.qwenpaw.backups`
+- 工作目录：`.jotaduo`
+- 密钥目录：`.jotaduo.secret`
+- 备份目录：`.jotaduo.backups`
 
 建议做法：
 
@@ -357,7 +357,7 @@ docker run --rm \
 停止容器：
 
 ```bash
-cd /opt/nexora
+cd /opt/jotaduo
 docker compose down
 ```
 
@@ -365,9 +365,9 @@ docker compose down
 
 ```bash
 docker run --rm \
-  -v nexora-data:/data \
-  -v /opt/nexora-migration:/backup \
-  busybox sh -c "rm -rf /data/* && tar xzf /backup/qwenpaw-data.tar.gz -C /data"
+  -v jotaduo-data:/data \
+  -v /opt/jotaduo-migration:/backup \
+  busybox sh -c "rm -rf /data/* && tar xzf /backup/jotaduo-data.tar.gz -C /data"
 ```
 
 密钥目录和备份目录同理处理。
@@ -375,8 +375,8 @@ docker run --rm \
 ## 13. 生产环境建议
 
 - 不要直接把容器端口暴露到 `0.0.0.0`，优先通过 Nginx 或 Cloudflare Tunnel 暴露。
-- 保持 `QWENPAW_AUTH_ENABLED=true`。
-- 定期备份 `nexora-secrets`、`nexora-data` 和 PostgreSQL 数据库。
+- 保持 `JOTADUO_AUTH_ENABLED=true`。
+- 定期备份 `jotaduo-secrets`、`jotaduo-data` 和 PostgreSQL 数据库。
 - 镜像发布建议使用版本号，不要只依赖 `latest`。
 - 公网访问必须配置 HTTPS。
 - 后续如果接入生产运维工具，建议先配置审批流和审计日志保留策略。
@@ -388,25 +388,25 @@ PostgreSQL 使用 `pg_isready`，应用使用 `/api/version`。Compose 同时提
 资源上限，避免 100 个智能体配置场景下一次性占满主机资源：
 
 ```bash
-export NEXORA_APP_CPUS=2.0
-export NEXORA_APP_MEMORY_LIMIT=4g
-export NEXORA_POSTGRES_CPUS=1.0
-export NEXORA_POSTGRES_MEMORY_LIMIT=1g
-export NEXORA_MAX_ACTIVE_AGENTS=20
-export NEXORA_AGENT_IDLE_TTL_SECONDS=3600
+export JOTADUO_APP_CPUS=2.0
+export JOTADUO_APP_MEMORY_LIMIT=4g
+export JOTADUO_POSTGRES_CPUS=1.0
+export JOTADUO_POSTGRES_MEMORY_LIMIT=1g
+export JOTADUO_MAX_ACTIVE_AGENTS=20
+export JOTADUO_AGENT_IDLE_TTL_SECONDS=3600
 ```
 
 对 100 用户 / 100 智能体的内部试运行，建议先保持最多 20 个活跃智能体、
 1 小时空闲卸载；如果并发聊天明显超过 20 个智能体，再逐步提高
-`NEXORA_MAX_ACTIVE_AGENTS`，同时观察容器内存、CPU 和数据库连接数。
+`JOTADUO_MAX_ACTIVE_AGENTS`，同时观察容器内存、CPU 和数据库连接数。
 
 ### PostgreSQL 存储
 
 当前 Docker Compose 已包含 PostgreSQL 服务。应用通过以下变量启用
-Nexora 数据库存储：
+Jotaduo 数据库存储：
 
 ```text
-NEXORA_DB_URL=postgresql+psycopg2://nexora:<password>@postgres:5432/nexora
+JOTADUO_DB_URL=postgresql+psycopg2://jotaduo:<password>@postgres:5432/jotaduo
 ```
 
 当前 PostgreSQL 化覆盖：
@@ -417,29 +417,29 @@ NEXORA_DB_URL=postgresql+psycopg2://nexora:<password>@postgres:5432/nexora
 - 用户、角色和角色权限
 
 JWT 签名密钥和 token 撤销列表仍保留在密钥目录的 `auth.json`，
-因此生产环境仍需要备份 `nexora-secrets`。
+因此生产环境仍需要备份 `jotaduo-secrets`。
 
 服务器部署前需要设置数据库密码：
 
 ```bash
-export NEXORA_POSTGRES_PASSWORD='<强密码>'
+export JOTADUO_POSTGRES_PASSWORD='<强密码>'
 docker compose -f deploy/docker-compose.server.yml up -d
 ```
 
 首次启用 PostgreSQL 后，可以把现有本地文件导入数据库。迁移脚本会导入
-`nexora_audit.jsonl`、`nexora_approval_requests.json`、
-`nexora_governance.json` 和 `auth.json` 中的用户/角色数据：
+`jotaduo_audit.jsonl`、`jotaduo_approval_requests.json`、
+`jotaduo_governance.json` 和 `auth.json` 中的用户/角色数据：
 
 ```bash
-cd /opt/nexora
-docker compose exec nexora alembic upgrade head
-docker compose exec nexora \
-  python /app/scripts/nexora_migrate_files_to_postgres.py \
+cd /opt/jotaduo
+docker compose exec jotaduo alembic upgrade head
+docker compose exec jotaduo \
+  python /app/scripts/jotaduo_migrate_files_to_postgres.py \
   --secret-dir /app/working.secret
 ```
 
 如果使用外部 PostgreSQL，可以不使用 Compose 内置 `postgres` 服务，
-但必须为应用容器提供 `NEXORA_DB_URL`，并确保网络可达。
+但必须为应用容器提供 `JOTADUO_DB_URL`，并确保网络可达。
 
 ## 14. 常见问题
 
@@ -449,7 +449,7 @@ docker compose exec nexora \
 
 ```bash
 docker compose ps
-docker compose logs -f nexora
+docker compose logs -f jotaduo
 ```
 
 如果 Compose 里是 `127.0.0.1:8088:8088`，外部电脑不能直接访问服务器 IP 的 8088，需要通过 Nginx、Cloudflare Tunnel 或改成 `0.0.0.0:8088:8088`。
@@ -459,7 +459,7 @@ docker compose logs -f nexora
 先查看日志：
 
 ```bash
-docker compose logs -f nexora
+docker compose logs -f jotaduo
 ```
 
 确认是否正确启用了认证，以及数据卷是否沿用了旧环境的用户配置。必要时先备份数据卷，再重置认证配置。

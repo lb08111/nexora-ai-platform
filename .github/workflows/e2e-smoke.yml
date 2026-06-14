@@ -61,9 +61,9 @@ jobs:
       - name: Run UI smoke tests
         working-directory: e2e
         env:
-          QWENPAW_BASE_URL: http://localhost:5173
-          QWENPAW_HEADLESS: 'true'
-          QWENPAW_TIMEOUT: '30000'
+          JOTADUO_BASE_URL: http://localhost:5173
+          JOTADUO_HEADLESS: 'true'
+          JOTADUO_TIMEOUT: '30000'
         run: |
           pytest tests/ -m "ui_smoke" -v --tb=short
 

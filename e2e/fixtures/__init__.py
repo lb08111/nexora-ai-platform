@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-QwenPaw E2E Test Framework - Pytest Fixtures
+JotaDuo E2E Test Framework - Pytest Fixtures
 
 Provides browser, page, API client and other fixtures required by tests.
 """
@@ -184,8 +184,8 @@ def page(browser_context: BrowserContext, request: pytest.FixtureRequest) -> Gen
 
     # Inject test name + step counter, used by BasePage.step_shot for auto-archiving
     try:
-        page._qwenpaw_test_name = test_name
-        page._qwenpaw_step_seq = 0
+        page._jotaduo_test_name = test_name
+        page._jotaduo_step_seq = 0
     except Exception:
         pass
 
@@ -268,7 +268,7 @@ def authenticated_page(page: Page) -> Page:
     """
     Authenticated page (if login is required)
 
-    QwenPaw currently uses an auth-free mode; extend this fixture if login
+    JotaDuo currently uses an auth-free mode; extend this fixture if login
     is needed.
 
     Yields:
@@ -299,11 +299,11 @@ def test_file(tmp_path: Path) -> Path:
         Test file path
     """
     test_file = tmp_path / "test_upload.txt"
-    test_content = """QwenPaw Test File
+    test_content = """JotaDuo Test File
 
 This is a file used to verify the E2E file upload functionality.
 
-QwenPaw is an intelligent assistant platform supporting the following features:
+JotaDuo is an intelligent assistant platform supporting the following features:
 1. Chat conversations
 2. File processing
 3. Skill invocation

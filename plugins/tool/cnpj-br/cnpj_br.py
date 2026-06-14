@@ -6,7 +6,7 @@ import logging
 import os
 import sys
 
-from qwenpaw.plugins.api import PluginApi
+from jotaduo.plugins.api import PluginApi
 
 logger = logging.getLogger(__name__)
 

@@ -17,7 +17,7 @@ export const ProviderCard = React.memo(function ProviderCard({
   onOpenConfig,
   onOpenModels,
 }: ProviderCardProps) {
-  if (provider.id === "qwenpaw-local") {
+  if (provider.id === "jotaduo-local") {
     return (
       <LocalProviderCard provider={provider} onOpenModels={onOpenModels} />
     );

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Tests for qwenpaw.security.tool_guard.guardians.rule_guardian."""
+"""Tests for jotaduo.security.tool_guard.guardians.rule_guardian."""
 # pylint: disable=redefined-outer-name,unused-argument
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ from unittest.mock import patch
 import pytest
 import yaml
 
-from qwenpaw.security.tool_guard.guardians.rule_guardian import (
+from jotaduo.security.tool_guard.guardians.rule_guardian import (
     GuardRule,
     RuleBasedToolGuardian,
     _check_rm_targets_outside_workspace,
@@ -20,7 +20,7 @@ from qwenpaw.security.tool_guard.guardians.rule_guardian import (
     load_rules_from_directory,
     load_rules_from_yaml,
 )
-from qwenpaw.security.tool_guard.models import (
+from jotaduo.security.tool_guard.models import (
     GuardSeverity,
     GuardThreatCategory,
 )
@@ -35,7 +35,7 @@ from qwenpaw.security.tool_guard.models import (
 def mock_config_rules():
     """Patch _load_config_rules to return empty rules and no disabled IDs."""
     with patch(
-        "qwenpaw.security.tool_guard.guardians.rule_guardian"
+        "jotaduo.security.tool_guard.guardians.rule_guardian"
         "._load_config_rules",
         return_value=([], set()),
     ):
@@ -46,7 +46,7 @@ def mock_config_rules():
 def mock_workspace_root(tmp_path):
     """Patch _get_workspace_root to return tmp_path."""
     with patch(
-        "qwenpaw.security.tool_guard.guardians.rule_guardian"
+        "jotaduo.security.tool_guard.guardians.rule_guardian"
         "._get_workspace_root",
         return_value=tmp_path,
     ):
@@ -691,7 +691,7 @@ class TestRuleBasedToolGuardianInit:
             yaml.dump([sample_rule_data]),
         )
         with patch(
-            "qwenpaw.security.tool_guard.guardians.rule_guardian"
+            "jotaduo.security.tool_guard.guardians.rule_guardian"
             "._load_config_rules",
             return_value=([], {"TEST_001"}),
         ):

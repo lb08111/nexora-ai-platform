@@ -15,7 +15,7 @@ from typing import Any, Optional
 
 from pydantic import BaseModel, Field
 
-from qwenpaw.discovery.session import TurnResult
+from jotaduo.discovery.session import TurnResult
 
 # --- component manifest --------------------------------------------------
 

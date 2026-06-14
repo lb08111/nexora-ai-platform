@@ -10,7 +10,7 @@ vi.mock("react-i18next", () => ({
 
 // Wrap with real ThemeProvider, control initial theme via localStorage
 function renderWithTheme(mode: "light" | "dark" | "system" = "light") {
-  localStorage.setItem("qwenpaw-theme", mode);
+  localStorage.setItem("jotaduo-theme", mode);
   return render(
     <ThemeProvider>
       <ThemeToggleButton />

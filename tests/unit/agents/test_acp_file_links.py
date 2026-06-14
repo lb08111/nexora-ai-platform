@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from types import SimpleNamespace
 
-from qwenpaw.agents.acp.server import (
+from jotaduo.agents.acp.server import (
     _extract_tool_output,
     _media_block_url,
     _msg_to_updates,

@@ -1,5 +1,5 @@
 /**
- * hostSdk/hooks.ts — React hooks exposed on `window.QwenPaw.host.*`.
+ * hostSdk/hooks.ts — React hooks exposed on `window.JotaDuo.host.*`.
  *
  * These are thin wrappers over existing host contexts. Plugin components
  * call them while rendering INSIDE the host React tree, so all underlying

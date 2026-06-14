@@ -226,13 +226,13 @@ jobs:
             ## PyPI — ${mention('pypi')}
 
             \`\`\`bash
-            python -m venv /tmp/qwenpaw-test && source /tmp/qwenpaw-test/bin/activate
-            pip install qwenpaw==${version}
-            qwenpaw
+            python -m venv /tmp/jotaduo-test && source /tmp/jotaduo-test/bin/activate
+            pip install jotaduo==${version}
+            jotaduo
             \`\`\`
 
             - [ ] Install succeeds (\`pip install\` exits cleanly)
-            - [ ] Launch succeeds (\`qwenpaw\` starts, browser UI reachable)
+            - [ ] Launch succeeds (\`jotaduo\` starts, browser UI reachable)
             - [ ] Model configured (API key + model saved without error)
             - [ ] Basic chat works (message sent, normal reply received)
 
@@ -258,7 +258,7 @@ jobs:
             ## macOS Desktop — ${mention('macos')}
 
             1. Go to the [Release page](${releaseUrl})
-            2. Download \`QwenPaw-${version}-macOS.zip\`
+            2. Download \`JotaDuo-${version}-macOS.zip\`
             3. Unzip, drag \`QwenPaw.app\` to Applications, launch
 
             - [ ] Download and unzip succeed
@@ -273,8 +273,8 @@ jobs:
             ## Windows Desktop — ${mention('windows')}
 
             1. Go to the [Release page](${releaseUrl})
-            2. Download \`QwenPaw-Setup-${version}.exe\`
-            3. Run the installer, follow the wizard, launch QwenPaw
+            2. Download \`JotaDuo-Setup-${version}.exe\`
+            3. Run the installer, follow the wizard, launch JotaDuo
 
             - [ ] Installer runs without error
             - [ ] App launches without crash
@@ -304,7 +304,7 @@ jobs:
             const { data: issue } = await github.rest.issues.create({
               owner: context.repo.owner,
               repo:  context.repo.repo,
-              title: `[Release Duty] QwenPaw ${tag} (${typeBadge}) — Installation Verification`,
+              title: `[Release Duty] JotaDuo ${tag} (${typeBadge}) — Installation Verification`,
               body:  body,
               labels: ['release-duty', releaseType === 'stable' || releaseType === 'post'
                 ? 'stable'

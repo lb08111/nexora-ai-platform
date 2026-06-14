@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-QwenPaw Voice page object.
+JotaDuo Voice page object.
 
 Wraps all interactions on the Voice page and exposes business-level methods.
 """
@@ -26,22 +26,22 @@ class VoicePage(BasePage):
     - Read voice service status
     """
 
-    PAGE_TITLE = "QwenPaw Console"
+    PAGE_TITLE = "JotaDuo Console"
     PAGE_URL = f"{config.base_url}/settings/voice"
 
     # ========== Selector definitions ==========
 
     # Page load indicator
-    PAGE_LOAD_INDICATOR = '.qwenpaw-switch, .qwenpaw-switch-input, [class*=voiceToggle]'
+    PAGE_LOAD_INDICATOR = '.jotaduo-switch, .jotaduo-switch-input, [class*=voiceToggle]'
 
     # Voice service switch
-    VOICE_TOGGLE_SELECTOR = '.qwenpaw-switch, .qwenpaw-switch-input, [class*=voiceToggle]'
+    VOICE_TOGGLE_SELECTOR = '.jotaduo-switch, .jotaduo-switch-input, [class*=voiceToggle]'
 
     # Configuration form
-    CONFIG_FORM_SELECTOR = '.qwenpaw-form, [class*=configForm], form'
+    CONFIG_FORM_SELECTOR = '.jotaduo-form, [class*=configForm], form'
 
     # Success message
-    SUCCESS_MESSAGE_SELECTOR = '.qwenpaw-message-success, .qwenpaw-notification-success'
+    SUCCESS_MESSAGE_SELECTOR = '.jotaduo-message-success, .jotaduo-notification-success'
 
     # ========== Navigation methods ==========
 

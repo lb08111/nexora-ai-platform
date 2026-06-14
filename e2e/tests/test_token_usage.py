@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-QwenPaw Token Usage module P0 end-to-end tests
+JotaDuo Token Usage module P0 end-to-end tests
 
 Combined test design:
 - TOKEN-001: Token usage page load + overview display + empty state validation
@@ -77,15 +77,15 @@ class TestTokenUsageDisplay:
 
         # Step 3: Verify page title
         log_test_step("3. Verify page title")
-        page_title = page.locator('h1:has-text("Token Usage"), h1:has-text("Token"), .qwenpaw-page-header:has-text("Token")').first
+        page_title = page.locator('h1:has-text("Token Usage"), h1:has-text("Token"), .jotaduo-page-header:has-text("Token")').first
         if page_title.is_visible(timeout=3000):
             logger.info("Page title visible")
 
         # Step 4: Verify overview cards (or empty state)
         log_test_step("4. Verify overview cards")
         overview_cards = page.locator(
-            '.qwenpaw-card, .ant-card, [class*=overviewCard], '
-            '[class*=statCard], .qwenpaw-statistic, .ant-statistic'
+            '.jotaduo-card, .ant-card, [class*=overviewCard], '
+            '[class*=statCard], .jotaduo-statistic, .ant-statistic'
         ).all()
 
         if len(overview_cards) > 0:
@@ -98,8 +98,8 @@ class TestTokenUsageDisplay:
 
         # Step 5: Check for data table or empty state
         log_test_step("5. Verify data table or empty state")
-        table_area = page.locator('.qwenpaw-table, .ant-table, table, [class*=dataTable]').first
-        empty_state = page.locator('.qwenpaw-empty, .ant-empty, [class*=empty], [class*=Empty]').first
+        table_area = page.locator('.jotaduo-table, .ant-table, table, [class*=dataTable]').first
+        empty_state = page.locator('.jotaduo-empty, .ant-empty, [class*=empty], [class*=Empty]').first
         has_table = table_area.count() > 0 and table_area.is_visible(timeout=5000)
         has_empty = empty_state.count() > 0 and empty_state.is_visible(timeout=3000)
 
@@ -170,7 +170,7 @@ class TestTokenUsageByModel:
         navigate_to_token_usage(page)
 
         log_test_step("Find by-model statistics table")
-        tables = page.locator('.qwenpaw-table, table').all()
+        tables = page.locator('.jotaduo-table, table').all()
         logger.info(f"Found {len(tables)} tables on the page")
 
         if len(tables) > 0:
@@ -178,15 +178,15 @@ class TestTokenUsageByModel:
             expect(first_table).to_be_visible(timeout=5000)
 
             log_test_step("Verify table column headers")
-            headers = first_table.locator('th, .qwenpaw-table-thead th').all()
+            headers = first_table.locator('th, .jotaduo-table-thead th').all()
             header_texts = [h.inner_text().strip() for h in headers if h.is_visible()]
             logger.info(f"Table column headers: {header_texts}")
             assert len(header_texts) > 0, "Table has no column headers"
             logger.info("By-model statistics table column headers validation passed")
 
             log_test_step("Verify data rows or empty state")
-            data_rows = first_table.locator('tbody tr, .qwenpaw-table-row').all()
-            empty_state = first_table.locator('.qwenpaw-empty, :text("暂无"), :text("No data")').first
+            data_rows = first_table.locator('tbody tr, .jotaduo-table-row').all()
+            empty_state = first_table.locator('.jotaduo-empty, :text("暂无"), :text("No data")').first
 
             assert len(data_rows) > 0 or empty_state.count() > 0, \
                 "By-model statistics table should have data rows or show empty state"
@@ -227,14 +227,14 @@ class TestTokenUsageByDate:
         navigate_to_token_usage(page)
 
         log_test_step("Find by-date statistics table")
-        tables = page.locator('.qwenpaw-table, table').all()
+        tables = page.locator('.jotaduo-table, table').all()
 
         if len(tables) >= 2:
             date_table = tables[1]
             expect(date_table).to_be_visible(timeout=5000)
 
             log_test_step("Verify date column exists")
-            headers = date_table.locator('th, .qwenpaw-table-thead th').all()
+            headers = date_table.locator('th, .jotaduo-table-thead th').all()
             header_texts = [h.inner_text().strip() for h in headers if h.is_visible()]
             logger.info(f"Date table column headers: {header_texts}")
 
@@ -248,12 +248,12 @@ class TestTokenUsageByDate:
                 logger.info(f"No explicit date column found; headers: {header_texts}")
 
             log_test_step("Verify data rows")
-            data_rows = date_table.locator('tbody tr, .qwenpaw-table-row').all()
+            data_rows = date_table.locator('tbody tr, .jotaduo-table-row').all()
             logger.info(f"By-date statistics table has {len(data_rows)} data rows")
         elif len(tables) == 1:
             logger.info("Only 1 table found; by-model and by-date may be combined")
             # Verify table has Tab switching
-            tabs = page.locator('.qwenpaw-tabs-tab, .qwenpaw-segmented-item').all()
+            tabs = page.locator('.jotaduo-tabs-tab, .jotaduo-segmented-item').all()
             if len(tabs) > 0:
                 logger.info(f"Found {len(tabs)} Tab/Segment switch items")
                 # Click the second Tab
@@ -293,14 +293,14 @@ class TestTokenUsageDateFilter:
 
         log_test_step("Find date range picker")
         range_picker = page.locator(
-            '.qwenpaw-picker-range, .ant-picker-range, '
+            '.jotaduo-picker-range, .ant-picker-range, '
             '[class*="rangePicker"], [class*="date-range"]'
         ).first
 
         if range_picker.count() == 0:
             # Try finding a single date picker
             range_picker = page.locator(
-                '.qwenpaw-picker, .ant-picker'
+                '.jotaduo-picker, .ant-picker'
             ).first
 
         if range_picker.count() > 0:
@@ -324,8 +324,8 @@ class TestTokenUsageDateFilter:
 
             # Verify date panel pops up
             date_panel = page.locator(
-                '.qwenpaw-picker-dropdown, .ant-picker-dropdown, '
-                '.qwenpaw-picker-panel, .ant-picker-panel'
+                '.jotaduo-picker-dropdown, .ant-picker-dropdown, '
+                '.jotaduo-picker-panel, .ant-picker-panel'
             ).first
             if date_panel.count() > 0:
                 expect(date_panel).to_be_visible(timeout=3000)
@@ -334,8 +334,8 @@ class TestTokenUsageDateFilter:
                 # Actually select a date
                 log_test_step("Select a date")
                 today_cell = date_panel.locator(
-                    '.qwenpaw-picker-cell-today, .ant-picker-cell-today, '
-                    'td.qwenpaw-picker-cell-in-view'
+                    '.jotaduo-picker-cell-today, .ant-picker-cell-today, '
+                    'td.jotaduo-picker-cell-in-view'
                 ).first
                 if today_cell.count() > 0 and today_cell.is_visible(timeout=2000):
                     today_cell.click()
@@ -346,7 +346,7 @@ class TestTokenUsageDateFilter:
                     is_range = range_picker.locator('input').count() > 1
                     if is_range:
                         # Pick the same day or the next visible day as the end date
-                        end_cells = date_panel.locator('td.qwenpaw-picker-cell-in-view, td.ant-picker-cell-in-view').all()
+                        end_cells = date_panel.locator('td.jotaduo-picker-cell-in-view, td.ant-picker-cell-in-view').all()
                         if len(end_cells) > 1:
                             end_cells[-1].click()
                             page.wait_for_timeout(500)
@@ -393,15 +393,15 @@ class TestTokenUsageEmptyState:
 
         log_test_step("Verify page loading state")
         # Check for loading animation
-        loading = page.locator('.qwenpaw-spin, .ant-spin, [class*="loading"]').first
+        loading = page.locator('.jotaduo-spin, .ant-spin, [class*="loading"]').first
         if loading.count() > 0 and loading.is_visible():
             logger.info("Page is loading...")
             page.wait_for_timeout(5000)
 
         log_test_step("Verify empty state or data display")
-        empty_state = page.locator('.qwenpaw-empty, :text("暂无"), :text("No data"), :text("Empty")').first
-        tables = page.locator('.qwenpaw-table, table').all()
-        cards = page.locator('.qwenpaw-card').all()
+        empty_state = page.locator('.jotaduo-empty, :text("暂无"), :text("No data"), :text("Empty")').first
+        tables = page.locator('.jotaduo-table, table').all()
+        cards = page.locator('.jotaduo-card').all()
 
         if empty_state.count() > 0 and empty_state.is_visible():
             logger.info("Empty state displayed correctly")

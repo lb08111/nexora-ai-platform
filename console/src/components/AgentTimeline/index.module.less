@@ -1,0 +1,343 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: 100%;
+  min-height: 280px;
+  background: var(--colorBgContainer, #fff);
+  border: 1px solid var(--colorBorderSecondary, rgba(0, 0, 0, 0.06));
+  border-radius: 12px;
+  overflow: hidden;
+  color: var(--colorText, rgba(0, 0, 0, 0.88));
+}
+
+/* Toolbar */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--colorBorderSecondary, rgba(0, 0, 0, 0.06));
+  background: var(--colorFillQuaternary, rgba(0, 0, 0, 0.02));
+  flex-shrink: 0;
+}
+
+.toolbarTitle {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.toolbarStats {
+  display: flex;
+  gap: 12px;
+  font-size: 11px;
+  color: var(--colorTextSecondary, rgba(0, 0, 0, 0.55));
+  flex: 1;
+
+  strong {
+    color: var(--colorText, rgba(0, 0, 0, 0.88));
+    font-weight: 600;
+    margin-right: 2px;
+  }
+}
+
+.toolbarActions {
+  display: flex;
+  gap: 4px;
+}
+
+.iconBtn {
+  background: transparent;
+  border: 1px solid var(--colorBorderSecondary, rgba(0, 0, 0, 0.12));
+  border-radius: 6px;
+  padding: 4px 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--colorText, rgba(0, 0, 0, 0.75));
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: var(--colorFillSecondary, rgba(0, 0, 0, 0.06));
+  }
+}
+
+/* Body layout */
+.body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+
+.labelCol {
+  flex-shrink: 0;
+  border-right: 1px solid var(--colorBorderSecondary, rgba(0, 0, 0, 0.06));
+  background: var(--colorBgContainer, #fff);
+  overflow: hidden;
+}
+
+.labelHeader {
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  font-size: 11px;
+  color: var(--colorTextSecondary, rgba(0, 0, 0, 0.55));
+  border-bottom: 1px solid var(--colorBorderSecondary, rgba(0, 0, 0, 0.06));
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+.labelRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  border-bottom: 1px solid var(--colorBorderSecondary, rgba(0, 0, 0, 0.04));
+}
+
+.labelAvatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.labelName {
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Scrolling canvas */
+.scroller {
+  flex: 1;
+  overflow-x: auto;
+  overflow-y: hidden;
+  position: relative;
+  background:
+    linear-gradient(
+      to bottom,
+      var(--colorFillQuaternary, rgba(0, 0, 0, 0.015)) 0,
+      transparent 28px
+    ),
+    var(--colorBgLayout, #fafafa);
+}
+
+.canvas {
+  position: relative;
+  min-width: 100%;
+}
+
+.axis {
+  position: relative;
+  border-bottom: 1px solid var(--colorBorderSecondary, rgba(0, 0, 0, 0.06));
+  background: var(--colorBgContainer, #fff);
+}
+
+.tick {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-left: 1px solid var(--colorBorderSecondary, rgba(0, 0, 0, 0.08));
+}
+
+.tickLabel {
+  position: absolute;
+  top: 6px;
+  left: 4px;
+  font-size: 10px;
+  color: var(--colorTextSecondary, rgba(0, 0, 0, 0.55));
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.grid {
+  position: absolute;
+  left: 0;
+  color: var(--colorText, rgba(0, 0, 0, 0.88));
+  pointer-events: none;
+}
+
+.row {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-bottom: 1px solid var(--colorBorderSecondary, rgba(0, 0, 0, 0.04));
+}
+
+.span {
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 500;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+  transition:
+    transform 0.1s ease,
+    box-shadow 0.1s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
+  }
+}
+
+.spanLabel {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.spanRunning {
+  background-image: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
+  );
+  background-size: 12px 12px;
+  animation: agenttl-stripe 1.2s linear infinite;
+}
+
+@keyframes agenttl-stripe {
+  to {
+    background-position: 24px 0;
+  }
+}
+
+.spanSelected {
+  outline: 2px solid var(--colorPrimary, #1677ff);
+  outline-offset: 1px;
+}
+
+.nowLine {
+  position: absolute;
+  top: 0;
+  width: 2px;
+  background: var(--colorErrorText, #ff4d4f);
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* Tooltip body */
+.tooltipBody {
+  max-width: 260px;
+}
+
+.tooltipTitle {
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.tooltipDetails {
+  margin-top: 4px;
+  font-size: 11px;
+  opacity: 0.85;
+  white-space: pre-wrap;
+}
+
+/* Detail bar */
+.detailBar {
+  border-top: 1px solid var(--colorBorderSecondary, rgba(0, 0, 0, 0.06));
+  background: var(--colorBgContainer, #fff);
+  padding: 8px 12px;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.detailBarRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.detailMeta {
+  color: var(--colorTextSecondary, rgba(0, 0, 0, 0.55));
+  font-size: 11px;
+  flex: 1;
+}
+
+.detailClose {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--colorTextSecondary, rgba(0, 0, 0, 0.55));
+}
+
+.detailText {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--colorTextSecondary, rgba(0, 0, 0, 0.65));
+  white-space: pre-wrap;
+}
+
+.emptyOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--colorTextSecondary, rgba(0, 0, 0, 0.45));
+  font-size: 13px;
+  pointer-events: none;
+}
+
+/* Dark mode */
+:global(.dark-mode) {
+  .root,
+  .labelCol,
+  .axis,
+  .detailBar {
+    background: #1f1f1f;
+    border-color: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.85);
+  }
+  .toolbar,
+  .labelHeader {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+  .scroller {
+    background: #141414;
+  }
+  .toolbarStats,
+  .labelHeader,
+  .tickLabel,
+  .detailMeta,
+  .detailText,
+  .emptyOverlay {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+  .iconBtn {
+    border-color: rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.75);
+  }
+  .row,
+  .labelRow {
+    border-color: rgba(255, 255, 255, 0.05);
+  }
+}

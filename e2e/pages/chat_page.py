@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-QwenPaw Chat page object.
+JotaDuo Chat page object.
 
 Wraps all interactions on the Chat page and exposes business-level methods.
 """
@@ -31,30 +31,30 @@ class ChatPage(BasePage):
     - Skill invocation
     """
 
-    PAGE_TITLE = "QwenPaw Console"
+    PAGE_TITLE = "JotaDuo Console"
     PAGE_URL = f"{config.base_url}/chat"
 
     # ========== Selector definitions ==========
-    # Page components use the qwenpaw- CSS prefix
+    # Page components use the jotaduo- CSS prefix
 
     # Navigation and new chat (compatible with both spark-icon and anticon icon sets)
     NEW_CHAT_BTN = 'button:has(.spark-icon-spark-newChat-fill), button:has(.anticon-plus), button:has([class*="newChat"])'
     SESSION_LIST_BTN = 'button:has(.spark-icon-spark-history-line), button:has(.anticon-history), button:has([class*="history"])'
 
     # Input area
-    CHAT_INPUT = 'textarea.qwenpaw-sender-input'
-    SEND_BTN = 'button.qwenpaw-sender-actions-btn.qwenpaw-btn-primary'
+    CHAT_INPUT = 'textarea.jotaduo-sender-input'
+    SEND_BTN = 'button.jotaduo-sender-actions-btn.jotaduo-btn-primary'
     FILE_INPUT = 'input[type="file"]'
-    UPLOAD_WRAPPER = 'span.qwenpaw-upload-wrapper'
+    UPLOAD_WRAPPER = 'span.jotaduo-upload-wrapper'
 
     # Message area
-    USER_MESSAGE = '.qwenpaw-bubble.qwenpaw-bubble-end'
-    AI_MESSAGE = '.qwenpaw-bubble.qwenpaw-bubble-start'
-    MESSAGE_CONTAINER = '.qwenpaw-bubble.qwenpaw-bubble-start, .qwenpaw-bubble.qwenpaw-bubble-end'
-    MESSAGE_LIST = '.qwenpaw-bubble-list-scroll'
+    USER_MESSAGE = '.jotaduo-bubble.jotaduo-bubble-end'
+    AI_MESSAGE = '.jotaduo-bubble.jotaduo-bubble-start'
+    MESSAGE_CONTAINER = '.jotaduo-bubble.jotaduo-bubble-start, .jotaduo-bubble.jotaduo-bubble-end'
+    MESSAGE_LIST = '.jotaduo-bubble-list-scroll'
 
     # Welcome screen (check input visibility)
-    WELCOME_TEXT = 'textarea.qwenpaw-sender-input'
+    WELCOME_TEXT = 'textarea.jotaduo-sender-input'
     QUICK_ACTIONS = '.quick-action'
 
     # Session management (through the history drawer, using CSS Modules class names)
@@ -66,23 +66,23 @@ class ChatPage(BasePage):
     SESSION_DELETE_BTN = 'button:has(.spark-icon-spark-delete-line), button:has(.anticon-delete)'
 
     # Settings and model
-    MODEL_SELECTOR = '.qwenpaw-dropdown-trigger'
-    MODEL_OPTION = '.qwenpaw-dropdown-menu-item'
-    AGENT_SELECTOR = '.qwenpaw-select-selector'
+    MODEL_SELECTOR = '.jotaduo-dropdown-trigger'
+    MODEL_OPTION = '.jotaduo-dropdown-menu-item'
+    AGENT_SELECTOR = '.jotaduo-select-selector'
 
     # Action buttons
     COPY_BTN = 'span[title="复制"]'
 
     # Tool and skill details
-    TOOL_TOGGLE = '.qwenpaw-operate-card-header-arrow'
-    TOOL_DETAILS = '.qwenpaw-operate-card'
+    TOOL_TOGGLE = '.jotaduo-operate-card-header-arrow'
+    TOOL_DETAILS = '.jotaduo-operate-card'
 
     # Errors and toasts (SUCCESS_MESSAGE / ERROR_MESSAGE inherited from BasePage)
-    COPY_SUCCESS = '.qwenpaw-message-success'
+    COPY_SUCCESS = '.jotaduo-message-success'
 
     # Drawer and dialog
     DRAWER_CLOSE = '[class*=headerRight] button'
-    CONFIRM_BTN = 'button:has-text("确认"), button:has-text("OK"), .qwenpaw-btn-primary:has-text("确定")'
+    CONFIRM_BTN = 'button:has-text("确认"), button:has-text("OK"), .jotaduo-btn-primary:has-text("确定")'
     CANCEL_BTN = 'button:has-text("取消"), button:has-text("Cancel")'
 
     # ========== Robust "button disabled" detection JS snippets ==========
@@ -94,14 +94,14 @@ class ChatPage(BasePage):
     # Hitting any of them is treated as disabled.
     _JS_BTN_IS_DISABLED = """() => {
         const btn = document.querySelector(
-            'button.qwenpaw-sender-actions-btn.qwenpaw-btn-primary'
+            'button.jotaduo-sender-actions-btn.jotaduo-btn-primary'
         );
         if (!btn) return false;
         if (btn.disabled === true) return true;
         if (btn.hasAttribute('disabled')) return true;
         if (btn.getAttribute('aria-disabled') === 'true') return true;
         const cls = btn.className || '';
-        if (/qwenpaw-btn-disabled|qwenpaw-btn-loading|is-disabled|is-loading/.test(cls)) {
+        if (/jotaduo-btn-disabled|jotaduo-btn-loading|is-disabled|is-loading/.test(cls)) {
             return true;
         }
         return false;
@@ -109,14 +109,14 @@ class ChatPage(BasePage):
 
     _JS_BTN_IS_ENABLED = """() => {
         const btn = document.querySelector(
-            'button.qwenpaw-sender-actions-btn.qwenpaw-btn-primary'
+            'button.jotaduo-sender-actions-btn.jotaduo-btn-primary'
         );
         if (!btn) return false;
         if (btn.disabled === true) return false;
         if (btn.hasAttribute('disabled')) return false;
         if (btn.getAttribute('aria-disabled') === 'true') return false;
         const cls = btn.className || '';
-        if (/qwenpaw-btn-disabled|qwenpaw-btn-loading|is-disabled|is-loading/.test(cls)) {
+        if (/jotaduo-btn-disabled|jotaduo-btn-loading|is-disabled|is-loading/.test(cls)) {
             return false;
         }
         return true;
@@ -267,11 +267,11 @@ class ChatPage(BasePage):
                     """() => {
                         // Path A: button has recovered to enabled
                         const btn = document.querySelector(
-                            'button.qwenpaw-sender-actions-btn.qwenpaw-btn-primary'
+                            'button.jotaduo-sender-actions-btn.jotaduo-btn-primary'
                         );
                         if (btn) {
                             const cls = btn.className || '';
-                            const disabledByCls = /qwenpaw-btn-disabled|qwenpaw-btn-loading|is-disabled|is-loading/.test(cls);
+                            const disabledByCls = /jotaduo-btn-disabled|jotaduo-btn-loading|is-disabled|is-loading/.test(cls);
                             const disabledByAttr = btn.disabled === true
                                 || btn.hasAttribute('disabled')
                                 || btn.getAttribute('aria-disabled') === 'true';
@@ -279,12 +279,12 @@ class ChatPage(BasePage):
                         }
                         // Path B: last AI bubble content unchanged for 1.5s in a row (release even if button is forever disabled)
                         const aiMsgs = document.querySelectorAll(
-                            '.qwenpaw-bubble.qwenpaw-bubble-start'
+                            '.jotaduo-bubble.jotaduo-bubble-start'
                         );
                         if (aiMsgs.length === 0) return true; // No AI bubble, release directly
                         const last = aiMsgs[aiMsgs.length - 1];
                         const raw = (last.innerText || '').trim();
-                        const key = '__qwenpaw_send_idle_cache__';
+                        const key = '__jotaduo_send_idle_cache__';
                         const now = Date.now();
                         const cache = window[key] || {};
                         if (cache.text !== raw) {
@@ -304,7 +304,7 @@ class ChatPage(BasePage):
             finally:
                 try:
                     self.page.evaluate(
-                        "() => { try { delete window.__qwenpaw_send_idle_cache__; } catch(e) {} }"
+                        "() => { try { delete window.__jotaduo_send_idle_cache__; } catch(e) {} }"
                     )
                 except Exception:
                     pass
@@ -333,7 +333,7 @@ class ChatPage(BasePage):
             self.page.wait_for_function(
                 """(expected) => {
                     const msgs = document.querySelectorAll(
-                        '.qwenpaw-bubble.qwenpaw-bubble-end'
+                        '.jotaduo-bubble.jotaduo-bubble-end'
                     );
                     return msgs.length > expected;
                 }""",
@@ -351,7 +351,7 @@ class ChatPage(BasePage):
             self.page.wait_for_function(
                 """(expected) => {
                     const msgs = document.querySelectorAll(
-                        '.qwenpaw-bubble.qwenpaw-bubble-end'
+                        '.jotaduo-bubble.jotaduo-bubble-end'
                     );
                     return msgs.length > expected;
                 }""",
@@ -459,7 +459,7 @@ class ChatPage(BasePage):
             self.page.wait_for_function(
                 """(expectedCount) => {
                     const aiMsgs = document.querySelectorAll(
-                        '.qwenpaw-bubble.qwenpaw-bubble-start'
+                        '.jotaduo-bubble.jotaduo-bubble-start'
                     );
                     return aiMsgs.length > expectedCount;
                 }""",
@@ -489,12 +489,12 @@ class ChatPage(BasePage):
                 """(expectedCount) => {
                     // Path A: button transitioned from disabled back to enabled -> streaming really ended
                     const btn = document.querySelector(
-                        'button.qwenpaw-sender-actions-btn.qwenpaw-btn-primary'
+                        'button.jotaduo-sender-actions-btn.jotaduo-btn-primary'
                     );
                     let btnEnabled = false;
                     if (btn) {
                         const cls = btn.className || '';
-                        const disabledByCls = /qwenpaw-btn-disabled|qwenpaw-btn-loading|is-disabled|is-loading/.test(cls);
+                        const disabledByCls = /jotaduo-btn-disabled|jotaduo-btn-loading|is-disabled|is-loading/.test(cls);
                         const disabledByAttr = btn.disabled === true
                             || btn.hasAttribute('disabled')
                             || btn.getAttribute('aria-disabled') === 'true';
@@ -503,7 +503,7 @@ class ChatPage(BasePage):
 
                     // Path B: AI bubble content unchanged for 2500ms in a row and >= 2 chars after stripping placeholders
                     const aiMsgs = document.querySelectorAll(
-                        '.qwenpaw-bubble.qwenpaw-bubble-start'
+                        '.jotaduo-bubble.jotaduo-bubble-start'
                     );
                     if (aiMsgs.length <= expectedCount) {
                         return false; // No new bubble at all; definitely cannot release
@@ -519,7 +519,7 @@ class ChatPage(BasePage):
                     // Content stability check (only computed when there is real text)
                     let contentStable = false;
                     if (hasRealText) {
-                        const key = '__qwenpaw_ai_stable_cache__';
+                        const key = '__jotaduo_ai_stable_cache__';
                         const now = Date.now();
                         const cache = window[key] || {};
                         if (cache.text !== raw) {
@@ -531,12 +531,12 @@ class ChatPage(BasePage):
 
                     // Path A priority (button recovered + at least real text -> release immediately)
                     if (btnEnabled && hasRealText) {
-                        window.__qwenpaw_wait_passed_via__ = 'btn_enabled';
+                        window.__jotaduo_wait_passed_via__ = 'btn_enabled';
                         return true;
                     }
                     // Path B fallback (release on content stability even if button is forever disabled)
                     if (contentStable) {
-                        window.__qwenpaw_wait_passed_via__ = 'content_stable';
+                        window.__jotaduo_wait_passed_via__ = 'content_stable';
                         return true;
                     }
                     return false;
@@ -546,7 +546,7 @@ class ChatPage(BasePage):
             )
             try:
                 passed_via = self.page.evaluate(
-                    "() => window.__qwenpaw_wait_passed_via__ || 'unknown'"
+                    "() => window.__jotaduo_wait_passed_via__ || 'unknown'"
                 )
             except Exception:
                 passed_via = "unknown"
@@ -572,8 +572,8 @@ class ChatPage(BasePage):
             try:
                 self.page.evaluate(
                     "() => { try { "
-                    "delete window.__qwenpaw_ai_stable_cache__; "
-                    "delete window.__qwenpaw_wait_passed_via__; "
+                    "delete window.__jotaduo_ai_stable_cache__; "
+                    "delete window.__jotaduo_wait_passed_via__; "
                     "} catch(e) {} }"
                 )
             except Exception:
@@ -674,7 +674,7 @@ class ChatPage(BasePage):
         Returns:
             whether the upload succeeded
         """
-        file_preview_selector = '.qwenpaw-upload-list-item, .qwenpaw-sender-content [class*="file"], [class*="attachment"]'
+        file_preview_selector = '.jotaduo-upload-list-item, .jotaduo-sender-content [class*="file"], [class*="attachment"]'
         return self.assert_visible(file_preview_selector, timeout=timeout)
 
     # ========== Session management ==========
@@ -732,7 +732,7 @@ class ChatPage(BasePage):
     def close_session_list(self) -> "ChatPage":
         """Close the session list."""
         logger.info("Closing session list")
-        close_btn = self.page.locator('.qwenpaw-drawer ' + self.DRAWER_CLOSE)
+        close_btn = self.page.locator('.jotaduo-drawer ' + self.DRAWER_CLOSE)
         if close_btn.count() > 0:
             close_btn.first.click()
             self.wait(500)
@@ -812,7 +812,7 @@ class ChatPage(BasePage):
         # Try several selectors to find the input (may live inside or outside the session item)
         rename_input = None
         input_selectors = [
-            'input.qwenpaw-input',
+            'input.jotaduo-input',
             'input[type="text"]',
             'input',
         ]
@@ -828,7 +828,7 @@ class ChatPage(BasePage):
         # If not found inside the session item, search globally on the page
         if rename_input is None:
             for selector in input_selectors:
-                locator = self.page.locator(f'.qwenpaw-modal input, .qwenpaw-drawer input, {self.SESSION_ITEM} {selector}')
+                locator = self.page.locator(f'.jotaduo-modal input, .jotaduo-drawer input, {self.SESSION_ITEM} {selector}')
                 if locator.count() > 0 and locator.first.is_visible():
                     rename_input = locator.first
                     logger.info(f"Found rename input globally with selector: {selector}")
@@ -981,7 +981,7 @@ class ChatPage(BasePage):
         """Open the model selector."""
         logger.info("Opening model selector")
         # The model selector lives in the right-side area of the header
-        header = self.page.locator('.qwenpaw-chat-anywhere-layout-right-header')
+        header = self.page.locator('.jotaduo-chat-anywhere-layout-right-header')
         model_btn = header.locator(self.MODEL_SELECTOR).first
         model_btn.click()
         self.wait(500)
@@ -1094,7 +1094,7 @@ class ChatPage(BasePage):
         """Dismiss the error message."""
         error = self.find(self.ERROR_MESSAGE)
         if error.count() > 0:
-            close_btn = error.locator('.qwenpaw-message-close, .qwenpaw-notification-close').first
+            close_btn = error.locator('.jotaduo-message-close, .jotaduo-notification-close').first
             if close_btn.count() > 0:
                 close_btn.click()
                 self.wait(500)
@@ -1105,7 +1105,7 @@ class ChatPage(BasePage):
     def scroll_to_top(self) -> "ChatPage":
         """Scroll the message list to the top."""
         self.page.evaluate("""() => {
-            const list = document.querySelector('.qwenpaw-bubble-list-scroll');
+            const list = document.querySelector('.jotaduo-bubble-list-scroll');
             if (list) list.scrollTop = 0;
         }""")
         self.wait(500)
@@ -1114,7 +1114,7 @@ class ChatPage(BasePage):
     def scroll_to_bottom(self) -> "ChatPage":
         """Scroll the message list to the bottom."""
         self.page.evaluate("""() => {
-            const list = document.querySelector('.qwenpaw-bubble-list-scroll');
+            const list = document.querySelector('.jotaduo-bubble-list-scroll');
             if (list) list.scrollTop = list.scrollHeight;
         }""")
         self.wait(500)

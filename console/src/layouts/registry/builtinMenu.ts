@@ -3,7 +3,7 @@
  *
  * Importing this module self-registers all builtins into menuRegistry, so the
  * Sidebar's `useMenuItems()` snapshot returns them on first render. Plugins
- * register via `QwenPaw.menu.add(...)` which lands in the same registry, so
+ * register via `JotaDuo.menu.add(...)` which lands in the same registry, so
  * Sidebar treats core + plugin items uniformly.
  *
  * ── Naming convention ──────────────────────────────────────────────────────

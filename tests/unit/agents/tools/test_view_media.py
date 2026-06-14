@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Tests for qwenpaw.agents.tools.view_media.
+"""Tests for jotaduo.agents.tools.view_media.
 
 Covers:
 - _is_url
@@ -16,7 +16,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from qwenpaw.agents.tools.view_media import (
+from jotaduo.agents.tools.view_media import (
     _IMAGE_EXTENSIONS,
     _VIDEO_EXTENSIONS,
     _check_multimodal_support,
@@ -167,12 +167,12 @@ class TestValidateMediaPath:
 class TestCheckMultimodalSupport:
     """Tests for _check_multimodal_support."""
 
-    @patch("qwenpaw.agents.prompt._get_active_model_info", create=True)
+    @patch("jotaduo.agents.prompt._get_active_model_info", create=True)
     def test_no_model_info_returns_true(self, mock_info):
         mock_info.return_value = (None, None)
         assert _check_multimodal_support("image") is True
 
-    @patch("qwenpaw.agents.prompt._get_active_model_info", create=True)
+    @patch("jotaduo.agents.prompt._get_active_model_info", create=True)
     def test_supports_image_true(self, mock_info):
         model_info = MagicMock()
         model_info.supports_image = True
@@ -180,7 +180,7 @@ class TestCheckMultimodalSupport:
         mock_info.return_value = (model_info, None)
         assert _check_multimodal_support("image") is True
 
-    @patch("qwenpaw.agents.prompt._get_active_model_info", create=True)
+    @patch("jotaduo.agents.prompt._get_active_model_info", create=True)
     def test_supports_multimodal_true(self, mock_info):
         model_info = MagicMock()
         model_info.supports_image = False
@@ -188,7 +188,7 @@ class TestCheckMultimodalSupport:
         mock_info.return_value = (model_info, None)
         assert _check_multimodal_support("image") is True
 
-    @patch("qwenpaw.agents.prompt._get_active_model_info", create=True)
+    @patch("jotaduo.agents.prompt._get_active_model_info", create=True)
     def test_video_requires_explicit_support(self, mock_info):
         model_info = MagicMock()
         model_info.supports_video = False
@@ -196,7 +196,7 @@ class TestCheckMultimodalSupport:
         mock_info.return_value = (model_info, None)
         assert _check_multimodal_support("video") is False
 
-    @patch("qwenpaw.agents.prompt._get_active_model_info", create=True)
+    @patch("jotaduo.agents.prompt._get_active_model_info", create=True)
     def test_exception_returns_true(self, mock_info):
         mock_info.side_effect = ImportError("no module")
         assert _check_multimodal_support("image") is True
@@ -211,7 +211,7 @@ class TestGetMultimodalFallbackHint:
     """Tests for _get_multimodal_fallback_hint."""
 
     @patch(
-        "qwenpaw.agents.prompt.get_active_model_multimodal_raw",
+        "jotaduo.agents.prompt.get_active_model_multimodal_raw",
         create=True,
     )
     def test_when_raw_is_none(self, mock_raw):
@@ -220,7 +220,7 @@ class TestGetMultimodalFallbackHint:
         assert "no multimodal capability was detected" in hint
 
     @patch(
-        "qwenpaw.agents.prompt.get_active_model_multimodal_raw",
+        "jotaduo.agents.prompt.get_active_model_multimodal_raw",
         create=True,
     )
     def test_when_raw_is_false(self, mock_raw):
@@ -229,7 +229,7 @@ class TestGetMultimodalFallbackHint:
         assert "multimodal" in hint.lower()
 
     @patch(
-        "qwenpaw.agents.prompt.get_active_model_multimodal_raw",
+        "jotaduo.agents.prompt.get_active_model_multimodal_raw",
         create=True,
     )
     def test_when_raw_is_true(self, mock_raw):
@@ -238,7 +238,7 @@ class TestGetMultimodalFallbackHint:
         assert "multimodal" in hint.lower()
 
     @patch(
-        "qwenpaw.agents.prompt.get_active_model_multimodal_raw",
+        "jotaduo.agents.prompt.get_active_model_multimodal_raw",
         create=True,
     )
     def test_exception_returns_none_hint(self, mock_raw):
@@ -256,7 +256,7 @@ class TestViewImage:
     """Tests for view_image."""
 
     @pytest.mark.asyncio
-    @patch("qwenpaw.agents.tools.view_media._check_multimodal_support")
+    @patch("jotaduo.agents.tools.view_media._check_multimodal_support")
     async def test_url_image(self, mock_support):
         mock_support.return_value = True
         result = await view_image("https://example.com/photo.jpg")
@@ -265,14 +265,14 @@ class TestViewImage:
         assert "image" in types
 
     @pytest.mark.asyncio
-    @patch("qwenpaw.agents.tools.view_media._check_multimodal_support")
+    @patch("jotaduo.agents.tools.view_media._check_multimodal_support")
     async def test_invalid_url_extension(self, mock_support):
         mock_support.return_value = True
         result = await view_image("https://example.com/doc.pdf")
         assert "image" in result.content[0]["text"].lower()
 
     @pytest.mark.asyncio
-    @patch("qwenpaw.agents.tools.view_media._check_multimodal_support")
+    @patch("jotaduo.agents.tools.view_media._check_multimodal_support")
     async def test_local_image_file(self, mock_support, tmp_path):
         mock_support.return_value = True
         img = tmp_path / "photo.png"
@@ -282,15 +282,15 @@ class TestViewImage:
         assert "image" in types
 
     @pytest.mark.asyncio
-    @patch("qwenpaw.agents.tools.view_media._check_multimodal_support")
+    @patch("jotaduo.agents.tools.view_media._check_multimodal_support")
     async def test_nonexistent_local_file(self, mock_support):
         mock_support.return_value = True
         result = await view_image("/nonexistent/image.png")
         assert "does not exist" in result.content[0]["text"]
 
     @pytest.mark.asyncio
-    @patch("qwenpaw.agents.tools.view_media._probe_multimodal_if_needed")
-    @patch("qwenpaw.agents.tools.view_media._check_multimodal_support")
+    @patch("jotaduo.agents.tools.view_media._probe_multimodal_if_needed")
+    @patch("jotaduo.agents.tools.view_media._check_multimodal_support")
     async def test_fallback_hint_included(self, mock_support, mock_probe):
         mock_support.return_value = False
         mock_probe.return_value = False
@@ -310,7 +310,7 @@ class TestViewVideo:
     """Tests for view_video."""
 
     @pytest.mark.asyncio
-    @patch("qwenpaw.agents.tools.view_media._check_multimodal_support")
+    @patch("jotaduo.agents.tools.view_media._check_multimodal_support")
     async def test_url_video(self, mock_support):
         mock_support.return_value = True
         result = await view_video("https://example.com/clip.mp4")
@@ -318,14 +318,14 @@ class TestViewVideo:
         assert "video" in types
 
     @pytest.mark.asyncio
-    @patch("qwenpaw.agents.tools.view_media._check_multimodal_support")
+    @patch("jotaduo.agents.tools.view_media._check_multimodal_support")
     async def test_invalid_url_extension(self, mock_support):
         mock_support.return_value = True
         result = await view_video("https://example.com/doc.pdf")
         assert "video" in result.content[0]["text"].lower()
 
     @pytest.mark.asyncio
-    @patch("qwenpaw.agents.tools.view_media._check_multimodal_support")
+    @patch("jotaduo.agents.tools.view_media._check_multimodal_support")
     async def test_local_video_file(self, mock_support, tmp_path):
         mock_support.return_value = True
         vid = tmp_path / "clip.mp4"
@@ -335,7 +335,7 @@ class TestViewVideo:
         assert "video" in types
 
     @pytest.mark.asyncio
-    @patch("qwenpaw.agents.tools.view_media._check_multimodal_support")
+    @patch("jotaduo.agents.tools.view_media._check_multimodal_support")
     async def test_nonexistent_local_file(self, mock_support):
         mock_support.return_value = True
         result = await view_video("/nonexistent/vid.mp4")

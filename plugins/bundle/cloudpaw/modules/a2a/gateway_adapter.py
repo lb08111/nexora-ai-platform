@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import logging
 
-logger = logging.getLogger("qwenpaw").getChild(
+logger = logging.getLogger("jotaduo").getChild(
     __name__.replace("plugin_cloudpaw.", ""),
 )
 

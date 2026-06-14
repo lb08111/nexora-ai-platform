@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Smoke test: AgentForge package imports cleanly + tool list intact."""
 
-from qwenpaw.agents.forge import FORGE_TOOLS
+from jotaduo.agents.forge import FORGE_TOOLS
 
 
 def test_forge_tools_loaded():
@@ -16,7 +16,7 @@ def test_forge_tools_loaded():
 
 
 def test_forge_class_is_lazy_importable():
-    from qwenpaw.agents.forge import AgentForge, build_agent_forge
+    from jotaduo.agents.forge import AgentForge, build_agent_forge
 
     assert AgentForge.__name__ == "AgentForge"
     assert callable(build_agent_forge)

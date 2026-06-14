@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-QwenPaw E2E Test Framework Configuration Module
+JotaDuo E2E Test Framework Configuration Module
 
 Provides unified configuration management with environment variable overrides.
 """
@@ -83,11 +83,11 @@ class Config:
     Uses the singleton pattern and supports environment variable overrides.
 
     Environment variables:
-    - QWENPAW_BASE_URL: Server URL
-    - QWENPAW_HEADLESS: Headless mode (true/false)
-    - QWENPAW_TIMEOUT: Timeout (milliseconds)
-    - QWENPAW_USER_ID: User ID
-    - QWENPAW_CHANNEL: Channel name
+    - JOTADUO_BASE_URL: Server URL
+    - JOTADUO_HEADLESS: Headless mode (true/false)
+    - JOTADUO_TIMEOUT: Timeout (milliseconds)
+    - JOTADUO_USER_ID: User ID
+    - JOTADUO_CHANNEL: Channel name
     - PLAYWRIGHT_SLOW_MO: Slow motion delay (milliseconds)
     """
     
@@ -115,34 +115,34 @@ class Config:
     def _load_from_env(self):
         """Load configuration from environment variables"""
         # Server configuration
-        if os.getenv("QWENPAW_BASE_URL"):
-            self.server.base_url = os.getenv("QWENPAW_BASE_URL")
+        if os.getenv("JOTADUO_BASE_URL"):
+            self.server.base_url = os.getenv("JOTADUO_BASE_URL")
 
         # Browser configuration
-        headless_env = os.getenv("QWENPAW_HEADLESS", "true").lower()
+        headless_env = os.getenv("JOTADUO_HEADLESS", "true").lower()
         self.browser.headless = headless_env in ("true", "1", "yes")
 
-        if os.getenv("QWENPAW_TIMEOUT"):
+        if os.getenv("JOTADUO_TIMEOUT"):
             try:
-                timeout = int(os.getenv("QWENPAW_TIMEOUT"))
+                timeout = int(os.getenv("JOTADUO_TIMEOUT"))
                 self.browser.timeout = timeout
                 self.server.timeout = timeout
             except ValueError:
                 import warnings
-                warnings.warn(f"Invalid QWENPAW_TIMEOUT value: '{os.getenv('QWENPAW_TIMEOUT')}', using default")
+                warnings.warn(f"Invalid JOTADUO_TIMEOUT value: '{os.getenv('JOTADUO_TIMEOUT')}', using default")
 
         if os.getenv("PLAYWRIGHT_SLOW_MO"):
             self.browser.slow_mo = int(os.getenv("PLAYWRIGHT_SLOW_MO"))
 
         # Test configuration
-        if os.getenv("QWENPAW_USER_ID"):
-            self.test.user_id = os.getenv("QWENPAW_USER_ID")
+        if os.getenv("JOTADUO_USER_ID"):
+            self.test.user_id = os.getenv("JOTADUO_USER_ID")
 
-        if os.getenv("QWENPAW_CHANNEL"):
-            self.test.channel = os.getenv("QWENPAW_CHANNEL")
+        if os.getenv("JOTADUO_CHANNEL"):
+            self.test.channel = os.getenv("JOTADUO_CHANNEL")
 
-        if os.getenv("QWENPAW_DASHSCOPE_API_KEY"):
-            self.server.model_key = os.getenv("QWENPAW_DASHSCOPE_API_KEY")
+        if os.getenv("JOTADUO_DASHSCOPE_API_KEY"):
+            self.server.model_key = os.getenv("JOTADUO_DASHSCOPE_API_KEY")
 
         # Set API base URL
         if not self.server.api_base_url:

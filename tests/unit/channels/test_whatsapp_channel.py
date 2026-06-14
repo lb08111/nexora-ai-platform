@@ -48,8 +48,8 @@ from agentscope_runtime.engine.schemas.agent_schemas import (  # noqa: E402
     FileContent,
     ContentType,
 )
-from qwenpaw.app.channels.whatsapp import channel as _wa_mod  # noqa: E402
-from qwenpaw.app.channels.whatsapp.channel import (  # noqa: E402
+from jotaduo.app.channels.whatsapp import channel as _wa_mod  # noqa: E402
+from jotaduo.app.channels.whatsapp.channel import (  # noqa: E402
     WhatsAppChannel,
     _jid_to_str,
     _is_group_jid,

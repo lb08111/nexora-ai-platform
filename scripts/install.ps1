@@ -1,9 +1,9 @@
-# QwenPaw Installer for Windows (self-contained: includes uv download via GitHub)
+# JotaDuo Installer for Windows (self-contained: includes uv download via GitHub)
 # Usage: irm <url>/install.ps1 | iex
 #    or: .\install.ps1 [-Version X.Y.Z] [-FromSource] [-SourceDir DIR]
 #                            [-Extras "dev,whisper"] [-UvPath PATH]
 #
-# Installs QwenPaw into ~/.qwenpaw with a uv-managed Python environment.
+# Installs JotaDuo into ~/.jotaduo with a uv-managed Python environment.
 # Users do NOT need Python pre-installed — uv handles everything.
 #
 # uv is obtained automatically (no action required from the user):
@@ -27,22 +27,22 @@ param(
 $ErrorActionPreference = "Stop"
 
 # ── Defaults ──────────────────────────────────────────────────────────────────
-$QwenpawHome     = if ($env:QWENPAW_HOME) { $env:QWENPAW_HOME } else { Join-Path $HOME ".qwenpaw" }
-$QwenpawVenv     = Join-Path $QwenpawHome "venv"
-$QwenpawBin      = Join-Path $QwenpawHome "bin"
+$JotaduoHome     = if ($env:JOTADUO_HOME) { $env:JOTADUO_HOME } else { Join-Path $HOME ".jotaduo" }
+$JotaduoVenv     = Join-Path $JotaduoHome "venv"
+$JotaduoBin      = Join-Path $JotaduoHome "bin"
 $PythonVersion = "3.12"
-$QwenpawRepo     = "https://github.com/agentscope-ai/QwenPaw.git"
+$JotaduoRepo     = "https://github.com/agentscope-ai/QwenPaw.git"
 
 # ── Colors ────────────────────────────────────────────────────────────────────
-function Write-Info { param([string]$Message) Write-Host "[qwenpaw] " -ForegroundColor Green  -NoNewline; Write-Host $Message }
-function Write-Warn { param([string]$Message) Write-Host "[qwenpaw] " -ForegroundColor Yellow -NoNewline; Write-Host $Message }
-function Write-Err  { param([string]$Message) Write-Host "[qwenpaw] " -ForegroundColor Red    -NoNewline; Write-Host $Message }
+function Write-Info { param([string]$Message) Write-Host "[jotaduo] " -ForegroundColor Green  -NoNewline; Write-Host $Message }
+function Write-Warn { param([string]$Message) Write-Host "[jotaduo] " -ForegroundColor Yellow -NoNewline; Write-Host $Message }
+function Write-Err  { param([string]$Message) Write-Host "[jotaduo] " -ForegroundColor Red    -NoNewline; Write-Host $Message }
 function Stop-WithError { param([string]$Message) Write-Err $Message; exit 1 }
 
 # ── Help ──────────────────────────────────────────────────────────────────────
 if ($Help) {
     @"
-QwenPaw Installer for Windows
+JotaDuo Installer for Windows
 
 Usage: .\install.ps1 [OPTIONS]
 
@@ -56,14 +56,14 @@ Options:
   -Help                 Show this help
 
 Environment:
-  QWENPAW_HOME            Installation directory (default: ~/.qwenpaw)
+  JOTADUO_HOME            Installation directory (default: ~/.jotaduo)
 "@
     exit 0
 }
 
-Write-Host "[qwenpaw] " -ForegroundColor Green -NoNewline
-Write-Host "Installing QwenPaw into " -NoNewline
-Write-Host "$QwenpawHome" -ForegroundColor White
+Write-Host "[jotaduo] " -ForegroundColor Green -NoNewline
+Write-Host "Installing JotaDuo into " -NoNewline
+Write-Host "$JotaduoHome" -ForegroundColor White
 
 # ── Execution Policy Check ────────────────────────────────────────────────────
 $policy = Get-ExecutionPolicy
@@ -193,22 +193,22 @@ function Ensure-Uv {
 Ensure-Uv
 
 # ── Step 2: Create / update virtual environment ──────────────────────────────
-if (Test-Path $QwenpawVenv) {
+if (Test-Path $JotaduoVenv) {
     Write-Info "Existing environment found, upgrading..."
 } else {
     Write-Info "Creating Python $PythonVersion environment..."
 }
 
-uv venv $QwenpawVenv --python $PythonVersion --quiet --clear
+uv venv $JotaduoVenv --python $PythonVersion --quiet --clear
 if ($LASTEXITCODE -ne 0) { Stop-WithError "Failed to create virtual environment" }
 
-$VenvPython = Join-Path $QwenpawVenv "Scripts\python.exe"
+$VenvPython = Join-Path $JotaduoVenv "Scripts\python.exe"
 if (-not (Test-Path $VenvPython)) { Stop-WithError "Failed to create virtual environment" }
 
 $pyVersion = & $VenvPython --version 2>&1
 Write-Info "Python environment ready ($pyVersion)"
 
-# ── Step 3: Install QwenPaw ────────────────────────────────────────────────────
+# ── Step 3: Install JotaDuo ────────────────────────────────────────────────────
 $ExtrasSuffix = ""
 if ($Extras) { $ExtrasSuffix = "[$Extras]" }
 
@@ -219,7 +219,7 @@ function Prepare-Console {
     param([string]$RepoDir)
 
     $consoleSrc  = Join-Path $RepoDir "console\dist"
-    $consoleDest = Join-Path $RepoDir "src\qwenpaw\console"
+    $consoleDest = Join-Path $RepoDir "src\jotaduo\console"
 
     # Already populated
     if (Test-Path (Join-Path $consoleDest "index.html")) { $script:ConsoleAvailable = $true; return }
@@ -273,19 +273,19 @@ function Prepare-Console {
 function Cleanup-Console {
     param([string]$RepoDir)
     if ($script:ConsoleCopied) {
-        $consoleDest = Join-Path $RepoDir "src\qwenpaw\console"
+        $consoleDest = Join-Path $RepoDir "src\jotaduo\console"
         if (Test-Path $consoleDest) {
             Remove-Item -Path "$consoleDest\*" -Recurse -Force -ErrorAction SilentlyContinue
         }
     }
 }
 
-$VenvQwenpaw = Join-Path $QwenpawVenv "Scripts\qwenpaw.exe"
+$VenvJotaduo = Join-Path $JotaduoVenv "Scripts\jotaduo.exe"
 
 if ($FromSource) {
     if ($SourceDir) {
         $SourceDir = (Resolve-Path $SourceDir).Path
-        Write-Info "Installing QwenPaw from local source: $SourceDir"
+        Write-Info "Installing JotaDuo from local source: $SourceDir"
         Prepare-Console $SourceDir
         Write-Info "Installing package from source..."
         uv pip install "${SourceDir}${ExtrasSuffix}" --python $VenvPython --prerelease=allow
@@ -293,12 +293,12 @@ if ($FromSource) {
         Cleanup-Console $SourceDir
     } else {
         if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
-            Stop-WithError "git is required for -FromSource without a local directory. Please install Git from https://git-scm.com/ or pass a local path: .\install.ps1 -FromSource -SourceDir C:\path\to\QwenPaw"
+            Stop-WithError "git is required for -FromSource without a local directory. Please install Git from https://git-scm.com/ or pass a local path: .\install.ps1 -FromSource -SourceDir C:\path\to\JotaDuo"
         }
-        Write-Info "Installing QwenPaw from source (GitHub)..."
-        $cloneDir = Join-Path $env:TEMP "qwenpaw-install-$(Get-Random)"
+        Write-Info "Installing JotaDuo from source (GitHub)..."
+        $cloneDir = Join-Path $env:TEMP "jotaduo-install-$(Get-Random)"
         try {
-            git clone --depth 1 $QwenpawRepo $cloneDir
+            git clone --depth 1 $JotaduoRepo $cloneDir
             if ($LASTEXITCODE -ne 0) { Stop-WithError "Failed to clone repository" }
             Prepare-Console $cloneDir
             Write-Info "Installing package from source..."
@@ -311,38 +311,38 @@ if ($FromSource) {
         }
     }
 } else {
-    $package = "qwenpaw"
-    if ($Version) { $package = "qwenpaw==$Version" }
+    $package = "jotaduo"
+    if ($Version) { $package = "jotaduo==$Version" }
 
     Write-Info "Installing ${package}${ExtrasSuffix} from PyPI..."
-    uv pip install "${package}${ExtrasSuffix}" --python $VenvPython --prerelease=allow --quiet --refresh-package qwenpaw
+    uv pip install "${package}${ExtrasSuffix}" --python $VenvPython --prerelease=allow --quiet --refresh-package jotaduo
     if ($LASTEXITCODE -ne 0) { Stop-WithError "Installation failed" }
 }
 
 # Verify the CLI entry point exists
-if (-not (Test-Path $VenvQwenpaw)) { Stop-WithError "Installation failed: qwenpaw CLI not found in venv" }
+if (-not (Test-Path $VenvJotaduo)) { Stop-WithError "Installation failed: jotaduo CLI not found in venv" }
 
-Write-Info "QwenPaw installed successfully"
+Write-Info "JotaDuo installed successfully"
 
 # Check console availability (for PyPI installs, check the installed package)
 if (-not $script:ConsoleAvailable) {
-    $consoleCheck = & $VenvPython -c "import importlib.resources, qwenpaw; p=importlib.resources.files('qwenpaw')/'console'/'index.html'; print('yes' if p.is_file() else 'no')" 2>&1
+    $consoleCheck = & $VenvPython -c "import importlib.resources, jotaduo; p=importlib.resources.files('jotaduo')/'console'/'index.html'; print('yes' if p.is_file() else 'no')" 2>&1
     if ($consoleCheck -eq "yes") { $script:ConsoleAvailable = $true }
 }
 
 # ── Step 4: Create wrapper scripts ───────────────────────────────────────────
-New-Item -ItemType Directory -Path $QwenpawBin -Force | Out-Null
+New-Item -ItemType Directory -Path $JotaduoBin -Force | Out-Null
 
-$wrapperPath = Join-Path $QwenpawBin "qwenpaw.ps1"
+$wrapperPath = Join-Path $JotaduoBin "jotaduo.ps1"
 $wrapperContent = @'
-# QwenPaw CLI wrapper — delegates to the uv-managed environment.
+# JotaDuo CLI wrapper — delegates to the uv-managed environment.
 $ErrorActionPreference = "Stop"
 
-$QwenpawHome = if ($env:QWENPAW_HOME) { $env:QWENPAW_HOME } else { Join-Path $HOME ".qwenpaw" }
-$RealBin   = Join-Path $QwenpawHome "venv\Scripts\qwenpaw.exe"
+$JotaduoHome = if ($env:JOTADUO_HOME) { $env:JOTADUO_HOME } else { Join-Path $HOME ".jotaduo" }
+$RealBin   = Join-Path $JotaduoHome "venv\Scripts\jotaduo.exe"
 
 if (-not (Test-Path $RealBin)) {
-    Write-Error "QwenPaw environment not found at $QwenpawHome\venv"
+    Write-Error "JotaDuo environment not found at $JotaduoHome\venv"
     Write-Error "Please reinstall: irm <install-url> | iex"
     exit 1
 }
@@ -354,15 +354,15 @@ Set-Content -Path $wrapperPath -Value $wrapperContent -Encoding UTF8
 Write-Info "Wrapper created at $wrapperPath"
 
 # Also create a .cmd wrapper for use from cmd.exe
-$cmdWrapperPath = Join-Path $QwenpawBin "qwenpaw.cmd"
+$cmdWrapperPath = Join-Path $JotaduoBin "jotaduo.cmd"
 $cmdWrapperContent = @"
 @echo off
-REM QwenPaw CLI wrapper — delegates to the uv-managed environment.
-set "QWENPAW_HOME=%QWENPAW_HOME%"
-if "%QWENPAW_HOME%"=="" set "QWENPAW_HOME=%USERPROFILE%\.qwenpaw"
-set "REAL_BIN=%QWENPAW_HOME%\venv\Scripts\qwenpaw.exe"
+REM JotaDuo CLI wrapper — delegates to the uv-managed environment.
+set "JOTADUO_HOME=%JOTADUO_HOME%"
+if "%JOTADUO_HOME%"=="" set "JOTADUO_HOME=%USERPROFILE%\.jotaduo"
+set "REAL_BIN=%JOTADUO_HOME%\venv\Scripts\jotaduo.exe"
 if not exist "%REAL_BIN%" (
-    echo Error: QwenPaw environment not found at %QWENPAW_HOME%\venv >&2
+    echo Error: JotaDuo environment not found at %JOTADUO_HOME%\venv >&2
     echo Please reinstall: irm ^<install-url^> ^| iex >&2
     exit /b 1
 )
@@ -373,7 +373,7 @@ Set-Content -Path $cmdWrapperPath -Value $cmdWrapperContent -Encoding UTF8
 Write-Info "CMD wrapper created at $cmdWrapperPath"
 
 # ──Step 5: Update PATH via User Environment Variable ────────────────────────
-$targetPath = $QwenpawBin
+$targetPath = $JotaduoBin
 $registryPath = "HKCU:\Environment"
 $registryName = "Path"
 
@@ -426,7 +426,7 @@ if (-not $isAlreadyAdded) {
         Write-Host "   Reason: $errorMsg"
         Write-Host "   Context: Your system policy strictly blocks environment modifications."
         Write-Host ""
-        Write-Host "ACTION REQUIRED: You must manually add the path to use QwenPaw."
+        Write-Host "ACTION REQUIRED: You must manually add the path to use JotaDuo."
         Write-Host "   Target Path: $targetPath"
         Write-Host ""
         Write-Host "Manual Steps (User Variables):"
@@ -451,10 +451,10 @@ if (-not $isAlreadyAdded) {
 
 # ── Done ──────────────────────────────────────────────────────────────────────
 Write-Host ""
-Write-Host "QwenPaw installed successfully!" -ForegroundColor Green
+Write-Host "JotaDuo installed successfully!" -ForegroundColor Green
 Write-Host ""
 
-Write-Host "  Install location:  " -NoNewline; Write-Host "$QwenpawHome" -ForegroundColor White
+Write-Host "  Install location:  " -NoNewline; Write-Host "$JotaduoHome" -ForegroundColor White
 Write-Host "  Python:            " -NoNewline; Write-Host "$pyVersion"  -ForegroundColor White
 if ($script:ConsoleAvailable) {
     Write-Host "  Console (web UI):  " -NoNewline; Write-Host "available"     -ForegroundColor Green
@@ -466,11 +466,11 @@ Write-Host ""
 
 Write-Host "To get started, open a new terminal and run:"
 Write-Host ""
-Write-Host "  qwenpaw init" -ForegroundColor White -NoNewline; Write-Host "       # first-time setup"
-Write-Host "  qwenpaw app"  -ForegroundColor White -NoNewline; Write-Host "        # start QwenPaw"
+Write-Host "  jotaduo init" -ForegroundColor White -NoNewline; Write-Host "       # first-time setup"
+Write-Host "  jotaduo app"  -ForegroundColor White -NoNewline; Write-Host "        # start JotaDuo"
 Write-Host ""
 Write-Host "To upgrade later, re-run this installer."
 Write-Host "To uninstall, run: " -NoNewline
-Write-Host "qwenpaw uninstall" -ForegroundColor White
+Write-Host "jotaduo uninstall" -ForegroundColor White
 
 } @args

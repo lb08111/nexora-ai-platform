@@ -1,4 +1,4 @@
-# QwenPaw E2E test framework dependencies
+# JotaDuo E2E test framework dependencies
 # Install with: pip install -r requirements.txt
 
 # ========== Core dependencies ==========

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-QwenPaw built-in tools management module P0 end-to-end test cases.
+JotaDuo built-in tools management module P0 end-to-end test cases.
 
 Tool module tests:
 - TOOL-001: Page display + global toggle + tool card verification
@@ -72,7 +72,7 @@ class TestToolsPageDisplayAndGlobalToggle:
 
             # 3. Verify the global enable/disable switch
             log_test_step("3. Verify the global enable/disable switch")
-            global_switch = page.locator('button.qwenpaw-switch[role="switch"]')
+            global_switch = page.locator('button.jotaduo-switch[role="switch"]')
             assert global_switch.count() > 0 and global_switch.first.is_visible(), \
                 "Global toggle switch should be visible"
             initial_aria_checked = global_switch.first.get_attribute('aria-checked')
@@ -393,7 +393,7 @@ class TestToolsGlobalToggleConsistency:
             logger.info(f"Detected tool card count: {card_count}")
 
             # Get the global toggle's initial state
-            global_switch = page.locator('button.qwenpaw-switch[role="switch"]').first
+            global_switch = page.locator('button.jotaduo-switch[role="switch"]').first
             expect(global_switch).to_be_visible(timeout=5000)
             initial_aria_checked = global_switch.get_attribute('aria-checked')
             initial_enabled = initial_aria_checked == 'true'
@@ -537,14 +537,14 @@ class TestToolAsyncSwitch:
         page.wait_for_timeout(3000)
 
         log_test_step("Find tool cards")
-        tool_cards = page.locator('.qwenpaw-card, [class*="toolCard"]').all()
+        tool_cards = page.locator('.jotaduo-card, [class*="toolCard"]').all()
         if len(tool_cards) == 0:
             pytest.skip("No tool cards found, skipping test")
         logger.info(f"Found {len(tool_cards)} tool cards")
 
         log_test_step("Find the async-execute toggle")
         async_switches = page.locator(
-            '.qwenpaw-switch, [class*="asyncSwitch"]'
+            '.jotaduo-switch, [class*="asyncSwitch"]'
         ).all()
         assert len(async_switches) > 0, "Tools page should have toggle controls"
         logger.info(f"Found {len(async_switches)} toggles")

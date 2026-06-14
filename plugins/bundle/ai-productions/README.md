@@ -75,8 +75,8 @@ await register_production(
     title="Post de lançamento - Linha Verão 2026",
     type="post",
     team="marketing",
-    agent_id="nexora-vendas",
-    agent_name="Nexora Vendas",
+    agent_id="jotaduo-vendas",
+    agent_name="Jotaduo Vendas",
     summary="Anúncio do drop de verão com CTA para Pix.",
     content="🌞 A nova coleção chegou...",
     tags=["instagram", "drop-verao"],
@@ -92,7 +92,7 @@ notificação `production.approval_requested`.
 ```python
 await request_approval(
     production_id="prod-abc123",
-    actor="nexora-orchestrator",
+    actor="jotaduo-orchestrator",
     note="Cliente quer publicar amanhã às 9h.",
 )
 ```
@@ -155,8 +155,8 @@ curl -X POST http://localhost:8000/api/ai-productions/productions \
     "title": "Landing - Black Friday",
     "type": "landing_page",
     "team": "marketing",
-    "agent_id": "nexora-orchestrator",
-    "agent_name": "Nexora Orchestrator",
+    "agent_id": "jotaduo-orchestrator",
+    "agent_name": "Jotaduo Orchestrator",
     "summary": "Hero + 3 CTAs + Pix",
     "content_url": "https://figma.com/file/xyz",
     "tags": ["bf", "lp"]

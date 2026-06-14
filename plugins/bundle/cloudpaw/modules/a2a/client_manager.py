@@ -25,7 +25,7 @@ from .gateway_adapter import (
 )
 from .gateway_token import GatewayTokenProvider
 
-logger = logging.getLogger("qwenpaw").getChild(
+logger = logging.getLogger("jotaduo").getChild(
     __name__.replace("plugin_cloudpaw.", ""),
 )
 

@@ -1,0 +1,598 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 360px;
+  background: var(--colorBgContainer, #fff);
+  border: 1px solid var(--colorBorderSecondary, rgba(0, 0, 0, 0.06));
+  border-radius: 12px;
+  overflow: hidden;
+  font-family: inherit;
+  color: var(--colorText, rgba(0, 0, 0, 0.88));
+}
+
+/* ---------- Toolbar ---------- */
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--colorBorderSecondary, rgba(0, 0, 0, 0.06));
+  background: var(--colorFillQuaternary, rgba(0, 0, 0, 0.02));
+  flex-shrink: 0;
+}
+
+.toolbarTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.toolbarStats {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--colorTextSecondary, rgba(0, 0, 0, 0.55));
+
+  strong {
+    color: var(--colorText, rgba(0, 0, 0, 0.88));
+    font-weight: 600;
+    margin-right: 2px;
+  }
+}
+
+/* ---------- Body layout ---------- */
+.body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.graphPane {
+  flex: 1;
+  position: relative;
+  min-width: 0;
+  background:
+    radial-gradient(
+      circle at 1px 1px,
+      var(--colorBorderSecondary, rgba(0, 0, 0, 0.08)) 1px,
+      transparent 0
+    );
+  background-size: 24px 24px;
+  background-color: var(--colorBgLayout, #fafafa);
+}
+
+.planPane {
+  width: 320px;
+  border-left: 1px solid var(--colorBorderSecondary, rgba(0, 0, 0, 0.06));
+  background: var(--colorBgContainer, #fff);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.logPane {
+  height: 200px;
+  border-top: 1px solid var(--colorBorderSecondary, rgba(0, 0, 0, 0.06));
+  background: var(--colorBgContainer, #fff);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ---------- Graph ---------- */
+.graphCanvas {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.graphSvg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.edge,
+.edgeActive {
+  transition: opacity 0.3s ease;
+}
+
+.edgeActive {
+  animation: agentwf-dash 1.2s linear infinite;
+}
+
+@keyframes agentwf-dash {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+
+.agentNode {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 180px;
+  background: var(--colorBgContainer, #fff);
+  border: 2px solid;
+  border-radius: 12px;
+  padding: 10px 12px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  z-index: 2;
+
+  &:hover {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.14);
+  }
+}
+
+.agentNodePulse {
+  animation: agentwf-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes agentwf-pulse {
+  0%,
+  100% {
+    box-shadow: 0 4px 12px rgba(22, 119, 255, 0.18);
+  }
+  50% {
+    box-shadow: 0 4px 22px rgba(22, 119, 255, 0.55);
+  }
+}
+
+.agentAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.agentBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.agentName {
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.agentRole {
+  font-size: 11px;
+  color: var(--colorTextSecondary, rgba(0, 0, 0, 0.55));
+  margin-top: 1px;
+}
+
+.agentStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.agentCurrentTask {
+  font-size: 11px;
+  color: var(--colorTextSecondary, rgba(0, 0, 0, 0.55));
+  margin-top: 4px;
+  line-height: 1.3;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.graphEmpty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--colorTextSecondary, rgba(0, 0, 0, 0.45));
+  font-size: 13px;
+}
+
+/* ---------- Plan view ---------- */
+.planView {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.planHeader {
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid var(--colorBorderSecondary, rgba(0, 0, 0, 0.06));
+  flex-shrink: 0;
+}
+
+.planTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.planTitle {
+  font-weight: 600;
+  font-size: 14px;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.planDesc {
+  font-size: 12px;
+  color: var(--colorTextSecondary, rgba(0, 0, 0, 0.55));
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+.planProgress {
+  margin-top: 6px;
+}
+
+.planProgressLabel {
+  font-size: 11px;
+  color: var(--colorTextSecondary, rgba(0, 0, 0, 0.55));
+  margin-bottom: 4px;
+}
+
+.taskList {
+  list-style: none;
+  padding: 4px 8px;
+  margin: 0;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.taskItem {
+  display: flex;
+  gap: 8px;
+  padding: 8px 8px;
+  border-radius: 6px;
+  align-items: flex-start;
+
+  &:hover {
+    background: var(--colorFillQuaternary, rgba(0, 0, 0, 0.03));
+  }
+}
+
+.taskEmpty {
+  padding: 16px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--colorTextSecondary, rgba(0, 0, 0, 0.45));
+}
+
+.taskIcon {
+  font-size: 14px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.taskBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.taskNameRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.taskName {
+  font-size: 13px;
+  font-weight: 500;
+  flex: 1;
+  min-width: 0;
+}
+
+.taskAssignee {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.taskDesc {
+  font-size: 11px;
+  color: var(--colorTextSecondary, rgba(0, 0, 0, 0.55));
+  margin-top: 2px;
+  line-height: 1.4;
+}
+
+.taskOutcome {
+  font-size: 11px;
+  color: var(--colorSuccessText, #52c41a);
+  margin-top: 2px;
+}
+
+.taskState {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 1px 6px;
+  border-radius: 4px;
+  text-transform: capitalize;
+}
+
+.taskStateTodo {
+  background: var(--colorInfoBg, #e6f4ff);
+  color: var(--colorInfoText, #1677ff);
+}
+.taskStateInProgress {
+  background: var(--colorWarningBg, #fffbe6);
+  color: var(--colorWarningText, #faad14);
+}
+.taskStateDone {
+  background: var(--colorSuccessBg, #f6ffed);
+  color: var(--colorSuccessText, #52c41a);
+}
+.taskStateBlocked {
+  background: var(--colorErrorBg, #fff2f0);
+  color: var(--colorErrorText, #ff4d4f);
+}
+.taskStateAbandoned {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--colorTextSecondary, rgba(0, 0, 0, 0.55));
+}
+
+.planEmpty {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--colorTextSecondary, rgba(0, 0, 0, 0.45));
+  font-size: 13px;
+}
+
+.planEmptyIcon {
+  font-size: 40px;
+  opacity: 0.5;
+  margin-bottom: 8px;
+}
+
+.planEmptyHint {
+  font-size: 11px;
+  margin-top: 6px;
+}
+
+.planOutcome {
+  padding: 12px 16px;
+  border-top: 1px solid var(--colorBorderSecondary, rgba(0, 0, 0, 0.06));
+  font-size: 12px;
+  background: var(--colorFillQuaternary, rgba(0, 0, 0, 0.02));
+}
+
+/* ---------- Communication log ---------- */
+.logRoot {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.logHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--colorBorderSecondary, rgba(0, 0, 0, 0.06));
+  flex-shrink: 0;
+  background: var(--colorFillQuaternary, rgba(0, 0, 0, 0.02));
+}
+
+.logCount {
+  font-weight: 400;
+  color: var(--colorTextSecondary, rgba(0, 0, 0, 0.55));
+}
+
+.logScroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 6px 12px;
+}
+
+.logEmpty {
+  padding: 24px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--colorTextSecondary, rgba(0, 0, 0, 0.45));
+}
+
+.logItem {
+  padding: 6px 8px;
+  border-radius: 6px;
+  margin-bottom: 4px;
+
+  &:hover {
+    background: var(--colorFillQuaternary, rgba(0, 0, 0, 0.03));
+  }
+}
+
+.logItemHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+}
+
+.logArrow {
+  color: var(--colorTextTertiary, rgba(0, 0, 0, 0.45));
+  flex-shrink: 0;
+}
+
+.logTime {
+  margin-left: auto;
+  color: var(--colorTextTertiary, rgba(0, 0, 0, 0.4));
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.logItemBody {
+  margin-top: 2px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--colorText, rgba(0, 0, 0, 0.88));
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.partyAgent,
+.partyBroadcast,
+.partyUser,
+.partySystem,
+.partyUnknown {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+}
+
+.partyAvatar {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.partyBroadcast {
+  color: var(--colorWarningText, #faad14);
+}
+.partyUser {
+  color: var(--colorPrimary, #1677ff);
+}
+.partySystem {
+  color: var(--colorTextSecondary, rgba(0, 0, 0, 0.55));
+}
+.partyUnknown {
+  color: var(--colorTextSecondary, rgba(0, 0, 0, 0.55));
+  font-style: italic;
+}
+
+.msgType {
+  font-size: 10px;
+  padding: 0 6px;
+  border-radius: 4px;
+  font-weight: 500;
+  text-transform: lowercase;
+}
+.msgRequest {
+  background: var(--colorInfoBg, #e6f4ff);
+  color: var(--colorInfoText, #1677ff);
+}
+.msgResponse {
+  background: var(--colorSuccessBg, #f6ffed);
+  color: var(--colorSuccessText, #52c41a);
+}
+.msgBroadcast {
+  background: var(--colorWarningBg, #fffbe6);
+  color: var(--colorWarningText, #faad14);
+}
+.msgToolCall {
+  background: rgba(114, 46, 209, 0.1);
+  color: #722ed1;
+}
+.msgToolResult {
+  background: rgba(114, 46, 209, 0.06);
+  color: #722ed1;
+}
+.msgHandoff {
+  background: rgba(22, 119, 255, 0.1);
+  color: var(--colorInfoText, #1677ff);
+}
+.msgInfo {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--colorTextSecondary, rgba(0, 0, 0, 0.55));
+}
+
+/* ---------- Dark mode adjustments ---------- */
+:global(.dark-mode) {
+  .root {
+    background: #1f1f1f;
+    border-color: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .toolbar,
+  .logHeader,
+  .planOutcome {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .graphPane {
+    background-color: #141414;
+    background-image: radial-gradient(
+      circle at 1px 1px,
+      rgba(255, 255, 255, 0.06) 1px,
+      transparent 0
+    );
+  }
+
+  .planPane,
+  .logPane,
+  .agentNode {
+    background: #1f1f1f;
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .agentNode {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  }
+
+  .toolbarStats,
+  .agentRole,
+  .agentCurrentTask,
+  .planDesc,
+  .planProgressLabel,
+  .taskDesc,
+  .taskEmpty,
+  .logEmpty,
+  .logCount,
+  .planEmpty,
+  .planEmptyHint,
+  .logTime,
+  .partyUnknown,
+  .partySystem {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+
+  .taskOutcome {
+    color: #73d13d !important;
+  }
+}
