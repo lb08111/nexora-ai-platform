@@ -1,0 +1,42 @@
+{
+  "version": "0.1.0",
+  "agentId": "discovery",
+  "stateSchema": "DiscoveryAgentState",
+  "components": [
+    {
+      "name": "CompanyProfileCard",
+      "file": "CompanyProfileCard.tsx",
+      "stateSlice": "company",
+      "renderWhen": "company && Object.keys(company).length > 0",
+      "description": "Mostra perfil da empresa (segmento, porte, modelo, dores) à medida que o agente o descobre."
+    },
+    {
+      "name": "OpenAreasList",
+      "file": "OpenAreasList.tsx",
+      "stateSlice": "open_areas",
+      "renderWhen": "open_areas && open_areas.length > 0",
+      "description": "Lista das ramificações ainda em aberto na entrevista, com confiança e prioridade."
+    },
+    {
+      "name": "IntegrationsList",
+      "file": "IntegrationsList.tsx",
+      "stateSlice": "integrations",
+      "renderWhen": "integrations && integrations.length > 0",
+      "description": "Integrações detectadas (CRM, planilha, WhatsApp, ...)."
+    },
+    {
+      "name": "BlueprintPreview",
+      "file": "BlueprintPreview.tsx",
+      "stateSlice": "blueprint",
+      "renderWhen": "blueprint != null",
+      "description": "Preview do TeamBlueprint final (time proposto, roadmap, integrações)."
+    },
+    {
+      "name": "DiscoveryAgentPanel",
+      "file": "DiscoveryAgentPanel.tsx",
+      "stateSlice": "*",
+      "renderWhen": "always",
+      "description": "Shell CopilotKit que provê o CoAgent, composta dos demais componentes via useCoAgentStateRender."
+    }
+  ]
+}

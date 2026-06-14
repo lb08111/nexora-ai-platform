@@ -17,7 +17,7 @@ from __future__ import annotations
 import pytest
 from pydantic import ValidationError
 
-from qwenpaw.providers.provider import ModelInfo, Provider, ProviderInfo
+from jotaduo.providers.provider import ModelInfo, Provider, ProviderInfo
 
 
 # ---------------------------------------------------------------------------

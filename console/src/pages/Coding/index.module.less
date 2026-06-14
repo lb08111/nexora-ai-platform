@@ -259,8 +259,10 @@
       border-color: #4da3ff;
     }
   }
+}
 
-  .disabled {
-    color: rgba(255, 255, 255, 0.35);
-  }
+// Issue #4987: Tighten chat header padding in coding mode
+// so action buttons remain visible in the narrower panel.
+.root :global(.jotaduo-chat-anywhere-layout-right-header) {
+  padding: 0 10px;
 }

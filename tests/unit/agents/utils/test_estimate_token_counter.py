@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-"""Tests for qwenpaw.agents.utils.estimate_token_counter."""
+"""Tests for jotaduo.agents.utils.estimate_token_counter."""
 # pylint: disable=protected-access
 
 import pytest
 
-from qwenpaw.agents.utils.estimate_token_counter import (
+from jotaduo.agents.utils.estimate_token_counter import (
     EstimatedTokenCounter,
 )
 

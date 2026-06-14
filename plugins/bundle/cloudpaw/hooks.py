@@ -2,6 +2,7 @@
 # pylint: disable=protected-access
 """Monkey-patch hooks for tools, prompts, and mission mode."""
 
+import json
 import logging
 import os
 import shutil
@@ -14,7 +15,9 @@ from .constants import (
     PLUGIN_DIR,
 )
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("jotaduo").getChild(
+    __name__.replace("plugin_cloudpaw.", ""),
+)
 
 
 # ---------------------------------------------------------------------------
@@ -48,8 +51,8 @@ def _check_iac_model_configured() -> bool:
         if not _IAC_CODE_SETTINGS_PATH.exists():
             return False
         content = _IAC_CODE_SETTINGS_PATH.read_text(encoding="utf-8")
-        # If llm_source is qwenpaw, iac-code uses QwenPaw's model config
-        if "llm_source: qwenpaw" in content:
+        # If llm_source is jotaduo, iac-code uses JotaDuo's model config
+        if "llm_source: jotaduo" in content:
             return True
         return _parse_iac_settings(content)
     except Exception:
@@ -81,25 +84,25 @@ def _check_environment_ready() -> (  # pylint: disable=too-many-branches
             "❌ 阿里云 AK-SK 未配置\n"
             f"   获取 AccessKey: {_AK_CONSOLE_URL}\n"
             "   配置命令:\n"
-            "     qwenpaw env set ALIBABA_CLOUD_ACCESS_KEY_ID <your-ak>\n"
-            "     qwenpaw env set ALIBABA_CLOUD_ACCESS_KEY_SECRET <your-sk>\n"
-            "     qwenpaw env set ALIBABA_CLOUD_REGION_ID cn-hangzhou",
+            "     jotaduo env set ALIBABA_CLOUD_ACCESS_KEY_ID <your-ak>\n"
+            "     jotaduo env set ALIBABA_CLOUD_ACCESS_KEY_SECRET <your-sk>\n"
+            "     jotaduo env set ALIBABA_CLOUD_REGION_ID cn-hangzhou",
         )
 
-    # 3. QwenPaw model configured?
-    qwenpaw_model_ok = False
+    # 3. JotaDuo model configured?
+    jotaduo_model_ok = False
     try:
-        from qwenpaw.providers.provider_manager import ProviderManager
+        from jotaduo.providers.provider_manager import ProviderManager
 
         pm = ProviderManager()
         active_slot = pm.get_active_model()
         if active_slot and active_slot.provider_id and active_slot.model:
-            qwenpaw_model_ok = True
+            jotaduo_model_ok = True
     except Exception:
         pass
-    if not qwenpaw_model_ok:
+    if not jotaduo_model_ok:
         issues.append(
-            "❌ QwenPaw 模型未配置\n" + "   配置命令: qwenpaw models config",
+            "❌ JotaDuo 模型未配置\n" + "   配置命令: jotaduo models config",
         )
 
     # 4. iac-code model configured?
@@ -187,7 +190,7 @@ but use the tool instead of writing the file directly.
 # ACP permission auto-approve for trusted runners (iac-code)
 # ---------------------------------------------------------------------------
 #
-# qwenpaw v1.1.7b1 `ACPAgentConfig.trusted` is *not* actually honoured by
+# jotaduo v1.1.7b1 `ACPAgentConfig.trusted` is *not* actually honoured by
 # `ACPHostedClient.request_permission` — every edit / write / execute tool
 # call made by iac-code still suspends and waits for an external `respond`.
 # For CloudPaw the iac-code runner is a fully trusted backend (we explicitly
@@ -270,7 +273,7 @@ def setup_acp_auto_approve() -> None:
     Non-trusted runners keep the original suspend-and-wait flow intact.
     """
     try:
-        from qwenpaw.agents.acp.client import ACPHostedClient
+        from jotaduo.agents.acp.client import ACPHostedClient
     except ImportError as exc:
         logger.error(
             "Cannot import ACPHostedClient; "
@@ -372,22 +375,54 @@ def setup_acp_auto_approve() -> None:
 def setup_tool_and_prompt_hooks() -> (  # pylint: disable=too-many-statements
     None
 ):
-    """Monkey-patch QwenPawAgent to add cloudpaw tools and prompt sections."""
+    """Monkey-patch JotaDuoAgent to add cloudpaw tools and prompt sections."""
     # IaC operations are delegated to iac-code via the built-in async
-    # `delegate_external_agent` tool (qwenpaw >= v1.1.7b1).  No CloudPaw-side
+    # `delegate_external_agent` tool (jotaduo >= v1.1.7b1).  No CloudPaw-side
     # ACP wrapper is required — the plugin only enables the built-in tool
     # with `async_execution=True` via constants.py.
     try:
-        from qwenpaw.agents.react_agent import QwenPawAgent
+        from jotaduo.agents.react_agent import JotaDuoAgent
     except ImportError as exc:
         logger.error(
-            "Cannot import QwenPawAgent; tool/prompt hooks skipped: %s",
+            "Cannot import JotaDuoAgent; tool/prompt hooks skipped: %s",
             exc,
         )
         return
 
-    _original_create_toolkit = QwenPawAgent._create_toolkit
-    _original_build_sys_prompt = QwenPawAgent._build_sys_prompt
+    _original_create_toolkit = JotaDuoAgent._create_toolkit
+    _original_build_sys_prompt = JotaDuoAgent._build_sys_prompt
+
+    def _build_a2a_agent_section() -> str:
+        """Build a compact list of registered A2A agent aliases.
+
+        Reads only from local config — no HTTP requests.
+        The LLM should call a2a_list() for name/description/skills details.
+        """
+        try:
+            from .tools.a2a_config_helper import load_a2a_agents
+        except ImportError:
+            return ""
+
+        agents_cfg = load_a2a_agents()
+        if not agents_cfg:
+            return ""
+
+        aliases = ", ".join(sorted(agents_cfg.keys()))
+        return (
+            "\n### 已注册的远程 A2A Agent\n\n"
+            f"可用别名：{aliases}\n\n"
+            "调用远程 Agent 前，先调用 `a2a_list()` 查看各 Agent "
+            "的名称、描述和技能列表，再选择合适的 Agent。\n"
+            '使用 `a2a_call(agent_alias="...", message="...")` 调用。'
+        )
+
+    def _render_base_supplement() -> str:
+        """Load and render base supplement with A2A agents injected."""
+        supplement = _load_prompt_file("base_supplement.md")
+        if not supplement:
+            return ""
+        a2a_section = _build_a2a_agent_section()
+        return supplement.replace("{a2a_agents_section}", a2a_section)
 
     def _patched_create_toolkit(self, *args, **kwargs):
         namesake_strategy = kwargs.get("namesake_strategy", "skip")
@@ -404,10 +439,10 @@ def setup_tool_and_prompt_hooks() -> (  # pylint: disable=too-many-statements
         )
 
         try:
-            from tools.proposal_choice import (
+            from .tools.proposal_choice import (
                 proposal_choice as _proposal_choice_fn,
             )
-            from tools.manage_prd import (
+            from .tools.manage_prd import (
                 manage_prd as _manage_prd_fn,
             )
 
@@ -440,8 +475,8 @@ def setup_tool_and_prompt_hooks() -> (  # pylint: disable=too-many-statements
         # A2A tools: register for orchestration agent
         if agent_id == BUILTIN_ORCHESTRATION_AGENT_ID:
             try:
-                from tools.a2a_list import a2a_list as _a2a_list_fn
-                from tools.a2a_call import a2a_call as _a2a_call_fn
+                from .tools.a2a_list import a2a_list as _a2a_list_fn
+                from .tools.a2a_call import a2a_call as _a2a_call_fn
 
                 try:
                     toolkit.register_tool_function(
@@ -487,11 +522,11 @@ def setup_tool_and_prompt_hooks() -> (  # pylint: disable=too-many-statements
                 return sys_prompt
 
         if agent_id == BUILTIN_ORCHESTRATION_AGENT_ID:
-            sys_prompt += "\n\n" + _CLOUDPAW_BASE_SUPPLEMENT
+            sys_prompt += "\n\n" + _render_base_supplement()
 
         return sys_prompt
 
-    _original_interrupt = QwenPawAgent.interrupt
+    _original_interrupt = JotaDuoAgent.interrupt
 
     async def _patched_interrupt(self, msg=None):
         """Cancel async tasks on stop (e.g. delegate_external_agent)."""
@@ -508,11 +543,11 @@ def setup_tool_and_prompt_hooks() -> (  # pylint: disable=too-many-statements
                     )
         await _original_interrupt(self, msg)
 
-    QwenPawAgent._create_toolkit = _patched_create_toolkit
-    QwenPawAgent._build_sys_prompt = _patched_build_sys_prompt
-    QwenPawAgent.interrupt = _patched_interrupt
+    JotaDuoAgent._create_toolkit = _patched_create_toolkit
+    JotaDuoAgent._build_sys_prompt = _patched_build_sys_prompt
+    JotaDuoAgent.interrupt = _patched_interrupt
     logger.info(
-        "Patched QwenPawAgent with cloudpaw tools, prompt hooks, "
+        "Patched JotaDuoAgent with cloudpaw tools, prompt hooks, "
         "and interrupt",
     )
 
@@ -533,8 +568,8 @@ def _setup_a2a_query_rewrite() -> None:
     can list registered agents as before.
     """
     try:
-        from qwenpaw.app.runner.runner import AgentRunner
-        from qwenpaw.app.runner.command_dispatch import _get_last_user_text
+        from jotaduo.app.runner.runner import AgentRunner
+        from jotaduo.app.runner.command_dispatch import _get_last_user_text
     except ImportError as exc:
         logger.warning(
             "Cannot import AgentRunner; /a2a query rewrite skipped: %s",
@@ -581,8 +616,6 @@ def _try_rewrite_a2a_query(  # pylint: disable=too-many-return-statements
     unknown alias, bad syntax), in which case the control-command path will
     handle it and show an appropriate error or listing.
     """
-    import json as _json
-
     rest = query[len("/a2a") :].strip()
     if not rest:
         return None
@@ -600,9 +633,9 @@ def _try_rewrite_a2a_query(  # pylint: disable=too-many-return-statements
         return None
 
     try:
-        data = _json.loads(config_path.read_text(encoding="utf-8"))
+        data = json.loads(config_path.read_text(encoding="utf-8"))
         agents_cfg = data.get("agents", {})
-    except (_json.JSONDecodeError, OSError):
+    except (json.JSONDecodeError, OSError):
         return None
 
     if agent_name not in agents_cfg:
@@ -636,7 +669,7 @@ def _patch_stream_task_timeout() -> None:
     provisioning workflows that can take 10+ minutes.
     """
     try:
-        from qwenpaw.app._app import agent_app
+        from jotaduo.app._app import agent_app
 
         old = agent_app.stream_task_timeout
         agent_app.stream_task_timeout = _CLOUDPAW_STREAM_TASK_TIMEOUT
@@ -662,8 +695,8 @@ def _patch_mission_master_prompt() -> None:
     builder is called unchanged.
     """
     try:
-        from qwenpaw.agents.mission import prompts as mission_prompts
-        from qwenpaw.agents.mission.prompts import (
+        from jotaduo.agents.mission import prompts as mission_prompts
+        from jotaduo.agents.mission.prompts import (
             WORKER_PROMPT_TEMPLATE,
             _build_git_sections,
             build_master_prompt as _original_build_master_prompt,
@@ -758,7 +791,7 @@ def _patch_mission_master_prompt() -> None:
     mission_prompts.build_master_prompt = _patched_build_master_prompt
 
     try:
-        from qwenpaw.agents.mission import handler as mission_handler
+        from jotaduo.agents.mission import handler as mission_handler
 
         mission_handler.build_master_prompt = _patched_build_master_prompt
     except (ImportError, AttributeError):
@@ -768,7 +801,7 @@ def _patch_mission_master_prompt() -> None:
     # validation fails, the fix prompt tells the agent to use manage_prd
     # instead of write_file.
     try:
-        from qwenpaw.agents.mission import mission_runner
+        from jotaduo.agents.mission import mission_runner
 
         mission_runner._PRD_FIX_PROMPT = _CLOUDPAW_PRD_FIX_PROMPT
         logger.info("[CloudPaw] Patched _PRD_FIX_PROMPT to use manage_prd")

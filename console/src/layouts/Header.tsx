@@ -1,6 +1,4 @@
-import { Layout, Space, Badge, Spin, Tooltip, Dropdown } from "antd";
-import type { MenuProps } from "antd";
-import LanguageSwitcher from "../components/LanguageSwitcher/index";
+import { Layout, Space, Badge, Spin } from "antd";
 import ThemeToggleButton from "../components/ThemeToggleButton";
 import CodingModeToggle from "../components/CodingModeToggle";
 import { useTranslation } from "react-i18next";
@@ -9,12 +7,8 @@ import styles from "./index.module.less";
 import api from "../api";
 import { clearAuthToken } from "../api/config";
 import { authApi } from "../api/modules/auth";
-import { usersApi } from "../nexora/api/users";
+import { usersApi } from "../jotaduo/api/users";
 import {
-  GITHUB_URL,
-  getDocsUrl,
-  getFeatureDemosUrl,
-  getFaqUrl,
   getReleaseNotesUrl,
   PYPI_URL,
   ONE_HOUR_MS,
@@ -29,12 +23,6 @@ import {
   CopyOutlined,
   CheckOutlined,
   TagOutlined,
-  GithubOutlined,
-  FileTextOutlined,
-  ReadOutlined,
-  PlayCircleOutlined,
-  QuestionCircleOutlined,
-  DownOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
 
@@ -159,8 +147,8 @@ export default function Header() {
     fetch(url, { cache: "no-cache" })
       .then((res) => (res.ok ? res.text() : Promise.reject()))
       .then((text) => {
-        const zhPattern = /###\s*QwenPaw如何更新[\s\S]*?(?=\n###|$)/;
-        const enPattern = /###\s*How to update QwenPaw[\s\S]*?(?=\n###|$)/;
+        const zhPattern = /###\s*JotaDuo如何更新[\s\S]*?(?=\n###|$)/;
+        const enPattern = /###\s*How to update JotaDuo[\s\S]*?(?=\n###|$)/;
         const match = text.match(faqLang === "zh" ? zhPattern : enPattern);
         setUpdateMarkdown(
           match && lang !== "ru"
@@ -202,7 +190,7 @@ export default function Header() {
           {version && (
             <Badge
               dot={!!hasUpdate}
-              color="rgba(255, 157, 77, 1)"
+              color="var(--app-warning)"
               offset={[4, 28]}
             >
               <span
@@ -219,58 +207,11 @@ export default function Header() {
           )}
         </div>
         <Space size="middle">
-          <Dropdown
-            menu={{
-              items: [
-                {
-                  key: "tutorial",
-                  icon: <ReadOutlined />,
-                  label: t("header.tutorial"),
-                  onClick: () => handleNavClick(getDocsUrl(i18n.language)),
-                },
-                {
-                  key: "featureDemos",
-                  icon: <PlayCircleOutlined />,
-                  label: t("header.featureDemos"),
-                  onClick: () =>
-                    handleNavClick(getFeatureDemosUrl(i18n.language)),
-                },
-                {
-                  key: "changelog",
-                  icon: <FileTextOutlined />,
-                  label: t("header.changelog"),
-                  onClick: () =>
-                    handleNavClick(getReleaseNotesUrl(i18n.language)),
-                },
-                {
-                  key: "faq",
-                  icon: <QuestionCircleOutlined />,
-                  label: t("header.faq"),
-                  onClick: () => handleNavClick(getFaqUrl(i18n.language)),
-                },
-              ] as MenuProps["items"],
-            }}
-          >
-            <Button type="text">
-              {t("header.resources")} <DownOutlined />
-            </Button>
-          </Dropdown>
           {authEnabled && username && (
             <span className={styles.currentUserName}>{username}</span>
           )}
-          <Tooltip title={t("header.github")}>
-            <Button
-              type="text"
-              icon={<GithubOutlined />}
-              onClick={() => handleNavClick(GITHUB_URL)}
-            >
-              {t("header.github")}
-            </Button>
-          </Tooltip>
           <div className={styles.headerDivider} />
           <CodingModeToggle />
-          <div className={styles.headerDivider} />
-          <LanguageSwitcher />
           <ThemeToggleButton />
           {authEnabled && (
             <Button

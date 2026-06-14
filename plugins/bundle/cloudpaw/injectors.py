@@ -4,20 +4,22 @@
 import logging
 import sys
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("jotaduo").getChild(
+    __name__.replace("plugin_cloudpaw.", ""),
+)
 
 
 def inject_interaction_module() -> None:
-    """Inject the interaction module into the qwenpaw.app namespace."""
+    """Inject the interaction module into the jotaduo.app namespace."""
     import types
     import asyncio
 
-    module_name = "qwenpaw.app.interaction"
+    module_name = "jotaduo.app.interaction"
     if module_name in sys.modules:
         return
 
     mod = types.ModuleType(module_name)
-    mod.__package__ = "qwenpaw.app"
+    mod.__package__ = "jotaduo.app"
 
     class _PendingInteraction:
         __slots__ = ("event", "result")

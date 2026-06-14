@@ -1,0 +1,324 @@
+.meterRoot {
+  background: var(--colorBgContainer);
+  border: 1px solid var(--colorBorderSecondary);
+  border-radius: 10px;
+  padding: 14px 16px;
+  color: var(--colorText);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 220px;
+}
+.meterCompact {
+  padding: 10px 12px;
+  gap: 6px;
+}
+
+.meterHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.meterIcon {
+  color: var(--colorPrimary);
+}
+.meterTitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--colorTextSecondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.meterWindow {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--colorTextTertiary, #8c8c8c);
+}
+
+.meterMainRow {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.meterTotal,
+.meterCost {
+  display: flex;
+  flex-direction: column;
+}
+.meterTotalValue,
+.meterCostValue {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+}
+.meterTotalLabel,
+.meterCostLabel {
+  font-size: 11px;
+  color: var(--colorTextSecondary);
+  margin-top: 2px;
+}
+.meterSpark {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+.spark {
+  display: block;
+}
+
+.meterSplit {
+  display: flex;
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--colorFillQuaternary);
+}
+.meterSplitPrompt {
+  background: var(--colorPrimary, #1677ff);
+}
+.meterSplitCompletion {
+  background: var(--colorSuccess, #52c41a);
+}
+
+.meterLegend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--colorTextSecondary);
+}
+.meterLegend i {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+.dotPrompt {
+  background: var(--colorPrimary, #1677ff);
+}
+.dotCompletion {
+  background: var(--colorSuccess, #52c41a);
+}
+.meterCallCount {
+  margin-left: auto;
+}
+
+.budgetRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.budgetTrack {
+  height: 6px;
+  background: var(--colorFillQuaternary);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.budgetFill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+.budgetOk {
+  background: var(--colorSuccess, #52c41a);
+}
+.budgetWarn {
+  background: var(--colorWarning, #faad14);
+}
+.budgetOver {
+  background: var(--colorError, #ff4d4f);
+}
+.budgetLabel {
+  font-size: 11px;
+  color: var(--colorTextSecondary);
+}
+
+/* ---------- Chart ---------- */
+.chartRoot {
+  background: var(--colorBgContainer);
+  border: 1px solid var(--colorBorderSecondary);
+  border-radius: 10px;
+  padding: 14px 16px;
+  color: var(--colorText);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.chartHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.chartTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--colorText);
+}
+.chartToggle {
+  margin-left: auto;
+  display: inline-flex;
+  border: 1px solid var(--colorBorderSecondary);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.chartToggle button {
+  background: transparent;
+  color: var(--colorTextSecondary);
+  border: none;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+.chartToggle button + button {
+  border-left: 1px solid var(--colorBorderSecondary);
+}
+.chartToggle button:hover {
+  color: var(--colorText);
+}
+.toggleActive {
+  background: var(--colorPrimary, #1677ff) !important;
+  color: #fff !important;
+}
+
+.chartEmpty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--colorTextSecondary);
+  font-size: 13px;
+  padding: 30px 0;
+}
+
+.donutLayout {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.donutSlice {
+  cursor: pointer;
+  transition: transform 0.15s ease;
+  transform-origin: center;
+}
+.donutSlice:hover {
+  filter: brightness(1.05);
+}
+.donutCenterValue {
+  font-size: 16px;
+  font-weight: 700;
+  fill: var(--colorText);
+}
+.donutCenterLabel {
+  font-size: 10px;
+  fill: var(--colorTextSecondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.legend {
+  flex: 1;
+  min-width: 180px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--colorText);
+}
+.legendSwatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.legendLabel {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.legendValue {
+  color: var(--colorTextSecondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.barWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+}
+.barRow {
+  display: grid;
+  grid-template-columns: 120px 1fr 70px;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+.barLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--colorText);
+}
+.barTrack {
+  height: 16px;
+  background: var(--colorFillQuaternary);
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+}
+.barFill {
+  height: 100%;
+  border-radius: 4px;
+  position: relative;
+  transition: width 0.3s ease;
+}
+.barPrompt {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: rgba(0, 0, 0, 0.2);
+}
+.barValue {
+  text-align: right;
+  color: var(--colorTextSecondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.tooltipBody {
+  font-size: 12px;
+  line-height: 1.4;
+}
+.tooltipTitle {
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+:global(.dark-mode) {
+  .meterRoot,
+  .chartRoot {
+    background: var(--colorBgContainer);
+    border-color: var(--colorBorderSecondary);
+  }
+  .barPrompt {
+    background: rgba(255, 255, 255, 0.18);
+  }
+}

@@ -1,4 +1,4 @@
-# Build QwenPaw backend with PyInstaller for Tauri sidecar (Windows)
+# Build JotaDuo backend with PyInstaller for Tauri sidecar (Windows)
 # Creates an onedir backend bundle with embedded Python runtime
 #
 # Usage:
@@ -18,7 +18,7 @@ $DIST = if ($env:DIST) { $env:DIST } else { "dist" }
 if (-not [System.IO.Path]::IsPathRooted($DIST)) {
     $DIST = Join-Path $REPO_ROOT $DIST
 }
-$VERSION_FILE = "src\qwenpaw\__version__.py"
+$VERSION_FILE = "src\jotaduo\__version__.py"
 
 # Extract version
 if (Test-Path $VERSION_FILE) {
@@ -33,7 +33,7 @@ if (Test-Path $VERSION_FILE) {
 }
 
 Write-Host "=========================================" -ForegroundColor Cyan
-Write-Host "QwenPaw PyInstaller Build - Windows" -ForegroundColor Cyan
+Write-Host "JotaDuo PyInstaller Build - Windows" -ForegroundColor Cyan
 Write-Host "=========================================" -ForegroundColor Cyan
 Write-Host "Version: $VERSION"
 Write-Host "Repository: $REPO_ROOT"
@@ -146,7 +146,7 @@ if (-not (Test-PythonImport "from acp import Agent")) {
 Write-Host "== Running PyInstaller ==" -ForegroundColor Yellow
 Write-Host "Building onedir backend bundle..."
 
-$SPEC_FILE = Join-Path $REPO_ROOT "scripts\pack-tauri\qwenpaw.spec"
+$SPEC_FILE = Join-Path $REPO_ROOT "scripts\pack-tauri\jotaduo.spec"
 if (-not (Test-Path $SPEC_FILE)) {
     Write-Host "ERROR: Spec file not found at $SPEC_FILE" -ForegroundColor Red
     exit 1
@@ -166,14 +166,19 @@ Write-Host "PyInstaller build complete" -ForegroundColor Green
 Write-Host ""
 
 # Verify output
-$BACKEND_DIR = Join-Path $DIST "pyinstaller\qwenpaw-backend"
-$BACKEND_EXE = Join-Path $BACKEND_DIR "qwenpaw-backend.exe"
+$BACKEND_DIR = Join-Path $DIST "pyinstaller\jotaduo-backend"
+$BACKEND_EXE = Join-Path $BACKEND_DIR "jotaduo-backend.exe"
+$CLI_EXE = Join-Path $BACKEND_DIR "jotaduo.exe"
 if (-not (Test-Path $BACKEND_DIR)) {
     Write-Host "ERROR: Backend bundle directory not found at $BACKEND_DIR" -ForegroundColor Red
     exit 1
 }
 if (-not (Test-Path $BACKEND_EXE)) {
     Write-Host "ERROR: Backend executable not found at $BACKEND_EXE" -ForegroundColor Red
+    exit 1
+}
+if (-not (Test-Path $CLI_EXE)) {
+    Write-Host "ERROR: CLI executable not found at $CLI_EXE" -ForegroundColor Red
     exit 1
 }
 
@@ -189,7 +194,7 @@ Write-Host "== Copying to Tauri binaries directory ==" -ForegroundColor Yellow
 $BINARIES_DIR = Join-Path $REPO_ROOT "console\src-tauri\binaries"
 New-Item -ItemType Directory -Force -Path $BINARIES_DIR | Out-Null
 
-$DEST = Join-Path $BINARIES_DIR "qwenpaw-backend"
+$DEST = Join-Path $BINARIES_DIR "jotaduo-backend"
 New-Item -ItemType Directory -Force -Path $DEST | Out-Null
 Get-ChildItem -LiteralPath $DEST -Force | Remove-Item -Recurse -Force
 Copy-Item -Recurse -Force (Join-Path $BACKEND_DIR "*") $DEST

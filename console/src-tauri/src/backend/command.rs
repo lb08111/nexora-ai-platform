@@ -1,9 +1,6 @@
 //! Backend command construction for development and packaged builds.
 
-use std::path::PathBuf;
-
-#[cfg(debug_assertions)]
-use std::path::Path;
+use std::path::{Path, PathBuf};
 #[cfg(debug_assertions)]
 use std::process::{Command as StdCommand, Stdio};
 
@@ -18,18 +15,18 @@ pub(super) fn create(app: &tauri::AppHandle) -> Result<Command, String> {
     let source_path = repo_root.join("src");
     let command = if command_exists("uv") {
         log::info!(
-            "[backend] dev command: uv run python -m qwenpaw.tauri.entry cwd={}",
+            "[backend] dev command: uv run python -m jotaduo.tauri.entry cwd={}",
             repo_root.display(),
         );
         app.shell()
             .command("uv")
-            .args(["run", "python", "-m", "qwenpaw.tauri.entry"])
+            .args(["run", "python", "-m", "jotaduo.tauri.entry"])
             .current_dir(repo_root)
             .env("PYTHONPATH", source_path.display().to_string())
     } else {
         let (python, prefix_args) = python_command(&repo_root);
         let mut args = prefix_args;
-        args.extend(["-m", "qwenpaw.tauri.entry"]);
+        args.extend(["-m", "jotaduo.tauri.entry"]);
         log::info!(
             "[backend] dev command: {} {} cwd={}",
             python,
@@ -58,22 +55,26 @@ pub(super) fn create(app: &tauri::AppHandle) -> Result<Command, String> {
         backend.display(),
         backend_dir.display(),
     );
-    Ok(app.shell().command(backend).current_dir(backend_dir))
+    Ok(app
+        .shell()
+        .command(backend)
+        .current_dir(&backend_dir)
+        .env(path_env_key(), path_with_backend_dir(&backend_dir)?))
 }
 
 #[cfg(not(debug_assertions))]
 fn packaged_backend_executable(app: &tauri::AppHandle) -> Result<PathBuf, String> {
     let executable_name = if cfg!(windows) {
-        "qwenpaw-backend.exe"
+        "jotaduo-backend.exe"
     } else {
-        "qwenpaw-backend"
+        "jotaduo-backend"
     };
     let path = app
         .path()
         .resource_dir()
         .map_err(|err| format!("failed to resolve resource directory: {err}"))?
         .join("binaries")
-        .join("qwenpaw-backend")
+        .join("jotaduo-backend")
         .join(executable_name);
 
     if path.is_file() {
@@ -84,6 +85,29 @@ fn packaged_backend_executable(app: &tauri::AppHandle) -> Result<PathBuf, String
             path.display()
         ))
     }
+}
+
+#[cfg(not(debug_assertions))]
+fn path_with_backend_dir(backend_dir: &Path) -> Result<String, String> {
+    let mut paths = vec![backend_dir.to_path_buf()];
+    if let Some(existing) = std::env::var_os(path_env_key()) {
+        paths.extend(std::env::split_paths(&existing));
+    }
+
+    std::env::join_paths(paths)
+        .map_err(|err| format!("failed to join backend PATH entries: {err}"))?
+        .into_string()
+        .map_err(|_| "backend PATH contains non-Unicode data".to_string())
+}
+
+#[cfg(all(not(debug_assertions), windows))]
+fn path_env_key() -> &'static str {
+    "Path"
+}
+
+#[cfg(all(not(debug_assertions), not(windows)))]
+fn path_env_key() -> &'static str {
+    "PATH"
 }
 
 #[cfg(debug_assertions)]

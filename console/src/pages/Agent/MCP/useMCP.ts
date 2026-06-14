@@ -16,14 +16,14 @@ export function useMCP() {
     setLoading(true);
     try {
       const data = await api.listMCPClients();
-      setClients(data || []);
+      setClients(data);
     } catch (error) {
       console.error("Failed to load MCP clients:", error);
       message.error(t("mcp.loadError"));
     } finally {
       setLoading(false);
     }
-  }, [t, selectedAgent]);
+  }, [t]);
 
   useEffect(() => {
     loadClients();

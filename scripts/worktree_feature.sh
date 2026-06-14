@@ -17,7 +17,7 @@ Behavior:
 1) git fetch origin
 2) git worktree add -b feature/<name> ../<repo>-<name> origin/main
 3) Creates links in the new worktree:
-   - .env    -> <shared-dir>/env/qwenpaw.env
+   - .env    -> <shared-dir>/env/jotaduo.env
    - tenants -> <shared-dir>/tenants
    - uploads -> <shared-dir>/uploads
 4) Runs pnpm install --prefer-offline (root package.json, or console/ fallback)

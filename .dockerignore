@@ -1,40 +1,62 @@
+# Git and IDE
 .git
-.github
+.gitignore
+.idea
+.vscode
+*.md
+!README.md
+
+# Python dev and cache
+__pycache__
+*.py[cod]
+*$py.class
 .venv
 venv
-node_modules
-console/node_modules
-website/node_modules
-dist
-build
-.cache
+uv.lock
 .pytest_cache
-.hypothesis
-coverage
+.coverage
 htmlcov
-*.egg-info
-*.pyc
-__pycache__
+.tox
+.mypy_cache
+.ruff_cache
 
-.DS_Store
-Thumbs.db
-*.log
-logs
-outputs
+# Tests (not needed in runtime image)
+tests
+test.py
+*_test.py
+pytest.ini
+.pre-commit-config.yaml
+.flake8
+.eslintrc
+.stylelintrc
 
+# Frontend: exclude build artifacts; ship pre-built src/console/dist in image
+website
+!website/
+!website/public/
+!website/public/docs/
+!website/public/docs/**
+console/node_modules
+console/dist
+console/.vite
+node_modules
+**/node_modules
+**/dist
+!src/jotaduo/console/dist
+!src/jotaduo/console/dist/**
+**/.vite
+
+# Example and local config (mount at runtime instead)
+example
+config.json
+jobs.json
+sessions_mount_dir
+
+# Misc
 .env
 .env.*
-providers.json
-envs.json
-config.json
-*.db
-*.rdb
-
-.cloudflared
-cloudflared.yml
-bin/cloudflared*
-
-sessions_mount_dir
-.worktrees
-localfile
-docs/*副本.md
+!.env.example
+.DS_Store
+*.log
+logs
+cookbook

@@ -14,7 +14,7 @@ import pytest
 
 def _make_concrete_class():
     """Return a minimal concrete subclass of BaseMemoryManager."""
-    from qwenpaw.agents.memory.base_memory_manager import (
+    from jotaduo.agents.memory.base_memory_manager import (
         BaseMemoryManager,
     )
 

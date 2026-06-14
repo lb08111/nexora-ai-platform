@@ -6,11 +6,11 @@ LLM 的上下文窗口就像一个**有限容量的背包** 🎒。每次对话�
 
 **上下文管理**就是一套帮你"管理背包"的机制，确保 AI 能够持续、高效地工作。
 
-> 上下文管理机制设计受 [OpenClaw](https://github.com/openclaw/openclaw) 启发，由 QwenPaw 的 **LightContextManager** 独立实现。
+> 上下文管理机制设计受 [OpenClaw](https://github.com/openclaw/openclaw) 启发，由 JotaDuo 的 **LightContextManager** 独立实现。
 
 ### 工作原理 — 总结
 
-QwenPaw 上下文管理分为两条并行的 Offload 路径，共同解决上下文窗口有限的问题：
+JotaDuo 上下文管理分为两条并行的 Offload 路径，共同解决上下文窗口有限的问题：
 
 | 机制                 | 触发时机              | Offload 目标              | 保留在上下文的内容                   |
 | -------------------- | --------------------- | ------------------------- | ------------------------------------ |
@@ -37,7 +37,7 @@ flowchart LR
 
 ### 内存中的数据结构
 
-QwenPaw 的上下文由两部分组成：
+JotaDuo 的上下文由两部分组成：
 
 ```mermaid
 flowchart TD
@@ -116,9 +116,9 @@ graph LR
 
 ### 相关代码
 
-- [LightContextManager](https://github.com/agentscope-ai/QwenPaw/blob/main/src/qwenpaw/agents/context/light_context_manager.py)
-- [AsMsgHandler](https://github.com/agentscope-ai/QwenPaw/blob/main/src/qwenpaw/agents/context/as_msg_handler.py) — 上下文检查与消息格式化
-- [compactor_prompts](https://github.com/agentscope-ai/QwenPaw/blob/main/src/qwenpaw/agents/context/compactor_prompts.py) — 压缩提示词
+- [LightContextManager](https://github.com/agentscope-ai/QwenPaw/blob/main/src/jotaduo/agents/context/light_context_manager.py)
+- [AsMsgHandler](https://github.com/agentscope-ai/QwenPaw/blob/main/src/jotaduo/agents/context/as_msg_handler.py) — 上下文检查与消息格式化
+- [compactor_prompts](https://github.com/agentscope-ai/QwenPaw/blob/main/src/jotaduo/agents/context/compactor_prompts.py) — 压缩提示词
 
 ### 执行流程
 
@@ -143,7 +143,7 @@ flowchart LR
 
 ## 压缩机制
 
-当上下文接近限制时，QwenPaw 会自动触发压缩，将旧对话浓缩为结构化摘要。
+当上下文接近限制时，JotaDuo 会自动触发压缩，将旧对话浓缩为结构化摘要。
 
 ### 1. compact_tool_result — 工具结果压缩
 
@@ -262,7 +262,7 @@ graph TB
 
 ## 配置
 
-配置文件位于 `~/.qwenpaw/workspaces/{agent_id}/agent.json` 中的 `running` 部分：
+配置文件位于 `~/.jotaduo/workspaces/{agent_id}/agent.json` 中的 `running` 部分：
 
 **`running` 直接字段：**
 

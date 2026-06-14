@@ -6,7 +6,7 @@ This page covers:
 - **Environment variables** — How to customize paths and behavior
 - **Configuration files** — Complete field description for `config.json` and `agent.json`
 
-From **v0.1.0**, QwenPaw supports **multi-agent**. Configuration is split into two layers:
+From **v0.1.0**, JotaDuo supports **multi-agent**. Configuration is split into two layers:
 
 1. **Global config** (`config.json`) — Model providers, agent list, global settings
 2. **Agent config** (`agent.json`) — Independent config for each agent (channels, heartbeat, tools, etc.)
@@ -15,10 +15,10 @@ From **v0.1.0**, QwenPaw supports **multi-agent**. Configuration is split into t
 
 ## Directory Structure
 
-The default working directory is `~/.qwenpaw`. After running `qwenpaw init`, the complete structure looks like:
+The default working directory is `~/.jotaduo`. After running `jotaduo init`, the complete structure looks like:
 
 ```
-$QWENPAW_WORKING_DIR/                      # Default ~/.qwenpaw
+$JOTADUO_WORKING_DIR/                      # Default ~/.jotaduo
 ├── config.json                          # Global config
 ├── workspaces/
 │   ├── default/                         # Default agent workspace
@@ -41,23 +41,23 @@ $QWENPAW_WORKING_DIR/                      # Default ~/.qwenpaw
     ├── skill.json                       # Pool metadata
     └── ...
 
-$QWENPAW_SECRET_DIR/                       # Default ~/.qwenpaw.secret
+$JOTADUO_SECRET_DIR/                       # Default ~/.jotaduo.secret
 ├── providers.json                       # Model provider config and API keys
 └── envs.json                            # Environment variables
 ```
 
-> **Path explanation:** `$QWENPAW_WORKING_DIR` and `$QWENPAW_SECRET_DIR` are environment variables, with default values of `~/.qwenpaw` and `~/.qwenpaw.secret` respectively. They can be customized via environment variables, see "Environment Variables" section below.
+> **Path explanation:** `$JOTADUO_WORKING_DIR` and `$JOTADUO_SECRET_DIR` are environment variables, with default values of `~/.jotaduo` and `~/.jotaduo.secret` respectively. They can be customized via environment variables, see "Environment Variables" section below.
 
 ### Directory Explanation
 
-**Global Directory (`~/.qwenpaw/`)**
+**Global Directory (`~/.jotaduo/`)**
 
 | File / Directory | Purpose                                               |
 | ---------------- | ----------------------------------------------------- |
 | `config.json`    | Global config (model providers, env vars, agent list) |
 | `workspaces/`    | All agent workspace directories                       |
 
-**Agent Workspace (`~/.qwenpaw/workspaces/{agent_id}/`)**
+**Agent Workspace (`~/.jotaduo/workspaces/{agent_id}/`)**
 
 | File / Directory   | Purpose                                                      |
 | ------------------ | ------------------------------------------------------------ |
@@ -75,7 +75,7 @@ $QWENPAW_SECRET_DIR/                       # Default ~/.qwenpaw.secret
 | `memory/`          | Daily memory files (see [Memory](./memory))                  |
 | `browser/`         | Browser user data (cookies, cache, localStorage, etc.)       |
 
-> **Persona files:** Agent behavior and personality are defined by persona files. Running `qwenpaw init` automatically creates template files based on your chosen language (`zh` / `en` / `ru`). For detailed explanation and management, see [Agent Persona](./persona).
+> **Persona files:** Agent behavior and personality are defined by persona files. Running `jotaduo init` automatically creates template files based on your chosen language (`zh` / `en` / `ru`). For detailed explanation and management, see [Agent Persona](./persona).
 
 > **Multi-Agent:** See the [Multi-Agent](./multi-agent) documentation for details.
 
@@ -87,35 +87,36 @@ You can customize paths and behavior via environment variables:
 
 **Path-related:**
 
-| Variable                   | Default             | Description                                                                                                 |
-| -------------------------- | ------------------- | ----------------------------------------------------------------------------------------------------------- |
-| `QWENPAW_WORKING_DIR`      | `~/.qwenpaw`        | Working directory root path                                                                                 |
-| `QWENPAW_SECRET_DIR`       | `~/.qwenpaw.secret` | Sensitive data directory (stores `providers.json` and `envs.json`). Docker default is `/app/working.secret` |
-| `QWENPAW_CONFIG_FILE`      | `config.json`       | Config file name (relative to `QWENPAW_WORKING_DIR`)                                                        |
-| `QWENPAW_HEARTBEAT_FILE`   | `HEARTBEAT.md`      | Heartbeat file name (relative to agent workspace)                                                           |
-| `QWENPAW_JOBS_FILE`        | `jobs.json`         | Cron jobs file name (relative to agent workspace)                                                           |
-| `QWENPAW_CHATS_FILE`       | `chats.json`        | Conversation history file name (relative to agent workspace)                                                |
-| `QWENPAW_TOKEN_USAGE_FILE` | `token_usage.json`  | Token usage record file name (relative to agent workspace)                                                  |
+| Variable                   | Default             | Description                                                                                                                                                                                                                                                                              |
+| -------------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `JOTADUO_WORKING_DIR`      | `~/.jotaduo`        | Working directory root path                                                                                                                                                                                                                                                              |
+| `JOTADUO_SECRET_DIR`       | `~/.jotaduo.secret` | Sensitive data directory (stores `providers.json` and `envs.json`). Docker default is `/app/working.secret`                                                                                                                                                                              |
+| `JOTADUO_KEYRING_ACCOUNT`  | _(auto)_            | OS keychain account name for the master key. Defaults to `master_key`; when `JOTADUO_WORKING_DIR`/`JOTADUO_SECRET_DIR` are set (e.g. a dev checkout) it auto-derives a per-install account so a dev install never overwrites the stable install's key. Set explicitly to name a profile. |
+| `JOTADUO_CONFIG_FILE`      | `config.json`       | Config file name (relative to `JOTADUO_WORKING_DIR`)                                                                                                                                                                                                                                     |
+| `JOTADUO_HEARTBEAT_FILE`   | `HEARTBEAT.md`      | Heartbeat file name (relative to agent workspace)                                                                                                                                                                                                                                        |
+| `JOTADUO_JOBS_FILE`        | `jobs.json`         | Cron jobs file name (relative to agent workspace)                                                                                                                                                                                                                                        |
+| `JOTADUO_CHATS_FILE`       | `chats.json`        | Conversation history file name (relative to agent workspace)                                                                                                                                                                                                                             |
+| `JOTADUO_TOKEN_USAGE_FILE` | `token_usage.json`  | Token usage record file name (relative to agent workspace)                                                                                                                                                                                                                               |
 
 **Other configuration:**
 
 | Variable                             | Default         | Description                                                                 |
 | ------------------------------------ | --------------- | --------------------------------------------------------------------------- |
-| `QWENPAW_LOG_LEVEL`                  | `info`          | Log level (`debug` / `info` / `warning` / `error` / `critical`)             |
-| `QWENPAW_MEMORY_COMPACT_THRESHOLD`   | `100000`        | Character threshold to trigger memory compaction                            |
-| `QWENPAW_MEMORY_COMPACT_KEEP_RECENT` | `3`             | Number of recent messages to keep after compaction                          |
-| `QWENPAW_MEMORY_COMPACT_RATIO`       | `0.7`           | Threshold ratio for triggering compaction (relative to context window size) |
-| `QWENPAW_CONSOLE_STATIC_DIR`         | _(auto-detect)_ | Console frontend static files path                                          |
+| `JOTADUO_LOG_LEVEL`                  | `info`          | Log level (`debug` / `info` / `warning` / `error` / `critical`)             |
+| `JOTADUO_MEMORY_COMPACT_THRESHOLD`   | `100000`        | Character threshold to trigger memory compaction                            |
+| `JOTADUO_MEMORY_COMPACT_KEEP_RECENT` | `3`             | Number of recent messages to keep after compaction                          |
+| `JOTADUO_MEMORY_COMPACT_RATIO`       | `0.7`           | Threshold ratio for triggering compaction (relative to context window size) |
+| `JOTADUO_CONSOLE_STATIC_DIR`         | _(auto-detect)_ | Console frontend static files path                                          |
 
 **Security & Authentication:**
 
 | Variable                     | Default | Description                                        |
 | ---------------------------- | ------- | -------------------------------------------------- |
-| `QWENPAW_AUTH_ENABLED`       | `false` | Whether to enable Web console login authentication |
-| `QWENPAW_AUTH_USERNAME`      | -       | Admin username for auto-registration (optional)    |
-| `QWENPAW_AUTH_PASSWORD`      | -       | Admin password for auto-registration (optional)    |
-| `QWENPAW_TOOL_GUARD_ENABLED` | `true`  | Whether to enable tool guard                       |
-| `QWENPAW_SKILL_SCAN_MODE`    | `warn`  | Skill scanning mode (`block` / `warn` / `off`)     |
+| `JOTADUO_AUTH_ENABLED`       | `false` | Whether to enable Web console login authentication |
+| `JOTADUO_AUTH_USERNAME`      | -       | Admin username for auto-registration (optional)    |
+| `JOTADUO_AUTH_PASSWORD`      | -       | Admin password for auto-registration (optional)    |
+| `JOTADUO_TOOL_GUARD_ENABLED` | `true`  | Whether to enable tool guard                       |
+| `JOTADUO_SKILL_SCAN_MODE`    | `warn`  | Skill scanning mode (`block` / `warn` / `off`)     |
 
 **Memory & Retrieval:**
 
@@ -127,12 +128,12 @@ You can customize paths and behavior via environment variables:
 Example — use a different working dir for this shell:
 
 ```bash
-export QWENPAW_WORKING_DIR=/home/me/my_qwenpaw
-qwenpaw app
+export JOTADUO_WORKING_DIR=/home/me/my_jotaduo
+jotaduo app
 ```
 
 Config, HEARTBEAT, jobs, memory, etc. will be read/written under
-`/home/me/my_qwenpaw`.
+`/home/me/my_jotaduo`.
 
 ---
 
@@ -140,8 +141,8 @@ Config, HEARTBEAT, jobs, memory, etc. will be read/written under
 
 Starting from **v0.1.0**, configuration is split into two layers:
 
-1. **Global config** - `~/.qwenpaw/config.json` (providers, environment variables, agent list)
-2. **Agent config** - `~/.qwenpaw/workspaces/{agent_id}/agent.json` (per-agent settings)
+1. **Global config** - `~/.jotaduo/config.json` (providers, environment variables, agent list)
+2. **Agent config** - `~/.jotaduo/workspaces/{agent_id}/agent.json` (per-agent settings)
 
 ### Global config.json
 
@@ -180,8 +181,8 @@ Stores globally shared configuration:
 | --------------------- | -------------- | ------------------- | ----------------------------------------------------------------- |
 | `agents.active_agent` | string         | `"default"`         | Currently active agent ID                                         |
 | `agents.profiles`     | object         | `{}`                | Agent profile references (key is agent_id)                        |
-| `last_api.host`       | string \| null | `null`              | Host address from last `qwenpaw app` start                        |
-| `last_api.port`       | int \| null    | `null`              | Port from last `qwenpaw app` start                                |
+| `last_api.host`       | string \| null | `null`              | Host address from last `jotaduo app` start                        |
+| `last_api.port`       | int \| null    | `null`              | Port from last `jotaduo app` start                                |
 | `show_tool_details`   | bool           | `true`              | Whether to show tool call/return details in channel messages      |
 | `user_timezone`       | string         | _(system timezone)_ | IANA timezone name (e.g., `"Asia/Shanghai"`)                      |
 | `last_dispatch`       | object \| null | `null`              | Last message dispatch target (used for heartbeat `target="last"`) |
@@ -194,18 +195,18 @@ Stores globally shared configuration:
 | `name`          | string | Yes      | Agent display name                                                            |
 | `description`   | string | No       | Agent description (used for multi-agent collaboration)                        |
 | `enabled`       | bool   | Yes      | Whether to enable this agent                                                  |
-| `workspace_dir` | string | No       | Workspace path (optional, defaults to `$QWENPAW_WORKING_DIR/workspaces/{id}`) |
+| `workspace_dir` | string | No       | Workspace path (optional, defaults to `$JOTADUO_WORKING_DIR/workspaces/{id}`) |
 
 > **Backward compatibility:** The global config.json still supports `channels`, `mcp`, `tools`, `security` and other fields for backward compatibility with older versions. In multi-agent mode, these configurations should be set in each agent's `agent.json`.
 >
 > **Configuration priority:** The agent's `agent.json` takes precedence over the global `config.json`. When the same field is configured in both places, the system uses the value from `agent.json`. For multi-agent mode, it's recommended to put all configurations in each agent's `agent.json`.
 
-> **Model provider configuration** is stored in `$QWENPAW_SECRET_DIR/providers.json` (default `~/.qwenpaw.secret/providers.json`).
-> **Environment variables** are stored in `$QWENPAW_SECRET_DIR/envs.json` (default `~/.qwenpaw.secret/envs.json`).
+> **Model provider configuration** is stored in `$JOTADUO_SECRET_DIR/providers.json` (default `~/.jotaduo.secret/providers.json`).
+> **Environment variables** are stored in `$JOTADUO_SECRET_DIR/envs.json` (default `~/.jotaduo.secret/envs.json`).
 
 ### Agent config (agent.json)
 
-Each agent has an independent `agent.json` in its workspace directory (`~/.qwenpaw/workspaces/{agent_id}/`) that stores all of its configuration (channels, tools, heartbeat, MCP, security, etc.). This allows different agents to have completely different configurations without interfering with each other.
+Each agent has an independent `agent.json` in its workspace directory (`~/.jotaduo/workspaces/{agent_id}/`) that stores all of its configuration (channels, tools, heartbeat, MCP, security, etc.). This allows different agents to have completely different configurations without interfering with each other.
 
 ```json
 {
@@ -568,9 +569,9 @@ Auto-updated; no manual configuration needed.
 
 ## Model Providers
 
-QwenPaw needs an LLM provider to work. You can set it up in three ways:
+JotaDuo needs an LLM provider to work. You can set it up in three ways:
 
-- **`qwenpaw init`** — interactive wizard, the easiest way
+- **`jotaduo init`** — interactive wizard, the easiest way
 - **Console UI** — in Settings → Models page
 - **API** — `PUT /providers/{id}` and `PUT /providers/active_llm`
 
@@ -578,7 +579,7 @@ QwenPaw needs an LLM provider to work. You can set it up in three ways:
 
 | Provider                           | ID                       | Default Base URL                                    | API Key Prefix |
 | ---------------------------------- | ------------------------ | --------------------------------------------------- | -------------- |
-| QwenPaw Local                      | `qwenpaw-local`          | _(local)_                                           | _(none)_       |
+| JotaDuo Local                      | `jotaduo-local`          | _(local)_                                           | _(none)_       |
 | Ollama                             | `ollama`                 | `http://localhost:11434`                            | _(none)_       |
 | LM Studio                          | `lmstudio`               | `http://localhost:1234/v1`                          | _(none)_       |
 | OpenRouter                         | `openrouter`             | `https://openrouter.ai/api/v1`                      | `sk-or-v1-`    |
@@ -618,11 +619,11 @@ Then choose which provider + model to activate:
 | `provider_id` | Which provider to use (e.g. `dashscope`) |
 | `model`       | Which model to use (e.g. `qwen3-max`)    |
 
-> **Tip:** Run `qwenpaw init` and follow the prompts — it will list available
+> **Tip:** Run `jotaduo init` and follow the prompts — it will list available
 > models for each provider so you can pick one directly.
 >
 > **Note:** You are responsible for ensuring the API key and base URL are valid.
-> QwenPaw does not verify whether the key is correct or has sufficient quota —
+> JotaDuo does not verify whether the key is correct or has sufficient quota —
 > make sure the chosen provider and model are accessible.
 
 ---
@@ -632,7 +633,7 @@ Then choose which provider + model to activate:
 Some tools and MCP services need extra API keys (e.g. `TAVILY_API_KEY` for web search). You can
 manage them in three ways:
 
-- **`qwenpaw init`** — prompts "Configure environment variables?" during setup
+- **`jotaduo init`** — prompts "Configure environment variables?" during setup
 - **Console UI** — edit on the settings page
 - **API** — `GET/PUT/DELETE /envs`
 
@@ -640,7 +641,7 @@ Set variables are auto-loaded at app startup, so all tools and child processes
 can read them via `os.environ`.
 
 > **Note:** You are responsible for ensuring the values (e.g. third-party API
-> keys) are valid. QwenPaw only stores and injects them — it does not verify
+> keys) are valid. JotaDuo only stores and injects them — it does not verify
 > correctness.
 
 ---
@@ -651,18 +652,18 @@ Skills extend the agent's capabilities. Skill files are distributed across two l
 
 | Directory                                  | Purpose                                           |
 | ------------------------------------------ | ------------------------------------------------- |
-| `~/.qwenpaw/skill_pool/`                   | Local shared pool for built-ins and shared skills |
-| `~/.qwenpaw/workspaces/{agent_id}/skills/` | Skills present in a specific agent's workspace    |
+| `~/.jotaduo/skill_pool/`                   | Local shared pool for built-ins and shared skills |
+| `~/.jotaduo/workspaces/{agent_id}/skills/` | Skills present in a specific agent's workspace    |
 
 Each skill is a directory with a `SKILL.md` file (YAML front matter with `name` and `description`), and optional `references/` and `scripts/` subdirectories.
 
-Skill enabled state and configuration are controlled by `~/.qwenpaw/workspaces/{agent_id}/skill.json`.
+Skill enabled state and configuration are controlled by `~/.jotaduo/workspaces/{agent_id}/skill.json`.
 
 **Manage skills via:**
 
 - Console (Agent → Skills) — Visual management, import, create, enable/disable
-- `qwenpaw init` (choose all / none / custom during setup)
-- `qwenpaw skills config` (interactive toggle)
+- `jotaduo init` (choose all / none / custom during setup)
+- `jotaduo skills config` (interactive toggle)
 
 See [Skills](./skills) for detailed documentation.
 
@@ -670,14 +671,14 @@ See [Skills](./skills) for detailed documentation.
 
 ## Memory
 
-QwenPaw has persistent cross-conversation memory: it automatically compresses context and saves key information to Markdown files for long-term retention.
+JotaDuo has persistent cross-conversation memory: it automatically compresses context and saves key information to Markdown files for long-term retention.
 
 Memory files are stored in the agent workspace:
 
 | File / Directory                                        | Purpose                                                               |
 | ------------------------------------------------------- | --------------------------------------------------------------------- |
-| `~/.qwenpaw/workspaces/{agent_id}/MEMORY.md`            | Long-lived key information (decisions, preferences, persistent facts) |
-| `~/.qwenpaw/workspaces/{agent_id}/memory/YYYY-MM-DD.md` | Daily logs (notes, runtime context, auto-generated summaries)         |
+| `~/.jotaduo/workspaces/{agent_id}/MEMORY.md`            | Long-lived key information (decisions, preferences, persistent facts) |
+| `~/.jotaduo/workspaces/{agent_id}/memory/YYYY-MM-DD.md` | Daily logs (notes, runtime context, auto-generated summaries)         |
 
 ### Embedding Configuration
 
@@ -697,13 +698,13 @@ Recommended to configure in `agent.json` under `running.reme_light_memory_config
 
 ## Summary
 
-- Everything lives under **`~/.qwenpaw`** by default; override with `QWENPAW_WORKING_DIR` (and related env vars) if needed.
+- Everything lives under **`~/.jotaduo`** by default; override with `JOTADUO_WORKING_DIR` (and related env vars) if needed.
 - From **v0.1.0**, configuration is split into:
-  - **Global config** (`~/.qwenpaw/config.json`) — providers, environment variables, agent list
-  - **Agent config** (`~/.qwenpaw/workspaces/{agent_id}/agent.json`) — per-agent settings
+  - **Global config** (`~/.jotaduo/config.json`) — providers, environment variables, agent list
+  - **Agent config** (`~/.jotaduo/workspaces/{agent_id}/agent.json`) — per-agent settings
 - Daily management is primarily done through the **Console**, or by directly editing configuration files.
 - Agent personality is defined by Markdown files in the workspace directory. See [Agent Persona](./persona) for details.
-- LLM providers are globally configured via `qwenpaw init` or the Console.
+- LLM providers are globally configured via `jotaduo init` or the Console.
 - Config changes are **auto-reloaded** without restart (polled every 2 seconds).
 - Call the Agent API: **POST** `/api/agent/process` with `X-Agent-Id` header, JSON body, SSE streaming; see [Quick start — Verify install](./quickstart#verify-install-optional) for examples.
 

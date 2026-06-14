@@ -43,7 +43,7 @@ import {
 import { CheckSquare, Package } from "lucide-react";
 import { clearAuthToken } from "../api/config";
 import { authApi } from "../api/modules/auth";
-import { usersApi } from "../nexora/api/users";
+import { usersApi } from "../jotaduo/api/users";
 import { usePlugins } from "../plugins/PluginContext";
 import { useCodingMode } from "../stores/codingModeStore";
 import styles from "./index.module.less";

@@ -1,14 +1,14 @@
-# Nexora AIops 平台公司级工程治理与健壮性建设规范
+# Jotaduo AIops 平台公司级工程治理与健壮性建设规范
 
-本文档用于约束Nexora AIops 平台后续二次开发，目标是避免“临时可用”“轻量拼接”“只在本机跑通”的方案进入主线，为公司级、多用户、长期演进的智能运维平台打基础。
+本文档用于约束Jotaduo AIops 平台后续二次开发，目标是避免“临时可用”“轻量拼接”“只在本机跑通”的方案进入主线，为公司级、多用户、长期演进的智能运维平台打基础。
 
 ## 1. 当前阶段判断
 
-当前项目已经完成从开源 QwenPaw 到Nexora AIops 平台的初步产品化改造：
+当前项目已经完成从开源 JotaDuo 到Jotaduo AIops 平台的初步产品化改造：
 
 - 已具备登录认证、用户管理、角色管理、菜单权限、智能体权限、工具/MCP/Skill 权限、审计日志、中文品牌化、Docker 构建和部署文档。
 - 已验证本地 Docker 镜像可以构建成功，容器可以启动并返回平台首页。
-- 二开逻辑已经尽量放在 `qwenpaw_ext/nexora` 和前端独立页面/模块中，降低了与上游代码的耦合。
+- 二开逻辑已经尽量放在 `jotaduo_ext/jotaduo` 和前端独立页面/模块中，降低了与上游代码的耦合。
 
 但从公司级平台角度看，当前仍处在“可用原型 + 初步工程化”阶段，不能直接视为大规模生产就绪。
 
@@ -18,8 +18,8 @@
 
 当前用户、角色、治理策略、审计日志主要依赖本地文件存储：
 
-- 权限策略：`nexora_governance.json`
-- 审计日志：`nexora_audit.jsonl`
+- 权限策略：`jotaduo_governance.json`
+- 审计日志：`jotaduo_audit.jsonl`
 - 用户和角色：复用上游认证文件
 
 这适合单机原型，但大量用户同时使用时会遇到：
@@ -144,14 +144,14 @@
 
 优先级从高到低：
 
-1. 独立扩展模块：`src/qwenpaw_ext/nexora`
-2. 独立后端路由：`src/qwenpaw/app/routers/nexora.py`
+1. 独立扩展模块：`src/jotaduo_ext/jotaduo`
+2. 独立后端路由：`src/jotaduo/app/routers/jotaduo.py`
 3. 独立前端页面和 API 模块。
 4. 少量接入点修改上游核心模块。
 
 必须避免：
 
-- 在上游业务文件中堆大量Nexora专属逻辑。
+- 在上游业务文件中堆大量Jotaduo专属逻辑。
 - 为了一个页面需求直接改通用组件行为。
 - 在多个地方复制同一套权限判断。
 
@@ -272,8 +272,8 @@
 镜像 tag 建议：
 
 ```text
-ghcr.io/lb08111/nexora-platform:v0.1.0
-ghcr.io/lb08111/nexora-platform:latest
+ghcr.io/lb08111/jotaduo-platform:v0.1.0
+ghcr.io/lb08111/jotaduo-platform:latest
 ```
 
 生产环境优先使用固定版本号，不直接依赖 `latest`。

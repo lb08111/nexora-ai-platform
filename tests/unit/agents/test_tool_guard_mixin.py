@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Tests for qwenpaw.agents.tool_guard_mixin.
+"""Tests for jotaduo.agents.tool_guard_mixin.
 
 Covers:
 - _normalize_tool_guard_ui_lang
@@ -20,13 +20,13 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from qwenpaw.agents.tool_guard_mixin import (
+from jotaduo.agents.tool_guard_mixin import (
     _GuardAction,
     _normalize_tool_guard_ui_lang,
     _tool_guard_t,
 )
-from qwenpaw.security.tool_guard.execution_level import ToolExecutionLevel
-from qwenpaw.security.tool_guard.models import (
+from jotaduo.security.tool_guard.execution_level import ToolExecutionLevel
+from jotaduo.security.tool_guard.models import (
     GuardSeverity,
     GuardThreatCategory,
     ToolGuardResult,
@@ -40,7 +40,7 @@ from qwenpaw.security.tool_guard.models import (
 
 def _make_mixin(**overrides):
     """Create a ToolGuardMixin instance with injected dependencies."""
-    from qwenpaw.agents.tool_guard_mixin import ToolGuardMixin
+    from jotaduo.agents.tool_guard_mixin import ToolGuardMixin
 
     instance = ToolGuardMixin()
 
@@ -409,7 +409,7 @@ class TestSeverityEmojiAndLocalizedName:
     """Tests for _severity_emoji_and_localized_name."""
 
     def test_critical_emoji(self):
-        from qwenpaw.agents.tool_guard_mixin import ToolGuardMixin
+        from jotaduo.agents.tool_guard_mixin import ToolGuardMixin
 
         emoji, _ = ToolGuardMixin._severity_emoji_and_localized_name(
             GuardSeverity.CRITICAL,
@@ -418,7 +418,7 @@ class TestSeverityEmojiAndLocalizedName:
         assert emoji == "\U0001f534"
 
     def test_high_emoji(self):
-        from qwenpaw.agents.tool_guard_mixin import ToolGuardMixin
+        from jotaduo.agents.tool_guard_mixin import ToolGuardMixin
 
         emoji, _ = ToolGuardMixin._severity_emoji_and_localized_name(
             GuardSeverity.HIGH,
@@ -427,7 +427,7 @@ class TestSeverityEmojiAndLocalizedName:
         assert emoji == "\U0001f534"
 
     def test_medium_emoji(self):
-        from qwenpaw.agents.tool_guard_mixin import ToolGuardMixin
+        from jotaduo.agents.tool_guard_mixin import ToolGuardMixin
 
         emoji, _ = ToolGuardMixin._severity_emoji_and_localized_name(
             GuardSeverity.MEDIUM,
@@ -436,7 +436,7 @@ class TestSeverityEmojiAndLocalizedName:
         assert emoji == "\U0001f7e1"
 
     def test_returns_localized_name(self):
-        from qwenpaw.agents.tool_guard_mixin import ToolGuardMixin
+        from jotaduo.agents.tool_guard_mixin import ToolGuardMixin
 
         _, loc_name = ToolGuardMixin._severity_emoji_and_localized_name(
             GuardSeverity.HIGH,
@@ -460,8 +460,8 @@ class TestEnsureToolGuard:
         m._ensure_tool_guard()
         # Should not re-init
 
-    @patch("qwenpaw.security.tool_guard.engine.get_guard_engine")
-    @patch("qwenpaw.app.approvals.get_approval_service")
+    @patch("jotaduo.security.tool_guard.engine.get_guard_engine")
+    @patch("jotaduo.app.approvals.get_approval_service")
     def test_lazy_init(self, mock_approval, mock_engine):
         mock_engine.return_value = MagicMock()
         mock_approval.return_value = MagicMock()

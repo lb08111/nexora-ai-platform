@@ -3,8 +3,8 @@ import json
 
 import pytest
 
-from qwenpaw.discovery.state import DiscoveryState, OpenArea
-from qwenpaw.discovery.tools import InterviewSession
+from jotaduo.discovery.state import DiscoveryState, OpenArea
+from jotaduo.discovery.tools import InterviewSession
 
 
 def _text(resp):
@@ -99,7 +99,7 @@ async def test_emit_blueprint_writes_files(tmp_path):
         "roadmap": [{"order": 1, "title": "WhatsApp", "rationale": "dor"}],
         "open_questions": [],
     }
-    result = await s.emit_blueprint(json.dumps(bp))
+    await s.emit_blueprint(json.dumps(bp))
     assert (tmp_path / "blueprint.json").exists()
     assert (tmp_path / "blueprint.md").exists()
     assert s.emitted is True

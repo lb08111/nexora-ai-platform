@@ -1,8 +1,8 @@
-import React from 'react';
-import { PluginProps } from '../../Chat/types';
+import React from "react";
+import { PluginProps } from "../../Chat/types";
 
 export const NotesPlugin: React.FC<PluginProps> = ({ onClose }) => {
-  const [notes, setNotes] = React.useState('');
+  const [notes, setNotes] = React.useState("");
 
   return (
     <div className="space-y-4">
@@ -15,7 +15,7 @@ export const NotesPlugin: React.FC<PluginProps> = ({ onClose }) => {
 
       <div className="flex gap-2 justify-end">
         <button
-          onClick={() => setNotes('')}
+          onClick={() => setNotes("")}
           className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
         >
           Clear
@@ -23,7 +23,7 @@ export const NotesPlugin: React.FC<PluginProps> = ({ onClose }) => {
         <button
           onClick={() => {
             navigator.clipboard.writeText(notes);
-            alert('Notes copied to clipboard!');
+            alert("Notes copied to clipboard!");
           }}
           className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
         >

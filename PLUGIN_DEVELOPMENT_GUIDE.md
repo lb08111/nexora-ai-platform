@@ -8,15 +8,15 @@ Este guia mostra como criar plugins customizados para o Copilot Kit.
 import React from 'react';
 import { PluginProps } from '@/components/Chat/types';
 
-export const MeuPlugin: React.FC<PluginProps> = ({ 
-  data, 
-  onClose, 
-  onAction 
+export const MeuPlugin: React.FC<PluginProps> = ({
+  data,
+  onClose,
+  onAction
 }) => {
   return (
     <div className="space-y-4">
       <h3 className="font-bold">Meu Plugin</h3>
-      
+
       <button onClick={onClose}>Fechar</button>
     </div>
   );
@@ -54,7 +54,7 @@ export const TranslatorPlugin: React.FC<PluginProps> = ({ onClose, onAction }) =
 
       const data = await response.json();
       setResult(data);
-      
+
       // Notificar ação ao chat
       onAction?.('translate_complete', data);
     } catch (error) {
@@ -137,8 +137,8 @@ export const examplePlugins: PluginDefinition[] = [
     version: '1.0.0',
     description: 'Traduza textos para diferentes idiomas',
     component: TranslatorPlugin,
-    config: { 
-      apiKey: '', 
+    config: {
+      apiKey: '',
       supportedLanguages: ['es', 'fr', 'de', 'pt', 'ja']
     },
   },
@@ -220,10 +220,10 @@ async def translate(request: TranslateRequest):
 interface PluginProps {
   // Dados de configuração do plugin
   data?: Record<string, unknown>;
-  
+
   // Callback para fechar o plugin
   onClose?: () => void;
-  
+
   // Callback para executar ações
   onAction?: (action: string, payload: unknown) => void;
 }

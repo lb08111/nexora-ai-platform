@@ -8,18 +8,6 @@ import zipfile
 import pytest
 
 
-_AGENT_PROFILE_TOP_LEVEL_KEYS = (
-    "channels",
-    "mcp",
-    "heartbeat",
-    "running",
-    "llm_routing",
-    "system_prompt_files",
-    "tools",
-    "plan",
-)
-
-
 @pytest.mark.integration
 @pytest.mark.p1
 def test_api_workspace_working_file_list_put_get(app_server) -> None:
@@ -316,7 +304,7 @@ def test_api_workspace_download_zip_contract(app_server) -> None:
             "",
         ).lower()
         assert "attachment;" in content_disposition
-        assert "qwenpaw_workspace_" in content_disposition
+        assert "jotaduo_workspace_" in content_disposition
         assert agent_id.lower() in content_disposition
 
         zip_bytes = download_resp.content

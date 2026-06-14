@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 """Shared fixtures for integration tests.
 
-These fixtures start a real QwenPaw app subprocess with isolated workspace
+These fixtures start a real JotaDuo app subprocess with isolated workspace
 directories and a sanitized environment to avoid touching local secrets.
 
 Subprocess coverage (optional):
 
-    QWENPAW_INTEGRATION_COVERAGE=1 pytest tests/integration/
+    JOTADUO_INTEGRATION_COVERAGE=1 pytest tests/integration/
 
 When set, ``pytest_sessionstart`` writes a coverage rcfile under
 ``.integration_coverage/`` with an **absolute** ``source=`` path
-(``…/src/qwenpaw``); the app subprocess runs with
+(``…/src/jotaduo``); the app subprocess runs with
 ``COVERAGE_PROCESS_START`` / ``COVERAGE_FILE`` so the child traces
 that tree. The fixture stops the app with **SIGINT** first so coverage
 can flush (SIGTERM often yields empty data). After the session, files
@@ -51,12 +51,12 @@ def _write_integration_subprocess_rc(root: Path, dest_ini: Path) -> None:
     when the file is loaded via ``COVERAGE_PROCESS_START``, which produced
     empty traces (0 files) even though the app ran.
     """
-    src_qwenpaw = (root / "src" / "qwenpaw").resolve()
+    src_jotaduo = (root / "src" / "jotaduo").resolve()
     text = (
         "[run]\n"
         "parallel = true\n"
         "branch = false\n"
-        f"source = {src_qwenpaw}\n"
+        f"source = {src_jotaduo}\n"
         "omit =\n"
         "    */tests/*\n"
         "    */test_*\n"
@@ -67,7 +67,7 @@ def _write_integration_subprocess_rc(root: Path, dest_ini: Path) -> None:
 
 def _integration_coverage_requested() -> bool:
     return os.environ.get(
-        "QWENPAW_INTEGRATION_COVERAGE",
+        "JOTADUO_INTEGRATION_COVERAGE",
         "",
     ).strip().lower() in (
         "1",
@@ -216,6 +216,11 @@ class AppServer:
     client: httpx.Client
     logs: list[str]
     log_thread: threading.Thread
+    # Working directory of the subprocess (= JOTADUO_WORKING_DIR). Tests that
+    # need to seed file-backed stores (inbox_events.json, cron jobs_history/,
+    # backups, etc.) write directly under this path. The subprocess re-reads
+    # these files on each HTTP request, so no restart is needed after seeding.
+    working_dir: Path
 
     @property
     def base_url(self) -> str:
@@ -279,11 +284,53 @@ class AppServer:
         return response
 
 
+@pytest.fixture(scope="session", autouse=True)
+def channel_callback_server():
+    """Start a lightweight HTTP server for custom channel outbound.
+
+    Sets ``TEST_CHANNEL_CALLBACK_URL`` in ``os.environ`` so every
+    ``app_server`` subprocess inherits it. Tests that need to
+    inspect recorded payloads request this fixture by name.
+    """
+    from http.server import BaseHTTPRequestHandler, HTTPServer
+    import json as _json  # pylint: disable=reimported
+
+    class _Handler(BaseHTTPRequestHandler):
+        def do_POST(self):  # noqa: N802
+            length = int(self.headers.get("Content-Length", 0))
+            body = self.rfile.read(length) if length else b""
+            try:
+                payload = _json.loads(body)
+            except (ValueError, UnicodeDecodeError):
+                payload = {
+                    "raw": body.decode("utf-8", errors="replace"),
+                }
+            self.server.recorded.append(payload)
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(b'{"ok":true}')
+
+        def log_message(self, fmt, *args):
+            pass
+
+    srv = HTTPServer(("127.0.0.1", 0), _Handler)
+    srv.recorded = []
+    port = srv.server_address[1]
+    t = threading.Thread(target=srv.serve_forever, daemon=True)
+    t.start()
+    os.environ[
+        "TEST_CHANNEL_CALLBACK_URL"
+    ] = f"http://127.0.0.1:{port}/callback"
+    yield srv
+    os.environ.pop("TEST_CHANNEL_CALLBACK_URL", None)
+    srv.shutdown()
+
+
 @pytest.fixture(scope="module")
 def app_server(  # pylint: disable=too-many-statements,too-many-branches
     tmp_path_factory: pytest.TempPathFactory,
 ) -> Iterator[AppServer]:
-    """Start one isolated qwenpaw app process per test module.
+    """Start one isolated jotaduo app process per test module.
 
     Module-scoped: cases in the same file share one subprocess. Cross-module
     isolation is preserved by re-launching with a fresh tmp dir. Cases must
@@ -301,14 +348,26 @@ def app_server(  # pylint: disable=too-many-statements,too-many-branches
     secret_dir.mkdir(parents=True, exist_ok=True)
     backups_dir.mkdir(parents=True, exist_ok=True)
 
+    custom_channels_src = Path(__file__).parent / "_custom_channels"
+    if custom_channels_src.is_dir():
+        custom_channels_dst = working_dir / "custom_channels"
+        custom_channels_dst.mkdir(parents=True, exist_ok=True)
+        for src_file in custom_channels_src.iterdir():
+            if src_file.suffix == ".py":
+                shutil.copy2(src_file, custom_channels_dst / src_file.name)
+
     env = os.environ.copy()
     for key in _SENSITIVE_ENV_VARS:
         env.pop(key, None)
 
-    env["QWENPAW_WORKING_DIR"] = str(working_dir)
-    env["QWENPAW_SECRET_DIR"] = str(secret_dir)
-    env["QWENPAW_BACKUP_DIR"] = str(backups_dir)
-    env["QWENPAW_AUTH_ENABLED"] = "false"
+    env["JOTADUO_WORKING_DIR"] = str(working_dir)
+    env["JOTADUO_SECRET_DIR"] = str(secret_dir)
+    env["JOTADUO_BACKUP_DIR"] = str(backups_dir)
+    env["JOTADUO_AUTH_ENABLED"] = "false"
+    env["JOTADUO_UPLOAD_MAX_SIZE_MB"] = "10"
+    callback_url = os.environ.get("TEST_CHANNEL_CALLBACK_URL")
+    if callback_url:
+        env["TEST_CHANNEL_CALLBACK_URL"] = callback_url
     env["NO_PROXY"] = "*"
     env["PYTHONUNBUFFERED"] = "1"
     # Force UTF-8 stdio in the subprocess so non-ASCII log lines (e.g.
@@ -320,7 +379,7 @@ def app_server(  # pylint: disable=too-many-statements,too-many-branches
     if _integration_coverage_requested():
         if _INTEGRATION_COVERAGE_DIR is None:
             raise AssertionError(
-                "QWENPAW_INTEGRATION_COVERAGE is set but coverage dir was not "
+                "JOTADUO_INTEGRATION_COVERAGE is set but coverage dir was not "
                 "initialised (pytest_sessionstart should create "
                 ".integration_coverage/).",
             )
@@ -335,7 +394,7 @@ def app_server(  # pylint: disable=too-many-statements,too-many-branches
         [
             sys.executable,
             "-m",
-            "qwenpaw",
+            "jotaduo",
             "app",
             "--host",
             host,
@@ -364,10 +423,10 @@ def app_server(  # pylint: disable=too-many-statements,too-many-branches
         )
         log_thread.start()
 
-        # 15s default lets cold-start endpoints (ACP getter, heartbeat)
-        # finish without hiding real deadlocks; 30s in coverage mode
-        # for tracer overhead.
-        http_timeout = 30.0 if _integration_coverage_requested() else 15.0
+        # 30s lets cold-start endpoints (ACP getter, heartbeat) and
+        # agent creation (workspace init) finish on slower runners
+        # (Windows CI ~50% slower) without hiding real deadlocks.
+        http_timeout = 30.0
         client = httpx.Client(timeout=http_timeout, trust_env=False)
 
         try:
@@ -377,7 +436,7 @@ def app_server(  # pylint: disable=too-many-statements,too-many-branches
             while time.time() - start_at < max_wait_seconds:
                 if process.poll() is not None:
                     raise AssertionError(
-                        "qwenpaw app exited during startup.\n"
+                        "jotaduo app exited during startup.\n"
                         f"exit_code={process.returncode}\n"
                         f"logs:\n{''.join(logs)[-4000:]}",
                     )
@@ -391,7 +450,7 @@ def app_server(  # pylint: disable=too-many-statements,too-many-branches
                 time.sleep(0.5)
             else:
                 raise AssertionError(
-                    "qwenpaw app did not become ready in time.\n"
+                    "jotaduo app did not become ready in time.\n"
                     f"last_error={last_error}\n"
                     f"logs:\n{''.join(logs)[-4000:]}",
                 )
@@ -403,6 +462,7 @@ def app_server(  # pylint: disable=too-many-statements,too-many-branches
                 client=client,
                 logs=logs,
                 log_thread=log_thread,
+                working_dir=working_dir,
             )
         finally:
             client.close()

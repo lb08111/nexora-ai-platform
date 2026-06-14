@@ -1,14 +1,14 @@
 # MCP & Built-in Tools
 
-QwenPaw uses **MCP (Model Context Protocol)** to connect to external services and provides a suite of **built-in tools** that enable agents to access filesystems, execute commands, browse the web, and more.
+JotaDuo uses **MCP (Model Context Protocol)** to connect to external services and provides a suite of **built-in tools** that enable agents to access filesystems, execute commands, browse the web, and more.
 
 ---
 
 ## Concepts
 
-QwenPaw provides two types of tools for agents:
+JotaDuo provides two types of tools for agents:
 
-1. **Built-in Tools**: Ready-to-use tools provided by QwenPaw core, such as file operations, command execution, and browser automation
+1. **Built-in Tools**: Ready-to-use tools provided by JotaDuo core, such as file operations, command execution, and browser automation
 
    - Managed on the **Agent → Tools** page
    - Can be individually enabled/disabled
@@ -23,7 +23,7 @@ Both types can be used simultaneously without conflict.
 
 ## MCP
 
-**MCP (Model Context Protocol)** allows QwenPaw to connect to external MCP servers, extending the agent's ability to access filesystems, databases, APIs, and other external resources.
+**MCP (Model Context Protocol)** allows JotaDuo to connect to external MCP servers, extending the agent's ability to access filesystems, databases, APIs, and other external resources.
 
 ### Prerequisites
 
@@ -52,7 +52,7 @@ node --version  # Check version
 
 ### Configuration Formats
 
-QwenPaw supports three JSON formats—choose one:
+JotaDuo supports three JSON formats—choose one:
 
 #### Format 1: Standard mcpServers Format (**Recommended**)
 
@@ -190,7 +190,7 @@ MCP supports three transport protocols, usually auto-detected:
 
 ## Built-in Tools
 
-QwenPaw provides a set of ready-to-use built-in tools that agents can directly call to perform various tasks.
+JotaDuo provides a set of ready-to-use built-in tools that agents can directly call to perform various tasks.
 
 ---
 
@@ -281,7 +281,7 @@ QwenPaw provides a set of ready-to-use built-in tools that agents can directly c
 - Then describe your intent directly in chat, for example:
   - “Please use the external agent claude code to analyze the structure of the working directory”
   - “Please talk to the external agent claude code and ask it to write a self-introduction into a markdown file”
-- QwenPaw will call `delegate_external_agent` when appropriate, establish a continuous conversation with the external agent, and stream progress and results back into the current chat
+- JotaDuo will call `delegate_external_agent` when appropriate, establish a continuous conversation with the external agent, and stream progress and results back into the current chat
 - After the connection is established, you can continue multi-turn conversations with that external agent through `delegate_external_agent`
 - Each runner currently supports only one active session per chat; to start a new conversation, close the current session first
 
@@ -335,6 +335,17 @@ Configure this option on the `execute_shell_command` tool card (only this tool s
 - Use `action` parameter to specify operation type
 - Runs in headless mode by default; use `headed=True` to launch a visible browser window
 - Supports multiple tabs (use different `page_id` values)
+- `click` supports two targeting modes: element locators (`ref`/`selector`) and page coordinates (`page_x` / `page_y`, in page viewport pixels). When both are provided, the priority is `ref > selector > page_x/page_y`, and the coordinate parameters only take effect when neither `ref` nor `selector` is given
+  - Coordinate clicks are backed by `page.mouse.click(...)`; they support `button` and `double_click`, but not `modifiers_json`
+  - **When to use:** Designed for Canvas/WebGL UIs where no DOM sub-elements exist. Coordinates can be estimated from screenshots or computed via `action=evaluate` for pixel-precise targeting. Example evaluate-based workflow: (1) `action=evaluate` to get the canvas element's bounding rect, (2) compute click point with known offsets, (3) `action=click` with `page_x`/`page_y`
+
+```json
+{
+  "action": "click",
+  "page_x": 420,
+  "page_y": 260
+}
+```
 
 **CDP Mode (Advanced Feature):**
 The browser tool supports connecting to a running Chrome browser via Chrome DevTools Protocol (CDP):

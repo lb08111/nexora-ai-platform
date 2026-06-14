@@ -4,8 +4,8 @@ This supplements the root `AGENTS.md` with a repo-local ECC baseline.
 
 ## Repo Skill
 
-- Repo-generated Codex skill: `.agents/skills/nexora-ai-platform/SKILL.md`
-- Claude-facing companion skill: `.claude/skills/nexora-ai-platform/SKILL.md`
+- Repo-generated Codex skill: `.agents/skills/jotaduo-ai-platform/SKILL.md`
+- Claude-facing companion skill: `.claude/skills/jotaduo-ai-platform/SKILL.md`
 - Keep user-specific credentials and private MCPs in `~/.codex/config.toml`, not in this repo.
 
 ## MCP Baseline

@@ -2,14 +2,15 @@ import { request } from "../request";
 import { getApiUrl } from "../config";
 import { buildAuthHeaders } from "../authHeaders";
 import { useCodeFileCacheStore } from "../../stores/codeFileCacheStore";
+import { downloadFileFromUrl } from "../../utils/downloadFileFromUrl";
 import type { MdFileInfo, MdFileContent, DailyMemoryFile } from "../types";
 
 function getSelectedAgentId(): string {
   try {
     // Read from sessionStorage first (per-tab agent), fall back to localStorage
     const agentStorage =
-      sessionStorage.getItem("qwenpaw-agent-storage") ||
-      localStorage.getItem("qwenpaw-agent-storage");
+      sessionStorage.getItem("jotaduo-agent-storage") ||
+      localStorage.getItem("jotaduo-agent-storage");
     if (agentStorage) {
       const parsed = JSON.parse(agentStorage);
       const selectedAgent = parsed?.state?.selectedAgent;
@@ -32,12 +33,7 @@ function generateFallbackFilename(): string {
     .replace(/\..+/, "")
     .replace("T", "_")
     .slice(0, 15); // YYYYMMDD_HHMMSS
-  return `qwenpaw_workspace_${agentId}_${timestamp}.zip`;
-}
-
-export interface WorkspaceDownloadResult {
-  blob: Blob;
-  filename: string;
+  return `jotaduo_workspace_${agentId}_${timestamp}.zip`;
 }
 
 export const workspaceApi = {
@@ -62,37 +58,16 @@ export const workspaceApi = {
     ),
 
   // Workspace package download
-  downloadWorkspace: async (): Promise<WorkspaceDownloadResult> => {
-    const response = await fetch(getApiUrl("/workspace/download"), {
-      method: "GET",
-      headers: buildAuthHeaders(),
-    });
-
-    if (!response.ok) {
-      throw new Error(
-        `Workspace download failed: ${response.status} ${response.statusText}`,
-      );
-    }
-
-    const blob = await response.blob();
-
-    // Extract filename from Content-Disposition header
-    const disposition = response.headers.get("Content-Disposition");
-    let filename: string;
-
-    if (disposition) {
-      const filenameMatch = disposition.match(/filename="(.+?)"/);
-      if (filenameMatch && filenameMatch[1]) {
-        filename = filenameMatch[1];
-      } else {
-        filename = generateFallbackFilename();
-      }
-    } else {
-      filename = generateFallbackFilename();
-    }
-
-    return { blob, filename };
-  },
+  downloadWorkspace: () =>
+    downloadFileFromUrl(
+      getApiUrl("/workspace/download"),
+      generateFallbackFilename(),
+      {
+        headers: buildAuthHeaders(),
+        errorMessage: "Workspace download failed",
+        preferResponseFilename: true,
+      },
+    ),
 
   // File upload functionality
   uploadFile: async (

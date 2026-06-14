@@ -1,0 +1,33 @@
+{
+  "id": "jotaduo-fiscal",
+  "name": "Jotaduo Fiscal — NFe/NFSe/NFCe BR",
+  "version": "1.0.0",
+  "type": "general",
+  "description": "Plugin fiscal brasileiro para o Jotaduo AI Platform/JotaDuo. Registra um agente especialista fiscal, ferramentas para emissão e gestão de NF-e, NFS-e e NFC-e, webhooks SEFAZ por provedor e abstração multi-provider com Focus NFe como padrão seguro em homologação.",
+  "description_i18n": {
+    "pt-BR": "Plugin fiscal brasileiro para o Jotaduo AI Platform/JotaDuo. Registra um agente especialista fiscal e ferramentas para emitir, consultar, cancelar, inutilizar numeração, emitir carta de correção e baixar XML/DANFE de NF-e, NFS-e e NFC-e via provedores fiscais.",
+    "en-US": "Brazilian fiscal plugin for Jotaduo AI Platform/JotaDuo. Registers a fiscal specialist agent and tools to issue, query, cancel, void numbering, create correction letters, and download XML/DANFE for NF-e, NFS-e, and NFC-e through fiscal providers."
+  },
+  "author": "Jotaduo",
+  "entry": {
+    "backend": "plugin.py"
+  },
+  "dependencies": [
+    "fastapi>=0.110",
+    "pydantic>=2.0",
+    "httpx>=0.24.0"
+  ],
+  "min_version": "1.1.7",
+  "meta": {
+    "category": "brazilian-fiscal",
+    "features": [
+      "nfe-emission",
+      "nfse-emission",
+      "nfce-emission",
+      "sefaz-events",
+      "carta-correcao",
+      "cancelamento",
+      "multi-provider"
+    ]
+  }
+}

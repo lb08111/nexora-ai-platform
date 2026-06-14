@@ -1,3 +1,192 @@
+/* IDE-like chat shell */
+.chatWorkspaceShell {
+  height: 100%;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  overflow: hidden;
+  background: var(--app-bg);
+}
+
+.chatPrimaryPane {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  overflow: hidden;
+  border: 1px solid var(--app-border-subtle);
+  border-radius: 8px;
+  background: var(--app-surface);
+}
+
+.chatRuntimeStack {
+  height: 100%;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.inspectorPanel {
+  width: 332px;
+  min-width: 300px;
+  max-width: 360px;
+  flex: 0 0 332px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--app-border-subtle);
+  border-radius: 8px;
+  background: var(--app-surface);
+  color: var(--app-text);
+  transition:
+    width 0.18s ease,
+    min-width 0.18s ease,
+    max-width 0.18s ease,
+    flex-basis 0.18s ease;
+}
+
+.inspectorPanelCollapsed {
+  width: 44px;
+  min-width: 44px;
+  max-width: 44px;
+  flex-basis: 44px;
+}
+
+.inspectorHeader {
+  height: 44px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 10px;
+  border-bottom: 1px solid var(--app-border-subtle);
+}
+
+.inspectorPanelCollapsed .inspectorHeader {
+  height: 100%;
+  justify-content: center;
+  padding: 8px 0;
+  border-bottom: 0;
+}
+
+.inspectorTabs {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.inspectorTab {
+  height: 30px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--app-text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.inspectorTab:hover {
+  background: var(--app-surface-hover);
+  color: var(--app-text);
+}
+
+.inspectorTabActive {
+  background: var(--app-surface-subtle);
+  color: var(--app-text-strong);
+}
+
+.inspectorActions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.inspectorPanelCollapsed .inspectorActions {
+  height: 100%;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.inspectorIconButton {
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: var(--app-text-muted);
+  cursor: pointer;
+}
+
+.inspectorIconButton:hover {
+  background: var(--app-surface-hover);
+  color: var(--app-text-strong);
+}
+
+.inspectorBody {
+  flex: 1;
+  min-height: 0;
+  padding: 12px;
+  overflow: auto;
+}
+
+.inspectorProjectRow {
+  width: 100%;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  background: transparent;
+  color: var(--app-text);
+  font-size: 13px;
+  text-align: left;
+  border-radius: 6px;
+  padding: 0 8px;
+  cursor: pointer;
+}
+
+.inspectorProjectRow:hover {
+  background: var(--app-surface-hover);
+}
+
+.inspectorProjectRow span:nth-child(2) {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inspectorStatusDot {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--app-warning);
+  opacity: 0.7;
+}
+
+.inspectorEmptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 140px;
+  color: var(--app-text-muted);
+  font-size: 13px;
+}
+
 /* Disabled input overlay */
 .chatDisabledOverlay {
   position: relative;
@@ -82,34 +271,60 @@
   align-items: flex-start;
   gap: 12px;
   min-width: 0;
-  width: 100%;
+  width: min(520px, calc(100vw - 48px));
+  max-width: 100%;
   line-height: 1.4;
+}
+
+.suggestionLabelCompact {
+  width: auto;
 }
 
 .suggestionCommand {
   flex: 0 0 88px;
-  color: #ff7f16;
+  min-width: 0;
+  color: var(--app-primary);
   font-weight: 600;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.suggestionLabelCompact .suggestionCommand {
+  flex-basis: auto;
+  max-width: min(320px, calc(100vw - 96px));
 }
 
 .suggestionDescription {
   flex: 1;
   min-width: 0;
-  color: rgba(0, 0, 0, 0.45);
+  color: var(--app-text-muted);
   display: -webkit-box;
   overflow: hidden;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
 }
 
+:global {
+  .jotaduo-suggestion .jotaduo-cascader-menu,
+  .jotaduo-suggestion .ant-cascader-menu,
+  .ant-cascader-dropdown.jotaduo-suggestion .jotaduo-cascader-menu,
+  .ant-cascader-dropdown.jotaduo-suggestion .ant-cascader-menu {
+    height: auto !important;
+    max-height: 210px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+}
+
 :global(.dark-mode) {
   .suggestionCommand {
-    color: #ff7f16;
+    color: var(--app-primary);
   }
 
   .suggestionDescription {
-    color: rgba(255, 255, 255, 0.65);
+    color: var(--app-text-muted);
   }
 }
 
@@ -118,7 +333,7 @@
   .chat-anywhere-prompt-icon,
   [class*="prompt-icon"],
   [class*="PromptIcon"] {
-    color: #ff7f16 !important;
+    color: var(--app-primary) !important;
   }
 }
 
@@ -156,5 +371,58 @@
   .chatDisabledOverlay :global(textarea),
   .chatDisabledOverlay :global(input[type="text"]) {
     background-color: #2a2a2a !important;
+  }
+}
+
+/* ---- Rate-limit guidance banner ---- */
+.rateLimitBanner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: rgba(250, 173, 20, 0.08);
+  border-top: 1px solid rgba(250, 173, 20, 0.2);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.rateLimitText {
+  font-size: 13px;
+  color: #d48806;
+  flex: 1;
+  min-width: 120px;
+}
+
+.rateLimitActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+:global(.dark-mode) {
+  .rateLimitBanner {
+    background: rgba(250, 173, 20, 0.06);
+    border-top-color: rgba(250, 173, 20, 0.15);
+  }
+
+  .rateLimitText {
+    color: #ffc53d;
+  }
+}
+
+@media (max-width: 980px) {
+  .chatWorkspaceShell {
+    gap: 0;
+    padding: 0;
+  }
+
+  .chatPrimaryPane {
+    border: 0;
+    border-radius: 0;
+  }
+
+  .inspectorPanel {
+    display: none;
   }
 }

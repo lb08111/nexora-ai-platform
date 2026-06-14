@@ -129,7 +129,12 @@ pub(crate) fn setup(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Erro
     app.handle().plugin(
         tauri_plugin_log::Builder::default()
             .clear_targets()
-            .targets([Target::new(TargetKind::Stdout)])
+            .targets([
+                Target::new(TargetKind::Stdout),
+                Target::new(TargetKind::LogDir {
+                    file_name: Some("jotaduo-desktop".into()),
+                }),
+            ])
             .level(log::LevelFilter::Info)
             .build(),
     )?;
@@ -160,7 +165,7 @@ fn start(app: &tauri::AppHandle) {
     .env("PYTHONIOENCODING", "utf-8")
     .env("PYTHONUNBUFFERED", "1")
     .env("PYTHONFAULTHANDLER", "1")
-    .env("QWENPAW_DESKTOP_APP", "1");
+    .env("JOTADUO_DESKTOP_APP", "1");
 
     log::info!("[backend] starting generation={generation}");
 
