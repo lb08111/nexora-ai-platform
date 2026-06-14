@@ -8,6 +8,8 @@
  * Uses window.QwenPaw plugin API (PR #3512+)
  */
 
+import { createAgentAudioVisualizerAura } from "./AgentAudioVisualizerAura";
+
 function buildPlugin() {
   const { React, antd, antdIcons, getApiUrl, getApiToken } = (window as any)
     .QwenPaw.host;
@@ -2542,6 +2544,9 @@ function ensureDefaultAgent() {
 // ── Welcome & Theme customisation via configProvider monkey-patch ──────
 
 function patchWelcomeAndTheme() {
+  const React = (window as any).QwenPaw?.host?.React;
+  if (!React) return;
+
   const modules = (window as any).QwenPaw?.modules;
   if (!modules) return;
 
@@ -2555,6 +2560,7 @@ function patchWelcomeAndTheme() {
 
   const provider = configModule.configProvider;
   const originalGetConfig = provider.getConfig.bind(provider);
+  const AgentAudioVisualizerAura = createAgentAudioVisualizerAura(React);
 
   const CLOUDPAW_LOGO_URL =
     "https://gw.alicdn.com/imgextra/i2/O1CN01pyXzjQ1EL1PuZMlSd_!!6000000000334-2-tps-288-288.png";
@@ -2605,6 +2611,67 @@ function patchWelcomeAndTheme() {
     return nav.split("-")[0] || "en";
   }
 
+  function CloudPawWelcome({
+    greeting,
+    description,
+    prompts,
+    onSubmit,
+  }: {
+    greeting?: string;
+    description?: string;
+    prompts?: Array<{ label?: string; value: string }>;
+    onSubmit: (data: { query: string }) => void;
+  }) {
+    const promptItems = Array.isArray(prompts) ? prompts : [];
+
+    return React.createElement(
+      "section",
+      { className: "cloudpaw-welcome-aura-panel" },
+      React.createElement(
+        "div",
+        { className: "cloudpaw-welcome-aura-shell" },
+        React.createElement(AgentAudioVisualizerAura, {
+          size: "sm",
+          state: "thinking",
+          color: "#4b8fce",
+          colorShift: 0.22,
+          className: "cloudpaw-welcome-aura-canvas",
+        }),
+      ),
+      React.createElement(
+        "h2",
+        { className: "cloudpaw-welcome-aura-title" },
+        greeting,
+      ),
+      description
+        ? React.createElement(
+            "p",
+            { className: "cloudpaw-welcome-aura-description" },
+            description,
+          )
+        : null,
+      promptItems.length
+        ? React.createElement(
+            "div",
+            { className: "cloudpaw-welcome-aura-prompts" },
+            promptItems.map((prompt) =>
+              React.createElement(
+                "button",
+                {
+                  key: prompt.value,
+                  type: "button",
+                  className: "cloudpaw-welcome-aura-prompt",
+                  onClick: () => onSubmit({ query: prompt.value }),
+                },
+                React.createElement("span", null, prompt.label || prompt.value),
+                React.createElement("span", { "aria-hidden": true }, "→"),
+              ),
+            ),
+          )
+        : null,
+    );
+  }
+
   provider.getGreeting = () => greetings[detectLang()] || greetings.en;
   provider.getDescription = () => descriptions[detectLang()] || descriptions.en;
   provider.getPrompts = () => promptSets[detectLang()] || promptSets.en;
@@ -2623,21 +2690,103 @@ function patchWelcomeAndTheme() {
       welcome: {
         ...base.welcome,
         avatar: CLOUDPAW_LOGO_URL,
+        render: CloudPawWelcome,
       },
     };
   };
 
   // Inject style so \n in the description renders as a line break
-  if (!document.getElementById("cloudpaw-welcome-style")) {
-    const style = document.createElement("style");
-    style.id = "cloudpaw-welcome-style";
-    style.textContent = `
+  const style =
+    document.getElementById("cloudpaw-welcome-style") ||
+    document.createElement("style");
+  style.id = "cloudpaw-welcome-style";
+  style.textContent = `
       [class*="chat-anywhere-welcome-default"] [class*="description"],
       [class*="message-list-welcome"] [class*="description"] {
         white-space: pre-line !important;
         text-align: center !important;
       }
+      .cloudpaw-welcome-aura-panel {
+        width: min(760px, 100%);
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        color: var(--app-text, rgba(241, 245, 249, 0.82));
+        text-align: center;
+      }
+      .cloudpaw-welcome-aura-shell {
+        width: 76px;
+        height: 76px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        background:
+          radial-gradient(circle at 50% 45%, rgba(75, 143, 206, 0.16), transparent 62%),
+          var(--app-surface, rgba(21, 23, 25, 0.98));
+        box-shadow:
+          0 0 0 1px var(--app-border-subtle, rgba(226, 232, 240, 0.09)),
+          0 18px 38px rgba(0, 0, 0, 0.22);
+      }
+      .cloudpaw-welcome-aura-canvas {
+        filter: saturate(1.08);
+      }
+      .cloudpaw-welcome-aura-title {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 650;
+        line-height: 1.4;
+        color: var(--app-text-strong, rgba(248, 250, 252, 0.94));
+      }
+      .cloudpaw-welcome-aura-description {
+        max-width: 740px;
+        margin: 0;
+        white-space: pre-line;
+        font-size: 12px;
+        line-height: 1.55;
+        color: var(--app-text-muted, rgba(203, 213, 225, 0.68));
+      }
+      .cloudpaw-welcome-aura-prompts {
+        width: min(360px, 100%);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 6px;
+      }
+      .cloudpaw-welcome-aura-prompt {
+        width: 100%;
+        min-height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 8px 14px;
+        border: 1px solid var(--app-border-subtle, rgba(226, 232, 240, 0.09));
+        border-radius: 8px;
+        background: var(--app-surface-subtle, rgba(32, 36, 42, 0.82));
+        color: var(--app-text, rgba(241, 245, 249, 0.82));
+        font: inherit;
+        font-size: 13px;
+        cursor: pointer;
+        transition:
+          background 0.18s ease,
+          border-color 0.18s ease,
+          color 0.18s ease,
+          transform 0.18s ease;
+      }
+      .cloudpaw-welcome-aura-prompt:hover {
+        border-color: var(--app-primary-border, rgba(75, 143, 206, 0.34));
+        background: var(--app-surface-hover, rgba(38, 48, 58, 0.9));
+        color: var(--app-text-strong, rgba(248, 250, 252, 0.94));
+        transform: translateY(-1px);
+      }
+      .cloudpaw-welcome-aura-prompt:focus-visible {
+        outline: none;
+        box-shadow: var(--app-focus-ring, 0 0 0 2px rgba(75, 143, 206, 0.34));
+      }
     `;
+  if (!style.parentNode) {
     document.head.appendChild(style);
   }
 
