@@ -1,26 +1,5 @@
 import { getApiUrl, clearAuthToken } from "./config";
 import { buildAuthHeaders } from "./authHeaders";
-import { useAgentStore } from "../stores/agentStore";
-
-let _resettingAgent = false;
-
-function resetToValidAgent() {
-  if (_resettingAgent) return;
-  _resettingAgent = true;
-  const store = useAgentStore.getState();
-  store.setSelectedAgent("default");
-  fetch(getApiUrl("/agents"), {
-    headers: new Headers(buildAuthHeaders()),
-  })
-    .then((r) => (r.ok ? r.json() : null))
-    .then((data) => {
-      if (data?.agents) store.setAgents(data.agents);
-    })
-    .catch(() => {})
-    .finally(() => {
-      _resettingAgent = false;
-    });
-}
 
 function getErrorMessageFromBody(
   text: string,
@@ -57,23 +36,14 @@ function getErrorMessageFromBody(
   return text;
 }
 
-function buildHeaders(
-  method?: string,
-  extra?: HeadersInit,
-  hasBody = false,
-): Headers {
+function buildHeaders(hasBody: boolean, extra?: HeadersInit): Headers {
   // Normalize extra to a Headers instance for consistent handling
   const headers = extra instanceof Headers ? extra : new Headers(extra);
 
-  // Only add Content-Type when the request carries a JSON body.
-  if (
-    method &&
-    (["POST", "PUT", "PATCH"].includes(method.toUpperCase()) || hasBody)
-  ) {
-    // Don't override if caller explicitly set Content-Type
-    if (!headers.has("Content-Type")) {
-      headers.set("Content-Type", "application/json");
-    }
+  // Add Content-Type whenever a request body is present (any method),
+  // but never override a caller-specified Content-Type.
+  if (hasBody && !headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json");
   }
 
   for (const [key, value] of Object.entries(buildAuthHeaders())) {
@@ -90,8 +60,10 @@ export async function request<T = unknown>(
   options: RequestInit = {},
 ): Promise<T> {
   const url = getApiUrl(path);
-  const method = options.method || "GET";
-  const headers = buildHeaders(method, options.headers, options.body != null);
+  const headers = buildHeaders(
+    options.body !== undefined && options.body !== null,
+    options.headers,
+  );
 
   const response = await fetch(url, {
     ...options,
@@ -110,10 +82,6 @@ export async function request<T = unknown>(
     const text = await response.text().catch(() => "");
     const contentType = response.headers.get("content-type") || "";
     const errorMessage = getErrorMessageFromBody(text, contentType);
-
-    if (response.status === 403 && errorMessage === "Agent access denied") {
-      resetToValidAgent();
-    }
 
     // Preserve raw body for parseErrorDetail() to extract structured fields
     const finalMessage = errorMessage

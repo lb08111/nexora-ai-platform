@@ -9,9 +9,6 @@ import {
   type ACPAgentConfig,
 } from "../../../api/types";
 import { useAgentStore } from "../../../stores/agentStore";
-import { governanceApi } from "../../../nexora/api/governance";
-import type { GovernancePolicy } from "../../../nexora/api/governance";
-import { canAgentUseResource } from "../../../nexora/utils/resourceAccess";
 import { ACPCard } from "./components/ACPCard";
 import {
   ACPDrawer,
@@ -40,7 +37,6 @@ function ACPPage() {
   const { message } = useAppMessage();
   const { selectedAgent } = useAgentStore();
   const [agents, setAgents] = useState<Record<string, ACPAgentConfig>>({});
-  const [policies, setPolicies] = useState<GovernancePolicy[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<FilterType>("all");
   const [activeKey, setActiveKey] = useState<string | null>(null);
@@ -52,12 +48,8 @@ function ACPPage() {
   const fetchACP = useCallback(async () => {
     setLoading(true);
     try {
-      const [data, policyList] = await Promise.all([
-        api.getACPConfig(),
-        governanceApi.listPolicies(),
-      ]);
+      const data = await api.getACPConfig();
       setAgents(data?.agents || {});
-      setPolicies(policyList);
     } catch (error) {
       console.error("❌ Failed to load ACP config:", error);
     } finally {
@@ -86,7 +78,6 @@ function ACPPage() {
     orderedKeys.forEach((key) => {
       const config = agents[key];
       if (!config) return;
-      if (!canAgentUseResource(policies, "cli", key, selectedAgent)) return;
 
       const builtin = isBuiltinACPAgent(key);
       if (filter === "builtin" && !builtin) return;
@@ -100,7 +91,7 @@ function ACPPage() {
     });
 
     return [...enabledCards, ...disabledCards];
-  }, [agents, orderedKeys, filter, policies, selectedAgent]);
+  }, [agents, orderedKeys, filter]);
 
   const handleCardClick = (key: string) => {
     const config = agents[key];

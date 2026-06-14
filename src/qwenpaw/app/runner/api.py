@@ -14,7 +14,6 @@ from .models import (
     ChatHistory,
 )
 from .utils import agentscope_msg_to_message
-from qwenpaw_ext.nexora.audit import record_audit_event
 
 
 router = APIRouter(prefix="/chats", tags=["chats"])
@@ -89,7 +88,6 @@ async def list_chats(
 @router.post("", response_model=ChatSpec)
 async def create_chat(
     request: ChatSpec,
-    http_request: Request,
     mgr: ChatManager = Depends(get_chat_manager),
 ):
     """Create a new chat.
@@ -112,29 +110,12 @@ async def create_chat(
         channel=request.channel,
         meta=request.meta,
     )
-    created = await mgr.create_chat(spec)
-    record_audit_event(
-        actor=getattr(http_request.state, "user", "") or "anonymous",
-        action="chat.create",
-        resource_type="chat",
-        resource_id=created.id,
-        status="success",
-        detail={
-            "agent_id": http_request.headers.get("X-Agent-Id") or "default",
-            "session_id": created.session_id,
-            "channel": created.channel,
-            "target_user": created.user_id,
-            "name": created.name,
-        },
-        request=http_request,
-    )
-    return created
+    return await mgr.create_chat(spec)
 
 
 @router.post("/batch-delete", response_model=dict)
 async def batch_delete_chats(
     chat_ids: list[str],
-    request: Request,
     mgr: ChatManager = Depends(get_chat_manager),
 ):
     """Delete chats by chat IDs.
@@ -147,18 +128,6 @@ async def batch_delete_chats(
 
     """
     deleted = await mgr.delete_chats(chat_ids=chat_ids)
-    record_audit_event(
-        actor=getattr(request.state, "user", "") or "anonymous",
-        action="chat.batch_delete",
-        resource_type="chat",
-        resource_id=",".join(chat_ids[:10]),
-        status="success" if deleted else "failure",
-        detail={
-            "agent_id": request.headers.get("X-Agent-Id") or "default",
-            "count": len(chat_ids),
-        },
-        request=request,
-    )
     return {"deleted": deleted}
 
 
@@ -211,7 +180,6 @@ async def get_chat(
 async def update_chat(
     chat_id: str,
     spec: ChatUpdate,
-    request: Request,
     mgr: ChatManager = Depends(get_chat_manager),
 ):
     """Update an existing chat.
@@ -233,25 +201,12 @@ async def update_chat(
             status_code=404,
             detail=f"Chat not found: {chat_id}",
         )
-    record_audit_event(
-        actor=getattr(request.state, "user", "") or "anonymous",
-        action="chat.update",
-        resource_type="chat",
-        resource_id=chat_id,
-        status="success",
-        detail={
-            "agent_id": request.headers.get("X-Agent-Id") or "default",
-            "name": getattr(spec, "name", None),
-        },
-        request=request,
-    )
     return updated
 
 
 @router.delete("/{chat_id}", response_model=dict)
 async def delete_chat(
     chat_id: str,
-    request: Request,
     mgr: ChatManager = Depends(get_chat_manager),
 ):
     """Delete a chat by UUID.
@@ -275,13 +230,4 @@ async def delete_chat(
             status_code=404,
             detail=f"Chat not found: {chat_id}",
         )
-    record_audit_event(
-        actor=getattr(request.state, "user", "") or "anonymous",
-        action="chat.delete",
-        resource_type="chat",
-        resource_id=chat_id,
-        status="success",
-        detail={"agent_id": request.headers.get("X-Agent-Id") or "default"},
-        request=request,
-    )
     return {"deleted": True}

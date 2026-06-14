@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 from typing import Optional
 
+import aiofiles
 from agentscope.message import TextBlock
 from agentscope.tool import ToolResponse
 
@@ -20,53 +21,23 @@ from ...config.context import (
 from ...constant import WORKING_DIR, TRUNCATION_NOTICE_MARKER
 
 
-def _workspace_root() -> Path:
-    return Path(get_current_workspace_dir() or WORKING_DIR).expanduser().resolve()
-
-
-def _is_relative_to(path: Path, root: Path) -> bool:
-    try:
-        path.relative_to(root)
-        return True
-    except ValueError:
-        return False
-
-
-def _workspace_boundary_error(file_path: str) -> ToolResponse:
-    return ToolResponse(
-        content=[
-            TextBlock(
-                type="text",
-                text=(
-                    "Error: File access is limited to the current agent "
-                    f"workspace. Refused path: {file_path}"
-                ),
-            ),
-        ],
-    )
-
-
-def _resolve_file_path(file_path: str) -> Path:
-    """Resolve a path and require it to stay in the current workspace.
+def _resolve_file_path(file_path: str) -> str:
+    """Resolve file path: use absolute path as-is,
+    resolve relative path from current workspace or WORKING_DIR.
 
     Args:
         file_path: The input file path (absolute or relative).
 
     Returns:
-        The resolved absolute file path.
+        The resolved absolute file path as string.
     """
     path = Path(file_path).expanduser()
-    workspace_dir = _workspace_root()
-    if not path.is_absolute():
-        path = workspace_dir / file_path
-    return path.resolve(strict=False)
-
-
-def _resolve_workspace_file_path(file_path: str) -> tuple[Path | None, ToolResponse | None]:
-    resolved = _resolve_file_path(file_path)
-    if not _is_relative_to(resolved, _workspace_root()):
-        return None, _workspace_boundary_error(file_path)
-    return resolved, None
+    if path.is_absolute():
+        return str(path)
+    else:
+        # Use current workspace_dir from context, fallback to WORKING_DIR
+        workspace_dir = get_current_workspace_dir() or WORKING_DIR
+        return str(workspace_dir / file_path)
 
 
 def _get_encoding_for_file(file_path: str) -> str:
@@ -139,11 +110,7 @@ async def read_file(  # pylint: disable=too-many-return-statements
                 ],
             )
 
-    resolved_path, error = _resolve_workspace_file_path(file_path)
-    if error is not None:
-        return error
-    assert resolved_path is not None
-    file_path = str(resolved_path)
+    file_path = _resolve_file_path(file_path)
 
     if not os.path.exists(file_path):
         return ToolResponse(
@@ -262,17 +229,12 @@ async def write_file(
             ],
         )
 
-    resolved_path, error = _resolve_workspace_file_path(file_path)
-    if error is not None:
-        return error
-    assert resolved_path is not None
-    file_path = str(resolved_path)
+    file_path = _resolve_file_path(file_path)
     encoding = _get_encoding_for_file(file_path)
 
     try:
-        resolved_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(file_path, "w", encoding=encoding) as file:
-            file.write(content)
+        async with aiofiles.open(file_path, "w", encoding=encoding) as file:
+            await file.write(content)
         return ToolResponse(
             content=[
                 TextBlock(
@@ -320,10 +282,7 @@ async def edit_file(
             ],
         )
 
-    resolved_path, error = _resolve_workspace_file_path(file_path)
-    if error is not None:
-        return error
-    assert resolved_path is not None
+    resolved_path = _resolve_file_path(file_path)
 
     if not os.path.exists(resolved_path):
         return ToolResponse(
@@ -412,17 +371,12 @@ async def append_file(
             ],
         )
 
-    resolved_path, error = _resolve_workspace_file_path(file_path)
-    if error is not None:
-        return error
-    assert resolved_path is not None
-    file_path = str(resolved_path)
+    file_path = _resolve_file_path(file_path)
     encoding = _get_encoding_for_file(file_path)
 
     try:
-        resolved_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(file_path, "a", encoding=encoding) as file:
-            file.write(content)
+        async with aiofiles.open(file_path, "a", encoding=encoding) as file:
+            await file.write(content)
         return ToolResponse(
             content=[
                 TextBlock(

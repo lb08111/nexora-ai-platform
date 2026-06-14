@@ -32,10 +32,6 @@ from ...agents.utils import copy_workspace_md_files, normalize_agent_language
 from ...agents.skill_system import SkillPoolService, get_workspace_skills_dir
 from ..multi_agent_manager import MultiAgentManager
 from ...constant import WORKING_DIR
-from qwenpaw_ext.nexora.authorization import (
-    ensure_agent_access as ensure_agent_access_v2,
-    filter_agent_ids_for_user,
-)
 
 logger = logging.getLogger(__name__)
 
@@ -57,27 +53,6 @@ class AgentListResponse(BaseModel):
     """Response for listing agents."""
 
     agents: list[AgentSummary]
-
-
-class RuntimeAgentSummary(BaseModel):
-    """Loaded agent runtime status."""
-
-    agent_id: str
-    loaded: bool
-    started_at: float | None = None
-    last_access_at: float | None = None
-    idle_seconds: float | None = None
-    active_task_count: int
-    active_task_ids: list[str]
-
-
-class RuntimeAgentsResponse(BaseModel):
-    """Response for loaded agent runtime pool status."""
-
-    max_active_agents: int
-    idle_ttl_seconds: int
-    loaded_agent_count: int
-    agents: list[RuntimeAgentSummary]
 
 
 class ReorderAgentsRequest(BaseModel):
@@ -130,7 +105,7 @@ def _get_multi_agent_manager(request: Request) -> MultiAgentManager:
     if not hasattr(request.app.state, "multi_agent_manager"):
         raise HTTPException(
             status_code=500,
-            detail="MultiAgentManager não inicializado",
+            detail="MultiAgentManager not initialized",
         )
     return request.app.state.multi_agent_manager
 
@@ -185,15 +160,10 @@ def _read_profile_description(workspace_dir: str) -> str:
     summary="List all agents",
     description="Get list of all configured agents",
 )
-async def list_agents(request: Request) -> AgentListResponse:
+async def list_agents() -> AgentListResponse:
     """List all configured agents."""
     config = load_config()
     ordered_agent_ids = _normalized_agent_order(config)
-    username = str(getattr(request.state, "user", "") or "")
-    roles = list(getattr(request.state, "roles", []) or [])
-    ordered_agent_ids = filter_agent_ids_for_user(
-        ordered_agent_ids, username, roles,
-    )
 
     agents = []
     for agent_id in ordered_agent_ids:
@@ -241,7 +211,6 @@ async def list_agents(request: Request) -> AgentListResponse:
     description="Save the full ordered list of configured agent IDs",
 )
 async def reorder_agents(
-    request: Request,
     reorder_request: ReorderAgentsRequest = Body(...),
 ) -> dict:
     """Persist the full ordered list of agent IDs."""
@@ -260,54 +229,10 @@ async def reorder_agents(
             detail="Each configured agent ID must appear exactly once.",
         )
 
-    for agent_id in reorder_request.agent_ids:
-        ensure_agent_access_v2(
-            str(getattr(request.state, "user", "") or ""),
-            list(getattr(request.state, "roles", []) or []),
-            agent_id,
-        )
-
     config.agents.agent_order = list(reorder_request.agent_ids)
     save_config(config)
 
     return {"success": True, "agent_ids": config.agents.agent_order}
-
-
-@router.get(
-    "/runtime",
-    response_model=RuntimeAgentsResponse,
-    summary="List loaded agent runtime status",
-    description="Get runtime pool status for loaded agent workspaces",
-)
-async def list_agent_runtime(request: Request) -> RuntimeAgentsResponse:
-    """List loaded agent runtime status."""
-    manager = _get_multi_agent_manager(request)
-    status = await manager.list_runtime_agents()
-    visible_ids = set(
-        filter_agent_ids_for_user(
-            [agent["agent_id"] for agent in status["agents"]],
-            str(getattr(request.state, "user", "") or ""),
-            list(getattr(request.state, "roles", []) or []),
-        ),
-    )
-    filtered_agents = [
-        agent for agent in status["agents"] if agent["agent_id"] in visible_ids
-    ]
-    status["agents"] = filtered_agents
-    status["loaded_agent_count"] = len(filtered_agents)
-    return RuntimeAgentsResponse(**status)
-
-
-@router.post(
-    "/runtime/cleanup-idle",
-    summary="Unload idle agent workspaces",
-    description="Run idle workspace cleanup immediately",
-)
-async def cleanup_idle_agent_runtime(request: Request) -> dict:
-    """Run idle cleanup immediately."""
-    manager = _get_multi_agent_manager(request)
-    unloaded = await manager.cleanup_idle_agents()
-    return {"success": True, "unloaded_agent_ids": unloaded}
 
 
 @router.get(
@@ -316,16 +241,8 @@ async def cleanup_idle_agent_runtime(request: Request) -> dict:
     summary="Get agent details",
     description="Get complete configuration for a specific agent",
 )
-async def get_agent(
-    request: Request,
-    agentId: str = PathParam(...),
-) -> AgentProfileConfig:
+async def get_agent(agentId: str = PathParam(...)) -> AgentProfileConfig:
     """Get agent configuration."""
-    ensure_agent_access_v2(
-        str(getattr(request.state, "user", "") or ""),
-        list(getattr(request.state, "roles", []) or []),
-        agentId,
-    )
     try:
         agent_config = load_agent_config(agentId)
         return agent_config
@@ -399,6 +316,17 @@ async def create_agent(
         request.language or config.agents.language or "en",
     )
 
+    active_model = request.active_model
+    if not active_model or not active_model.provider_id:
+        try:
+            from ...providers import ProviderManager
+
+            global_model = ProviderManager.get_instance().get_active_model()
+            if global_model and global_model.provider_id:
+                active_model = global_model
+        except Exception:
+            pass
+
     agent_config = AgentProfileConfig(
         id=new_id,
         name=request.name,
@@ -409,7 +337,7 @@ async def create_agent(
         mcp=MCPConfig(),
         heartbeat=HeartbeatConfig(),
         tools=ToolsConfig(),
-        active_model=request.active_model,
+        active_model=active_model,
     )
 
     _initialize_agent_workspace(
@@ -456,12 +384,6 @@ async def update_agent(
             detail=f"Agent '{agentId}' not found",
         )
 
-    ensure_agent_access_v2(
-        str(getattr(request.state, "user", "") or ""),
-        list(getattr(request.state, "roles", []) or []),
-        agentId,
-    )
-
     existing_config = load_agent_config(agentId)
 
     update_data = agent_config.model_dump(exclude_unset=True)
@@ -494,16 +416,10 @@ async def delete_agent(
             detail=f"Agent '{agentId}' not found",
         )
 
-    ensure_agent_access_v2(
-        str(getattr(request.state, "user", "") or ""),
-        list(getattr(request.state, "roles", []) or []),
-        agentId,
-    )
-
     if agentId == "default":
         raise HTTPException(
             status_code=400,
-            detail="Não é possível excluir o agente padrão",
+            detail="Cannot delete the default agent",
         )
 
     manager = _get_multi_agent_manager(request)
@@ -514,35 +430,6 @@ async def delete_agent(
     save_config(config)
 
     return {"success": True, "agent_id": agentId}
-
-
-@router.post(
-    "/{agentId}/runtime/unload",
-    summary="Unload loaded agent runtime",
-    description="Unload an idle agent workspace without deleting its config",
-)
-async def unload_agent_runtime(
-    request: Request,
-    agentId: str = PathParam(...),
-) -> dict:
-    """Unload a loaded agent workspace if it has no active tasks."""
-    ensure_agent_access_v2(
-        str(getattr(request.state, "user", "") or ""),
-        list(getattr(request.state, "roles", []) or []),
-        agentId,
-    )
-    manager = _get_multi_agent_manager(request)
-    unloaded, reason = await manager.unload_agent(agentId)
-    if reason == "active_tasks":
-        raise HTTPException(
-            status_code=409,
-            detail="O agente possui tarefas ativas e não pode ser descarregado.",
-        )
-    return {
-        "success": unloaded,
-        "agent_id": agentId,
-        "reason": reason,
-    }
 
 
 @router.patch(
@@ -564,16 +451,10 @@ async def toggle_agent_enabled(
             detail=f"Agent '{agentId}' not found",
         )
 
-    ensure_agent_access_v2(
-        str(getattr(request.state, "user", "") or ""),
-        list(getattr(request.state, "roles", []) or []),
-        agentId,
-    )
-
     if agentId == "default":
         raise HTTPException(
             status_code=400,
-            detail="Não é possível desativar o agente padrão",
+            detail="Cannot disable the default agent",
         )
 
     agent_ref = config.agents.profiles[agentId]

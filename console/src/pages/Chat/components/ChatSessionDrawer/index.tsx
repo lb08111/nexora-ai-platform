@@ -23,6 +23,8 @@ import { useTranslation } from "react-i18next";
 import type { ChatStatus } from "../../../../api/types/chat";
 import { chatApi } from "../../../../api/modules/chat";
 import sessionApi from "../../sessionApi";
+import { buildSessionPath } from "../../../../utils/sessionRoute";
+import { useCodingMode } from "../../../../stores/codingModeStore";
 import ChatSessionItem from "../ChatSessionItem";
 import { getChannelLabel } from "../../../Control/Channels/components";
 import {
@@ -148,6 +150,7 @@ const ChatSessionDrawer: React.FC<ChatSessionDrawerProps> = (props) => {
   const navigate = useNavigate();
   const { sessions, currentSessionId, setCurrentSessionId, setSessions } =
     useChatAnywhereSessionsState();
+  const { codingMode } = useCodingMode();
 
   const { createSession } = useChatAnywhereSessions();
 
@@ -164,7 +167,7 @@ const ChatSessionDrawer: React.FC<ChatSessionDrawerProps> = (props) => {
   /** Current value of the rename input */
   const [editValue, setEditValue] = useState("");
 
-  /** Whether the session list is being fetched (default true because destroyOnClose re-mounts) */
+  /** Whether the session list is being fetched (default true because destroyOnHidden re-mounts) */
   const [listLoading, setListLoading] = useState(true);
 
   /** Height of the virtual list container, measured via ResizeObserver */
@@ -294,8 +297,13 @@ const ChatSessionDrawer: React.FC<ChatSessionDrawerProps> = (props) => {
       sessionApi
         .preloadSession(sessionId)
         .then(({ realId }) => {
-          const targetUrl = `/chat/${realId || sessionId}`;
-          sessionApi.lastNavigatedChatId = realId || sessionId;
+          // Issue #5142: Navigate to the correct URL for the current mode.
+          const effectiveId = realId || sessionId;
+          const targetUrl = buildSessionPath(
+            codingMode ? "coding" : "chat",
+            effectiveId,
+          );
+          sessionApi.lastNavigatedChatId = effectiveId;
           navigate(targetUrl, { replace: true });
           // Now set currentSessionId — the library's getSession will hit cache.
           setCurrentSessionId(sessionId);
@@ -318,7 +326,7 @@ const ChatSessionDrawer: React.FC<ChatSessionDrawerProps> = (props) => {
           setSwitchingSessionId(null);
         });
     },
-    [currentSessionId, setCurrentSessionId, navigate],
+    [currentSessionId, setCurrentSessionId, navigate, codingMode],
   );
 
   /** Delete a session: call deleteChat API then refresh the list */
@@ -499,7 +507,7 @@ const ChatSessionDrawer: React.FC<ChatSessionDrawerProps> = (props) => {
     <Drawer
       open={props.open}
       onClose={props.pinned ? undefined : props.onClose}
-      destroyOnClose={!props.pinned}
+      destroyOnHidden={!props.pinned}
       placement="right"
       width={360}
       closable={false}
@@ -575,13 +583,6 @@ const ChatSessionDrawer: React.FC<ChatSessionDrawerProps> = (props) => {
           </div>
         ) : (
           <>
-            {/* Background loading — only show when content overflows the container,
-                so it's visible through unrendered gaps during fast scroll */}
-            {sortedSessions.length * ITEM_HEIGHT > listHeight && (
-              <div className={styles.virtualListBackground}>
-                <Spin size="small" />
-              </div>
-            )}
             <FixedSizeList
               height={listHeight}
               width="100%"

@@ -18,7 +18,7 @@ import {
 } from "./backendRuntime";
 
 const setViteBase = (v: string) => {
-  (globalThis as any).VITE_API_BASE_URL = v;
+  vi.stubEnv("VITE_API_BASE_URL", v);
 };
 
 describe("backendRuntime", () => {

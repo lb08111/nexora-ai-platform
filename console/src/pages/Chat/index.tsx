@@ -15,10 +15,11 @@ import sessionApi from "./sessionApi";
 import defaultConfig, { getDefaultConfig } from "./OptionsPanel/defaultConfig";
 import { chatApi } from "../../api/modules/chat";
 import { agentApi } from "../../api/modules/agent";
+import { skillApi } from "../../api/modules/skill";
 import { getApiUrl } from "../../api/config";
 import { buildAuthHeaders } from "../../api/authHeaders";
 import { providerApi } from "../../api/modules/provider";
-import type { ProviderInfo, ModelInfo } from "../../api/types";
+import type { ProviderInfo, ModelInfo, SkillSpec } from "../../api/types";
 import ModelSelector from "./ModelSelector";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useAgentStore } from "../../stores/agentStore";
@@ -33,6 +34,18 @@ import { ApprovalCard } from "../../components/ApprovalCard/ApprovalCard";
 import { commandsApi } from "../../api/modules/commands";
 import { useApprovalContext } from "../../contexts/ApprovalContext";
 import { planApi } from "../../api/modules/plan";
+import {
+  useChatScalarSnapshot,
+  useChatListSnapshot,
+} from "../../plugins/registry/useChatExtensions";
+import { PluginSlotBoundary } from "../../plugins/registry/PluginSlotBoundary";
+import {
+  resolveLocalized,
+  type WelcomeRenderProps,
+} from "../../plugins/registry/types";
+import { ChatScalar, ChatList } from "../../plugins/registry/slotKeys";
+import { HostRequestCard, HostResponseCard } from "./HostBubbles";
+import { withGenericFallback } from "../../components/Chat/ToolCards/adapters/v1Adapter";
 
 interface ApprovalMessageData {
   requestId: string;
@@ -65,10 +78,15 @@ import {
   type CopyableResponse,
   type RuntimeLoadingBridgeApi,
 } from "./utils";
+import {
+  getSessionIdFromPath,
+  buildBasePath,
+  buildSessionPath,
+  type SessionRouteMode,
+} from "../../utils/sessionRoute";
 import { openExternalLink } from "../../utils/openExternalLink";
 import { getLastEditorCopy } from "../Coding/lastEditorCopy";
-
-const CHAT_ATTACHMENT_MAX_MB = 10;
+import { useUploadLimitStore } from "../../stores/uploadLimitStore";
 
 interface SessionInfo {
   session_id?: string;
@@ -130,11 +148,17 @@ function payloadCompletesResponse(payload: unknown): boolean {
   return record.object === "response" && record.status === "completed";
 }
 
-function renderSuggestionLabel(command: string, description: string) {
+function renderSuggestionLabel(command: string, description?: string) {
   return (
-    <div className={styles.suggestionLabel}>
+    <div
+      className={`${styles.suggestionLabel} ${
+        description ? "" : styles.suggestionLabelCompact
+      }`}
+    >
       <span className={styles.suggestionCommand}>{command}</span>
-      <span className={styles.suggestionDescription}>{description}</span>
+      {description ? (
+        <span className={styles.suggestionDescription}>{description}</span>
+      ) : null}
     </div>
   );
 }
@@ -145,6 +169,12 @@ function renderSuggestionLabel(command: string, description: string) {
 
 const DEFAULT_USER_ID = "default";
 const DEFAULT_CHANNEL = "console";
+
+function isSkillAvailableInConsole(skill: SkillSpec): boolean {
+  if (!skill.enabled) return false;
+  const channels = skill.channels?.length ? skill.channels : ["all"];
+  return channels.includes("all") || channels.includes(DEFAULT_CHANNEL);
+}
 
 // ---------------------------------------------------------------------------
 // Custom hooks
@@ -479,8 +509,14 @@ function useMessageHistoryNavigation(
 // Chat input draft persistence
 // ---------------------------------------------------------------------------
 
-const DRAFT_STORAGE_KEY = "qwenpaw_chat_input_draft";
+const DRAFT_STORAGE_KEY_PREFIX = "qwenpaw_chat_input_draft";
 let draftSuppressed = false;
+
+function getDraftStorageKey(agentId?: string): string {
+  return agentId
+    ? `${DRAFT_STORAGE_KEY_PREFIX}_${agentId}`
+    : DRAFT_STORAGE_KEY_PREFIX;
+}
 
 interface DraftState {
   value: string;
@@ -488,7 +524,9 @@ interface DraftState {
   selectionEnd: number;
 }
 
-function useChatInputDraft(isChatActive: () => boolean) {
+function useChatInputDraft(isChatActive: () => boolean, agentId?: string) {
+  const storageKey = getDraftStorageKey(agentId);
+
   useEffect(() => {
     if (!isChatActive()) return;
 
@@ -506,9 +544,9 @@ function useChatInputDraft(isChatActive: () => boolean) {
         selectionEnd: textarea.selectionEnd,
       };
       if (draft.value) {
-        localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(draft));
+        localStorage.setItem(storageKey, JSON.stringify(draft));
       } else {
-        localStorage.removeItem(DRAFT_STORAGE_KEY);
+        localStorage.removeItem(storageKey);
       }
     };
 
@@ -531,7 +569,7 @@ function useChatInputDraft(isChatActive: () => boolean) {
       const textarea = getTextarea();
       if (textarea) {
         clearInterval(restoreInterval);
-        const raw = localStorage.getItem(DRAFT_STORAGE_KEY);
+        const raw = localStorage.getItem(storageKey);
         if (raw) {
           try {
             const draft: DraftState = JSON.parse(raw);
@@ -567,7 +605,7 @@ function useChatInputDraft(isChatActive: () => boolean) {
       }
       draftSuppressed = false;
     };
-  }, [isChatActive]);
+  }, [isChatActive, storageKey]);
 }
 
 /**
@@ -662,26 +700,43 @@ const timestampStyle: React.CSSProperties = {
 };
 
 export default function ChatPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const { isDark } = useTheme();
   const { codingMode, initialized } = useCodingMode();
+  const codingModeRef = useRef(codingMode);
+  codingModeRef.current = codingMode;
 
-  // Redirect to /coding when coding mode is active
+  // Redirect to /coding when coding mode is active, preserving sessionId.
   useEffect(() => {
-    if (initialized && codingMode) {
-      navigate("/coding", { replace: true });
+    if (initialized && codingMode && !location.pathname.startsWith("/coding")) {
+      // Issue #5142: Carry over the current chatId so the session survives
+      // the redirect from /chat/<id> to /coding/<id>.
+      const currentChatId = getSessionIdFromPath(location.pathname);
+      navigate(buildSessionPath("coding", currentChatId), {
+        replace: true,
+      });
     }
-  }, [initialized, codingMode, navigate]);
+  }, [initialized, codingMode, navigate, location.pathname]);
 
-  const chatId = useMemo(() => {
-    const match = location.pathname.match(/^\/chat\/(.+)$/);
-    return match?.[1];
-  }, [location.pathname]);
+  const chatId = useMemo(
+    () => getSessionIdFromPath(location.pathname),
+    [location.pathname],
+  );
   const [showModelPrompt, setShowModelPrompt] = useState(false);
+  const [rateLimitAlternatives, setRateLimitAlternatives] = useState<
+    Array<{
+      provider_id: string;
+      provider_name: string;
+      model_id: string;
+      model_name: string;
+    }>
+  >([]);
   const { selectedAgent } = useAgentStore();
   const { toolRenderConfig } = usePlugins();
+  const extScalar = useChatScalarSnapshot();
+  const extLists = useChatListSnapshot();
   const [refreshKey, setRefreshKey] = useState(0);
   const runtimeLoadingBridgeRef = useRef<RuntimeLoadingBridgeApi | null>(null);
   const { message } = useAppMessage();
@@ -690,6 +745,11 @@ export default function ChatPage() {
     Map<string, ApprovalMessageData>
   >(new Map());
   const [planEnabled, setPlanEnabled] = useState(false);
+  const [chatSkills, setChatSkills] = useState<SkillSpec[]>([]);
+  const consoleSkills = useMemo(
+    () => chatSkills.filter(isSkillAvailableInConsole),
+    [chatSkills],
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -704,11 +764,70 @@ export default function ChatPage() {
     };
   }, [selectedAgent]);
 
+  useEffect(() => {
+    let cancelled = false;
+    skillApi
+      .listSkills(selectedAgent)
+      .then((skills) => {
+        if (cancelled) return;
+        const nextSkills = Array.isArray(skills) ? skills : [];
+        setChatSkills(nextSkills);
+      })
+      .catch((error) => {
+        console.warn("[ChatSkills] failed to load slash skills", {
+          selectedAgent,
+          error,
+        });
+        if (!cancelled) setChatSkills([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedAgent]);
+
   const isChatActiveRef = useRef(false);
+  // Issue #5142: In Coding mode the Chat component is embedded under /coding/*,
+  // so session callbacks must also fire on /coding paths.
   isChatActiveRef.current =
-    location.pathname === "/" || location.pathname.startsWith("/chat");
+    location.pathname === "/" ||
+    location.pathname.startsWith("/chat") ||
+    location.pathname.startsWith("/coding");
 
   const isChatActive = useCallback(() => isChatActiveRef.current, []);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Tab" || !isChatActive()) return;
+      const textarea = event.target;
+      if (!(textarea instanceof HTMLTextAreaElement)) return;
+      if (!textarea.closest('[class*="sender"]')) return;
+      if (
+        !textarea.value.startsWith("/") ||
+        /\s/.test(textarea.value.slice(1))
+      ) {
+        return;
+      }
+
+      const selectedItem =
+        document.querySelector(
+          '[role="menuitemcheckbox"][aria-checked="true"]',
+        ) || document.querySelector('[role="menuitem"][aria-current="true"]');
+      if (!(selectedItem instanceof HTMLElement)) return;
+
+      const selectedValue = selectedItem.getAttribute("data-path-key")?.trim();
+      if (!selectedValue) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+      setTextareaValue(textarea, `/${selectedValue} `);
+      textarea.focus();
+    };
+
+    document.addEventListener("keydown", handleKeyDown, true);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown, true);
+    };
+  }, [isChatActive]);
 
   // Consume approvals from Context and filter by current session.
   // Uses a serialized key to avoid creating a new Map (and triggering
@@ -888,7 +1007,7 @@ export default function ChatPage() {
   }, []);
 
   useMessageHistoryNavigation(chatRef, isChatActive, isComposingRef);
-  useChatInputDraft(isChatActive);
+  useChatInputDraft(isChatActive, selectedAgent);
   useChatPasteFromEditor();
 
   const onFileCardClick = useCallback(
@@ -939,12 +1058,20 @@ export default function ChatPage() {
   // Register session API event callbacks for URL synchronization
 
   useEffect(() => {
+    const getCurrentRouteMode = (): SessionRouteMode =>
+      codingModeRef.current ? "coding" : "chat";
+
+    const buildCurrentSessionPath = (sessionId: string) =>
+      buildSessionPath(getCurrentRouteMode(), sessionId);
+
+    const buildCurrentBasePath = () => buildBasePath(getCurrentRouteMode());
+
     sessionApi.onSessionIdResolved = (realId) => {
       if (!isChatActiveRef.current) return;
       // Update URL when realId is resolved, regardless of current chatId
       // (chatId may be undefined if URL was cleared in onSessionCreated)
       lastSessionIdRef.current = realId;
-      navigateRef.current(`/chat/${realId}`, { replace: true });
+      navigateRef.current(buildCurrentSessionPath(realId), { replace: true });
     };
 
     sessionApi.onSessionRemoved = (removedId) => {
@@ -956,7 +1083,7 @@ export default function ChatPage() {
       );
       if (chatIdRef.current === removedId || currentRealId === removedId) {
         lastSessionIdRef.current = null;
-        navigateRef.current("/chat", { replace: true });
+        navigateRef.current(buildCurrentBasePath(), { replace: true });
       }
     };
 
@@ -1001,7 +1128,9 @@ export default function ChatPage() {
       if (targetId !== lastSessionIdRef.current) {
         lastSessionIdRef.current = targetId;
         sessionApi.lastNavigatedChatId = targetId;
-        navigateRef.current(`/chat/${targetId}`, { replace: true });
+        navigateRef.current(buildCurrentSessionPath(targetId), {
+          replace: true,
+        });
       }
     };
 
@@ -1009,7 +1138,7 @@ export default function ChatPage() {
       if (!isChatActiveRef.current) return;
       // Clear URL when creating new session, wait for realId resolution to update
       lastSessionIdRef.current = null;
-      navigateRef.current("/chat", { replace: true });
+      navigateRef.current(buildCurrentBasePath(), { replace: true });
     };
 
     return () => {
@@ -1038,7 +1167,9 @@ export default function ChatPage() {
       // Restore last chat ID for the agent we're switching to
       const restored = getLastChatId(selectedAgent);
       if (restored) {
-        navigateRef.current(`/chat/${restored}`, { replace: true });
+        navigateRef.current(buildSessionPath("chat", restored), {
+          replace: true,
+        });
         sessionApi.preferredChatId = restored;
       } else {
         navigateRef.current("/chat", { replace: true });
@@ -1161,16 +1292,15 @@ export default function ChatPage() {
           message.warning(t("chat.attachments.imageOnlyWarning"));
         }
         const sizeMb = file.size / 1024 / 1024;
-        const isWithinLimit = sizeMb < CHAT_ATTACHMENT_MAX_MB;
-
-        if (!isWithinLimit) {
+        const uploadLimit = useUploadLimitStore.getState().uploadMaxSizeMb;
+        if (uploadLimit !== null && sizeMb > uploadLimit) {
           message.error(
             t("chat.attachments.fileSizeExceeded", {
-              limit: CHAT_ATTACHMENT_MAX_MB,
+              limit: uploadLimit,
               size: sizeMb.toFixed(2),
             }),
           );
-          onError?.(new Error(`File size exceeds ${CHAT_ATTACHMENT_MAX_MB}MB`));
+          onError?.(new Error(`File size exceeds ${uploadLimit}MB`));
           return;
         }
 
@@ -1215,22 +1345,216 @@ export default function ChatPage() {
         description: t("chat.commands.plan.description"),
       });
     }
-
+    const reservedCommands = new Set(
+      commandSuggestions.map((item) => item.value.trim()),
+    );
+    const skillSuggestions: CommandSuggestion[] = consoleSkills
+      .filter((skill) => !reservedCommands.has(skill.name))
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map((skill) => ({
+        command: `/${skill.name}`,
+        value: skill.name,
+        description: "",
+      }));
     const handleBeforeSubmit = async () => {
       if (isComposingRef.current) return false;
-      localStorage.removeItem(DRAFT_STORAGE_KEY);
+      localStorage.removeItem(getDraftStorageKey(selectedAgent));
       draftSuppressed = true;
       return true;
     };
+
+    // ── Resolve plugin extension snapshots ────────────────────────────────
+    const locale = i18n.language;
+    const extGreeting = resolveLocalized(
+      extScalar[ChatScalar.welcomeGreeting]?.value,
+      locale,
+    );
+    const extDescription = resolveLocalized(
+      extScalar[ChatScalar.welcomeDescription]?.value,
+      locale,
+    );
+    const extAvatar = resolveLocalized(
+      extScalar[ChatScalar.welcomeAvatar]?.value,
+      locale,
+    );
+    const extNick = resolveLocalized(
+      extScalar[ChatScalar.welcomeNick]?.value,
+      locale,
+    );
+    const extPrompts = resolveLocalized(
+      extScalar[ChatScalar.welcomePrompts]?.value,
+      locale,
+    );
+    const extLeftTitle = resolveLocalized(
+      extScalar[ChatScalar.headerLeftTitle]?.value,
+      locale,
+    );
+    const extLeftLogo = resolveLocalized(
+      extScalar[ChatScalar.headerLeftLogo]?.value,
+      locale,
+    );
+    const extColorPrimary = extScalar[ChatScalar.themeColorPrimary]?.value;
+    const extPlaceholder = resolveLocalized(
+      extScalar[ChatScalar.senderPlaceholder]?.value,
+      locale,
+    );
+    const extDisclaimer = resolveLocalized(
+      extScalar[ChatScalar.senderDisclaimer]?.value,
+      locale,
+    );
+
+    // Whole-section render overrides (plugin can fully replace welcome / leftHeader)
+    const extWelcomeRenderEntry = extScalar[ChatScalar.welcomeRender];
+    const extWelcomeRender = extWelcomeRenderEntry?.value;
+    const extLeftHeaderRenderEntry =
+      extScalar[ChatScalar.headerLeftHeaderRender];
+    const extLeftHeaderRender = extLeftHeaderRenderEntry?.value;
+
+    const wrappedWelcomeRender = extWelcomeRender
+      ? (props: WelcomeRenderProps) => (
+          <PluginSlotBoundary
+            slot={ChatScalar.welcomeRender}
+            pluginId={extWelcomeRenderEntry!.pluginId}
+          >
+            {extWelcomeRender(props)}
+          </PluginSlotBoundary>
+        )
+      : undefined;
+
+    const sortByOrder = <T extends { item: { order?: number } }>(arr: T[]) =>
+      arr.slice().sort((a, b) => (a.item.order ?? 100) - (b.item.order ?? 100));
+
+    const pluginRightHeader = sortByOrder(extLists[ChatList.rightHeader]).map(
+      (e) => (
+        <PluginSlotBoundary
+          key={e.item.id}
+          slot={ChatList.rightHeader}
+          pluginId={e.pluginId}
+        >
+          {e.item.node}
+        </PluginSlotBoundary>
+      ),
+    );
+    const pluginSenderPrefix = sortByOrder(extLists[ChatList.senderPrefix]).map(
+      (e) => (
+        <PluginSlotBoundary
+          key={e.item.id}
+          slot={ChatList.senderPrefix}
+          pluginId={e.pluginId}
+        >
+          {e.item.node}
+        </PluginSlotBoundary>
+      ),
+    );
+    const pluginSuggestions = extLists[ChatList.senderSuggestions].flatMap(
+      (e) => {
+        const resolved = resolveLocalized(e.item.items, locale) ?? [];
+        return resolved.map((s) => ({ label: s.label, value: s.value }));
+      },
+    );
+
+    const wrapActionSpec = (
+      pluginId: string,
+      slot: string,
+      spec: { id: string; icon?: any; render?: any; onClick?: any },
+    ) => ({
+      icon: spec.icon,
+      render: spec.render
+        ? (ctx: { data: unknown }) => (
+            <PluginSlotBoundary slot={slot} pluginId={pluginId}>
+              {spec.render!(ctx)}
+            </PluginSlotBoundary>
+          )
+        : undefined,
+      onClick: spec.onClick
+        ? (ctx: { data: unknown }) => {
+            try {
+              spec.onClick!(ctx);
+            } catch (err) {
+              console.error(
+                `[plugin:${pluginId}] action ${spec.id} onClick threw:`,
+                err,
+              );
+            }
+          }
+        : undefined,
+    });
+
+    const pluginActions = extLists[ChatList.actions].map((e) =>
+      wrapActionSpec(e.pluginId, ChatList.actions, e.item.item),
+    );
+    const pluginRequestActions = extLists[ChatList.requestActions].map((e) =>
+      wrapActionSpec(e.pluginId, ChatList.requestActions, e.item.item),
+    );
+
+    const wrapToolFC = (
+      pluginId: string,
+      toolName: string,
+      FC: React.FC<any>,
+    ) => {
+      const Wrapped: React.FC<any> = (props) => (
+        <PluginSlotBoundary
+          slot={`customToolRender:${toolName}`}
+          pluginId={pluginId}
+        >
+          <FC {...props} />
+        </PluginSlotBoundary>
+      );
+      return Wrapped;
+    };
+    const pluginToolRenderers: Record<string, React.FC<any>> = {};
+    for (const e of extLists[ChatList.customToolRender]) {
+      pluginToolRenderers[e.item.toolName] = wrapToolFC(
+        e.pluginId,
+        e.item.toolName,
+        e.item.render,
+      );
+    }
+    const mergedToolRenderers: Record<string, React.FC<any>> = {
+      ...toolRenderConfig,
+      ...pluginToolRenderers,
+    };
+
+    const pluginCards: Record<string, React.FC<any>> = {};
+    for (const e of extLists[ChatList.cards]) {
+      pluginCards[e.item.cardName] = wrapToolFC(
+        e.pluginId,
+        e.item.cardName,
+        e.item.render,
+      );
+    }
+
+    const baseSuggestions = [...commandSuggestions, ...skillSuggestions].map(
+      (item) => ({
+        label: renderSuggestionLabel(item.command, item.description),
+        value: item.value,
+      }),
+    );
+
+    // leftHeader: whole-section render wins, otherwise partial merge {logo, title}.
+    const mergedLeftHeader: any =
+      extLeftHeaderRender !== undefined ? (
+        <PluginSlotBoundary
+          slot={ChatScalar.headerLeftHeaderRender}
+          pluginId={extLeftHeaderRenderEntry!.pluginId}
+        >
+          {extLeftHeaderRender}
+        </PluginSlotBoundary>
+      ) : (
+        {
+          ...defaultConfig.theme.leftHeader,
+          ...(extLeftTitle !== undefined ? { title: extLeftTitle } : {}),
+          ...(extLeftLogo !== undefined ? { logo: extLeftLogo } : {}),
+        }
+      );
 
     return {
       ...i18nConfig,
       theme: {
         ...defaultConfig.theme,
         darkMode: isDark,
-        leftHeader: {
-          ...defaultConfig.theme.leftHeader,
-        },
+        ...(extColorPrimary ? { colorPrimary: extColorPrimary } : {}),
+        leftHeader: mergedLeftHeader,
         rightHeader: (
           <>
             <ChatSessionInitializer />
@@ -1239,34 +1563,55 @@ export default function ChatPage() {
             <span style={{ flex: 1 }} />
             <ModelSelector />
             <ChatActionGroup planEnabled={planEnabled} />
+            {pluginRightHeader}
           </>
         ),
       },
       welcome: {
         ...i18nConfig.welcome,
-        nick: "QwenPaw",
-        avatar: "/qwenpaw.png",
+        nick: extNick ?? "QwenPaw",
+        avatar: extAvatar ?? "/qwenpaw.png",
+        ...(extGreeting !== undefined ? { greeting: extGreeting } : {}),
+        ...(extDescription !== undefined
+          ? { description: extDescription }
+          : {}),
+        ...(extPrompts !== undefined ? { prompts: extPrompts } : {}),
+        // SDK uses `render` if present and ignores the other fields.
+        ...(wrappedWelcomeRender ? { render: wrappedWelcomeRender } : {}),
       },
       sender: {
         ...(i18nConfig as any)?.sender,
         beforeSubmit: handleBeforeSubmit,
         allowSpeech: whisperChecked && !whisperEnabled,
-        prefix: whisperEnabled ? (
-          <WhisperSpeechButton
-            ref={whisperSpeechRef}
-            onTranscription={handleWhisperTranscription}
-          />
-        ) : undefined,
+        prefix:
+          whisperEnabled || pluginSenderPrefix.length > 0 ? (
+            <>
+              {whisperEnabled ? (
+                <WhisperSpeechButton
+                  ref={whisperSpeechRef}
+                  onTranscription={handleWhisperTranscription}
+                />
+              ) : null}
+              {pluginSenderPrefix}
+            </>
+          ) : undefined,
         attachments: {
           multiple: true,
           trigger: function (props: any) {
+            const uploadLimit = useUploadLimitStore.getState().uploadMaxSizeMb;
             const tooltipKey = multimodalCaps.supportsMultimodal
               ? multimodalCaps.supportsImage && !multimodalCaps.supportsVideo
                 ? "chat.attachments.tooltipImageOnly"
                 : "chat.attachments.tooltip"
               : "chat.attachments.tooltipNoMultimodal";
+            const tooltipTitle =
+              uploadLimit !== null
+                ? `${t(tooltipKey)}, ${t("chat.attachments.fileSizeLimit", {
+                    limit: uploadLimit,
+                  })}`
+                : t(tooltipKey);
             return (
-              <Tooltip title={t(tooltipKey, { limit: CHAT_ATTACHMENT_MAX_MB })}>
+              <Tooltip title={tooltipTitle}>
                 <IconButton
                   disabled={props?.disabled}
                   icon={<SparkAttachmentLine />}
@@ -1277,11 +1622,9 @@ export default function ChatPage() {
           },
           customRequest: handleFileUpload,
         },
-        placeholder: t("chat.inputPlaceholder"),
-        suggestions: commandSuggestions.map((item) => ({
-          label: renderSuggestionLabel(item.command, item.description),
-          value: item.value,
-        })),
+        placeholder: extPlaceholder ?? t("chat.inputPlaceholder"),
+        ...(extDisclaimer !== undefined ? { disclaimer: extDisclaimer } : {}),
+        suggestions: [...baseSuggestions, ...pluginSuggestions],
       },
       session: {
         multiple: true,
@@ -1293,6 +1636,14 @@ export default function ChatPage() {
         fetch: customFetch,
         responseParser: (chunk: string) => {
           const payload = JSON.parse(chunk) as Record<string, unknown>;
+
+          if (payload.type === "rate_limited") {
+            const alts =
+              (payload.alternatives as typeof rateLimitAlternatives) || [];
+            setRateLimitAlternatives(alts);
+            message.warning(t("chat.rateLimitHit"));
+            return null;
+          }
 
           if (payloadRequestsHistoryClear(payload)) {
             pendingClearHistoryRef.current = true;
@@ -1335,8 +1686,15 @@ export default function ChatPage() {
           });
         },
       },
-      customToolRenderConfig:
-        Object.keys(toolRenderConfig).length > 0 ? toolRenderConfig : undefined,
+      customToolRenderConfig: withGenericFallback(mergedToolRenderers),
+      cards: {
+        // Host wrappers that delegate to vendor defaults when no plugin
+        // request/response render/prepend/append is registered — and
+        // compose plugin slots otherwise.
+        AgentScopeRuntimeRequestCard: HostRequestCard,
+        AgentScopeRuntimeResponseCard: HostResponseCard,
+        ...pluginCards,
+      },
       actions: {
         list: [
           {
@@ -1362,6 +1720,7 @@ export default function ChatPage() {
               );
             },
           },
+          ...pluginActions,
         ],
         replace: true,
       },
@@ -1390,6 +1749,7 @@ export default function ChatPage() {
               }
             },
           },
+          ...pluginRequestActions,
         ],
       },
     } as unknown as IAgentScopeRuntimeWebUIOptions;
@@ -1398,11 +1758,16 @@ export default function ChatPage() {
     copyResponse,
     handleFileUpload,
     t,
+    i18n.language,
     isDark,
     multimodalCaps,
     toolRenderConfig,
+    extScalar,
+    extLists,
     scheduleHistoryClear,
     planEnabled,
+    consoleSkills,
+    selectedAgent,
     onFileCardClick,
     whisperChecked,
     whisperEnabled,
@@ -1425,6 +1790,50 @@ export default function ChatPage() {
           options={options}
         />
       </div>
+
+      {/* Rate-limit guidance banner */}
+      {rateLimitAlternatives.length > 0 && (
+        <div className={styles.rateLimitBanner}>
+          <span className={styles.rateLimitText}>
+            {t("chat.rateLimitMessage")}
+          </span>
+          <div className={styles.rateLimitActions}>
+            {rateLimitAlternatives.slice(0, 3).map((alt) => (
+              <Button
+                key={`${alt.provider_id}/${alt.model_id}`}
+                size="small"
+                type="default"
+                onClick={async () => {
+                  try {
+                    await providerApi.setActiveLlm({
+                      provider_id: alt.provider_id,
+                      model: alt.model_id,
+                      scope: "agent",
+                      agent_id: selectedAgent,
+                    });
+                    window.dispatchEvent(new CustomEvent("model-switched"));
+                    message.success(
+                      t("chat.rateLimitSwitched", { model: alt.model_name }),
+                    );
+                    setRateLimitAlternatives([]);
+                  } catch {
+                    message.error(t("modelSelector.switchFailed"));
+                  }
+                }}
+              >
+                {alt.model_name}
+              </Button>
+            ))}
+            <Button
+              size="small"
+              type="link"
+              onClick={() => setRateLimitAlternatives([])}
+            >
+              {t("common.close")}
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Render approval cards as overlays */}
       {Array.from(approvalRequests.values()).map((request) => (

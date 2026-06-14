@@ -1,7 +1,5 @@
 import { invoke, isTauri } from "@tauri-apps/api/core";
 
-declare const VITE_API_BASE_URL: string;
-
 let initRuntimeApiBaseUrlPromise: Promise<string> | null = null;
 
 export function isTauriRuntime(): boolean {
@@ -41,7 +39,8 @@ async function resolveRuntimeApiBaseUrl(): Promise<string> {
 }
 
 function getApiBaseUrl(): string {
-  return typeof VITE_API_BASE_URL !== "undefined" ? VITE_API_BASE_URL : "";
+  const v = import.meta.env.VITE_API_BASE_URL as string | undefined;
+  return typeof v === "string" ? v : "";
 }
 
 function isBackendHostedConsole(): boolean {

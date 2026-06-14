@@ -1,7 +1,7 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Form, Input } from "antd";
+import { Button, Form, Input } from "antd";
 import { useAppMessage } from "../../hooks/useAppMessage";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { authApi } from "../../api/modules/auth";
@@ -59,26 +59,17 @@ export default function LoginPage() {
         }
       }
     } catch (err) {
-      const rawMessage = err instanceof Error ? err.message : "";
       message.error(
-        rawMessage ||
-          (isRegister ? t("login.registerFailed") : t("login.failed")),
+        isRegister
+          ? err instanceof Error
+            ? err.message
+            : t("login.registerFailed")
+          : t("login.failed"),
       );
     } finally {
       setLoading(false);
     }
   };
-
-  const bg = isDark ? "#111110" : "#F7F6F2";
-  const cardBg = isDark ? "#1A1917" : "#FAFAF8";
-  const border = isDark ? "rgba(255,255,255,0.072)" : "rgba(0,0,0,0.072)";
-  const text = isDark ? "#F2F1ED" : "#1A1917";
-  const textMuted = isDark ? "rgba(242,241,237,0.50)" : "rgba(26,25,23,0.45)";
-  const accent = isDark ? "#FF8C2A" : "#E8650A";
-  const inputBg = isDark ? "#222120" : "#fff";
-  const shadow = isDark
-    ? "0 8px 32px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.35)"
-    : "0 8px 32px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04)";
 
   return (
     <div
@@ -87,66 +78,37 @@ export default function LoginPage() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: bg,
-        fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif",
+        background: isDark
+          ? "linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)"
+          : "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
       }}
     >
-      {/* Subtle background pattern */}
       <div
         style={{
-          position: "fixed",
-          inset: 0,
-          backgroundImage: isDark
-            ? "radial-gradient(circle at 30% 20%, rgba(255,140,42,0.06) 0%, transparent 60%), radial-gradient(circle at 70% 80%, rgba(255,140,42,0.04) 0%, transparent 50%)"
-            : "radial-gradient(circle at 30% 20%, rgba(232,101,10,0.06) 0%, transparent 60%), radial-gradient(circle at 70% 80%, rgba(232,101,10,0.04) 0%, transparent 50%)",
-          pointerEvents: "none",
-        }}
-      />
-
-      <div
-        style={{
-          width: 380,
-          padding: "36px 32px 32px",
-          borderRadius: 16,
-          background: cardBg,
-          border: `1px solid ${border}`,
-          boxShadow: shadow,
-          position: "relative",
+          width: 400,
+          padding: 32,
+          borderRadius: 12,
+          background: isDark ? "#1f1f1f" : "#fff",
+          boxShadow: isDark
+            ? "0 4px 24px rgba(0,0,0,0.4)"
+            : "0 4px 24px rgba(0,0,0,0.1)",
         }}
       >
-        {/* Logo area */}
         <div style={{ textAlign: "center", marginBottom: 32 }}>
           <img
-            src="/logo.png"
-            alt="Nexora"
-            style={{
-              height: 64,
-              width: "auto",
-              marginBottom: 20,
-              display: "block",
-              margin: "0 auto 20px",
-            }}
+            src={isDark ? "/logo-dark.svg" : "/logo-light.svg"}
+            alt="QwenPaw"
+            style={{ height: 48, marginBottom: 12 }}
           />
-          <h1
-            style={{
-              margin: "0 0 6px",
-              fontSize: 20,
-              fontWeight: 600,
-              color: text,
-              letterSpacing: "-0.4px",
-              fontFamily: "'DM Sans', system-ui, sans-serif",
-            }}
-          >
+          <h2 style={{ margin: 0, fontWeight: 600, fontSize: 20 }}>
             {isRegister ? t("login.registerTitle") : t("login.title")}
-          </h1>
+          </h2>
           {!hasUsers && (
             <p
               style={{
                 margin: "8px 0 0",
-                color: textMuted,
+                color: isDark ? "rgba(255,255,255,0.45)" : "#666",
                 fontSize: 13,
-                lineHeight: 1.5,
-                fontFamily: "'DM Sans', system-ui, sans-serif",
               }}
             >
               {t("login.firstUserHint")}
@@ -163,86 +125,46 @@ export default function LoginPage() {
           <Form.Item
             name="username"
             rules={[{ required: true, message: t("login.usernameRequired") }]}
-            style={{ marginBottom: 12 }}
           >
             <Input
               prefix={
-                <UserOutlined style={{ color: textMuted, fontSize: 14 }} />
+                <UserOutlined
+                  style={{
+                    color: isDark ? "rgba(255,255,255,0.45)" : undefined,
+                  }}
+                />
               }
               placeholder={t("login.usernamePlaceholder")}
               autoFocus
-              style={{
-                background: inputBg,
-                borderColor: border,
-                color: text,
-                borderRadius: 8,
-                fontFamily: "'DM Sans', system-ui, sans-serif",
-                fontSize: 14,
-                height: 42,
-              }}
             />
           </Form.Item>
 
           <Form.Item
             name="password"
             rules={[{ required: true, message: t("login.passwordRequired") }]}
-            style={{ marginBottom: 20 }}
           >
             <Input.Password
               prefix={
-                <LockOutlined style={{ color: textMuted, fontSize: 14 }} />
+                <LockOutlined
+                  style={{
+                    color: isDark ? "rgba(255,255,255,0.45)" : undefined,
+                  }}
+                />
               }
               placeholder={t("login.passwordPlaceholder")}
-              style={{
-                background: inputBg,
-                borderColor: border,
-                color: text,
-                borderRadius: 8,
-                fontFamily: "'DM Sans', system-ui, sans-serif",
-                fontSize: 14,
-                height: 42,
-              }}
             />
           </Form.Item>
 
-          <Form.Item style={{ marginBottom: 0 }}>
-            <button
-              type="submit"
-              disabled={loading}
-              style={{
-                width: "100%",
-                height: 42,
-                borderRadius: 9,
-                background: loading
-                  ? isDark ? "rgba(255,140,42,0.6)" : "rgba(232,101,10,0.6)"
-                  : accent,
-                border: "none",
-                color: "#fff",
-                fontSize: 14,
-                fontWeight: 550,
-                fontFamily: "'DM Sans', system-ui, sans-serif",
-                cursor: loading ? "not-allowed" : "pointer",
-                letterSpacing: "0.01em",
-                transition: "all 0.15s cubic-bezier(0.4,0,0.2,1)",
-              }}
-              onMouseEnter={(e) => {
-                if (!loading) {
-                  (e.currentTarget as HTMLButtonElement).style.background =
-                    isDark ? "#FF9F47" : "#CF5A09";
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!loading) {
-                  (e.currentTarget as HTMLButtonElement).style.background = accent;
-                }
-              }}
+          <Form.Item style={{ marginBottom: 0, marginTop: 8 }}>
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={loading}
+              block
+              style={{ height: 44, borderRadius: 8, fontWeight: 500 }}
             >
-              {loading
-                ? "..."
-                : isRegister
-                ? t("login.register")
-                : t("login.submit")}
-            </button>
+              {isRegister ? t("login.register") : t("login.submit")}
+            </Button>
           </Form.Item>
         </Form>
       </div>
