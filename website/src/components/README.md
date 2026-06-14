@@ -28,9 +28,9 @@ Este é um sistema modular de chat e plugins para a Nexora AI Platform, desenvol
 ### Integração Básica
 
 ```tsx
-import { ChatProvider, CopilotChat } from '@/components/Chat';
-import { PluginProvider, PluginGrid } from '@/components/Plugins';
-import { examplePlugins } from '@/components/Plugins/examples';
+import { ChatProvider, CopilotChat } from "@/components/Chat";
+import { PluginProvider, PluginGrid } from "@/components/Plugins";
+import { examplePlugins } from "@/components/Plugins/examples";
 
 export function MyApp() {
   return (
@@ -49,14 +49,18 @@ export function MyApp() {
 ### Criar um Plugin Customizado
 
 ```tsx
-import React from 'react';
-import { PluginProps } from '@/components/Chat/types';
+import React from "react";
+import { PluginProps } from "@/components/Chat/types";
 
-export const MyPlugin: React.FC<PluginProps> = ({ data, onClose, onAction }) => {
+export const MyPlugin: React.FC<PluginProps> = ({
+  data,
+  onClose,
+  onAction,
+}) => {
   return (
     <div>
       <p>Meu Plugin</p>
-      <button onClick={() => onAction?.('myAction', { value: 123 })}>
+      <button onClick={() => onAction?.("myAction", { value: 123 })}>
         Execute Ação
       </button>
       <button onClick={onClose}>Fechar</button>
@@ -66,10 +70,10 @@ export const MyPlugin: React.FC<PluginProps> = ({ data, onClose, onAction }) => 
 
 // Registrar o plugin
 const myPluginDef: PluginDefinition = {
-  id: 'my-plugin',
-  name: 'My Plugin',
-  version: '1.0.0',
-  description: 'Descrição do meu plugin',
+  id: "my-plugin",
+  name: "My Plugin",
+  version: "1.0.0",
+  description: "Descrição do meu plugin",
   component: MyPlugin,
 };
 
@@ -83,6 +87,7 @@ registerPlugin(myPluginDef);
 ### Temas
 
 O sistema suporta temas claro e escuro através de classes CSS:
+
 - `dark:` - Aplica estilos para modo escuro
 
 ### Estilos Globais
@@ -114,7 +119,7 @@ E retorna:
 ```typescript
 interface ChatMessage {
   id: string;
-  role: 'user' | 'assistant' | 'system';
+  role: "user" | "assistant" | "system";
   content: string;
   timestamp: Date;
   metadata?: Record<string, unknown>;

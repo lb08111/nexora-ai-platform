@@ -10,10 +10,7 @@ export const ONE_HOUR_MS = 60 * 60 * 1000;
 
 // ── Navigation ────────────────────────────────────────────────────────────
 
-export const DEFAULT_OPEN_KEYS = [
-  "chat-group",
-  "agent-group",
-];
+export const DEFAULT_OPEN_KEYS = ["chat-group", "agent-group"];
 
 export const KEY_TO_PATH: Record<string, string> = {
   chat: "/chat",

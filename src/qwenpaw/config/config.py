@@ -455,6 +455,26 @@ class WeChatConfig(BaseChannelConfig):
     message_merge_delay_ms: Optional[int] = 0
 
 
+class WhatsAppConfig(BaseChannelConfig):
+    """WhatsApp (neonize) personal account channel config.
+
+    Mirrors the keys read by ``WhatsAppChannel.from_config`` so that
+    ``config.json`` and ``config.yaml`` files can express WhatsApp settings
+    without falling back to the ``extra="allow"`` escape hatch.
+    """
+
+    auth_dir: str = ""
+    send_read_receipts: bool = True
+    text_chunk_limit: Optional[int] = None
+    self_chat_mode: bool = False
+    ack_reaction_thinking: str = "🤔"
+    ack_reaction_done: str = "👀"
+    ack_reaction_error: str = "⚠️"
+    groups: List[str] = Field(default_factory=list)
+    group_allow_from: List[str] = Field(default_factory=list)
+    reply_to_trigger: bool = True
+
+
 class ChannelConfig(BaseModel):
     """Built-in channel configs; extra keys allowed for plugin channels."""
 
@@ -476,6 +496,7 @@ class ChannelConfig(BaseModel):
     xiaoyi: XiaoYiConfig = XiaoYiConfig()
     yuanbao: YuanbaoConfig = YuanbaoConfig()
     wechat: WeChatConfig = WeChatConfig()
+    whatsapp: WhatsAppConfig = WhatsAppConfig()
     onebot: OneBotConfig = OneBotConfig()
 
     @model_validator(mode="before")

@@ -1,9 +1,11 @@
-import React from 'react';
-import { PluginProps } from '../../Chat/types';
+import React from "react";
+import { PluginProps } from "../../Chat/types";
 
 export const WeatherPlugin: React.FC<PluginProps> = ({ onClose }) => {
-  const [city, setCity] = React.useState('');
-  const [weather, setWeather] = React.useState<Record<string, unknown> | null>(null);
+  const [city, setCity] = React.useState("");
+  const [weather, setWeather] = React.useState<Record<string, unknown> | null>(
+    null,
+  );
 
   const handleSearch = async () => {
     if (!city.trim()) return;
@@ -12,7 +14,7 @@ export const WeatherPlugin: React.FC<PluginProps> = ({ onClose }) => {
       const data = await response.json();
       setWeather(data);
     } catch (error) {
-      console.error('Weather fetch error:', error);
+      console.error("Weather fetch error:", error);
     }
   };
 
