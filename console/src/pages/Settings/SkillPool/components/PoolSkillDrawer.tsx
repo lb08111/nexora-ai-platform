@@ -60,7 +60,7 @@ export function PoolSkillDrawer({
       }
       open={mode === "create" || mode === "edit"}
       onClose={onClose}
-      destroyOnClose
+      destroyOnHidden
       footer={
         <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
           <Button onClick={onClose}>{t("common.cancel")}</Button>
@@ -114,7 +114,9 @@ export function PoolSkillDrawer({
               {t("skillPool.installedFrom")}
             </div>
             <div className={styles.infoBlock}>
-              {deriveInstalledFromLabel(activeSkill.installed_from)}
+              {activeSkill.external && activeSkill.external_path
+                ? activeSkill.external_path
+                : deriveInstalledFromLabel(activeSkill.installed_from)}
             </div>
           </div>
         </div>

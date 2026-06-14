@@ -31,8 +31,13 @@ _current_root_session_id: ContextVar[Optional[str]] = ContextVar(
     default=None,
 )
 
-_current_actor: ContextVar[Optional[str]] = ContextVar(
-    "current_actor",
+_current_user_id: ContextVar[Optional[str]] = ContextVar(
+    "current_user_id",
+    default=None,
+)
+
+_current_channel: ContextVar[Optional[str]] = ContextVar(
+    "current_channel",
     default=None,
 )
 
@@ -205,9 +210,21 @@ def get_current_root_session_id() -> Optional[str]:
     return _current_root_session_id.get()
 
 
-def set_current_actor(actor: str) -> None:
-    _current_actor.set(actor)
+def set_current_user_id(user_id: Optional[str]) -> None:
+    """Set current user ID in context."""
+    _current_user_id.set(user_id)
 
 
-def get_current_actor() -> Optional[str]:
-    return _current_actor.get()
+def get_current_user_id() -> Optional[str]:
+    """Get current user ID from context."""
+    return _current_user_id.get()
+
+
+def set_current_channel(channel: Optional[str]) -> None:
+    """Set current channel in context."""
+    _current_channel.set(channel)
+
+
+def get_current_channel() -> Optional[str]:
+    """Get current channel from context."""
+    return _current_channel.get()

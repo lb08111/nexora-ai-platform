@@ -53,10 +53,6 @@ export function useOfficialPlugins({ onInstalled }: UseOfficialPluginsOptions) {
         const result = await installPlugin(entry.install_url, {
           force: entry.installed || entry.upgrade_available,
         });
-        if (result.status === "pending_approval") {
-          message.info(result.message);
-          return;
-        }
         message.success(`${t("pluginManager.installSuccess")}: ${result.name}`);
         onInstalled();
         setTimeout(() => window.location.reload(), 800);

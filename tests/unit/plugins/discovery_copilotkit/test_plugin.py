@@ -114,10 +114,10 @@ def test_startup_hook_in_scripted_mode_does_not_raise(monkeypatch):
     # Should be a no-op (scripted is the default factory) and must not
     # raise — guards against accidentally requiring the live agent at
     # plugin install time on machines without an LLM key.
-    plugin._startup()
+    plugin._startup()  # pylint: disable=protected-access
 
 
 def test_shutdown_hook_clears_sessions():
     module = _load_plugin_module()
     plugin = module.plugin
-    plugin._shutdown()  # must be idempotent / safe with no sessions
+    plugin._shutdown()  # pylint: disable=protected-access  # must be idempotent / safe with no sessions

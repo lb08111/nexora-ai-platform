@@ -8,6 +8,7 @@ with integrated tools, skills, and memory management.
 from __future__ import annotations
 
 import asyncio
+import inspect
 import logging
 import os
 from pathlib import Path
@@ -43,6 +44,7 @@ from .tools import (
     delegate_external_agent,
     chat_with_agent,
     check_agent_task,
+    spawn_subagent,
     submit_to_agent,
     desktop_screenshot,
     edit_file,
@@ -54,6 +56,7 @@ from .tools import (
     list_agents,
     materialize_skill,
     read_file,
+    run_tool_batch,
     send_file_to_user,
     set_user_timezone,
     view_image,
@@ -248,17 +251,7 @@ class QwenPawAgent(CodingModeMixin, ToolGuardMixin, ReActAgent):
         Returns:
             Configured toolkit instance
         """
-        from qwenpaw_ext.nexora.governance import (
-            agent_can_use_resource,
-            filter_resource_ids_for_agent,
-        )
-
-        agent_id = self._agent_config.id
-        effective_skills = filter_resource_ids_for_agent(
-            agent_id,
-            "skill",
-            effective_skills or [],
-        )
+        effective_skills = effective_skills or []
         toolkit = Toolkit()
 
         # Check which tools are enabled from agent config
@@ -311,6 +304,8 @@ class QwenPawAgent(CodingModeMixin, ToolGuardMixin, ReActAgent):
             "chat_with_agent": chat_with_agent,
             "submit_to_agent": submit_to_agent,
             "check_agent_task": check_agent_task,
+            "spawn_subagent": spawn_subagent,
+            "run_tool_batch": run_tool_batch,
             # Register only when the `make-skill` skill is enabled.
             **(
                 {"materialize_skill": materialize_skill}
@@ -338,19 +333,7 @@ class QwenPawAgent(CodingModeMixin, ToolGuardMixin, ReActAgent):
                     )
 
         # Register tools with appropriate defaults
-        registered_tool_names: set[str] = set()
         for tool_name, tool_func in tool_functions.items():
-            if not agent_can_use_resource(
-                agent_id,
-                "builtin_tool",
-                tool_name,
-            ):
-                logger.debug(
-                    "Skipped unauthorized builtin tool for agent %s: %s",
-                    agent_id,
-                    tool_name,
-                )
-                continue
             # For plugin tools: skip if not in config (security)
             # For hardcoded tools: default to enabled (backward compatibility)
             if tool_name in plugin_tools:
@@ -381,7 +364,6 @@ class QwenPawAgent(CodingModeMixin, ToolGuardMixin, ReActAgent):
                 namesake_strategy=namesake_strategy,
                 async_execution=async_exec,
             )
-            registered_tool_names.add(tool_name)
             logger.debug(
                 "Registered tool: %s (async_execution=%s)",
                 tool_name,
@@ -392,7 +374,8 @@ class QwenPawAgent(CodingModeMixin, ToolGuardMixin, ReActAgent):
         # tool has async_execution set
         has_async_tools = any(
             async_execution_tools.get(name, False)
-            for name in registered_tool_names
+            for name in tool_functions
+            if enabled_tools.get(name, True)
         )
         if has_async_tools:
             try:
@@ -442,15 +425,8 @@ class QwenPawAgent(CodingModeMixin, ToolGuardMixin, ReActAgent):
             effective_skills: Resolved skill names for the current
                 workspace + channel.
         """
-        from qwenpaw_ext.nexora.governance import filter_resource_ids_for_agent
-
         workspace_dir = self._workspace_dir or WORKING_DIR
         working_skills_dir = get_workspace_skills_dir(Path(workspace_dir))
-        effective_skills = filter_resource_ids_for_agent(
-            self._agent_config.id,
-            "skill",
-            effective_skills,
-        )
 
         for skill_name in effective_skills:
             skill_dir = working_skills_dir / skill_name
@@ -495,15 +471,17 @@ class QwenPawAgent(CodingModeMixin, ToolGuardMixin, ReActAgent):
         )
         logger.debug("System prompt:\n%s...", sys_prompt[:100])
 
-        # Inject multimodal capability awareness
-        multimodal_hint = build_multimodal_hint()
-        if multimodal_hint:
-            sys_prompt = sys_prompt + "\n\n" + multimodal_hint
+        from .prompt_builder import PromptBuilder
+        from ..plugins.registry import PluginRegistry
 
-        if self._env_context is not None:
-            sys_prompt = sys_prompt + "\n\n" + self._env_context
-
-        return sys_prompt
+        builder = PromptBuilder(PluginRegistry())
+        return builder.build(
+            agent=self,
+            agent_id=agent_id,
+            workspace=sys_prompt,
+            multimodal=build_multimodal_hint() or "",
+            env_context=self._env_context or "",
+        )
 
     def _register_hooks(self) -> None:
         """Register pre-reasoning and pre-acting hooks."""
@@ -757,10 +735,15 @@ class QwenPawAgent(CodingModeMixin, ToolGuardMixin, ReActAgent):
 
     # ------------------------------------------------------------------
     # Media-block fallback: strip unsupported media blocks (image, audio,
-    # video) from memory and retry when the model rejects them.
+    # video, file) from memory and retry when the model rejects them.
+    # Unlike model_factory._fixup_media_list (which converts file blocks
+    # to text placeholders so the user-facing message history stays
+    # readable), this fallback strips them entirely — its purpose is to
+    # make a previously-rejected request retryable, so leaving residue
+    # would defeat the point.
     # ------------------------------------------------------------------
 
-    _MEDIA_BLOCK_TYPES = {"image", "audio", "video"}
+    _MEDIA_BLOCK_TYPES = {"image", "audio", "video", "file"}
 
     # ------------------------------------------------------------------
     # Plan gate: block non-create_plan tools when /plan gate is active
@@ -1443,9 +1426,11 @@ class QwenPawAgent(CodingModeMixin, ToolGuardMixin, ReActAgent):
             set_current_session_id,
             set_current_shell_command_timeout,
             set_current_shell_command_executable,
+            set_current_toolkit,
         )
 
         set_current_workspace_dir(self._workspace_dir)
+        set_current_toolkit(self.toolkit)
         set_current_session_id(
             self._request_context.get("session_id") or None,
         )
@@ -1504,3 +1489,13 @@ class QwenPawAgent(CodingModeMixin, ToolGuardMixin, ReActAgent):
                     "Exception occurred during interrupt cleanup",
                     exc_info=True,
                 )
+
+    async def _broadcast_to_subscribers(self, msg):
+        # agentscope hook wrapper may misidentify an
+        # async bound method as sync, returning an
+        # unawaited coroutine instead of a Msg.
+        if inspect.iscoroutine(msg):
+            msg = await msg
+        elif isinstance(msg, list):
+            msg = [(await m) if inspect.iscoroutine(m) else m for m in msg]
+        await super()._broadcast_to_subscribers(msg)

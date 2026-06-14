@@ -24,6 +24,19 @@ vi.mock("react-i18next", () => ({
   useTranslation: () => ({ t: (k: string) => k }),
 }));
 
+vi.mock("lucide-react", () => ({
+  Loader2: () => "Loader2",
+  ExternalLink: () => "ExternalLink",
+  ChevronDown: () => "ChevronDown",
+  ChevronRight: () => "ChevronRight",
+  Search: () => "Search",
+  X: () => "X",
+  Check: () => "Check",
+  AlertCircle: () => "AlertCircle",
+  Eye: () => "Eye",
+  Zap: () => "Zap",
+}));
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -51,9 +64,9 @@ const mockProvider = {
       supports_multimodal: false,
       supports_image: false,
       supports_video: false,
-      max_tokens: 8192,
-      max_input_length: 131072,
       generate_kwargs: {},
+      max_tokens: 8192,
+      max_input_length: 32768,
     },
     {
       id: "gpt-3.5-turbo",
@@ -61,9 +74,9 @@ const mockProvider = {
       supports_multimodal: false,
       supports_image: false,
       supports_video: false,
-      max_tokens: 8192,
-      max_input_length: 131072,
       generate_kwargs: {},
+      max_tokens: 4096,
+      max_input_length: 16384,
     },
   ],
   extra_models: [],

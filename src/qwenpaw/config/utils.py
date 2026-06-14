@@ -583,87 +583,14 @@ def _load_and_validate_config(
     return config
 
 
-def _load_config_from_pg() -> Optional[Config]:
-    """Try to load global config from PostgreSQL.
-
-    Returns None when the DB has no config row yet (first-run scenario).
-    """
-    try:
-        from qwenpaw_ext.nexora import db
-
-        if not db.is_database_enabled():
-            return None
-        from qwenpaw_ext.nexora.repositories import config_postgres
-
-        data = config_postgres.load_global_config()
-        if data is None:
-            return None
-        data = _normalize_working_dir_bound_paths(data)
-        return Config.model_validate(data)
-    except Exception as exc:
-        logger.warning("Failed to load config from PostgreSQL: %s", exc)
-        return None
-
-
-def _save_config_to_pg(config: Config) -> bool:
-    """Try to persist global config to PostgreSQL.  Returns True on success."""
-    try:
-        from qwenpaw_ext.nexora import db
-
-        if not db.is_database_enabled():
-            return False
-        from qwenpaw_ext.nexora.repositories import config_postgres
-
-        config_postgres.save_global_config(
-            config.model_dump(mode="json", by_alias=True),
-        )
-        return True
-    except Exception as exc:
-        logger.warning("Failed to save config to PostgreSQL: %s", exc)
-        return False
-
-
-def _get_pg_config_version() -> Optional[int]:
-    """Return the PG updated_at value, used for cache invalidation."""
-    try:
-        from qwenpaw_ext.nexora import db
-
-        if not db.is_database_enabled():
-            return None
-        from qwenpaw_ext.nexora.repositories import config_postgres
-
-        return config_postgres.get_global_config_version()
-    except Exception:
-        return None
-
-
 def load_config(config_path: Optional[Path] = None) -> Config:
     """Load config from file with mtime-based caching.
 
-    When NEXORA_DB_URL is configured, reads from PostgreSQL instead.
-    Uses file modification time (or PG updated_at) to avoid unnecessary reads.
+    Uses file modification time to avoid unnecessary disk reads.
     Returns default Config if file is missing.
     """
     global _config_cache, _config_mtime
 
-    # --- PostgreSQL path ---
-    pg_version = _get_pg_config_version()
-    if pg_version is not None:
-        with _config_lock:
-            if (
-                _config_cache is not None
-                and _config_mtime is not None
-                and _config_mtime == pg_version
-            ):
-                return _config_cache
-
-            pg_config = _load_config_from_pg()
-            if pg_config is not None:
-                _config_cache = pg_config
-                _config_mtime = pg_version
-                return pg_config
-
-    # --- File path (original logic) ---
     if config_path is None:
         config_path = get_config_path()
 
@@ -738,14 +665,9 @@ def strict_validate_config_file(
 
 
 def save_config(config: Config, config_path: Optional[Path] = None) -> None:
-    """Save the config to the file (and PostgreSQL when enabled) and
-    invalidate cache."""
+    """Save the config to the file and invalidate cache."""
     global _config_cache, _config_mtime
 
-    saved_to_pg = _save_config_to_pg(config)
-
-    # Always write file as well: it is the fallback for CLI commands,
-    # migration tooling, and non-PG environments.
     if config_path is None:
         config_path = get_config_path()
     config_path.parent.mkdir(parents=True, exist_ok=True)

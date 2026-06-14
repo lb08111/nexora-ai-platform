@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
+# pylint: disable=redefined-outer-name,no-name-in-module,too-many-function-args
 """End-to-end router test: drive the scripted session through HTTP.
 
 Uses FastAPI's TestClient against a hermetic ``SessionManager`` so the
 test cannot bleed state into other tests via the module-level manager.
+
+``router`` is imported by name (sibling-import inside the plugin dir,
+which conftest.py adds to ``sys.path``). Pylint can't statically resolve
+that path, hence the module-level disables above.
 """
 from __future__ import annotations
 

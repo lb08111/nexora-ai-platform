@@ -6,7 +6,13 @@ usage() {
 Bootstrap a worktree with shared runtime resources.
 
 Usage:
-  bash scripts/worktree_bootstrap.sh [--shared-dir <path>] [--force] [--skip-install]
+  bash scripts/worktree_bootstrap.sh [--shared-dir <path>] [--force] [--skip-install] [--pr-config]
+
+Options:
+  --shared-dir <path>  Path to shared runtime directory (default: ../_shared)
+  --force              Overwrite existing symlinks
+  --skip-install       Skip pnpm install
+  --pr-config          Use .codex/pr.toml for Codex configuration
 
 Behavior:
 1) Links:
@@ -14,12 +20,14 @@ Behavior:
    - tenants -> <shared-dir>/tenants
    - uploads -> <shared-dir>/uploads
 2) Runs pnpm install --prefer-offline (root package.json, or console/ fallback)
+3) If --pr-config: Sets up .codex environment for PR review workflows
 EOF
 }
 
 shared_dir="../_shared"
 force=0
 skip_install=0
+pr_config=0
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -41,6 +49,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         --skip-install)
             skip_install=1
+            shift
+            ;;
+        --pr-config)
+            pr_config=1
             shift
             ;;
         *)
@@ -96,14 +108,24 @@ create_link "$shared_dir/uploads" "uploads"
 
 if [[ "$skip_install" -eq 1 ]]; then
     echo ">> Skipping pnpm install (--skip-install)"
-    exit 0
+else
+    echo ">> Installing JS dependencies (prefer offline)"
+    if [[ -f "package.json" ]]; then
+        pnpm install --prefer-offline
+    elif [[ -f "console/package.json" ]]; then
+        pnpm --dir console install --prefer-offline
+    else
+        echo "No package.json found in root or console/. Skipping pnpm install."
+    fi
 fi
 
-echo ">> Installing JS dependencies (prefer offline)"
-if [[ -f "package.json" ]]; then
-    pnpm install --prefer-offline
-elif [[ -f "console/package.json" ]]; then
-    pnpm --dir console install --prefer-offline
-else
-    echo "No package.json found in root or console/. Skipping pnpm install."
+if [[ "$pr_config" -eq 1 ]]; then
+    echo ">> Setting up Codex PR configuration"
+    if [[ -f ".codex/pr.toml" ]]; then
+        export CODEX_CONFIG=".codex/pr.toml"
+        echo "✓ CODEX_CONFIG set to .codex/pr.toml"
+        echo "  Use --codex-config .codex/pr.toml with Codex CLI for PR reviews"
+    else
+        echo "⚠ .codex/pr.toml not found" >&2
+    fi
 fi

@@ -1,40 +1,61 @@
-## 变更说明
+## Description
 
-请说明本次改动解决什么问题，以及是否复用了原项目已有能力。
+[Describe what this PR does and why]
 
-## 影响范围
+**Related Issue:** Fixes #(issue_number) or Relates to #(issue_number)
 
-- [ ] 后端接口
-- [ ] 前端页面
-- [ ] 用户/角色/菜单权限
-- [ ] 智能体权限
-- [ ] 工具/MCP/Skill 调用
-- [ ] 审计日志
-- [ ] 审批流
-- [ ] Docker/部署
-- [ ] 文档
-- [ ] 其他：
+**Security Considerations:** [If applicable, e.g. channel auth, env/config handling]
 
-## 公司级健壮性检查
+## Type of Change
 
-- [ ] 没有写死账号、密码、Token、API Key 或模型 Key。
-- [ ] 没有只做前端隐藏，后端也完成了权限校验。
-- [ ] 新增或修改的敏感操作已经接入审计。
-- [ ] 工具/MCP/Skill 的调用路径没有绕过智能体授权。
-- [ ] 高风险动作已评估是否需要审批。
-- [ ] 没有引入长期依赖本机路径、临时端口、临时公网地址的方案。
-- [ ] 如果修改了上游核心文件，已说明原因和上游同步影响。
-- [ ] 如果涉及数据结构变化，已说明迁移和回滚方式。
-- [ ] 如果涉及部署，已验证 Docker/Compose 或说明未验证原因。
+- [ ] Bug fix
+- [ ] New feature
+- [ ] Breaking change
+- [ ] Documentation
+- [ ] Refactoring
 
-## 验证记录
+## Component(s) Affected
 
-请填写实际执行过的验证命令和结果摘要。
+- [ ] Core / Backend (app, agents, config, providers, utils, local_models)
+- [ ] Console (frontend web UI)
+- [ ] Channels (DingTalk, Feishu, QQ, Discord, iMessage, etc.)
+- [ ] Skills
+- [ ] CLI
+- [ ] Documentation (website)
+- [ ] Tests
+- [ ] CI/CD
+- [ ] Scripts / Deploy
 
-```text
+## Checklist
 
+- [ ] I ran `pre-commit run --all-files` locally and it passes
+- [ ] If pre-commit auto-fixed files, I committed those changes and reran checks
+- [ ] I ran tests locally (`pytest` or as relevant) and they pass
+- [ ] Documentation updated (if needed)
+- [ ] Ready for review
+
+### For Channel Changes (DingTalk, Feishu, QQ, Console, etc.)
+
+- [ ] I ran `./scripts/check-channels.sh` (or `./scripts/check-channels.sh --changed`) and it passes
+- [ ] **Contract test** exists in `tests/contract/channels/test_<channel>_contract.py` (REQUIRED)
+- [ ] Contract test implements `create_instance()` with proper channel initialization
+- [ ] All 19 contract verification points pass (see `tests/contract/channels/__init__.py`)
+- [ ] **Optional**: Unit tests in `tests/unit/channels/test_<channel>.py` for complex internal logic
+
+## Testing
+
+[How to test these changes]
+
+## Local Verification Evidence
+
+```bash
+pre-commit run --all-files
+# paste summary result
+
+pytest
+# paste summary result
 ```
 
-## 回滚方式
+## Additional Notes
 
-请说明如果上线后异常，如何回滚本次改动。
+[Optional: any other context]

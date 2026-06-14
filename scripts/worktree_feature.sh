@@ -6,11 +6,12 @@ usage() {
 Create a feature worktree wired to shared runtime files.
 
 Usage:
-  bash scripts/worktree_feature.sh <feature-name> [--shared-dir <path>] [--force]
+  bash scripts/worktree_feature.sh <feature-name> [--shared-dir <path>] [--force] [--pr-config]
 
 Examples:
   bash scripts/worktree_feature.sh login-page
   bash scripts/worktree_feature.sh feature/login-page --shared-dir ../_shared
+  bash scripts/worktree_feature.sh bugfix/auth --pr-config
 
 Behavior:
 1) git fetch origin
@@ -20,13 +21,15 @@ Behavior:
    - tenants -> <shared-dir>/tenants
    - uploads -> <shared-dir>/uploads
 4) Runs pnpm install --prefer-offline (root package.json, or console/ fallback)
-5) git push -u origin feature/<name>
+5) If --pr-config: Sets up Codex PR configuration
+6) git push -u origin feature/<name>
 EOF
 }
 
 shared_dir="../_shared"
 force=0
 feature_input=""
+pr_config=0
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -44,6 +47,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         --force)
             force=1
+            shift
+            ;;
+        --pr-config)
+            pr_config=1
             shift
             ;;
         *)
@@ -98,6 +105,9 @@ bootstrap_args=(--shared-dir "$shared_dir")
 if [[ "$force" -eq 1 ]]; then
     bootstrap_args+=(--force)
 fi
+if [[ "$pr_config" -eq 1 ]]; then
+    bootstrap_args+=(--pr-config)
+fi
 bash scripts/worktree_bootstrap.sh "${bootstrap_args[@]}"
 
 echo ">> Pushing branch to origin"
@@ -108,3 +118,9 @@ echo "Worktree ready:"
 echo "  Branch:   $branch_name"
 echo "  Path:     $worktree_dir"
 echo "  Shared:   $shared_dir"
+if [[ "$pr_config" -eq 1 ]]; then
+    echo "  Codex:    .codex/pr.toml (set)"
+    echo ""
+    echo "For PR review with Codex:"
+    echo "  cd $worktree_dir && codex --config .codex/pr.toml"
+fi

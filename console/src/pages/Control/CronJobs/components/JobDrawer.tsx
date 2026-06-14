@@ -133,7 +133,7 @@ export function JobDrawer({
       title={editingJob ? t("cronJobs.editJob") : t("cronJobs.createJob")}
       open={open}
       onClose={onClose}
-      destroyOnClose
+      destroyOnHidden
       footer={
         <div className={styles.formActions}>
           <Button onClick={onClose}>{t("common.cancel")}</Button>
@@ -427,7 +427,7 @@ export function JobDrawer({
                 <Form.Item
                   name="cronDaysOfWeek"
                   label={t("cronJobs.cronDaysOfWeek")}
-                  rules={[{ required: true, message: "Por favor, selecione pelo menos um dia" }]}
+                  rules={[{ required: true, message: "请选择至少一天" }]}
                 >
                   <Checkbox.Group
                     options={[
@@ -627,7 +627,7 @@ export function JobDrawer({
             options={channelOptions}
             onSearch={setChannelSearch}
             onBlur={() => setChannelSearch("")}
-            notFoundContent="Digite um valor personalizado e pressione Enter"
+            notFoundContent="输入自定义值后按 Enter"
             filterOption={(input, option) =>
               (option?.label?.toString() || "")
                 .toLowerCase()
@@ -649,7 +649,7 @@ export function JobDrawer({
             options={userOptions}
             onSearch={setUserSearch}
             onBlur={() => setUserSearch("")}
-            notFoundContent="Digite um valor personalizado e pressione Enter"
+            notFoundContent="输入自定义值后按 Enter"
             filterOption={(input, option) =>
               (option?.label?.toString() || "")
                 .toLowerCase()
@@ -673,7 +673,7 @@ export function JobDrawer({
             options={sessionOptions}
             onSearch={setSessionSearch}
             onBlur={() => setSessionSearch("")}
-            notFoundContent="Digite um valor personalizado e pressione Enter"
+            notFoundContent="输入自定义值后按 Enter"
             filterOption={(input, option) =>
               (option?.label?.toString() || "")
                 .toLowerCase()

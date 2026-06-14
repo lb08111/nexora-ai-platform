@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import re
 from pathlib import Path
 from typing import Optional, Union, Dict, List, Literal, Any, Set
@@ -32,6 +33,8 @@ from ..constant import (
     LLM_RATE_LIMIT_PAUSE,
     WORKING_DIR,
 )
+
+logger = logging.getLogger(__name__)
 
 
 # ============================================================================
@@ -243,6 +246,8 @@ class FeishuConfig(BaseChannelConfig):
     domain: 'feishu' for China, 'lark' for international.
     streaming_enabled: enable CardKit streaming card updates for real-time
     typewriter-style text output.
+    share_session_in_group: if True, all group members share one session;
+    if False (default), each member gets an independent session.
     """
 
     app_id: str = ""
@@ -252,6 +257,7 @@ class FeishuConfig(BaseChannelConfig):
     media_dir: Optional[str] = None
     domain: Literal["feishu", "lark"] = "feishu"
     streaming_enabled: bool = False
+    share_session_in_group: bool = False
 
 
 class QQConfig(BaseChannelConfig):
@@ -409,6 +415,19 @@ class XiaoYiConfig(BaseChannelConfig):
     task_timeout_ms: int = 3600000  # 1 hour task timeout
 
 
+class YuanbaoConfig(BaseChannelConfig):
+    """Tencent Yuanbao (元宝) channel config.
+
+    Connects to Yuanbao bot platform via protobuf WebSocket with
+    sign-token authentication. Supports C2C and group messaging.
+    """
+
+    app_id: str = ""
+    app_secret: str = ""
+    api_domain: str = "bot.yuanbao.tencent.com"
+    media_dir: Optional[str] = None
+
+
 class WeChatConfig(BaseChannelConfig):
     """WeChat (iLink Bot) personal account channel config.
 
@@ -436,21 +455,6 @@ class WeChatConfig(BaseChannelConfig):
     message_merge_delay_ms: Optional[int] = 0
 
 
-class WhatsAppConfig(BaseChannelConfig):
-    """WhatsApp channel config (neonize backend)."""
-
-    auth_dir: str = ""
-    send_read_receipts: bool = True
-    self_chat_mode: bool = False
-    text_chunk_limit: int = 4096
-    groups: List[str] = Field(default_factory=list)
-    group_allow_from: List[str] = Field(default_factory=list)
-    ack_reaction_thinking: str = "🤔"
-    ack_reaction_done: str = "👀"
-    ack_reaction_error: str = "⚠️"
-    reply_to_trigger: bool = True
-
-
 class ChannelConfig(BaseModel):
     """Built-in channel configs; extra keys allowed for plugin channels."""
 
@@ -470,9 +474,9 @@ class ChannelConfig(BaseModel):
     sip: SIPChannelConfig = SIPChannelConfig()
     wecom: WecomConfig = WecomConfig()
     xiaoyi: XiaoYiConfig = XiaoYiConfig()
+    yuanbao: YuanbaoConfig = YuanbaoConfig()
     wechat: WeChatConfig = WeChatConfig()
     onebot: OneBotConfig = OneBotConfig()
-    whatsapp: WhatsAppConfig = WhatsAppConfig()
 
     @model_validator(mode="before")
     @classmethod
@@ -1302,6 +1306,11 @@ class MCPClientConfig(BaseModel):
     args: List[str] = Field(default_factory=list)
     env: Dict[str, str] = Field(default_factory=dict)
     cwd: str = ""
+    tools: Optional[List[str]] = Field(
+        default=None,
+        description="Tool whitelist. Only listed tools will be loaded. "
+        "None means load all tools from the server.",
+    )
     oauth: Optional[MCPOAuthConfig] = None
 
     @model_validator(mode="before")
@@ -1538,6 +1547,14 @@ def _default_builtin_tools() -> Dict[str, BuiltinToolConfig]:
             description="Check the status of a background agent task",
             icon="⏳",
         ),
+        "spawn_subagent": BuiltinToolConfig(
+            name="spawn_subagent",
+            enabled=True,
+            description=(
+                "Spawn an ephemeral sub-task within the current " "workspace"
+            ),
+            icon="🔀",
+        ),
     }
 
     # Merge dynamically registered tools from plugins
@@ -1716,6 +1733,7 @@ class FileGuardConfig(BaseModel):
 
     enabled: bool = True
     sensitive_files: List[str] = Field(default_factory=list)
+    allow_preview_outside_workspace: bool = True
 
 
 class SkillScannerWhitelistEntry(BaseModel):
@@ -1799,6 +1817,13 @@ class Config(BaseModel):
         description="Plugin configurations. Key is plugin_id, "
         "value is plugin-specific config dict.",
     )
+    skill_paths: List[str] = Field(
+        default_factory=list,
+        description="Additional read-only skill pool roots, scanned after "
+        "the primary skill_pool in order. Paths support ~ expansion. "
+        "Skills found here are read-only (no edit/create); they can be "
+        "listed, downloaded to a workspace, and deleted.",
+    )
 
 
 ChannelConfigUnion = Union[
@@ -1878,43 +1903,6 @@ def build_fallback_agent_profile_config(
     )
 
 
-def _load_agent_config_from_pg(agent_id: str) -> Optional[AgentProfileConfig]:
-    """Try to load agent config from PostgreSQL."""
-    try:
-        from qwenpaw_ext.nexora import db
-
-        if not db.is_database_enabled():
-            return None
-        from qwenpaw_ext.nexora.repositories import config_postgres
-
-        data = config_postgres.load_agent_config(agent_id)
-        if data is None:
-            return None
-        try:
-            from .utils import _normalize_working_dir_bound_paths
-
-            data = _normalize_working_dir_bound_paths(data)
-        except Exception:
-            pass
-        return AgentProfileConfig(**data)
-    except Exception:
-        return None
-
-
-def _get_pg_agent_config_version(agent_id: str) -> Optional[int]:
-    """Return PG updated_at for agent config cache invalidation."""
-    try:
-        from qwenpaw_ext.nexora import db
-
-        if not db.is_database_enabled():
-            return None
-        from qwenpaw_ext.nexora.repositories import config_postgres
-
-        return config_postgres.get_agent_config_version(agent_id)
-    except Exception:
-        return None
-
-
 def _migrate_access_control_fields(  # pylint: disable=too-many-branches
     channels: dict,
     workspace_dir: Path,
@@ -1986,8 +1974,7 @@ def load_agent_config(  # pylint: disable=too-many-branches,too-many-statements
     """Load agent's complete configuration from workspace/agent.json with
     mtime-based caching.
 
-    When NEXORA_DB_URL is configured, reads from PostgreSQL instead.
-    Uses file modification time (or PG updated_at) to avoid unnecessary reads.
+    Uses file modification time to avoid unnecessary disk reads.
 
     Args:
         agent_id: Agent ID to load
@@ -2012,21 +1999,6 @@ def load_agent_config(  # pylint: disable=too-many-branches,too-many-statements
             message=f"Agent '{agent_id}' not found in config",
         )
 
-    # --- PostgreSQL path ---
-    pg_version = _get_pg_agent_config_version(agent_id)
-    if pg_version is not None:
-        with _agent_config_lock:
-            if agent_id in _agent_config_cache:
-                cached_config, cached_ver = _agent_config_cache[agent_id]
-                if cached_ver == pg_version:
-                    return cached_config
-
-            pg_config = _load_agent_config_from_pg(agent_id)
-            if pg_config is not None:
-                _agent_config_cache[agent_id] = (pg_config, pg_version)
-                return pg_config
-
-    # --- File path (original logic) ---
     agent_ref = config.agents.profiles[agent_id]
     workspace_dir = Path(agent_ref.workspace_dir).expanduser()
     agent_config_path = workspace_dir / "agent.json"
@@ -2130,36 +2102,11 @@ def load_agent_config(  # pylint: disable=too-many-branches,too-many-statements
         return agent_config
 
 
-def _save_agent_config_to_pg(
-    agent_id: str, agent_config: AgentProfileConfig
-) -> bool:
-    """Try to persist agent config to PostgreSQL.  Returns True on success."""
-    try:
-        from qwenpaw_ext.nexora import db
-
-        if not db.is_database_enabled():
-            return False
-        from qwenpaw_ext.nexora.repositories import config_postgres
-
-        config_postgres.save_agent_config(
-            agent_id, agent_config.model_dump(exclude_none=True)
-        )
-        return True
-    except Exception as exc:
-        import logging
-
-        logging.getLogger(__name__).warning(
-            "Failed to save agent config %s to PostgreSQL: %s", agent_id, exc
-        )
-        return False
-
-
 def save_agent_config(
     agent_id: str,
     agent_config: AgentProfileConfig,
 ) -> None:
-    """Save agent configuration to workspace/agent.json (and PostgreSQL when
-    enabled) and invalidate cache.
+    """Save agent configuration to workspace/agent.json and invalidate cache.
 
     Args:
         agent_id: Agent ID
@@ -2182,9 +2129,6 @@ def save_agent_config(
             message=f"Agent '{agent_id}' not found in config",
         )
 
-    _save_agent_config_to_pg(agent_id, agent_config)
-
-    # Always write file as well for CLI tools and non-PG environments.
     agent_ref = config.agents.profiles[agent_id]
     workspace_dir = Path(agent_ref.workspace_dir).expanduser()
     workspace_dir.mkdir(parents=True, exist_ok=True)
@@ -2236,6 +2180,19 @@ def migrate_legacy_config_to_multi_agent() -> bool:
     default_workspace = Path(f"{WORKING_DIR}/workspaces/default").expanduser()
     default_workspace.mkdir(parents=True, exist_ok=True)
 
+    # Inherit the global active model so the new agent.json has a valid
+    # active_model pointer from the start (fixes #4937).
+    try:
+        from ..providers import ProviderManager
+
+        global_active_model = ProviderManager.get_instance().get_active_model()
+    except Exception:
+        global_active_model = None
+        logger.info(
+            "Could not resolve global active model during migration; "
+            "agent will be created without active_model.",
+        )
+
     # Create default agent configuration from legacy settings
     default_agent_config = AgentProfileConfig(
         id="default",
@@ -2266,6 +2223,7 @@ def migrate_legacy_config_to_multi_agent() -> bool:
         ),
         tools=config.tools if config.tools else None,
         security=config.security if config.security else None,
+        active_model=global_active_model,
     )
 
     # Save default agent configuration to workspace
@@ -2354,6 +2312,14 @@ def get_model_max_input_length(
     from ..providers import ProviderManager
 
     model_slot = agent_config.active_model
+    # Fallback: if agent.json doesn't have active_model, try ProviderManager
+    if not model_slot or not model_slot.provider_id:
+        try:
+            manager = ProviderManager.get_instance()
+            model_slot = manager.get_active_model()
+        except Exception:
+            pass
+
     if model_slot and model_slot.provider_id and model_slot.model:
         try:
             manager = ProviderManager.get_instance()
@@ -2364,4 +2330,10 @@ def get_model_max_input_length(
                     return model_info.max_input_length
         except Exception:
             pass
+    logger.debug(
+        "Could not resolve max_input_length for agent '%s' "
+        "(active_model=%s), falling back to 128K default.",
+        getattr(agent_config, "id", "?"),
+        agent_config.active_model,
+    )
     return 128 * 1024

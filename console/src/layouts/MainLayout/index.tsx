@@ -6,10 +6,7 @@ import Sidebar from "../Sidebar";
 import Header from "../Header";
 import ConsolePollService from "../../components/ConsolePollService";
 import { ChunkErrorBoundary } from "../../components/ChunkErrorBoundary";
-import {
-  lazyImportWithRetry,
-  lazyWithRetry,
-} from "../../utils/lazyWithRetry";
+import { lazyImportWithRetry, lazyWithRetry } from "../../utils/lazyWithRetry";
 import { usePlugins } from "../../plugins/PluginContext";
 import { auditApi } from "../../nexora/api/audit";
 import { useCodingMode } from "../../stores/codingModeStore";
