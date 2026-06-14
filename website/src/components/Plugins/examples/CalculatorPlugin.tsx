@@ -1,17 +1,17 @@
-import React from 'react';
-import { PluginProps } from '../../Chat/types';
+import React from "react";
+import { PluginProps } from "../../Chat/types";
 
 export const CalculatorPlugin: React.FC<PluginProps> = ({ onClose }) => {
-  const [input, setInput] = React.useState('');
-  const [result, setResult] = React.useState<number | string>('');
+  const [input, setInput] = React.useState("");
+  const [result, setResult] = React.useState<number | string>("");
 
   const calculate = () => {
     try {
       // eslint-disable-next-line no-new-func
-      const calculated = Function('"use strict"; return (' + input + ')')();
+      const calculated = Function('"use strict"; return (' + input + ")")();
       setResult(calculated);
     } catch (error) {
-      setResult('Invalid expression');
+      setResult("Invalid expression");
     }
   };
 
@@ -35,7 +35,7 @@ export const CalculatorPlugin: React.FC<PluginProps> = ({ onClose }) => {
           Calculate
         </button>
         <button
-          onClick={() => setInput('')}
+          onClick={() => setInput("")}
           className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
         >
           Clear
@@ -45,7 +45,9 @@ export const CalculatorPlugin: React.FC<PluginProps> = ({ onClose }) => {
       {result && (
         <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded">
           <p className="text-sm text-gray-600 dark:text-gray-400">Result:</p>
-          <p className="text-2xl font-bold text-green-600 dark:text-green-400">{result}</p>
+          <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+            {result}
+          </p>
         </div>
       )}
 

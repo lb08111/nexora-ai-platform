@@ -57,9 +57,7 @@ export const multiTenantApi = {
 
   // Capability Approval Config
   listApprovalConfigs: () =>
-    request<CapabilityApprovalConfig[]>(
-      "/nexora/capability-approval-config",
-    ),
+    request<CapabilityApprovalConfig[]>("/nexora/capability-approval-config"),
   updateApprovalConfig: (
     capType: string,
     payload: Partial<CapabilityApprovalConfig>,
@@ -73,9 +71,10 @@ export const multiTenantApi = {
     ),
 
   // Agent Templates
-  listTemplates: () =>
-    request<AgentTemplate[]>("/nexora/agent-templates"),
-  createTemplate: (payload: Omit<AgentTemplate, "builtin" | "created_at" | "updated_at">) =>
+  listTemplates: () => request<AgentTemplate[]>("/nexora/agent-templates"),
+  createTemplate: (
+    payload: Omit<AgentTemplate, "builtin" | "created_at" | "updated_at">,
+  ) =>
     request<AgentTemplate>("/nexora/agent-templates", {
       method: "POST",
       body: JSON.stringify(payload),
@@ -84,10 +83,7 @@ export const multiTenantApi = {
     request<AgentTemplate>(
       `/nexora/agent-templates/${encodeURIComponent(templateId)}`,
     ),
-  updateTemplate: (
-    templateId: string,
-    payload: Partial<AgentTemplate>,
-  ) =>
+  updateTemplate: (templateId: string, payload: Partial<AgentTemplate>) =>
     request<AgentTemplate>(
       `/nexora/agent-templates/${encodeURIComponent(templateId)}`,
       {

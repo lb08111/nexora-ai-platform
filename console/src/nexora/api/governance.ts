@@ -24,7 +24,10 @@ export interface GovernancePolicy {
   updated_at: number;
 }
 
-export type GovernancePolicyPayload = Omit<GovernancePolicy, "id" | "updated_at">;
+export type GovernancePolicyPayload = Omit<
+  GovernancePolicy,
+  "id" | "updated_at"
+>;
 
 export type ApprovalAction =
   | "mcp.create"

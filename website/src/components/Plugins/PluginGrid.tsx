@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import { usePlugins } from './PluginContext';
-import { PluginWrapper } from './PluginWrapper';
+import React, { useState } from "react";
+import { usePlugins } from "./PluginContext";
+import { PluginWrapper } from "./PluginWrapper";
 
 interface PluginGridProps {
-  displayMode?: 'grid' | 'list';
+  displayMode?: "grid" | "list";
   maxColumns?: number;
 }
 
 export const PluginGrid: React.FC<PluginGridProps> = ({
-  displayMode = 'grid',
+  displayMode = "grid",
   maxColumns = 2,
 }) => {
   const { listPlugins } = usePlugins();
@@ -17,7 +17,7 @@ export const PluginGrid: React.FC<PluginGridProps> = ({
   const plugins = listPlugins();
 
   const handleTogglePlugin = (id: string) => {
-    setActivePlugins(prev => {
+    setActivePlugins((prev) => {
       const next = new Set(prev);
       if (next.has(id)) {
         next.delete(id);
@@ -39,12 +39,12 @@ export const PluginGrid: React.FC<PluginGridProps> = ({
   return (
     <div
       className={
-        displayMode === 'grid'
+        displayMode === "grid"
           ? `grid gap-4 grid-cols-1 md:grid-cols-${maxColumns}`
-          : 'flex flex-col gap-4'
+          : "flex flex-col gap-4"
       }
     >
-      {plugins.map(plugin => (
+      {plugins.map((plugin) => (
         <PluginWrapper
           key={plugin.id}
           plugin={plugin}
